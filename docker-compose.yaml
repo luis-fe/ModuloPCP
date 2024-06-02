@@ -5,11 +5,15 @@ services:
     image: postgres:13.0
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
     restart: always
     environment:
       POSTGRES_PASSWORD: Master100
       POSTGRES_DB: PCP
       POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
     
   flask:
     depends_on:

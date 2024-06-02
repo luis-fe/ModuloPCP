@@ -1,4 +1,4 @@
-CREATE SCHEMA "pcp" AUTHORIZATION postgre;
+CREATE SCHEMA "pcp" AUTHORIZATION postgres;
 CREATE TABLE "pcp"."Plano" (
     "codigo" int PRIMARY KEY,
     "descricao do Plano" VARCHAR(50),
