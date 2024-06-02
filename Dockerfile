@@ -10,9 +10,12 @@ RUN apt-get update && apt-get install -y \
 # Defina o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
+# Copie e instale as dependências do Python
 COPY requeriments.txt requeriments.txt
 
-RUN pip install --no-cache-dir -r requeriments.txt
+# Mostrar versão do pip e instalar dependências
+RUN pip --version \
+    && pip install --no-cache-dir -r requeriments.txt
 
 COPY . .
 
@@ -26,4 +29,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 5000
 
 # Comando para rodar a aplicação Flask
-CMD ["python", "main.py"]
+CMD ["python", "app.py"]
