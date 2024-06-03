@@ -1,5 +1,6 @@
 import connection.ConexaoBanco as ConexaoBanco
 import pandas as pd
+import gc
 
 def lote(empresa):
     sql = """SELECT * FROM TCL.lote l WHERE l.codempresa = %s"""%empresa
@@ -14,5 +15,6 @@ def lote(empresa):
             # Cria o DataFrame com as colunas
             lotes = pd.DataFrame(rows, columns=colunas)    
             del rows
+            gc.collect()
             return lotes
 
