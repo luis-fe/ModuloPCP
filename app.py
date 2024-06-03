@@ -2,22 +2,21 @@ import pandas as pd
 from flask import Flask, jsonify
 import os
 from models import loteCsw
+import gc
 
 app = Flask(__name__)
 port = int(os.environ.get('PORT',5000))
 
 @app.route("/api/teste", methods=['GET'])
 def teste():
-
     x = loteCsw.lote(1)
-    # Obtém os nomes das colunas
-    column_names = x.columns
-    OP_data = []
-    for index, row in x.iterrows():
-            op_dict = {}
-            for column_name in column_names:
-                op_dict[column_name] = row[column_name]
-            OP_data.append(op_dict)
+    
+    # Otimiza a conversão para JSON
+    OP_data = x.to_dict(orient='records')
+    
+    # Libera memória não utilizada
+    del x
+    gc.collect()
 
     return jsonify(OP_data)
     

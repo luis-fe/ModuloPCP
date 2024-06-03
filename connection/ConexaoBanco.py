@@ -1,4 +1,5 @@
 import jaydebeapi
+import gc
 
 def Conexao2():
     conn = jaydebeapi.connect(
@@ -7,4 +8,5 @@ def Conexao2():
     {'user': 'root', 'password': 'ccscache'},
     './connection/CacheDB.jar'
 )
+    gc.collect()
     return conn
