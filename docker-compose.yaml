@@ -8,10 +8,8 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
     restart: always
-    environment:
-      POSTGRES_PASSWORD: Master100
-      POSTGRES_DB: pcp
-      POSTGRES_USER: postgres
+    env_file:
+      - ./config/db.env
     ports:
       - "5432:5432"
     
