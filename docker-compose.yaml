@@ -23,6 +23,8 @@ services:
       - "5001:5001"
     volumes:
       - .:/app
+    env_file:
+      - ./config/db.env
 
 volumes:
   db_data:
