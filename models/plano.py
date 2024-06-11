@@ -1,12 +1,14 @@
-'''MODULO FEITO PARA CROD DO PLANO - CONJUNTO DE REGRAS QUE FORMAM A POLITICA A SER PROJETADA E SIMULADA'''
+'''
+MODULO FEITO PARA CROD DO PLANO - CONJUNTO DE REGRAS QUE FORMAM A POLITICA A SER PROJETADA E SIMULADA
+'''
 
-from ..connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms
 from datetime import datetime
 import pandas as pd
 
 
-def ObeterPlanos(host, bancoDados):
-    conn = ConexaoPostgreWms.conexaoEngine(host, bancoDados)
+def ObeterPlanos():
+    conn = ConexaoPostgreWms.conexaoEngine()
     planos = pd.read_sql('SELECT * FROM pcp."Plano" '
                          ' ORDER BY codigo ASC;',conn)
     planos.rename(
