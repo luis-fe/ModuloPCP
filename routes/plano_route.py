@@ -18,7 +18,7 @@ def token_required(f):
 @planoPCP_routes.route('/pcp/api/Plano', methods=['GET'])
 @token_required
 def get_Plano():
-    dados = plano.ObeterPlanos('192.168.0.183',"PCP")
+    dados = plano.ObeterPlanos()
 
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
