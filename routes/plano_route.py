@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models import Plano, CalendarioProducao
+from models import plano
 
-plano_routes = Blueprint('plano_routes', __name__)
+planoPCP_routes = Blueprint('planoPCP_routes', __name__)
+
 def token_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -14,15 +15,15 @@ def token_required(f):
     return decorated_function
 
 
-@plano_routes.route('/pcp/api/Plano', methods=['GET'])
+@planoPCP_routes.route('/pcp/api/Plano', methods=['GET'])
 @token_required
 def get_Plano():
-    plano = Plano.ObeterPlanos()
+    dados = plano.ObeterPlanos('192.168.0.183',"PCP")
 
-    column_names = plano.columns
+    column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
-    for index, row in plano.iterrows():
+    for index, row in dados.iterrows():
         op_dict = {}
         for column_name in column_names:
             op_dict[column_name] = row[column_name]

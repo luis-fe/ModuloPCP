@@ -3,9 +3,13 @@ from flask import Flask, jsonify
 import os
 from models import loteCsw
 import gc
+from routes import routes_blueprint
 
 app = Flask(__name__)
-port = int(os.environ.get('PORT',5000))
+port = int(os.environ.get('PORT',5001))
+
+app.register_blueprint(routes_blueprint)
+
 
 @app.route("/api/teste", methods=['GET'])
 def teste():
