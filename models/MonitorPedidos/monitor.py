@@ -38,9 +38,14 @@ def Monitor_CapaPedidosDataPrev(empresa, iniVenda, finalVenda, tiponota):
 
 
     with ConexaoBanco.Conexao2() as conn:
-     consulta = pd.read_sql(sqlCswCapaPedidosDataPrev, conn)
+        with conn.cursor() as cursor:
+            cursor.execute(sqlCswCapaPedidosDataPrev)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
 
-    return consulta
+        del rows
+        return consulta
 
 # Verfiicando se o pedido nao está bloqueado :
 def Monitor_PedidosBloqueados():
@@ -54,8 +59,14 @@ def Monitor_PedidosBloqueados():
     order BY codPedido DESC) as D"""
 
     with ConexaoBanco.Conexao2() as conn:
-        consulta = pd.read_sql(consultacsw, conn)
-    return consulta
+        with conn.cursor() as cursor:
+            cursor.execute(consultacsw)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+
+        del rows
+        return consulta
 
 #Carregando os Pedidos a nivel Sku
 def Monitor_nivelSku(datainicio):
@@ -112,8 +123,13 @@ def EstoqueSKU():
     group by dt.reduzido
      """
     with ConexaoBanco.Conexao2() as conn:
-        consulta = pd.read_sql(consultasqlCsw, conn)
-    return consulta
+        with conn.cursor() as cursor:
+            cursor.execute(consultasqlCsw)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+        del rows
+        return consulta
 
 #ObtendoEntregasSolicitadas
 def ObtendoEntregasSolicitadas():
@@ -122,8 +138,13 @@ def ObtendoEntregasSolicitadas():
                                          numeroEntrega as entregas_Solicitadas from asgo_ped.Entregas where 
                                          codEmpresa = 1  order by codPedido desc"""
     with ConexaoBanco.Conexao2() as conn:
-        consulta = pd.read_sql(consultasqlCsw, conn)
-    return consulta
+        with conn.cursor() as cursor:
+            cursor.execute(consultasqlCsw)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+        del rows
+        return consulta
 
 #Entregas_Enviados
 def ObtendoEntregas_Enviados():
@@ -133,8 +154,13 @@ def ObtendoEntregas_Enviados():
     not in ('200','800','300','600','700','511') and situacao = 2 and codpedido> 0 and dataFaturamento > '2020-01-01' group by codPedido order by codPedido desc
     """
     with ConexaoBanco.Conexao2() as conn:
-        consulta = pd.read_sql(consultasqlCsw, conn)
-    return consulta
+        with conn.cursor() as cursor:
+            cursor.execute(consultasqlCsw)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+        del rows
+        return consulta
 
 #Obtendo os Sku - estrutura
 def EstruturaSku():
@@ -152,8 +178,13 @@ def CapaSugestao():
     FROM ped.SugestaoPed c WHERE c.codEmpresa = 1  """
 
     with ConexaoBanco.Conexao2() as conn:
-        consulta = pd.read_sql(consultasqlCsw, conn)
-    return consulta
+        with conn.cursor() as cursor:
+            cursor.execute(consultasqlCsw)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+        del rows
+        return consulta
 
 #Criando o modelo de classificacao
 def Classificacao(pedidos, parametro):
@@ -488,9 +519,11 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
     #retirar as seguintes colunas: StatusSugestao, situacaobloq, dias_a_adicionar, Resultado    monitor.fillna('', inplace=True)
     pedidos['codProduto'] = pedidos['codProduto'].astype(str)
     pedidos['codCor'] = pedidos['codCor'].astype(str)
+    pedidos['nomeSKU'] = pedidos['nomeSKU'].astype(str)
+    pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
 
 
-    fp.write('/dados/monitor.parquet', pedidos)
+    fp.write('./dados/monitor.parquet', pedidos)
 
     #etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
     return pedidos
