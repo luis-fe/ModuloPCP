@@ -3,6 +3,6 @@ from flask import Blueprint
 routes_blueprint = Blueprint('routes', __name__)
 
 
-from .plano_route import planoPCP_routes
+from .Planejamento.plano_route import planoPCP_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)

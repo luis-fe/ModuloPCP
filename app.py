@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import Flask, jsonify
 import os
-from models import loteCsw
+from models.Planejamento import loteCsw
 import gc
 from routes import routes_blueprint
 

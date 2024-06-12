@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models import plano
+from models.Planejamento import plano
 
 planoPCP_routes = Blueprint('planoPCP_routes', __name__)
 

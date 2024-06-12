@@ -1,5 +1,15 @@
-CREATE SCHEMA "pcp" AUTHORIZATION postgres;
-CREATE TABLE "pcp"."Plano" (
+-- Criar schema se não existir
+DO
+$$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'pcp') THEN
+        CREATE SCHEMA "pcp" AUTHORIZATION postgres;
+    END IF;
+END
+$$;
+
+-- Criar tabela Plano se não existir
+CREATE TABLE IF NOT EXISTS "pcp"."Plano" (
     "codigo" int PRIMARY KEY,
     "descricao do Plano" VARCHAR(50),
     "inicioVenda" VARCHAR(50),
@@ -10,50 +20,37 @@ CREATE TABLE "pcp"."Plano" (
     "dataGeracao" VARCHAR(50)
 );
 
---pcp.usuarios definition
---Drop table
---DROP TABLE pcp.usuarios;
-CREATE TABLE pcp.usuarios (
-	codigo varchar NOT NULL,
-	nome varchar NOT NULL,
-	senha varchar NOT NULL,
-	CONSTRAINT usuarios_pkey PRIMARY KEY (codigo)
+-- Criar tabela usuarios se não existir
+CREATE TABLE IF NOT EXISTS pcp.usuarios (
+    codigo varchar NOT NULL,
+    nome varchar NOT NULL,
+    senha varchar NOT NULL,
+    CONSTRAINT usuarios_pkey PRIMARY KEY (codigo)
 );
 
-
--- pcp."LoteporPlano" definition
--- Drop table
--- DROP TABLE pcp."LoteporPlano";
-
-CREATE TABLE pcp."LoteporPlano" (
-	plano varchar NOT NULL,
-	lote varchar NOT NULL,
-	nomelote varchar NULL,
-	id serial4 NOT NULL,
-	CONSTRAINT "LoteporPlano_pkey" PRIMARY KEY (id)
+-- Criar tabela LoteporPlano se não existir
+CREATE TABLE IF NOT EXISTS pcp."LoteporPlano" (
+    plano varchar NOT NULL,
+    lote varchar NOT NULL,
+    nomelote varchar NULL,
+    id serial4 NOT NULL,
+    CONSTRAINT "LoteporPlano_pkey" PRIMARY KEY (id)
 );
 
-
--- pcp."colecoesPlano" definition
--- Drop table
--- DROP TABLE pcp."colecoesPlano";
-
-CREATE TABLE pcp."colecoesPlano" (
-	plano varchar NOT NULL,
-	colecao varchar NOT NULL,
-	id serial4 NOT NULL,
-	nomecolecao varchar NULL,
-	CONSTRAINT "colecoesPlano_pkey" PRIMARY KEY (id)
+-- Criar tabela colecoesPlano se não existir
+CREATE TABLE IF NOT EXISTS pcp."colecoesPlano" (
+    plano varchar NOT NULL,
+    colecao varchar NOT NULL,
+    id serial4 NOT NULL,
+    nomecolecao varchar NULL,
+    CONSTRAINT "colecoesPlano_pkey" PRIMARY KEY (id)
 );
 
-
--- pcp."tipoNotaporPlano" definition
--- Drop table
--- DROP TABLE pcp."tipoNotaporPlano";
-CREATE TABLE pcp."tipoNotaporPlano" (
-	"tipo nota" varchar NOT NULL,
-	nome varchar NOT NULL,
-	plano varchar NOT NULL,
-	id serial4 NOT NULL,
-	CONSTRAINT "tipoNotaporPlano_pkey" PRIMARY KEY (id)
+-- Criar tabela tipoNotaporPlano se não existir
+CREATE TABLE IF NOT EXISTS pcp."tipoNotaporPlano" (
+    "tipo nota" varchar NOT NULL,
+    nome varchar NOT NULL,
+    plano varchar NOT NULL,
+    id serial4 NOT NULL,
+    CONSTRAINT "tipoNotaporPlano_pkey" PRIMARY KEY (id)
 );
