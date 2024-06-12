@@ -54,3 +54,16 @@ CREATE TABLE IF NOT EXISTS pcp."tipoNotaporPlano" (
     id serial4 NOT NULL,
     CONSTRAINT "tipoNotaporPlano_pkey" PRIMARY KEY (id)
 );
+CREATE TABLE pcp.ordemprod (
+	"codProduto" text NULL,
+	numeroop text NULL,
+	"codSortimento" text NULL,
+	"seqTamanho" text NULL,
+	total_pcs float8 NULL,
+	"codTipoOP" int8 NULL,
+	"seqAtual" text NULL,
+	codreduzido text NULL,
+	id text NULL,
+	ocorrencia_sku float8 NULL,
+	"qtdAcumulada" float8 NULL
+);
