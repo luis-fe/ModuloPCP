@@ -23,9 +23,10 @@ def BuscandoOPCSW(empresa):
     with ConexaoBanco.ConexaoInternoMPL() as conn:  ##Abrindo Conexao Com o CSW
 
         sqlCswOpsnivelSku = """
-        SELECT ot.codProduto ,ot.numeroop as numeroop , codSortimento , seqTamanho, 
+        SELECT op.codfaseatual ,ot.codProduto ,ot.numeroop as numeroop , ot.codSortimento , seqTamanho, 
         case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end total_pcs 
         FROM tco.OrdemProdTamanhos ot
+        inner join tco.ordemprod op on op.codempresa = ot.codempresa and op.numeroop = ot.numeroop
         having ot.codEmpresa = """ + empresa + """ and ot.numeroOP IN """ + ' (select o.numeroOP  from tco.ordemprod o where o.situacao = 3 and o.codempresa = ' + empresa + ')'
 
         with conn.cursor() as cursor_csw:

@@ -4,7 +4,7 @@ Nessa classe é acrescentado os dados referente a ops sku em aberto
 
 import fastparquet as fp
 import numpy
-from connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms, ConexaoBanco
 import pandas as pd
 
 # Funcao para organizar o Monitor em datas de embarque (entrega) e atribuir a OP pré reservado para cada sku a nivel de pedido
@@ -275,12 +275,12 @@ def ReservaOPMonitor(dataInico, dataFim):
         # Remove as colunas para depois fazer novo merge
         monitor = monitor.drop(['id', 'qtdAcumulada2','ocorrencia_sku'], axis=1)
 
-    consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop from "pcp".ordemprod o   """, conn)
+    consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual" from "pcp".ordemprod o   """, conn)
     monitor = pd.merge(monitor,consulta3,on='Op Reservada2',how='left')
 
     monitor.to_csv('./dados/monitorOps.csv')
 
-    monitor = monitor[['numeroop','dataPrevAtualizada2']]
+    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual']]
     # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
     monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
@@ -288,6 +288,37 @@ def ReservaOPMonitor(dataInico, dataFim):
                                                         infer_datetime_format=True)
 
     mascara = (monitor['dataPrevAtualizada2'] >= dataInico) & (monitor['dataPrevAtualizada2'] <= dataFim)
+    monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+    monitor['numeroop'].fillna('-',inplace=True)
     monitor = monitor.loc[mascara]
 
-    return monitor
+    monitor = monitor[monitor['numeroop'] != '-']
+
+    monitor['Ocorrencia Pedidos'] =1
+    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum'}).reset_index()
+
+    monitor = monitor.sort_values(by=['Ocorrencia Pedidos'],
+                                      ascending=[False]).reset_index()
+
+    sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor_csw:
+            # Executa a primeira consulta e armazena os resultados
+            cursor_csw.execute(sqlCsw)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            get = pd.DataFrame(rows, columns=colunas)
+            get['codFaseAtual'] = get['codFaseAtual'].astype(str)
+            del rows
+
+    monitor = pd.merge(monitor,get,on='codFaseAtual', how='left')
+
+    dados = {
+        '0-Status':True,
+        '1-Mensagem': f'Atencao!! Calculado segundo o ultimo monitor emitido',
+        '6 -Detalhamento': monitor.to_dict(orient='records')
+
+    }
+    return pd.DataFrame([dados])
