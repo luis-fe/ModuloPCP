@@ -9,7 +9,6 @@ def PesquisandoReduzido():
     consulta = """select "codItemPai" as "codProduto"  ,"codSortimento" as "codSortimento" , "codSeqTamanho" as "seqTamanho", "codSKU" as codreduzido from "pcp"."SKU" """
 
     consulta = pd.read_sql(consulta,conn)
-    conn.close()
 
     consulta['codProduto'] = consulta['codProduto'] + "-0"
     consulta['codProduto'] = consulta['codProduto'].apply(lambda x: '0'+ x if x.startswith(('1', '2')) else x)
@@ -21,14 +20,13 @@ def PesquisandoReduzido():
 
 
 def BuscandoOPCSW(empresa):
-    with ConexaoBanco.Conexao2() as conn:  ##Abrindo Conexao Com o CSW
-        sqsCswOPem_aberto = ' (select o.numeroOP  from tco.ordemprod o where o.situacao = 3 and o.codempresa = ' + empresa + ')'
+    with ConexaoBanco.ConexaoInternoMPL() as conn:  ##Abrindo Conexao Com o CSW
 
         sqlCswOpsnivelSku = """
         SELECT ot.codProduto ,ot.numeroop as numeroop , codSortimento , seqTamanho, 
-        case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end total_pcs '
+        case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end total_pcs 
         FROM tco.OrdemProdTamanhos ot
-        having ot.codEmpresa = " + empresa + " and ot.numeroOP IN """ + sqsCswOPem_aberto
+        having ot.codEmpresa = """ + empresa + """ and ot.numeroOP IN """ + ' (select o.numeroOP  from tco.ordemprod o where o.situacao = 3 and o.codempresa = ' + empresa + ')'
 
         with conn.cursor() as cursor_csw:
             # Executa a primeira consulta e armazena os resultados
@@ -65,9 +63,6 @@ def BuscandoOPCSW(empresa):
 def IncrementadoDadosPostgre(empresa):
 
         dados = BuscandoOPCSW(empresa)
+        ConexaoPostgreWms.Funcao_InserirOFF(dados,dados['numeroop'].size,'ordemprod','replace')
+        return pd.DataFrame([{'status':True,'Mensagem':'Dados carregados com sucesso !'}])
 
-        try:
-            ConexaoPostgreWms.Funcao_InserirOFF(dados,dados['numeroop'].size,'ordemprod','replace')
-            print('OPS INSERIDAS COM SUCESSO')
-        except:
-            print('FALHA AO TENTAR INSERIR OS DADOS')

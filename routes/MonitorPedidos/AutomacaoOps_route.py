@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models.MonitorPedidos import monitorOP
+from models.MonitorPedidos import AutomacaoOPs
 
-MonitorOp_routes = Blueprint('MonitorOp_routes', __name__)
+AtualizaOP_routes = Blueprint('AtualizaOP', __name__)
 
 def token_required(f):
     @wraps(f)
@@ -15,14 +15,14 @@ def token_required(f):
     return decorated_function
 
 
-@MonitorOp_routes.route('/pcp/api/monitorOPs', methods=['GET'])
+@AtualizaOP_routes.route('/pcp/api/AtualizaOP', methods=['GET'])
 @token_required
-def get_monitorOPs():
-    dataInico = request.args.get('dataInico','-')
-    dataFim = request.args.get('dataFim')
+def get_AtualizaOP():
+    empresa = request.args.get('empresa','1')
 
-    #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = monitorOP.ReservaOPMonitor(dataInico , dataFim)
+
+    dados = AutomacaoOPs.IncrementadoDadosPostgre(empresa)
+    #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -33,4 +33,5 @@ def get_monitorOPs():
         for column_name in column_names:
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
+    del dados
     return jsonify(OP_data)

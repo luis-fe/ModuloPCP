@@ -67,3 +67,13 @@ CREATE TABLE pcp.ordemprod (
 	ocorrencia_sku float8 NULL,
 	"qtdAcumulada" float8 NULL
 );
+
+CREATE TABLE pcp."SKU" (
+	"codSKU" text NOT NULL,
+	"codItemPai" text NULL,
+	"codSortimento" int8 NULL,
+	"codCor" text NULL,
+	"codSeqTamanho" int8 NULL,
+	"nomeSKU" text NULL,
+	CONSTRAINT sku_pk PRIMARY KEY ("codSKU")
+);

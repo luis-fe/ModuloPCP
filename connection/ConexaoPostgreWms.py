@@ -24,3 +24,19 @@ def conexaoEngine():
 
     connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{portbanco}/{db_name}"
     return create_engine(connection_string)
+
+def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
+    # Configurações de conexão ao banco de dados
+    database = os.getenv('POSTGRES_DB')
+    user = "postgres"
+    password = "Master100"
+    host = os.getenv('DATABASE_HOST')
+    port = "5432"
+
+# Cria conexão ao banco de dados usando SQLAlchemy
+    engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
+
+    # Inserir dados em lotes
+    chunksize = tamanho
+    for i in range(0, len(df_tags), chunksize):
+        df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='pcp')

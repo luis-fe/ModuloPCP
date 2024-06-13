@@ -32,14 +32,14 @@ order by p.codPedido desc
     """
 
 
-    with ConexaoBanco.Conexao2() as conn:
+    with ConexaoBanco.ConexaoInternoMPL() as conn:
         with conn.cursor() as cursor_csw:
             # Executa a primeira consulta e armazena os resultados
             cursor_csw.execute(sqlcswPedidosProdutos)
             colunas = [desc[0] for desc in cursor_csw.description]
             rows = cursor_csw.fetchall()
             pedidos = pd.DataFrame(rows, columns=colunas)
-            del rows
+            del rows, colunas
 
             # Executa a segunda consulta e armazena os resultados
             cursor_csw.execute(sqlcswValordosProdutos)
