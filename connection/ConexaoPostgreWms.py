@@ -9,9 +9,11 @@ load_dotenv()
 
 def conexaoEngine():
     db_name = os.getenv('POSTGRES_DB')
+    db_name = 'pcp'
     db_user = "postgres"
     db_password = "Master100"
     db_host = os.getenv('DATABASE_HOST')
+    db_host ='192.168.0.183'
     portbanco = "5432"
     # Debugging prints
     print(f"DATABASE_NAME: {db_name}")
@@ -27,10 +29,12 @@ def conexaoEngine():
 
 def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     # Configurações de conexão ao banco de dados
-    database = os.getenv('POSTGRES_DB')
+    #database = os.getenv('POSTGRES_DB')
+    database = 'pcp'
     user = "postgres"
     password = "Master100"
-    host = os.getenv('DATABASE_HOST')
+    #host = os.getenv('DATABASE_HOST')
+    host ='192.168.0.183'
     port = "5432"
 
 # Cria conexão ao banco de dados usando SQLAlchemy
