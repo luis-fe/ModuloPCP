@@ -280,7 +280,7 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     monitor.to_csv('./dados/monitorOps.csv')
 
-    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codProduto"]]
+    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai"]]
     # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
     monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
@@ -296,7 +296,7 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor = monitor[monitor['numeroop'] != '-']
 
     monitor['Ocorrencia Pedidos'] =1
-    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codProduto":"first"}).reset_index()
+    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first"}).reset_index()
 
     monitor = monitor.sort_values(by=['Ocorrencia Pedidos'],
                                       ascending=[False]).reset_index()
