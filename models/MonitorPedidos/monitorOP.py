@@ -275,12 +275,12 @@ def ReservaOPMonitor(dataInico, dataFim):
         # Remove as colunas para depois fazer novo merge
         monitor = monitor.drop(['id', 'qtdAcumulada2','ocorrencia_sku'], axis=1)
 
-    consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual" from "pcp".ordemprod o   """, conn)
+    consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual", "codProduto" from "pcp".ordemprod o   """, conn)
     monitor = pd.merge(monitor,consulta3,on='Op Reservada2',how='left')
 
     monitor.to_csv('./dados/monitorOps.csv')
 
-    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual']]
+    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codProduto"]]
     # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
     monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
@@ -296,7 +296,7 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor = monitor[monitor['numeroop'] != '-']
 
     monitor['Ocorrencia Pedidos'] =1
-    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum'}).reset_index()
+    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codProduto":"first"}).reset_index()
 
     monitor = monitor.sort_values(by=['Ocorrencia Pedidos'],
                                       ascending=[False]).reset_index()
