@@ -9,7 +9,7 @@ load_dotenv()
 
 def conexaoEngine():
     db_name = os.getenv('POSTGRES_DB')
-    db_name = 'pcp'
+    db_name = 'PCP'
     db_user = "postgres"
     db_password = "Master100"
     db_host = os.getenv('DATABASE_HOST')
@@ -30,7 +30,7 @@ def conexaoEngine():
 def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     # Configurações de conexão ao banco de dados
     #database = os.getenv('POSTGRES_DB')
-    database = 'pcp'
+    database = 'PCP'
     user = "postgres"
     password = "Master100"
     #host = os.getenv('DATABASE_HOST')
@@ -47,9 +47,13 @@ def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
 
 def conexaoInsercao():
     db_name = os.getenv('POSTGRES_DB')
+    db_name = 'PCP'
+
     db_user = "postgres"
     db_password = "Master100"
     db_host = os.getenv('DATABASE_HOST')
+    db_host ='192.168.0.183'
+
     portbanco = "5432"
 
     return psycopg2.connect(dbname=db_name, user=db_user, password=db_password, host=db_host, port=portbanco)
