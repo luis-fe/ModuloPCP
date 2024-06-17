@@ -275,7 +275,7 @@ def ReservaOPMonitor(dataInico, dataFim):
         # Remove as colunas para depois fazer novo merge
         monitor = monitor.drop(['id', 'qtdAcumulada2','ocorrencia_sku'], axis=1)
 
-    consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual", "codProduto" from "pcp".ordemprod o   """, conn)
+    consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual" from "pcp".ordemprod o   """, conn)
     monitor = pd.merge(monitor,consulta3,on='Op Reservada2',how='left')
 
     monitor.to_csv('./dados/monitorOps.csv')
