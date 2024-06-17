@@ -26,7 +26,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Exponha a porta em que a aplicação Flask estará rodando
-EXPOSE 5001
+EXPOSE 8000
 
 # Comando para rodar a aplicação Flask
 CMD ["python", "app.py"]
