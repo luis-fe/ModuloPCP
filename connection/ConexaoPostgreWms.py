@@ -40,3 +40,12 @@ def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     chunksize = tamanho
     for i in range(0, len(df_tags), chunksize):
         df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='pcp')
+
+def conexaoInsercao():
+    db_name = os.getenv('POSTGRES_DB')
+    db_user = "postgres"
+    db_password = "Master100"
+    db_host = os.getenv('DATABASE_HOST')
+    portbanco = "5432"
+
+    return psycopg2.connect(dbname=db_name, user=db_user, password=db_password, host=db_host, port=portbanco)

@@ -8,6 +8,9 @@ BEGIN
 END
 $$;
 
+
+
+
 -- Criar tabela Plano se não existir
 CREATE TABLE IF NOT EXISTS "pcp"."Plano" (
     "codigo" int PRIMARY KEY,
@@ -76,4 +79,88 @@ CREATE TABLE pcp."SKU" (
 	"codSeqTamanho" int8 NULL,
 	"nomeSKU" text NULL,
 	CONSTRAINT sku_pk PRIMARY KEY ("codSKU")
+);
+
+CREATE TABLE pcp.justificativa (
+	ordemprod varchar NULL,
+	fase varchar NULL,
+	justificativa varchar NULL,
+	ip varchar NULL
+);
+
+CREATE TABLE pcp.leadtime_categorias (
+	codfase varchar NULL,
+	categoria varchar NULL,
+	leadtime varchar NULL,
+	limite_atencao varchar NULL
+);
+
+CREATE TABLE pcp.controle_requisicao_csw (
+	rotina varchar NULL,
+	inicio varchar NULL,
+	fim varchar NULL,
+	ip_origem varchar NULL,
+	"tempo_processamento(s)" float8 NULL,
+	status varchar NULL,
+	etapa1 varchar NULL,
+	etapa1_tempo float8 NULL,
+	etapa2 varchar NULL,
+	etapa2_tempo float8 NULL,
+	etapa3 varchar NULL,
+	etapa3_tempo float8 NULL,
+	etapa4 varchar NULL,
+	etapa4_tempo float8 NULL,
+	etapa5 varchar NULL,
+	etapa5_tempo float8 NULL,
+	etapa6 varchar NULL,
+	etapa6_tempo float8 NULL,
+	etapa7 varchar NULL,
+	etapa7_tempo float8 NULL,
+	etapa8 varchar NULL,
+	etapa8_tempo float8 NULL,
+	etapa9 varchar NULL,
+	etapa9_tempo float8 NULL,
+	etapa10 varchar NULL,
+	etapa10_tempo float8 NULL,
+	etapa11 varchar NULL,
+	etapa11_tempo float8 NULL,
+	etapa12 varchar NULL,
+	etapa12_tempo float8 NULL,
+	etapa13 varchar NULL,
+	etapa13_tempo float8 NULL,
+	etapa14 varchar NULL,
+	etapa14_tempo float8 NULL,
+	etapa15 varchar NULL,
+	etapa15_tempo float8 NULL,
+	etapa16 varchar NULL,
+	etapa16_tempo float8 NULL,
+	etapa17 varchar NULL,
+	etapa17_tempo float8 NULL,
+	etapa18 varchar NULL,
+	etapa18_tempo float8 NULL,
+	etapa19 varchar NULL,
+	etapa19_tempo float8 NULL,
+	etapa20 varchar NULL,
+	etapa20_tempo float8 NULL,
+	etapa21_tempo float8 NULL,
+	etapa21 varchar NULL,
+	etapa22_tempo float8 NULL,
+	etapa22 varchar NULL,
+	etapa23 varchar NULL,
+	etapa23_tempo float8 NULL,
+	etapa24 varchar NULL,
+	etapa24_tempo float8 NULL,
+	etapa25 varchar NULL,
+	etapa25_tempo float8 NULL,
+	"usoCpu1" varchar NULL,
+	"usoCpu2" varchar NULL,
+	"usoCpu3" varchar NULL,
+	"usoCpu4" varchar NULL,
+	"usoCpu6" varchar NULL,
+	"usoCpu5" varchar NULL,
+	"usoCpu11" varchar NULL,
+	"usoCpu8" varchar NULL,
+	"usoCpu7" varchar NULL,
+	"usoCpu9" varchar NULL,
+	"usoCpu10" varchar NULL
 );
