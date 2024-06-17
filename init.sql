@@ -164,3 +164,11 @@ CREATE TABLE pcp.controle_requisicao_csw (
 	"usoCpu9" varchar NULL,
 	"usoCpu10" varchar NULL
 );
+
+CREATE TABLE pcp."DashbordTV" (
+	empresa varchar NULL,
+	tiponota varchar NULL,
+	exibi_todas_empresas varchar NULL,
+	id varchar NOT NULL,
+	CONSTRAINT configuracao_pk PRIMARY KEY (id)
+);

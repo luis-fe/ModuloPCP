@@ -22,7 +22,6 @@ def token_required(f):
 
 @dashboardTVroute.route('/pcp/api/dashboarTV', methods=['GET'])
 def dashboarTV():
-    try:
         ano = request.args.get('ano', '2024')
         empresa = request.args.get('empresa', 'Todas')
 
@@ -44,12 +43,33 @@ def dashboarTV():
             OP_data.append(op_dict)
 
         return jsonify(OP_data)
-    except Exception as e:
-        print(f"Erro detectado: {str(e)}")
-        restart_server()
-        return jsonify({"error": "O servidor foi reiniciado devido a um erro."})
+
 
 
 def restart_server():
     print("Reiniciando o aplicativo...")
     subprocess.call(["python", "main.py"])
+
+
+@dashboardTVroute.route('/pcp/api/dashboardTVBACKUP', methods=['GET'])
+@token_required
+def dashboarTVBACKUP():
+    ano = request.args.get('ano','2024')
+    empresa = request.args.get('empresa', 'Todas')
+
+    usuarios = PainelFaturamento.Backup(ano,empresa)
+    usuarios = pd.DataFrame([{'mensagem':f'Backup salvo com sucesso - empresa {empresa}'}])
+
+
+    # Obtém os nomes das colunas
+    column_names = usuarios.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in usuarios.iterrows():
+        op_dict = {}
+        for index, row in usuarios.iterrows():
+            op_dict = {}
+            for column_name in column_names:
+                op_dict[column_name] = row[column_name]
+            OP_data.append(op_dict)
+        return jsonify(OP_data)

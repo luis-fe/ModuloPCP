@@ -215,7 +215,7 @@ def Faturamento_ano(ano, empresa):
     ValorRetornaMplus = str(ValorRetornaMplus)
     ValorRetornaMplus = 'R$ ' + ValorRetornaMplus.replace(',', ';').replace('.', ',').replace(';', '.')
 
-    nome = ano + 'Vendas' + empresa + '.csv'
+    nome = './dados/' + ano + 'Vendas' + empresa + '.csv'
 
     if mesAtual != '01':
         dataframe2 = pd.read_csv(nome)
@@ -313,8 +313,18 @@ def Faturamento_ano(ano, empresa):
 
     df_faturamento['meta'] = 'R$ '+df_faturamento['meta'].str.replace(';', '.')
     df_faturamento['meta acum.'] = 'R$ ' + df_faturamento['meta acum.'].str.replace(';', '.')
-    df_faturamento['Mês'] = df_faturamento['Mês'].str.split('-', 1).str[1]
-    df_faturamento = df_faturamento.append({'Mês': '✈TOTAL','meta':metaTotal, 'Faturado':total,'meta acum.':metaTotal,'Fat.Acumulado':total}, ignore_index=True)
+    print(df_faturamento['Mês'] )
+    df_faturamento['Mês'] = df_faturamento['Mês'].str.split('-', n=1).str[1]
+
+    # Dados que você deseja adicionar
+    new_row = {'Mês': '✈TOTAL', 'meta': metaTotal, 'Faturado': total, 'meta acum.': metaTotal, 'Fat.Acumulado': total}
+
+    # Convertendo o dicionário em um DataFrame
+    new_row_df = pd.DataFrame([new_row])
+
+    # Concatenando o novo DataFrame com o original
+    df_faturamento = pd.concat([df_faturamento, new_row_df], ignore_index=True)
+
     df_faturamento.fillna('-',inplace=True)
 
     if empresa == 'Todas':
@@ -404,7 +414,8 @@ def OutrosFat(ano, empresa):
             dataframe = pd.DataFrame(rows, columns=colunas)
             del rows
 
-    nome = ano + 'Vendas' + empresa + '.csv'
+    nome = './dados/' + ano + 'Vendas' + empresa + '.csv'
+
     dataframe2 = pd.read_csv(nome)
 
     dataframe = pd.concat([dataframe, dataframe2], ignore_index=True)
@@ -630,3 +641,118 @@ def OutrosFat(ano, empresa):
     }
     return [data]
 
+def Backup(ano, empresa):
+    datahora, dia = obterHoraAtual()
+
+    mesFinal, mesAtual = EncontrandoMesAtual()
+
+    dataInicio = ano + '-01-01'
+    backupAno = True
+    if mesFinal in ['11','4','06','09']:
+        dataFim = ano + '-'+mesFinal+'-30'
+    elif mesFinal in ['01']:
+        backupAno = False
+        dataFim = ano + '-'+mesFinal+'-31'
+    elif mesFinal in ['02'] or  mesFinal in ['2']:
+        dataFim = ano + '-' + mesFinal + '-29'
+    else:
+        dataFim = ano + '-'+mesFinal+'-31'
+
+    if empresa == 'Todas':
+
+        print(dataInicio)
+        print(dataFim)
+
+        query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
+            'FROM Fat.NotaFiscal n ' \
+            'where n.codPedido >= 0 ' \
+            'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+            'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 ' \
+                                                            ' union ' \
+                                                            'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
+            'FROM Fat.NotaFiscal n ' \
+            'where n.codTipoDeNota not in (9) and codPedido is null ' \
+            'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+            'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 ' \
+
+
+        with ConexaoBanco.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(query)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                dataframe = pd.DataFrame(rows, columns=colunas)
+                del rows
+
+        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        dataframe.to_csv(nome)
+
+    elif empresa =='Varejo':
+        query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
+                'FROM Fat.NotaFiscal n ' \
+                'where n.codPedido >= 0 ' \
+                'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+                                                                   'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 and codempresa in(100, 101) ' \
+                                                                                        'union ' \
+                                                                                        ' select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
+                                                                                        ' FROM Fat.NotaFiscal n ' \
+                                                                                        'where n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+                                                                                        ' and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2  and codTipoDeNota in (145)'
+        with ConexaoBanco.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(query)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                dataframe = pd.DataFrame(rows, columns=colunas)
+                del rows
+
+        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        dataframe.to_csv(nome)
+    elif empresa == 'Outras':
+        query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
+                'FROM Fat.NotaFiscal n ' \
+                'where n.codTipoDeNota in (48, 167, 30, 118, 102, 149, 168, 170, 159, 156, 12) ' \
+                'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+                                                                   'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 '
+        with ConexaoBanco.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(query)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                dataframe = pd.DataFrame(rows, columns=colunas)
+                del rows
+
+
+        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        dataframe.to_csv(nome)
+
+    else:
+        if backupAno == True:
+            query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido, codNumNota, codEmpresa , codpedido ' \
+                'FROM Fat.NotaFiscal n ' \
+                'where n.codPedido >= 0 '   \
+                'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+                'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 and codempresa ='+ "'" + empresa + "'" \
+                                                                ' union ' \
+                                                                "select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, '0' ,codNumNota, "+"'"+empresa+"', codpedido" \
+                ' FROM Fat.NotaFiscal n ' \
+                'where n.codTipoDeNota not in (9) and codPedido is null ' \
+                'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
+                'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 and codempresa ='+ "'" + empresa + "'" \
+
+            with ConexaoBanco.ConexaoInternoMPL() as conn:
+                with conn.cursor() as cursor_csw:
+                    # Executa a primeira consulta e armazena os resultados
+                    cursor_csw.execute(query)
+                    colunas = [desc[0] for desc in cursor_csw.description]
+                    rows = cursor_csw.fetchall()
+                    dataframe = pd.DataFrame(rows, columns=colunas)
+                    del rows
+        else:
+            dataframe = pd.DataFrame([{'Mensagem':'Sem meses para guardar backup'}])
+
+        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        dataframe.to_csv(nome)
