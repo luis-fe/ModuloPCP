@@ -614,20 +614,20 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         if isinstance(colecao, pd.DataFrame):
             filtros = pd.merge(filtros, colecao, on='COLECAO')
 
-            # Dividir a string em partes usando a vírgula como delimitador
-            filtros['estaPendente'] = filtros['estaPendente'].str.replace("[", "")
-            filtros['estaPendente'] = filtros['estaPendente'].str.replace("]", "")
-            filtros['estaPendente'] = filtros['estaPendente'].str.replace("'", "")
+        # Dividir a string em partes usando a vírgula como delimitador
+        filtros['estaPendente'] = filtros['estaPendente'].str.replace("[", "")
+        filtros['estaPendente'] = filtros['estaPendente'].str.replace("]", "")
+        filtros['estaPendente'] = filtros['estaPendente'].str.replace("'", "")
 
-            filtros['estaPendente'] = filtros.apply(lambda row: row['estaPendente'].split(','), axis=1)
+        filtros['estaPendente'] = filtros.apply(lambda row: row['estaPendente'].split(','), axis=1)
 
-            ### ETAPA X : PROCEDIMENTO DE VARREDURA DOS TIPOS DE FILTRO INFORMADO PELO USUARIO:
-            ###     NIVEL 1: NAO FILTRA O DATAFRAME, NIVEL2: FILTRA O DATAFRAME:
+        ### ETAPA X : PROCEDIMENTO DE VARREDURA DOS TIPOS DE FILTRO INFORMADO PELO USUARIO:
+        ###     NIVEL 1: NAO FILTRA O DATAFRAME, NIVEL2: FILTRA O DATAFRAME:
 
-            matrizNivel = filtro.split("/")
-            nivel1Array = []
-            nivel2Array = []
-            for busca in matrizNivel:
+        matrizNivel = filtro.split("/")
+        nivel1Array = []
+        nivel2Array = []
+        for busca in matrizNivel:
                 nivel = ReconhecerFiltro(busca)
 
                 if nivel == 'N2':
@@ -635,17 +635,17 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                 else:
                     nivel1Array.append(busca)
 
-            ## Verifica se existe algum filtro de nivel2 para fazer uma filtragem nos dados
-            if len(nivel2Array) == 0:
+        ## Verifica se existe algum filtro de nivel2 para fazer uma filtragem nos dados
+        if len(nivel2Array) == 0:
                 print("sem filtro de nivel 2")
-            else:
+        else:
                 filtrarValor = nivel2Array[0]
                 print(f'filtro de nivel 2 encontrado: {filtrarValor}')
                 filtros = filtros[filtros['filtro'].str.contains(filtrarValor)]
 
         ### FIM ETAPA X.
 
-            if filtroDiferente == '':
+        if filtroDiferente == '':
                 print(nivel1Array)
 
                 filtrosNovo = None
@@ -661,7 +661,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
 
                         filtrosNovo = pd.concat([filtrosNovo, filtrosNovoCadeia], ignore_index=True)
 
-            else:
+        else:
                 print(nivel1Array)
                 filtroDif = filtros[~filtros['filtro'].str.contains(filtroDiferente)]
 
@@ -677,23 +677,23 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
 
                         filtrosNovo = pd.concat([filtrosNovo, filtrosNovoCadeia], ignore_index=True)
 
-            if classificar == 'tempo':
+        if classificar == 'tempo':
                 filtrosNovo = filtrosNovo.sort_values(by=['dias na Fase'],
                                                       ascending=False)  # escolher como deseja classificar
 
-            elif classificar == 'status':
+        elif classificar == 'status':
                 filtrosNovo = filtrosNovo.sort_values(by=['status', 'dias na Fase'],
                                                       ascending=False)  # escolher como deseja classificar
 
-            elif classificar == 'prioridade':
+        elif classificar == 'prioridade':
                 print('deu certo: buscou do que ta salvo')
                 filtrosNovo = filtrosNovo.sort_values(by=['prioridade', 'status', 'dias na Fase'],
                                                       ascending=False)  # escolher como deseja classificar
 
-            else:
+        else:
                 filtrosNovo = filtrosNovo
 
-            if filtrosNovo.empty:
+        if filtrosNovo.empty:
                 dados = {
                     '0-Total DE pçs': '',
                     '1-Total OP': '',
@@ -704,8 +704,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                 }
 
                 return pd.DataFrame([dados])
-            else:
 
+        else:
+                print('bateu aqui')
                 filtrosNovo['Qtd Pcs'] = pd.to_numeric(filtrosNovo['Qtd Pcs'], errors='coerce').fillna(0).astype(int)
                 QtdPcs = filtrosNovo['Qtd Pcs'].sum()
 
@@ -741,6 +742,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                 }
 
                 return pd.DataFrame([dados])
+
 
 
 
