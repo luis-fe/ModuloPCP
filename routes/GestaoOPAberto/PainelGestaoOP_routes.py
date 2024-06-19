@@ -57,11 +57,14 @@ def CargadasOPs():
         controle.salvar('Portal Consulta OP',client_ip,datainicio)
         controle.ExcluirHistorico(3)
         usuarios = PainelGestaoOP.OPemProcesso(empresa, area, filtro, filtroDiferente, tempo, limite,classificar,colecao)  ## Aqui defino que o tempo limite de requisicao no csw é acima de 60 segundos, evitando a simultanedade de requisicao
-
+        print('Resultado')
+        print(usuarios)
 
     else:
         usuarios = PainelGestaoOP.OPemProcesso(empresa, area, filtro, filtroDiferente, tempo, limite,classificar,colecao)  ## Aqui defino que o tempo limite de requisicao no csw é acima de 60 segundos, evitando a simultanedade de requisicao
         print(client_ip+' '+filtro)
+        print('Resultado')
+        print(usuarios)
 
     # Obtém os nomes das colunas
     column_names = usuarios.columns

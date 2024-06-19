@@ -11,6 +11,7 @@ from .MonitorPedidos.monitorOP_routes import MonitorOp_routes
 from .GestaoOPAberto.PainelGestaoOP_routes import PainelGestaoOP_routes
 from .PainelFaturamento.PainelFaturamento import dashboardTVroute
 from .PortalWeb.rotasPlataformaWeb import rotasPlataformaWeb
+from .GestaoOPAberto.JustificativaOP import JustificativaOP_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -20,3 +21,4 @@ routes_blueprint.register_blueprint(MonitorOp_routes)
 routes_blueprint.register_blueprint(PainelGestaoOP_routes)
 routes_blueprint.register_blueprint(dashboardTVroute)
 routes_blueprint.register_blueprint(rotasPlataformaWeb)
+routes_blueprint.register_blueprint(JustificativaOP_routes)
