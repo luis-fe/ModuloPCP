@@ -172,3 +172,27 @@ CREATE TABLE pcp."DashbordTV" (
 	id varchar NOT NULL,
 	CONSTRAINT configuracao_pk PRIMARY KEY (id)
 );
+
+CREATE OR REPLACE FUNCTION pcp.concatenatiponota()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+    NEW."cod_desTipoNota" := NEW.codtiponota || '-' || NEW."descTipoNota";
+    RETURN NEW;
+END;
+$function$
+;
+
+CREATE TABLE pcp."tipoNotaMonitor" (
+	codtiponota varchar NULL,
+	"descTipoNota" varchar NULL,
+	"cod_desTipoNota" varchar NULL
+);
+
+create trigger trg_concatenate_notamon before
+insert
+    or
+update
+    on
+    pcp."tipoNotaMonitor" for each row execute procedure pcp.concatenatiponota();
