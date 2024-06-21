@@ -49,7 +49,7 @@ def CadastrarJustificativa():
     data = request.get_json()
 
     ordemProd = data.get('ordemProd', '-')
-    fase = data.get('ordemProd', '-')
+    fase = data.get('fase', '-')
     justificativa = data.get('justificativa', '-')
 
     plano = justificativasOP.CadastrarJustificativa(ordemProd, fase, justificativa)
