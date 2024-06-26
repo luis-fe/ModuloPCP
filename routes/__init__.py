@@ -13,6 +13,8 @@ from .PainelFaturamento.PainelFaturamento import dashboardTVroute
 from .PortalWeb.rotasPlataformaWeb import rotasPlataformaWeb
 from .GestaoOPAberto.JustificativaOP import JustificativaOP_routes
 from .MonitorPedidos.FiltrosEspeciaisMonitor import FiltrosEspeciaisMonitor_routes
+from .GestaoOPAberto.FilaFases import FilaDasFases_routes
+
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -24,3 +26,4 @@ routes_blueprint.register_blueprint(dashboardTVroute)
 routes_blueprint.register_blueprint(rotasPlataformaWeb)
 routes_blueprint.register_blueprint(JustificativaOP_routes)
 routes_blueprint.register_blueprint(FiltrosEspeciaisMonitor_routes)
+routes_blueprint.register_blueprint(FilaDasFases_routes)
