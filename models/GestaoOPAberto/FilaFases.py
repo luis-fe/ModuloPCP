@@ -27,7 +27,7 @@ numeroOP in (SELECT numeroOP from tco.OrdemProd op WHERE op.codempresa = 1 and o
 def FilaFases():
 
     sqlOrdemAbertoCsw = """
-    SELECT op.codLote , codTipoOP , numeroOP, codSeqRoteiroAtual, lot.descricao as desLote from tco.OrdemProd op 
+    SELECT op.codLote , codTipoOP , numeroOP, codSeqRoteiroAtual, lot.descricao as desLote, codfaseatual from tco.OrdemProd op 
     inner join tcl.Lote lot on lot.codLote = op.codLote  
     WHERE op.codempresa = 1 and op.situacao = 3
     """
@@ -56,6 +56,11 @@ def FilaFases():
     WHERE f.codEmpresa = 1 
     """
 
+    sql_nomeFases2 = """
+    SELECT f.codFase as codFaseAtual , f.nome as faseAtual FROM tcp.FasesProducao f
+    WHERE f.codEmpresa = 1 
+    """
+
     with ConexaoBanco.ConexaoInternoMPL() as conn:
         with conn.cursor() as cursor_csw:
             # Executa a primeira consulta e armazena os resultados
@@ -65,7 +70,17 @@ def FilaFases():
             sql_nomeFases = pd.DataFrame(rows, columns=colunas)
             del rows
 
+            cursor_csw.execute(sql_nomeFases2)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            sql_nomeFases2 = pd.DataFrame(rows, columns=colunas)
+            del rows
+
     fila = pd.merge(fila,sql_nomeFases,on='codFase')
+    fila['codFaseAtual'] = fila['codFaseAtual'].astype(str)
+    sql_nomeFases2['codFaseAtual'] = sql_nomeFases2['codFaseAtual'].astype(str)
+
+    fila = pd.merge(fila,sql_nomeFases2,on='codFaseAtual')
 
     sqlBuscarPecas = """
     select o.numeroop as "numeroOP", sum(o.total_pcs) as pcs from pcp.ordemprod o 
@@ -76,7 +91,11 @@ def FilaFases():
 
     sqlBuscarPecas = pd.read_sql(sqlBuscarPecas, conn2)
     fila = pd.merge(fila,sqlBuscarPecas,on='numeroOP')
+    fila['COLECAO'] = fila['desLote'].apply(TratamentoInformacaoColecao)
+    fila['COLECAO'] = fila['COLECAO'] + ' ' + fila['desLote'].apply(extrair_ano)
+    fila.fillna('-', inplace=True)
 
+    fila.to_csv('./dados/filaroteiroOP.csv')
 
 
 
@@ -85,10 +104,6 @@ def FilaFases():
 
 def ApresentacaoFila(COLECAO):
     fila = FilaFases()
-    fila['COLECAO'] = fila['desLote'].apply(TratamentoInformacaoColecao)
-    fila['COLECAO'] = fila['COLECAO'] + ' ' + fila['desLote'].apply(extrair_ano)
-    fila.fillna('-', inplace=True)
-    print(fila)
 
 
     colecoes = FiltroColecao(COLECAO)
@@ -131,12 +146,28 @@ def ApresentacaoFila(COLECAO):
 
     return fila
 
-def FiltrosFila(NomeFase):
-    fila = FilaFases()
-    filaFila = fila[fila['Situacao'] == 'a produzir'].reset_index()
-    filaFila = filaFila[filaFila['fase'] == NomeFase].reset_index()
+def FiltrosFila(NomeFase, COLECAO):
+    fila = pd.read_csv('./dados/filaroteiroOP.csv')
 
-    return filaFila
+    colecoes = FiltroColecao(COLECAO)
+    if colecoes['COLECAO'][0] != '-':
+        fila = pd.merge(fila, colecoes , on='COLECAO')
+    fila = fila[(fila['codFase'] < 599)]
+    fila = fila[fila['fase'] == NomeFase].reset_index()
+    fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
+    fila = fila.groupby('faseAtual').agg({"pcs": 'sum'}).reset_index()
+    apresentacao_query = """
+            SELECT x."nomeFase" as "faseAtual", apresentacao 
+            FROM pcp."SeqApresentacao" x
+            ORDER BY x.apresentacao
+        """
+
+    conn2 = ConexaoPostgreWms.conexaoEngine()
+    apresentacao = pd.read_sql(apresentacao_query, conn2)
+    fila = pd.merge(apresentacao, fila, on='faseAtual')
+
+
+    return fila
 
 
 def TratamentoInformacaoColecao(descricaoLote):

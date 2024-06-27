@@ -47,13 +47,14 @@ def get_FilaDasFases_routes():
     #except Exception as e:
        # return jsonify({'error': str(e)}), 500
 
-@FilaDasFases_routes.route('/pcp/api/DetalhaOpFilas', methods=['GET'])
+@FilaDasFases_routes.route('/pcp/api/DetalhaOpFilas', methods=['POST'])
 @token_required
 def get_DetalhaOpFilas():
+    data = request.get_json()
+    colecao = data.get('Colecao', '-')
+    nomeFase = data.get('nomeFase', '-')
 
-    nomeFase = request.args.get('nomeFase')
-
-    usuarios = FilaFases.FiltrosFila(nomeFase)
+    usuarios = FilaFases.FiltrosFila(nomeFase,colecao)
 
 
     # Obtém os nomes das colunas
