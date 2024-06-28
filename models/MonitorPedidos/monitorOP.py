@@ -232,8 +232,9 @@ def ReservaOPMonitor(dataInico, dataFim):
                                                        unit='d')  # Converte a coluna de inteiros para timedelta
     monitor['dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
                                                         infer_datetime_format=True)
-    monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
     monitor['dataPrevAtualizada2'].fillna(dataInico, inplace=True)
+
+    monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
 
 
     monitor = monitor.sort_values(by=['dataPrevAtualizada2'], ascending=True)
