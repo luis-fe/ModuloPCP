@@ -286,7 +286,7 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     monitor.to_csv('./dados/monitorOps.csv')
 
-    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai"]]
+    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo"]]
     # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
     monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
