@@ -231,8 +231,9 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor['dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
                                                         infer_datetime_format=True)
     monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
-    monitor['dataPrevAtualizada2'].fillna('-', inplace=True)
     monitor = monitor.sort_values(by=['dataPrevAtualizada2'], ascending=True)
+    monitor['dataPrevAtualizada2'].fillna('-', inplace=True)
+
 
     monitor.drop(['NecessodadeOP', 'NecessodadeOPAcum', 'id_op', 'Op Reservada'], axis=1, inplace=True)
 
