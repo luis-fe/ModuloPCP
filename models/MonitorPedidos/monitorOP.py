@@ -224,15 +224,19 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor['dataPrevAtualizada2'] = monitor.apply(
             lambda r: r['dataPrevAtualizada'][6:10] + '-' + r['dataPrevAtualizada'][3:5] + '-' + r[
                                                                                                      'dataPrevAtualizada'][
-                                                                                                 :2], axis=1)
+
+                                                                                             :2], axis=1)
+
     # 7 Calculando a nova data de Previsao do pedido
     monitor['dias_a_adicionar2'] = pd.to_timedelta(((monitor['entregaAtualizada'] - 1) * 15),
                                                        unit='d')  # Converte a coluna de inteiros para timedelta
     monitor['dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
                                                         infer_datetime_format=True)
     monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
+    monitor['dataPrevAtualizada2'].fillna(dataInico, inplace=True)
+
+
     monitor = monitor.sort_values(by=['dataPrevAtualizada2'], ascending=True)
-    monitor['dataPrevAtualizada2'].fillna('-', inplace=True)
 
 
     monitor.drop(['NecessodadeOP', 'NecessodadeOPAcum', 'id_op', 'Op Reservada'], axis=1, inplace=True)
