@@ -302,10 +302,11 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor = monitor[monitor['numeroop'] != '-']
 
     monitor['Ocorrencia Pedidos'] =1
-    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first"}).reset_index()
+    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
 
     monitor = monitor.sort_values(by=['Ocorrencia Pedidos'],
                                       ascending=[False]).reset_index()
+    monitor.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
 
     sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
 
