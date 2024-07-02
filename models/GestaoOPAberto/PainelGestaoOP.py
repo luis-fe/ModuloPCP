@@ -353,7 +353,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         consulta['Area'] = consulta.apply(lambda row: 'PILOTO' if row['codTipoOP'] == '13-PILOTO' else 'PRODUCAO',
                                           axis=1)
         consulta['prioridade'] = consulta.apply(
-            lambda row: '1-URGENTE' if row['prioridade'] == 'URGENTE' else row['prioridade'], axis=1)
+            lambda row: '2-URGENTE' if row['prioridade'] == 'URGENTE' else row['prioridade'], axis=1)
+        consulta['prioridade'] = consulta.apply(
+            lambda row: '1-FAT ATRASADO' if row['prioridade'] == 'FAT ATRASADO' else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(
             lambda row: '09-P/FAT.' if row['prioridade'] == 'P/FATURAMENTO' else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models.MonitorPedidos import monitorOP
+from models.MonitorPedidos import monitorOP, AutomacaoOPs
 
 MonitorOp_routes = Blueprint('MonitorOp_routes', __name__)
 
@@ -23,6 +23,8 @@ def get_monitorOPs():
 
     #controle.InserindoStatus(rotina, ip, datainicio)
     dados = monitorOP.ReservaOPMonitor(dataInico , dataFim)
+    dados2 = AutomacaoOPs.IncrementadoDadosPostgre('1')
+
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -34,3 +36,16 @@ def get_monitorOPs():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
     return jsonify(OP_data)
+
+
+
+@MonitorOp_routes.route('/pcp/api/DelhalamentoMonitorOP', methods=['GET'])
+@token_required
+def get_DelhalamentoOPMonitor():
+    numeroOP = request.args.get('numeroOP', '-')
+    dados = monitorOP.DetalhaOPMonitor(numeroOP)
+    # Converte o DataFrame em uma lista de dicionários
+    OP_data = dados.to_dict(orient='records')
+
+    return jsonify(OP_data)
+
