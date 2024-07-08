@@ -316,6 +316,11 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor1.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
 
     sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
+    sqlCswPrioridade = """
+    SELECT numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino  FROM TCO.OrdemProd OP 
+INNER JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP  
+WHERE op.situacao = 3 and op.codEmpresa = 1
+    """
 
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor_csw:
@@ -327,7 +332,14 @@ def ReservaOPMonitor(dataInico, dataFim):
             get['codFaseAtual'] = get['codFaseAtual'].astype(str)
             del rows
 
+            cursor_csw.execute(sqlCswPrioridade)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            get2 = pd.DataFrame(rows, columns=colunas)
+            del rows
+
     monitor1 = pd.merge(monitor1,get,on='codFaseAtual', how='left')
+    monitor1 = pd.merge(monitor1,get2,on='numeroop', how='left')
 
     dados = {
         '0-Status':True,
