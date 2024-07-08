@@ -366,7 +366,7 @@ Where op.numeroOP = '""" +numeroop+"""'"""
 
     monitorDetalhadoOps.rename(
         columns={'tipoNota':'01-tipoNota','numeroop':'02-numeroop','codProduto': '03- Cód Reduzido',
-                 'cor':'04-cor','descricao':'05-tam'},
+                 'cor':'04-cor','descricao':'05-tam','pcsOP':'06-pcsOP','QtdSaldo':'07-Necessidade' },
         inplace=True)
 
     return monitorDetalhadoOps
