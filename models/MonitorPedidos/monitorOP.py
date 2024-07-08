@@ -354,7 +354,7 @@ WHERE op.situacao = 3 and op.codEmpresa = 1
 def DetalhaOPMonitor(numeroop):
 
     sqlCSW = """
-    SELECT DISTINCT t.coditem as codProduto, op.numeroOP as numeroop, op.codTipoOP||'-'||fa.nome as tipoNota, e.descricao ,s.corBase ||'-'|| s.nomeCorBase as cor , ta.descricao, t.qtdePecas1Qualidade as pcsOP  FROM tco.OrdemProd op
+    SELECT DISTINCT t.codProduto as itemPai ,t.coditem as codProduto, op.numeroOP as numeroop, op.codTipoOP||'-'||fa.nome as tipoNota, e.descricao ,s.corBase ||'-'|| s.nomeCorBase as cor , ta.descricao, t.qtdePecas1Qualidade as pcsOP  FROM tco.OrdemProd op
 inner join tco.OrdemProdTamanhos t on t.codEmpresa = op.codEmpresa and t.numeroOP = op.numeroOP 
 inner join tcp.Tamanhos ta on ta.sequencia = t.seqTamanho 
 inner join tcp.SortimentosProduto s on s.codEmpresa = op.codEmpresa and s.codProduto = op.codProduto and t.codSortimento = s.codSortimento 
