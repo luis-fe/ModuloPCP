@@ -286,27 +286,34 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     monitor.to_csv('./dados/monitorOps.csv')
 
-    monitor = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo"]]
-    # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
-    monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+    monitor1 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo"]]
+    monitor2 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo","codProduto"]]
 
-    monitor['dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
+
+    # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
+    monitor1['dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+    monitor1['dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce',
                                                         infer_datetime_format=True)
 
-    mascara = (monitor['dataPrevAtualizada2'] >= dataInico) & (monitor['dataPrevAtualizada2'] <= dataFim)
-    monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+    mascara = (monitor1['dataPrevAtualizada2'] >= dataInico) & (monitor1['dataPrevAtualizada2'] <= dataFim)
+    monitor1['dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
-    monitor['numeroop'].fillna('-',inplace=True)
-    monitor = monitor.loc[mascara]
+    monitor1['numeroop'].fillna('-',inplace=True)
+    monitor1 = monitor1.loc[mascara]
 
-    monitor = monitor[monitor['numeroop'] != '-']
+    monitor1 = monitor1[monitor1['numeroop'] != '-']
 
-    monitor['Ocorrencia Pedidos'] =1
-    monitor = monitor.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
+    monitor1['Ocorrencia Pedidos'] =1
+    monitor1 = monitor1.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
+    monitorDetalhadoOps = monitor2.groupby(['numeroop','codProduto']).agg({"QtdSaldo":"sum"}).reset_index()
 
-    monitor = monitor.sort_values(by=['Ocorrencia Pedidos'],
+    monitorDetalhadoOps.to_csv('./dados/detalhadoops.csv')
+
+
+    monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
                                       ascending=[False]).reset_index()
-    monitor.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
+    monitor1.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
 
     sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
 
@@ -320,12 +327,46 @@ def ReservaOPMonitor(dataInico, dataFim):
             get['codFaseAtual'] = get['codFaseAtual'].astype(str)
             del rows
 
-    monitor = pd.merge(monitor,get,on='codFaseAtual', how='left')
+    monitor1 = pd.merge(monitor1,get,on='codFaseAtual', how='left')
 
     dados = {
         '0-Status':True,
         '1-Mensagem': f'Atencao!! Calculado segundo o ultimo monitor emitido',
-        '6 -Detalhamento': monitor.to_dict(orient='records')
+        '6 -Detalhamento': monitor1.to_dict(orient='records')
 
     }
     return pd.DataFrame([dados])
+
+
+def DetalhaOPMonitor(numeroop):
+
+    sqlCSW = """
+    SELECT DISTINCT t.coditem as codProduto, op.numeroOP as numeroop, op.codTipoOP||'-'||fa.nome as tipoNota, e.descricao ,s.corBase ||'-'|| s.nomeCorBase as cor , ta.descricao, t.qtdePecas1Qualidade as pcsOP  FROM tco.OrdemProd op
+inner join tco.OrdemProdTamanhos t on t.codEmpresa = op.codEmpresa and t.numeroOP = op.numeroOP 
+inner join tcp.Tamanhos ta on ta.sequencia = t.seqTamanho 
+inner join tcp.SortimentosProduto s on s.codEmpresa = op.codEmpresa and s.codProduto = op.codProduto and t.codSortimento = s.codSortimento 
+inner join tcp.TipoOP  fa on fa.empresa = 1 and fa.codTipo = op.codTipoOP 
+inner join tcp.Engenharia e on e.codengenharia = op.codproduto and e.codempresa = 1
+Where op.numeroOP = '""" +numeroop+"""'"""
+
+    with ConexaoBanco.ConexaoInternoMPL() as conn:
+        with conn.cursor() as cursor_csw:
+            # Executa a primeira consulta e armazena os resultados
+            cursor_csw.execute(sqlCSW)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            sqlCSW = pd.DataFrame(rows, columns=colunas)
+            del rows
+
+    monitorDetalhadoOps = pd.read_csv('./dados/detalhadoops.csv')
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['numeroop']==numeroop]
+    monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
+
+    monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sqlCSW,on=['codProduto','numeroop'])
+
+    monitorDetalhadoOps.rename(
+        columns={'codProduto': '01- Cód Reduzido'},
+        inplace=True)
+
+
+    return monitorDetalhadoOps

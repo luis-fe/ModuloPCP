@@ -220,7 +220,7 @@ def ConfiguracaoCategoria():
 
     return consultar
 
-def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao, tipoData, Representante_excluir, escolherRepresentante ):
+def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao, tipoData, Representante_excluir, escolherRepresentante,escolhernomeCliente  ):
     # 1 - Carregar Os pedidos (etapa 1)
     if tipoData == 'DataEmissao':
         pedidos = Monitor_CapaPedidos(empresa, iniVenda, finalVenda, tiponota)
@@ -236,6 +236,13 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
     if escolherRepresentante != '':
         escolherRepresentante = escolherRepresentante.split(', ')
         pedidos = pedidos[pedidos['codRepresentante'].astype(str).isin(escolherRepresentante)]
+
+    # 1.3 - Verificar se o filtro esta aplicado para clientes excluisvos
+    if escolhernomeCliente != '':
+        #escolhernomeCliente = escolhernomeCliente.split(', ')
+        print(escolhernomeCliente)
+        pedidos = pedidos[pedidos['nome_cli'].str.contains(escolhernomeCliente, case=False, na=False)]
+
 
     statusSugestao = CapaSugestao()
     pedidos = pd.merge(pedidos,statusSugestao,on='codPedido',how='left')
@@ -528,9 +535,9 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
     #etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
     return pedidos
 
-def API(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao, tipoData,arrayRepres_excluir, arrayRepre_Incluir):
+def API(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao, tipoData,arrayRepres_excluir, arrayRepre_Incluir, nomeCliente):
     tiponota = '1,2,3,4,5,6,7,8,10,24,92,201,1012,77,27,28,172,9998,66,67,233,237'#Arrumar o Tipo de Nota 40
-    pedidos = MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao,tipoData, arrayRepres_excluir, arrayRepre_Incluir)
+    pedidos = MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao,tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente)
     pedidos['codPedido'] = pedidos['codPedido'].astype(str)
     pedidos['codCliente'] = pedidos['codCliente'].astype(str)
     pedidos["StatusSugestao"].fillna('-', inplace=True)
