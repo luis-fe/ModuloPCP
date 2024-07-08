@@ -368,5 +368,4 @@ Where op.numeroOP = '""" +numeroop+"""'"""
         columns={'codProduto': '01- Cód Reduzido'},
         inplace=True)
 
-
     return monitorDetalhadoOps
