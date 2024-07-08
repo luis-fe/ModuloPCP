@@ -340,7 +340,7 @@ WHERE op.situacao = 3 and op.codEmpresa = 1
 
     monitor1 = pd.merge(monitor1,get,on='codFaseAtual', how='left')
     monitor1 = pd.merge(monitor1,get2,on='numeroop', how='left')
-    monitor.fillna('-',inplace=True)
+    monitor1.fillna('-',inplace=True)
 
     dados = {
         '0-Status':True,
