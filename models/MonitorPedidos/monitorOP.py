@@ -365,7 +365,8 @@ Where op.numeroOP = '""" +numeroop+"""'"""
     monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sqlCSW,on=['codProduto','numeroop'])
 
     monitorDetalhadoOps.rename(
-        columns={'tipoNota':'01-tipoNota','numeroop':'02-numeroop','codProduto': '03- Cód Reduzido'},
+        columns={'tipoNota':'01-tipoNota','numeroop':'02-numeroop','codProduto': '03- Cód Reduzido',
+                 'cor':'04-cor','descricao':'05-tam'},
         inplace=True)
 
     return monitorDetalhadoOps
