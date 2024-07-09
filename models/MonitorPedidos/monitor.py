@@ -768,7 +768,7 @@ def DetalhaPedido(codPedido):
         pedido = pedido[pedido['QtdSaldo'] > 0].reset_index(drop=True)
 
         # Selecionando colunas específicas
-        colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo']
+        colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo','codItemPai','numeroop']
 
         # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
         for coluna in colunas_desejadas:
