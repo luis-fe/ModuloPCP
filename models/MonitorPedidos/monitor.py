@@ -784,7 +784,9 @@ def DetalhaPedido(codPedido):
         df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].str.replace('.0','º')
 
         df_selecionado.rename(columns={'nome_cli':'3-nome_cli','entregaAtualizada': '2-Embarque','codPedido':'1-codPedido','codItemPai':'4-codProduto',
-                                       'nomeSKU':'6-nomeSKU','QtdSaldo':'7-QtdSaldoPedido','Qtd Atende':'8-QtdAtendeEstoque','codProduto':'5-codReduzido','9-numeroop':'numeroop'}, inplace=True)
+                                       'nomeSKU':'6-nomeSKU','QtdSaldo':'7-QtdSaldoPedido','Qtd Atende':'8-QtdAtendeEstoque','codProduto':'5-codReduzido','numeroop':'9-numeroop'}, inplace=True)
+
+        df_selecionado = df_selecionado.sort_values(by=['2-Embarque', '4-codProduto','6-nomeSKU'], ascending=False)
 
         return df_selecionado
 
