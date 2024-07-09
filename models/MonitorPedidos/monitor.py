@@ -786,7 +786,7 @@ def DetalhaPedido(codPedido):
         df_selecionado.rename(columns={'nome_cli':'03-nome_cli','entregaAtualizada': '02-Embarque','codPedido':'01-codPedido','codItemPai':'04-codProduto',
                                        'nomeSKU':'07-nomeSKU','QtdSaldo':'08-QtdSaldoPedido','Qtd Atende':'09-QtdAtendeEstoque','codProduto':'05-codReduzido','numeroop':'10-numeroop','codCor':'06-codCor'}, inplace=True)
 
-        df_selecionado = df_selecionado.sort_values(by=['2-Embarque', '4-codProduto','6-codCor'], ascending=True)
+        df_selecionado = df_selecionado.sort_values(by=['02-Embarque', '04-codProduto','06-codCor'], ascending=True)
         df_selecionado.fillna('-',inplace=True)
 
         return df_selecionado
