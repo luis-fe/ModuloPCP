@@ -751,7 +751,7 @@ def DetalhaPedido(codPedido):
     carregar = carregar['codPedido'].astype(str)
 
 
-    pedido = carregar[carregar['codPedido']==codPedido].reset_index()
+    pedido = carregar[carregar['codPedido']==str(codPedido)].reset_index()
     print(pedido)
     pedido = pedido['QtdSaldo'].astype(int)
     pedido = pedido[pedido['QtdSaldo']>0].reset_index()
