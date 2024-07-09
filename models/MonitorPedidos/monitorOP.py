@@ -380,3 +380,29 @@ Where op.numeroOP = '""" +numeroop+"""'"""
         inplace=True)
 
     return monitorDetalhadoOps
+
+def ProdutosSemOP():
+    monitorDetalhadoOps = pd.read_csv('./dados/detalhadoops.csv')
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index(drop=True)
+    # Filtrando pedidos com 'QtdSaldo' maior que 0
+    pedido = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index(drop=True)
+
+    # Selecionando colunas específicas
+    colunas_desejadas = ['nomeSKU', 'QtdSaldo', 'codItemPai',  'codProduto', 'codCor']
+
+    # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
+    for coluna in colunas_desejadas:
+        if coluna not in pedido.columns:
+            raise KeyError(
+                f"A coluna '{coluna}' não foi encontrada no DataFrame filtrado. Colunas disponíveis: {pedido.columns.tolist()}")
+
+    df_selecionado = pedido[colunas_desejadas]
+
+    df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].astype(str)
+    df_selecionado['codItemPai'] = df_selecionado['codItemPai'].astype(str)
+    df_selecionado = df_selecionado.groupby('codProduto').agg({'nomeSKU':'first',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
+
+
+
+    return df_selecionado
+

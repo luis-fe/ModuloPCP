@@ -49,3 +49,12 @@ def get_DelhalamentoOPMonitor():
 
     return jsonify(OP_data)
 
+@MonitorOp_routes.route('/pcp/api/ProdutosSemOP', methods=['GET'])
+@token_required
+def get_ProdutosSemOP():
+    dados = monitorOP.ProdutosSemOP()
+    # Converte o DataFrame em uma lista de dicionários
+    OP_data = dados.to_dict(orient='records')
+
+    return jsonify(OP_data)
+
