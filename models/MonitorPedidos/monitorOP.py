@@ -258,29 +258,24 @@ def ReservaOPMonitor(dataInico, dataFim):
     """
 
     consulta2 = pd.read_sql(consultaSql2, conn)
-    for i in range(7):
-        i = i + 1  # Utilizado para obter a iteracao
-        consultai = consulta2[consulta2['ocorrencia_sku'] == i]  # filtra o dataframe consulta de acordo com a iteracao
-
-        # Apresenta o numero de linhas do dataframe filtrado
+    for i in range(1, 8):
+        consultai = consulta2[consulta2['ocorrencia_sku'] == i]
         x = consultai['codProduto'].count()
         print(f'iteracao {i}: {x}')
 
-        # Realiza um merge com outro dataFrame Chamado Monitor
-        monitor = pd.merge(monitor, consultai, on='codProduto', how='left')
-        # Condição para o cálculo da coluna 'id_op'
-        condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada2']) | (
-                monitor['id_op2'] == 'Atendeu')
-        # Cálculo da coluna 'id_op' de forma vetorizada
-        monitor['id_op2'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
-        monitor['Op Reservada2'] = monitor.apply(
-            lambda r: r['id'] if (r['id_op2'] == 'Atendeu') & (r['NecessodadeOP'] > 0) & (r['Op Reservada2'] == '-') else
-            r['Op Reservada2'], axis=1)
+        monitor = pd.merge(monitor, consultai, on='codProduto', how='left', suffixes=('', '_consultai'))
 
-        # Define NecessodadeOP para 0 onde id_op é 'Atendeu'
+        condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada2']) | (
+                    monitor['id_op2'] == 'Atendeu')
+        monitor['id_op2'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
+
+        monitor['Op Reservada2'] = numpy.where(
+            (monitor['id_op2'] == 'Atendeu') & (monitor['NecessodadeOP'] > 0) & (monitor['Op Reservada2'] == '-'),
+            monitor['id'].fillna(monitor['Op Reservada2']), monitor['Op Reservada2'])
+
         monitor.loc[monitor['id_op2'] == 'Atendeu', 'NecessodadeOP'] = 0
-        # Remove as colunas para depois fazer novo merge
-        monitor = monitor.drop(['id', 'qtdAcumulada2','ocorrencia_sku'], axis=1)
+        monitor = monitor.drop(['id', 'qtdAcumulada2', 'ocorrencia_sku'], axis=1)
+
 
     consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual" from "pcp".ordemprod o   """, conn)
     monitor = pd.merge(monitor,consulta3,on='Op Reservada2',how='left')
