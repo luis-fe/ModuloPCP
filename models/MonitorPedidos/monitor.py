@@ -750,6 +750,7 @@ def DetalhaPedido(codPedido):
     carregar = pd.read_csv('./dados/monitorOps.csv')
 
     pedido = carregar[carregar['codPedido']==codPedido].reset_index()
+    pedido = pedido['QtdSaldo'].astype(int)
     pedido = pedido[pedido['QtdSaldo']>0].reset_index()
 
     # Selecionando colunas específicas
