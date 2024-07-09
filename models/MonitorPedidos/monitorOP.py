@@ -399,9 +399,13 @@ def ProdutosSemOP():
     df_selecionado = pedido[colunas_desejadas]
 
     df_selecionado['codItemPai'] = df_selecionado['codItemPai'].astype(str)
-    df_selecionado = df_selecionado.groupby('codProduto').agg({'nomeSKU':'first',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
+    df_selecionado = df_selecionado.groupby('codProduto').agg({'nomeSKU':'first',"codItemPai":"first","QtdSaldo":"sum",'codCor':'first'}).reset_index()
 
-
+    df_selecionado.rename(
+        columns={
+                 'codItemPai': '01-codProduto',
+                 'nomeSKU': '02-nomeSKU', 'QtdSaldo': '05-QtdSaldoPedido',
+                 'codProduto': '03-codReduzido', 'codCor': '04-codCor'}, inplace=True)
 
     return df_selecionado
 
