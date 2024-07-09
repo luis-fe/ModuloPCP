@@ -749,11 +749,16 @@ def Ciclo2(pedidos,avaliar_grupo):
 def DetalhaPedido(codPedido):
     carregar = pd.read_csv('./dados/monitorOps.csv',sep=',')
     print(carregar)
+    # Verifica se 'codPedido' está presente nas colunas do DataFrame
+    if 'codPedido' not in carregar.columns:
+        raise KeyError(
+            f"A coluna 'codPedido' não foi encontrada no arquivo CSV. Colunas disponíveis: {carregar.columns.tolist()}")
 
-    carregar = carregar['codPedido'].astype(str)
+    # Convertendo a coluna 'codPedido' para string
+    carregar['codPedido'] = carregar['codPedido'].astype(str)
 
-
-    pedido = carregar[carregar['codPedido']==str(codPedido)].reset_index()
+    # Filtrando o pedido específico
+    pedido = carregar[carregar['codPedido'] == str(codPedido)].reset_index(drop=True)
     pedido = pedido['QtdSaldo'].astype(int)
     pedido = pedido[pedido['QtdSaldo']>0].reset_index()
 
