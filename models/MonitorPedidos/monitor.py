@@ -768,7 +768,7 @@ def DetalhaPedido(codPedido):
         pedido = pedido[pedido['QtdSaldo'] > 0].reset_index(drop=True)
 
         # Selecionando colunas específicas
-        colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo','codItemPai','numeroop','Qtd Atende','codProduto']
+        colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo','codItemPai','numeroop','Qtd Atende','codProduto','codCor']
 
         # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
         for coluna in colunas_desejadas:
@@ -784,9 +784,9 @@ def DetalhaPedido(codPedido):
         df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].str.replace('.0','º')
 
         df_selecionado.rename(columns={'nome_cli':'3-nome_cli','entregaAtualizada': '2-Embarque','codPedido':'1-codPedido','codItemPai':'4-codProduto',
-                                       'nomeSKU':'6-nomeSKU','QtdSaldo':'7-QtdSaldoPedido','Qtd Atende':'8-QtdAtendeEstoque','codProduto':'5-codReduzido','numeroop':'9-numeroop'}, inplace=True)
+                                       'nomeSKU':'7-nomeSKU','QtdSaldo':'8-QtdSaldoPedido','Qtd Atende':'9-QtdAtendeEstoque','codProduto':'5-codReduzido','numeroop':'10-numeroop','codCor':'6-codCor'}, inplace=True)
 
-        df_selecionado = df_selecionado.sort_values(by=['2-Embarque', '4-codProduto','6-nomeSKU'], ascending=True)
+        df_selecionado = df_selecionado.sort_values(by=['2-Embarque', '4-codProduto','6-codCor'], ascending=True)
         df_selecionado.fillna('-',inplace=True)
 
         return df_selecionado
