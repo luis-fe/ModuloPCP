@@ -748,6 +748,8 @@ def Ciclo2(pedidos,avaliar_grupo):
 
 def DetalhaPedido(codPedido):
     carregar = pd.read_csv('./dados/monitorOps.csv')
+    carregar = carregar['codPedido'].astype(str)
+
 
     pedido = carregar[carregar['codPedido']==codPedido].reset_index()
     print(pedido)
