@@ -382,7 +382,7 @@ Where op.numeroOP = '""" +numeroop+"""'"""
     return monitorDetalhadoOps
 
 def ProdutosSemOP():
-    monitorDetalhadoOps = pd.read_csv('./dados/detalhadoops.csv')
+    monitorDetalhadoOps = pd.read_csv('./dados/monitorOps.csv')
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index(drop=True)
     # Filtrando pedidos com 'QtdSaldo' maior que 0
     pedido = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index(drop=True)
