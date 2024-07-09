@@ -743,3 +743,17 @@ def Ciclo2(pedidos,avaliar_grupo):
     pedidosNovo = pd.concat([pedidos1, pedidos2])
 
     return pedidosNovo
+
+
+
+def DetalhaPedido(codPedido):
+    carregar = pd.read_csv('./dados/monitorOps.csv')
+
+    pedido = carregar[carregar['codPedido']==codPedido].reset_index()
+    pedido = pedido[pedido['QtdSaldo']>0].reset_index()
+
+    # Selecionando colunas específicas
+    colunas_desejadas = ['codPedido', 'nome_cli','entregaAtualizada','nomeSKU','QtdSaldo']
+    df_selecionado = pedido[colunas_desejadas]
+
+    return df_selecionado
