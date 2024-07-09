@@ -779,9 +779,11 @@ def DetalhaPedido(codPedido):
         df_selecionado = pedido[colunas_desejadas]
 
         df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].astype(str)
+        df_selecionado['codItemPai'] = df_selecionado['codItemPai'].astype(str)
+
         df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].str.replace('.0','º')
 
-        df_selecionado.rename(columns={'entregaAtualizada': '2-Embarque'}, inplace=True)
+        df_selecionado.rename(columns={'entregaAtualizada': '2-Embarque','codPedido':'1-codPedido','codItemPai':'3-codProduto'}, inplace=True)
 
         return df_selecionado
 
