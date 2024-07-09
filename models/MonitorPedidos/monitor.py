@@ -784,10 +784,14 @@ def DetalhaPedido(codPedido):
         df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].str.replace('.0','º')
 
         df_selecionado.rename(columns={'nome_cli':'03-nome_cli','entregaAtualizada': '02-Embarque','codPedido':'01-codPedido','codItemPai':'04-codProduto',
-                                       'nomeSKU':'07-nomeSKU','QtdSaldo':'08-QtdSaldoPedido','Qtd Atende':'09-QtdAtendeEstoque','codProduto':'05-codReduzido','numeroop':'10-numeroop','codCor':'06-codCor'}, inplace=True)
+                                       'nomeSKU':'07-nomeSKU','QtdSaldo':'08-QtdSaldoPedido','Qtd Atende':'09-QtdAtendeEstoque','codProduto':'05-codReduzido','numeroop':'11-numeroop','codCor':'06-codCor'}, inplace=True)
 
+        df_selecionado['10-situacao'] = df_selecionado.apply(lambda r : 'Atendeu' if r['09-QtdAtendeEstoque'] > 0 else 'Nao Atendeu', axis=1  )
         df_selecionado = df_selecionado.sort_values(by=['02-Embarque', '04-codProduto','06-codCor'], ascending=True)
         df_selecionado.fillna('-',inplace=True)
+
+
+
 
         return df_selecionado
 
