@@ -760,7 +760,7 @@ def DetalhaPedido(codPedido):
     # Filtrando o pedido específico
     pedido = carregar[carregar['codPedido'] == str(codPedido)].reset_index(drop=True)
     pedido = pedido['QtdSaldo'].astype(int)
-    pedido = pedido[pedido['QtdSaldo']>0].reset_index()
+    pedido = pedido[pedido['QtdSaldo']>0].reset_index(drop=True)
 
     # Selecionando colunas específicas
     colunas_desejadas = ['codPedido', 'nome_cli','entregaAtualizada','nomeSKU','QtdSaldo']
