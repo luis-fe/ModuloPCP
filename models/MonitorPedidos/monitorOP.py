@@ -398,7 +398,6 @@ def ProdutosSemOP():
 
     df_selecionado = pedido[colunas_desejadas]
 
-    df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].astype(str)
     df_selecionado['codItemPai'] = df_selecionado['codItemPai'].astype(str)
     df_selecionado = df_selecionado.groupby('codProduto').agg({'nomeSKU':'first',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
 
