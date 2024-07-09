@@ -407,5 +407,7 @@ def ProdutosSemOP():
                  'nomeSKU': '02-nomeSKU', 'QtdSaldo': '05-QtdSaldoPedido',
                  'codProduto': '03-codReduzido', 'codCor': '04-codCor'}, inplace=True)
 
+    df_selecionado = df_selecionado.sort_values(by=['01-codProduto', '04-codCor'], ascending=True)
+
     return df_selecionado
 
