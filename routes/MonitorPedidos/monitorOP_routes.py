@@ -22,8 +22,8 @@ def get_monitorOPs():
     dataFim = request.args.get('dataFim')
 
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = monitorOP.ReservaOPMonitor(dataInico , dataFim)
     dados2 = AutomacaoOPs.IncrementadoDadosPostgre('1')
+    dados = monitorOP.ReservaOPMonitor(dataInico , dataFim)
 
 
     # Obtém os nomes das colunas
