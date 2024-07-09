@@ -763,7 +763,14 @@ def DetalhaPedido(codPedido):
 #   pedido = pedido[pedido['QtdSaldo'] > 0].reset_index(drop=True)
 
     # Selecionando colunas específicas
-    colunas_desejadas = ['codPedido', 'nome_cli','entregaAtualizada','nomeSKU','QtdSaldo']
+    colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo']
+
+    # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
+    for coluna in colunas_desejadas:
+        if coluna not in pedido.columns:
+            raise KeyError(
+                f"A coluna '{coluna}' não foi encontrada no DataFrame filtrado. Colunas disponíveis: {pedido.columns.tolist()}")
+
     df_selecionado = pedido[colunas_desejadas]
 
     return df_selecionado
