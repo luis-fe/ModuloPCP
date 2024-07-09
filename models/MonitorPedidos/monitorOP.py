@@ -221,11 +221,12 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor.loc[cond_8_7, 'entregaAtualizada'] = 7
     monitor.loc[cond_8_8, 'entregaAtualizada'] = 8
 
-    monitor['dataPrevAtualizada2'] = monitor.apply(
-            lambda r: r['dataPrevAtualizada'][6:10] + '-' + r['dataPrevAtualizada'][3:5] + '-' + r[
-                                                                                                     'dataPrevAtualizada'][
-
-                                                                                             :2], axis=1)
+    monitor['dataPrevAtualizada2'] = (
+            monitor['dataPrevAtualizada']
+            .str.slice(6, 10) + '-' +
+            monitor['dataPrevAtualizada'].str.slice(3, 5) + '-' +
+            monitor['dataPrevAtualizada'].str.slice(0, 2)
+    )
 
     # 7 Calculando a nova data de Previsao do pedido
     monitor['dias_a_adicionar2'] = pd.to_timedelta(((monitor['entregaAtualizada'] - 1) * 15),
