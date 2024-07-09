@@ -778,6 +778,9 @@ def DetalhaPedido(codPedido):
 
         df_selecionado = pedido[colunas_desejadas]
 
+        df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].astype(str)
+        df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].replace('.0','º')
+
         return df_selecionado
 
     except KeyError as e:
