@@ -747,7 +747,7 @@ def Ciclo2(pedidos,avaliar_grupo):
 
 
 def DetalhaPedido(codPedido):
-    carregar = pd.read_csv('./dados/monitorOps.csv')
+    carregar = pd.read_csv('./dados/monitorOps.csv',sep=',')
     carregar = carregar['codPedido'].astype(str)
 
 
