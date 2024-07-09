@@ -745,32 +745,45 @@ def Ciclo2(pedidos,avaliar_grupo):
     return pedidosNovo
 
 
-
 def DetalhaPedido(codPedido):
-    carregar = pd.read_csv('./dados/monitorOps.csv',sep=',')
-    print(carregar)
-    # Verifica se 'codPedido' está presente nas colunas do DataFrame
-    if 'codPedido' not in carregar.columns:
-        raise KeyError(
-            f"A coluna 'codPedido' não foi encontrada no arquivo CSV. Colunas disponíveis: {carregar.columns.tolist()}")
+    try:
+        carregar = pd.read_csv('./dados/monitorOps.csv', sep=',')
+        print(carregar)
 
-    # Convertendo a coluna 'codPedido' para string
-    carregar['codPedido'] = carregar['codPedido'].astype(str)
-
-    # Filtrando o pedido específico
-    pedido = carregar[carregar['codPedido'] == str(codPedido)].reset_index(drop=True)
-    pedido = pedido['QtdSaldo'].astype(int)
-#   pedido = pedido[pedido['QtdSaldo'] > 0].reset_index(drop=True)
-
-    # Selecionando colunas específicas
-    colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo']
-
-    # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
-    for coluna in colunas_desejadas:
-        if coluna not in pedido.columns:
+        # Verifica se 'codPedido' está presente nas colunas do DataFrame
+        if 'codPedido' not in carregar.columns:
             raise KeyError(
-                f"A coluna '{coluna}' não foi encontrada no DataFrame filtrado. Colunas disponíveis: {pedido.columns.tolist()}")
+                f"A coluna 'codPedido' não foi encontrada no arquivo CSV. Colunas disponíveis: {carregar.columns.tolist()}")
 
-    df_selecionado = pedido[colunas_desejadas]
+        # Convertendo a coluna 'codPedido' para string
+        carregar['codPedido'] = carregar['codPedido'].astype(str)
 
-    return df_selecionado
+        # Filtrando o pedido específico
+        pedido = carregar[carregar['codPedido'] == str(codPedido)].reset_index(drop=True)
+
+        # Convertendo a coluna 'QtdSaldo' para inteiro
+        pedido['QtdSaldo'] = pedido['QtdSaldo'].astype(int)
+
+        # Filtrando pedidos com 'QtdSaldo' maior que 0
+        pedido = pedido[pedido['QtdSaldo'] > 0].reset_index(drop=True)
+
+        # Selecionando colunas específicas
+        colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo']
+
+        # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
+        for coluna in colunas_desejadas:
+            if coluna not in pedido.columns:
+                raise KeyError(
+                    f"A coluna '{coluna}' não foi encontrada no DataFrame filtrado. Colunas disponíveis: {pedido.columns.tolist()}")
+
+        df_selecionado = pedido[colunas_desejadas]
+
+        return df_selecionado
+
+    except KeyError as e:
+        print(f"Erro: {e}")
+        return None
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+        return None
+
