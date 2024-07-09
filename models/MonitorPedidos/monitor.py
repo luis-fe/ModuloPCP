@@ -748,11 +748,12 @@ def Ciclo2(pedidos,avaliar_grupo):
 
 def DetalhaPedido(codPedido):
     carregar = pd.read_csv('./dados/monitorOps.csv',sep=',')
+    print(carregar)
+
     carregar = carregar['codPedido'].astype(str)
 
 
     pedido = carregar[carregar['codPedido']==str(codPedido)].reset_index()
-    print(pedido)
     pedido = pedido['QtdSaldo'].astype(int)
     pedido = pedido[pedido['QtdSaldo']>0].reset_index()
 
