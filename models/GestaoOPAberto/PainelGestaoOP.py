@@ -353,13 +353,16 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         consulta['Area'] = consulta.apply(lambda row: 'PILOTO' if row['codTipoOP'] == '13-PILOTO' else 'PRODUCAO',
                                           axis=1)
         consulta['prioridade'] = consulta.apply(
-            lambda row: '1-URGENTE' if row['prioridade'] == 'URGENTE' else row['prioridade'], axis=1)
+            lambda row: '3-CLAUDINO' if row['prioridade'] == 'CLAUDINO' else row['prioridade'], axis=1)
+
+        consulta['prioridade'] = consulta.apply(
+            lambda row: '09-URGENTE' if row['prioridade'] == 'URGENTE' else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(
             lambda row: '2-FAT ATRASADO' if row['prioridade'] == 'FAT ATRASADO' else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(
-            lambda row: '09-P/FAT.' if row['prioridade'] == 'P/FATURAMENTO' else row['prioridade'], axis=1)
+            lambda row: '1-P/FAT.' if row['prioridade'] == 'P/FATURAMENTO' else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(
-            lambda row: '09-P/FAT.' if 'FATURAMENTO' in row['prioridade'] else row['prioridade'], axis=1)
+            lambda row: '1-P/FAT.' if 'FATURAMENTO' in row['prioridade'] else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(
             lambda row: '08-QP1' if row['prioridade'] == 'QP1' else row['prioridade'], axis=1)
         consulta['prioridade'] = consulta.apply(
