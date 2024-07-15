@@ -95,7 +95,7 @@ def FilaFases():
     fila['COLECAO'] = fila['COLECAO'] + ' ' + fila['desLote'].apply(extrair_ano)
     fila.fillna('-', inplace=True)
 
-    fila.to_csv('./dados/filaroteiroOP.csv')
+    #fila.to_csv('./dados/filaroteiroOP.csv')
 
 
 
@@ -141,6 +141,7 @@ def ApresentacaoFila(COLECAO):
     fila['Carga Atual'] =fila['Carga Atual'].astype(int).round()
     fila['Fila'] =fila['Fila'].astype(int).round()
 
+    fila.to_csv('./dados/filaroteiroOP.csv')
 
 
 
