@@ -112,6 +112,7 @@ def ApresentacaoFila(COLECAO):
     if colecoes['COLECAO'][0] != '-':
         fila = pd.merge(fila, colecoes , on='COLECAO')
 
+    fila.to_csv('./dados/filaroteiroOP.csv')
 
     fila_carga_atual = fila[fila['Situacao'] == 'em processo'].reset_index()
     fila_fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
@@ -141,7 +142,6 @@ def ApresentacaoFila(COLECAO):
     fila['Carga Atual'] =fila['Carga Atual'].astype(int).round()
     fila['Fila'] =fila['Fila'].astype(int).round()
 
-    fila.to_csv('./dados/filaroteiroOP.csv')
 
 
 
@@ -150,9 +150,6 @@ def ApresentacaoFila(COLECAO):
 def FiltrosFila(NomeFase):
     fila = pd.read_csv('./dados/filaroteiroOP.csv')
 
-    #colecoes = FiltroColecao(COLECAO)
-    #if colecoes['COLECAO'][0] != '-':
-     #   fila = pd.merge(fila, colecoes , on='COLECAO')
     fila = fila[(fila['codFase'] < 599)]
     fila = fila[fila['fase'] == NomeFase].reset_index()
     fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
