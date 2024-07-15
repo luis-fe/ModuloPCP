@@ -67,32 +67,66 @@
         /* Adiciona uma barra de rolagem vertical quando o conteúdo excede a altura */
     }
 
-    
-#ModalLoading {
-  width: 100%;
-  height: 100vh;
-  background-color: #fefefe;
-  padding: 20px;
-  border: 1px solid #888;
-  border-radius: 10px;
-  text-align: center;
-}
 
-.loader {
-  border: 8px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 8px solid #3498db;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-  margin-top: 20%;
-}
+    #ModalLoading {
+        width: 100%;
+        height: 100vh;
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        text-align: center;
+    }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    .loader {
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+        margin-top: 20%;
+    }
+
+    #legenda {
+        cursor: pointer;
+        border: 1px solid black;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        margin-right: 10px;
+        justify-content: center;
+    }
+
+    @keyframes blink {
+        0% {
+            background-color: initial;
+        }
+
+        50% {
+            background-color: red;
+        }
+
+        100% {
+            background-color: initial;
+        }
+    }
+
+    .blink {
+        animation: blink 1s infinite;
+    }
+
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
 
 
@@ -140,20 +174,20 @@
         z-index: 999;
     }
 
-    .ModalJustificativa{
-    display: none;
-    position: absolute;
-    background-color: rgb(184, 184, 184);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    margin-left: 50px;
-    z-index: 999;
-}
+    .ModalJustificativa {
+        display: none;
+        position: absolute;
+        background-color: rgb(184, 184, 184);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        margin-left: 50px;
+        z-index: 999;
+    }
 
-.close{
-    cursor: pointer;
-}
+    .close {
+        cursor: pointer;
+    }
 </style>
 
 
@@ -214,9 +248,41 @@
         </div>
 
         <!-- Card: Qtd. Op's Atrasadas -->
-        <div class="col-sm-6 col-md-2">
-            <i class="bi bi-funnel-fill" id="BotaoFiltros" title="Filtros"></i>
-            <i class="bi bi-file-earmark-arrow-down-fill" id="BotaoExcel" title="Exportar Excel"></i>
+        <div class="row col-6 col-md-12">
+            <i class="bi bi-funnel-fill col-1" id="BotaoFiltros" title="Filtros"></i>
+            <i class="bi bi-file-earmark-arrow-down-fill col-1" id="BotaoExcel" title="Exportar Excel"></i>
+            <div class="row legenda col-10">
+                <div class="card legenda blink col-1" id="legenda" onclick="aplicarFiltros('claudino')">
+                    <label for="" style="cursor:pointer">CLAUDINO</label>
+                </div>
+                <div class="card legenda blink col-1" id="legenda" onclick="aplicarFiltros('fatatrasado')">
+                    <label for="" style="cursor:pointer">FAT ATRASADO</label>
+                </div>
+                <div class="card legenda col-1" id="legenda" style="background-color: red">
+                    <label for="" style="cursor:pointer">P/ FAT.</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM1/QP1</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM2/QP2</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM3/QP3</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM4/QP4</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM5/QP5</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM6/QP6</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM7/QP7</label>
+                </div>
+            </div>
         </div>
         <h2>Lista Op's</h2>
         <div class="row" id="Corpo">
@@ -226,13 +292,12 @@
 
     <div id="modalLoading" class="modal">
         <div class="modal-content" id="ModalLoading">
-          <div class="loader"></div>
-          <p>Aguarde, carregando...</p>
+            <div class="loader"></div>
+            <p>Aguarde, carregando...</p>
         </div>
-      </div>
+    </div>
 
-    <div class="modal fade" id="ModalFiltros" tabindex="-1" role="dialog" aria-labelledby="ModalFiltrosLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="ModalFiltros" tabindex="-1" role="dialog" aria-labelledby="ModalFiltrosLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <!-- Cabeçalho da Modal -->
@@ -254,18 +319,16 @@
                         <label>Ordenação:</label>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
                             <label class="btn btn-outline-primary active">
-                                <input type="radio" name="opcoesOrdenacao" id="btnUrgente" data-valor="prioridade"
-                                    autocomplete="off" checked> Prioridade
+                                <input type="radio" name="opcoesOrdenacao" id="btnUrgente" data-valor="prioridade" autocomplete="off" checked> Prioridade
                             </label>
                             <label class="btn btn-outline-primary">
-                                <input type="radio" name="opcoesOrdenacao" id="btnLeadTime" data-valor="tempo"
-                                    autocomplete="off"> Lead Time
+                                <input type="radio" name="opcoesOrdenacao" id="btnLeadTime" data-valor="tempo" autocomplete="off"> Lead Time
                             </label>
                         </div>
-                </div>
-                <div class="form-group" id="divOpcoes">
-                    
-                </div>
+                    </div>
+                    <div class="form-group" id="divOpcoes">
+
+                    </div>
                 </div>
                 <!-- Rodapé da Modal -->
                 <div class="modal-footer">
@@ -280,8 +343,7 @@
 
     <div class="ModalPendencia" id="ModalPendencia">
         <span class="close" id="FecharPendencia">&times;</span>
-        <div
-            style="margin-bottom: 20px; margin-right: 30px; justify-content: center; align-items: center; text-align: center;">
+        <div style="margin-bottom: 20px; margin-right: 30px; justify-content: center; align-items: center; text-align: center;">
             <label for="text" id="TituloModal" style="font-size: 25px;">Pendências</label>
         </div>
         <div style="display: flex; flex-direction: column;" class="DivPendencias" id="DivPendencias">
@@ -298,8 +360,7 @@
             <textarea name="InputJustificativa" id="InputJustificativa" cols="30" rows="10" style="font-size: 20px;"></textarea>
         </div>
         <div style="justify-content: right; text-align: right;">
-            <i class="bi bi-check-circle-fill" id="SalvarObs"
-                style="text-align: right; justify-content: right; font-size: 25px; color: green; cursor: pointer;" title="SALVAR"></i>
+            <i class="bi bi-check-circle-fill" id="SalvarObs" style="text-align: right; justify-content: right; font-size: 25px; color: green; cursor: pointer;" title="SALVAR"></i>
         </div>
 
     </div>
