@@ -51,10 +51,9 @@ def get_FilaDasFases_routes():
 @token_required
 def get_DetalhaOpFilas():
     data = request.get_json()
-    colecao = data.get('Colecao', '-')
     nomeFase = data.get('nomeFase', '-')
 
-    usuarios = FilaFases.FiltrosFila(nomeFase,colecao)
+    usuarios = FilaFases.FiltrosFila(nomeFase)
 
 
     # Obtém os nomes das colunas

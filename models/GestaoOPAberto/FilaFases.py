@@ -147,12 +147,12 @@ def ApresentacaoFila(COLECAO):
 
     return fila
 
-def FiltrosFila(NomeFase, COLECAO):
+def FiltrosFila(NomeFase):
     fila = pd.read_csv('./dados/filaroteiroOP.csv')
 
-    colecoes = FiltroColecao(COLECAO)
-    if colecoes['COLECAO'][0] != '-':
-        fila = pd.merge(fila, colecoes , on='COLECAO')
+    #colecoes = FiltroColecao(COLECAO)
+    #if colecoes['COLECAO'][0] != '-':
+     #   fila = pd.merge(fila, colecoes , on='COLECAO')
     fila = fila[(fila['codFase'] < 599)]
     fila = fila[fila['fase'] == NomeFase].reset_index()
     fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
