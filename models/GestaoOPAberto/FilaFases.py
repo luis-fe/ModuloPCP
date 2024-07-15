@@ -153,13 +153,13 @@ def FiltrosFila(NomeFase):
     fila = fila[(fila['codFase'] < 599)]
     fila = fila[fila['fase'] == NomeFase].reset_index()
     fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
-    print(fila)
     fila = fila.groupby('faseAtual').agg({"pcs": 'sum'}).reset_index()
     apresentacao_query = """
             SELECT x."nomeFase" as "faseAtual", apresentacao 
             FROM pcp."SeqApresentacao" x
             ORDER BY x.apresentacao
         """
+    print(fila)
 
     conn2 = ConexaoPostgreWms.conexaoEngine()
     apresentacao = pd.read_sql(apresentacao_query, conn2)
