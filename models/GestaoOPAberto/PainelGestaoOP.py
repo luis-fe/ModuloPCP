@@ -37,8 +37,8 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         ##Excecao Almoxarifado aviamentos
         OP_emAbertoAvimamento = OP_emAberto.copy()  # Criar uma cópia do DataFrame original
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='145']
-        OP_emAberto1 = OP_emAberto[OP_emAberto['codFase']!='406']
-        OP_emAberto = OP_emAberto1[OP_emAberto1['codFase']!='407']
+        OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='406']
+        OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='407']
 
         with ConexaoBanco.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor_csw:
@@ -62,6 +62,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         OP_emAbertoAvimamento['seq409'] = OP_emAbertoAvimamento['seq409'].astype(int)
         OP_emAbertoAvimamento['seq428'] = OP_emAbertoAvimamento['seq428'].astype(int)
         OP_emAbertoAvimamento = OP_emAbertoAvimamento[(OP_emAbertoAvimamento['seq409'] < OP_emAbertoAvimamento['seqAtual']) &(OP_emAbertoAvimamento['seq428'] >= OP_emAbertoAvimamento['seqAtual']) ].reset_index()
+        OP_emAbertoAvimamento['codFase'] = OP_emAbertoAvimamento.apply(lambda row: '145' if row['codFase'] == '407'else row['codFase'], axis=1  )
         OP_emAbertoAvimamento['codFase'] = OP_emAbertoAvimamento.apply(lambda row: '145' if row['codFase'] == '145'else '406', axis=1  )
         OP_emAbertoAvimamento['nomeFase'] = OP_emAbertoAvimamento.apply(lambda row: row['nomeFase'] if row['codFase'] == '145'else 'ALMOX. DE AVIAMENTOS', axis=1  )
 
