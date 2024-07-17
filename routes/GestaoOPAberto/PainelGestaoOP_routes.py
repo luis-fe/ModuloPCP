@@ -66,20 +66,27 @@ def CargadasOPs():
         print('Resultado')
         print(usuarios)
 
-    # Obtém os nomes das colunas
-    column_names = usuarios.columns
-    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+        # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
 
     for index, row in usuarios.iterrows():
-        op_dict = {}
-        for index, row in usuarios.iterrows():
-            op_dict = {}
-            for column_name in column_names:
-                op_dict[column_name] = row[column_name]
-            OP_data.append(op_dict)
-        return jsonify(OP_data) , 200
+        op_dict = {column_name: row[column_name] for column_name in usuarios.columns}
 
+        # Se "3 - Detalhamento" existir e for uma lista de dicionários, reordena as colunas no detalhamento
+        if "3 -Detalhamento" in op_dict and isinstance(op_dict["3 -Detalhamento"], list):
+            detalhamento = []
+            for detail in op_dict["3 -Detalhamento"]:
+                ordered_detail = {
+                    "numeroOP": detail.get("numeroOP"),
+                    "codProduto": detail.get("codProduto"),
+                    **{k: v for k, v in detail.items() if k not in ["numeroOP", "codProduto"]}
+                }
+                detalhamento.append(ordered_detail)
+            op_dict["3 -Detalhamento"] = detalhamento
+
+        OP_data.append(op_dict)
+
+    return jsonify(OP_data), 200
 @PainelGestaoOP_routes.route('/pcp/api/DistinctColecao', methods=['GET'])
 @token_required
 def DistinctColecao():
