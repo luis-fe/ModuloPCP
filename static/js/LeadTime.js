@@ -346,42 +346,52 @@ const ApiConsulta = 'http://192.168.0.183:8000/pcp/api/CargaOPs';
 
 
         async function ExportarExcel(Api, Empresa, Filtro) {
-            const Dados = {
-                "empresa": Empresa,
-                "filtro": Filtro
-            };
+    const Dados = {
+        "empresa": Empresa,
+        "filtro": Filtro
+    };
 
-            try {
-                const response = await fetch(`${Api}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': Token
-                    },
-                    body: JSON.stringify(Dados),
+    try {
+        const response = await fetch(`${Api}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Token
+            },
+            body: JSON.stringify(Dados),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const DetalhamentoApi = data[0]['3 -Detalhamento'];
+            const colunasDesejadas = ['numeroOP', 'codProduto', 'descricao', 'Qtd Pcs', 'codFase', 'nomeFase', 'dias na Fase', 'responsavel', 'prioridade', 'justificativa', 'COLECAO', 'categoria', 'status']; // substitua com os nomes das colunas desejadas
+
+            // Filtrar dados para incluir apenas as colunas desejadas
+            const dadosFiltrados = DetalhamentoApi.map(item => {
+                let novoItem = {};
+                colunasDesejadas.forEach(coluna => {
+                    novoItem[coluna] = item[coluna];
                 });
+                return novoItem;
+            });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    const DetalhamentoApi = data[0]['3 -Detalhamento'];
-                    const nomeArquivo = 'Dados Ops.xlsx';
-                    const wb = XLSX.utils.book_new();
-                    const ws = XLSX.utils.json_to_sheet(DetalhamentoApi);
+            const nomeArquivo = 'Dados Ops.xlsx';
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(dadosFiltrados);
 
-                    // Adicionar a planilha ao workbook
-                    XLSX.utils.book_append_sheet(wb, ws, "Dados Op's");
+            // Adicionar a planilha ao workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Dados Op's");
 
-                    // Salvar o arquivo
-                    XLSX.writeFile(wb, nomeArquivo);
+            // Salvar o arquivo
+            XLSX.writeFile(wb, nomeArquivo);
 
-                } else {
-                    throw new Error('Erro No Retorno');
-                }
-            } catch (error) {
-                console.error(error);
-            }
+        } else {
+            throw new Error('Erro No Retorno');
         }
-
+    } catch (error) {
+        console.error(error);
+    }
+}
 
         $('#BotaoExcel').click(() => {
             ExportarExcel(ApiConsulta, '1', $("#InputContem").val());
