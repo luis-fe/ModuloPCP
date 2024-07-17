@@ -88,6 +88,8 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,dataGeracaoRequisicao,on='numeroOP')
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,reqAbertas,on='numeroOP')
         OP_emAberto = pd.concat([OP_emAberto, OP_emAbertoAvimamento], ignore_index=True)
+        OP_emAberto['codFase'] = OP_emAberto.apply(lambda row: '407' if row['codFase'] == '145'else row['codFase'], axis=1  )
+
 
         # Etapa 2 Tratando a informacao da Descricao do Lote para o formato COLECAO
         #################################################################################################
