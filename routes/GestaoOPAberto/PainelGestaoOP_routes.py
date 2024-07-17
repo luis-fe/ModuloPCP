@@ -67,7 +67,7 @@ def CargadasOPs():
         print(usuarios)
 
     # Define a ordem desejada das colunas
-    desired_order = ["numeroOP", "codProduto"]
+    desired_order = [ "codProduto"]
 
     # Adiciona as colunas restantes
     desired_order += [col for col in usuarios.columns if col not in desired_order]
