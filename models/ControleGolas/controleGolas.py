@@ -65,8 +65,8 @@ def ControleGolasPunhos():
     conferencia = pd.merge(conferencia,estoque,on='codItem', how='left')
     conferencia.fillna('-',inplace=True)
 
-    conferencia['Chave'] = conferencia['dataEntrada'].str.slice(7, 9).astype(int)
-    conferencia['Chave']  = (conferencia['Chave'] + 7).astype(str)
+    conferencia['Chave1'] = conferencia['dataEntrada'].str.slice(7, 9).astype(int)
+    conferencia['Chave']  = (conferencia['Chave1'] + 7).astype(str)
     conferencia['Chave'] = conferencia['dataEntrada'].str.slice(0, 7) +'_'+conferencia['Chave']  +'-'+conferencia['codItem']
 
     return conferencia
