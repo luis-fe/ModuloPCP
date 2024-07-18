@@ -6,7 +6,7 @@ def ControleGolasPunhos():
 
     # Passo 1: retirando os itens movimentados para a natureza de conferencia
     sql = """
-    SELECT TOP 1000 m.dataMovto as dataEntrada  , m.codItem, m.numDocto, m.qtdMovto, m.codUnidEstoque, m.nomeItem  FROM est.Movimento m
+    SELECT TOP 1000 m.dataMovto as dataEntrada  , m.codItem, m.numDocto, m.qtdMovto as Qtd_Entrada, m.codUnidEstoque, m.nomeItem  FROM est.Movimento m
     WHERE m.codEmpresa = 1 and m.codTransacao = 200 and (nomeItem like '%GOLA%' OR nomeItem like '%PUNHO%' ) 
     ORDER BY dataLcto DESC 
     """
@@ -44,5 +44,5 @@ def ControleGolasPunhos():
     #Passo3 - fazendo o merge item + nota
 
     conferencia = pd.merge(EntradaConferencia, SaidaConferencia, on=['numDocto','codItem'], how='left')
-
+    conferencia.fillna('-',inplace=True)
     return conferencia
