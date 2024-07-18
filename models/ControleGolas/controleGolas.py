@@ -43,4 +43,6 @@ def ControleGolasPunhos():
 
     #Passo3 - fazendo o merge item + nota
 
-    return SaidaConferencia
+    conferencia = pd.merge(EntradaConferencia, SaidaConferencia, on=['numDocto','codItem'], how='left')
+
+    return conferencia
