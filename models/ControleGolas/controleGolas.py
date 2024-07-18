@@ -63,5 +63,7 @@ def ControleGolasPunhos():
             del rows, colunas
 
     conferencia = pd.merge(conferencia,estoque,on='codItem', how='left')
+    conferencia.fillna('-',inplace=True)
+
 
     return conferencia
