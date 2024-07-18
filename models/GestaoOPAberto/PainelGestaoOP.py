@@ -452,8 +452,8 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         consulta['nome'] = consulta.apply(
             lambda row: ApelidoFaccionista(row['nome'], 'PRODUZIR', '- PRODUZIR'), axis=1)
 
-        consulta['nome'] = consulta['nome'].replace('(-)', '-')
-        consulta['nomeFase'] = consulta['nomeFase'] + '' + consulta['nome']
+        consulta['nome'] = consulta['nome'].replace('-', '')
+        consulta['nomeFase'] = consulta['nomeFase'] + '-' + consulta['nome']
 
         consulta = pd.merge(consulta, leadTime2, on=['codFase', 'categoria'], how='left')
 
@@ -972,7 +972,7 @@ def ApelidoFaccionista(entrada, referencia, saida):
     if referencia in entrada:
         return saida
     else:
-        return entrada[0:9]
+        return entrada[0:12]
 
 def ReconhecerFiltro(filtro):
     palavras_chave = ['CAMI', 'CALCA', 'SHORT', 'BONE', 'POLO','JAQUET','ATRASA']
