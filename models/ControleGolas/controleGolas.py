@@ -67,5 +67,6 @@ def ControleGolasPunhos():
 
     conferencia['Chave'] = conferencia['dataEntrada'].str.slice(5, 7).astype(int)
     conferencia['Chave']  = (conferencia['Chave'] + 1).astype(str)
+    conferencia['Chave'] = conferencia['dataEntrada'].str.slice(5, 7) +'_'+conferencia['Chave']
 
     return conferencia
