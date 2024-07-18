@@ -66,6 +66,6 @@ def ControleGolasPunhos():
     conferencia.fillna('-',inplace=True)
 
     conferencia['Chave'] = conferencia['dataEntrada'].str.slice(5, 7).astype(int)
-
+    conferencia['Chave']  = (conferencia['Chave'] + 1).astype(str)
 
     return conferencia
