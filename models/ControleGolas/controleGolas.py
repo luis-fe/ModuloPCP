@@ -45,4 +45,23 @@ def ControleGolasPunhos():
 
     conferencia = pd.merge(EntradaConferencia, SaidaConferencia, on=['numDocto','codItem'], how='left')
     conferencia.fillna('-',inplace=True)
+
+    #Passo4 - lendo o estoque da conferencia
+
+    sql3 = """
+    SELECT d.codItem , d.estoqueAtual  FROM est.DadosEstoque d
+    WHERE d.codNatureza = 16 and d.codEmpresa = 1 and d.estoqueAtual > 0
+    """
+
+    with ConexaoBanco.ConexaoInternoMPL() as conn:
+        with conn.cursor() as cursor_csw:
+            # Executa a primeira consulta e armazena os resultados
+            cursor_csw.execute(sql3)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            estoque = pd.DataFrame(rows, columns=colunas)
+            del rows, colunas
+
+    conferencia = pd.merge(conferencia,estoque,on='codItem', how='left')
+
     return conferencia
