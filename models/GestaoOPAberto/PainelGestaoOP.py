@@ -441,16 +441,16 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
             lambda row: Categoria('SHORT', row['descricao'], 'SHORT', row['categoria']), axis=1)
 
         consulta['nome'] = consulta.apply(
-            lambda row: ApelidoFaccionista(row['nome'], 'CLAUDIANA', '- CLAUDIANA'), axis=1)
+            lambda row: ApelidoFaccionista(row['nome'], 'CLAUDIANA', ' CLAUDIANA'), axis=1)
 
         consulta['nome'] = consulta.apply(
-            lambda row: ApelidoFaccionista(row['nome'], 'LPS', '- LPS'), axis=1)
+            lambda row: ApelidoFaccionista(row['nome'], 'LPS', ' LPS'), axis=1)
         consulta['nome'] = consulta.apply(
-            lambda row: ApelidoFaccionista(row['nome'], 'BELLA D', '- DEVANI'), axis=1)
+            lambda row: ApelidoFaccionista(row['nome'], 'BELLA D', ' DEVANI'), axis=1)
         consulta['nome'] = consulta.apply(
-            lambda row: ApelidoFaccionista(row['nome'], 'PATRICIO', '- PATRICIO'), axis=1)
+            lambda row: ApelidoFaccionista(row['nome'], 'PATRICIO', ' PATRICIO'), axis=1)
         consulta['nome'] = consulta.apply(
-            lambda row: ApelidoFaccionista(row['nome'], 'PRODUZIR', '- PRODUZIR'), axis=1)
+            lambda row: ApelidoFaccionista(row['nome'], 'PRODUZIR', ' PRODUZIR'), axis=1)
 
         consulta['nome'] = consulta['nome'].replace('-', '')
         consulta['nomeFase'] = consulta['nomeFase'] + '-' + consulta['nome']
