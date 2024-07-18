@@ -23,7 +23,7 @@ def ControleGolasPunhos():
 
     #Passo2 : Itens movimentados como SAIDA na natureza de conferencia
     sql2 = """
-    SELECT TOP 1000 m.dataMovto as dataSaida , m.codItem, m.numDocto, - m.qtdMovto AS Qtd_saida,  FROM est.Movimento m
+    SELECT TOP 1000 m.dataMovto as dataSaida , m.codItem, m.numDocto, - m.qtdMovto AS Qtd_saida  FROM est.Movimento m
     WHERE m.codEmpresa = 1 and m.codTransacao IN ( 1651, 1659) and (nomeItem like '%GOLA%' OR nomeItem like '%PUNHO%' )
     ORDER BY dataLcto DESC 
     """
