@@ -452,7 +452,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         consulta['nome'] = consulta.apply(
             lambda row: ApelidoFaccionista(row['nome'], 'PRODUZIR', 'PRODUZIR'), axis=1)
         consulta['nome'] = consulta.apply(
-            lambda row: ApelidoFaccionista(row['nome'], 'ANDREA VARGAS', 'ANDREA VARGAS'), axis=1)
+            lambda row: ApelidoFaccionista(row['nome'], '35138347', 'ANDREA VARGAS'), axis=1)
 
         consulta['nome'] = consulta['nome'].replace('-', '')
         consulta['nomeFase'] = consulta['nomeFase'] + '- ' + consulta['nome']
