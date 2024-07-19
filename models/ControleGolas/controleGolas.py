@@ -70,3 +70,29 @@ def ControleGolasPunhos():
     conferencia['Chave'] = conferencia['dataEntrada'].str.slice(0, 7) +'_'+conferencia['Chave']  +'-'+conferencia['codItem']
 
     return conferencia
+
+
+
+def FuncaoObterEtiquetasGolas():
+    sql = """
+    -- SQL BUSCAR ETIQUETAS DE ROLO DAS GOLAS E PUNHOS
+SELECT top 40000 s.* , i.nome, DATEDIFF(day, '1840-12-31', dataMovimento) AS codbarras FROM Ppcpt_Tin_Ttp.EtiquetasProdCorSimula s
+inner join cgi.Item i on i.codigo = s.codProdutoRed 
+WHERE s.codempresa = 1
+and (i.nome like '%GOLA%' OR i.nome like '%PUNHO%') AND (s.codProduto not like '2501%' and s.codProduto not like '2502%') --and codprodutored = '4366'
+order by s.dataMovimento desc 
+    """
+
+    with ConexaoBanco.ConexaoInternoMPL() as conn:
+        with conn.cursor() as cursor_csw:
+            # Executa a primeira consulta e armazena os resultados
+            cursor_csw.execute(sql)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            etiquetas = pd.DataFrame(rows, columns=colunas)
+            del rows, colunas
+
+    etiquetas['codbarras'] = etiquetas['codbarras'].astype(str)
+    etiquetas['NumeroDeCaracteres'] = etiquetas['codbarras'].str.len()
+
+    return etiquetas
