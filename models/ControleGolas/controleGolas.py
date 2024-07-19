@@ -97,5 +97,7 @@ order by s.dataMovimento desc
 
     etiquetas['NumeroDeCaracteres'] = etiquetas['seqPesagem'].str.len()
 
-    etiquetas['Zeros'] = etiquetas['NumeroDeCaracteres'].apply(lambda x: '0' * x)
+    etiquetas['codbarras'] = etiquetas.apply(lambda r: '000'+r['codbarras']
+            if r['seqPesagem'] == 2 else r['seqPesagem'], axis=1)
+
     return etiquetas
