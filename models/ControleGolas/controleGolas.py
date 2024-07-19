@@ -95,6 +95,5 @@ order by s.dataMovimento desc
     etiquetas['codbarras'] = etiquetas['codbarras'].astype(str)
     etiquetas['NumeroDeCaracteres'] = etiquetas['seqPesagem'].str.len()
 
-    etiquetas['NumeroDeCaracteres'] = etiquetas['NumeroDeCaracteres'].apply(lambda x: '0' * x)
-
+    etiquetas['Zeros'] = etiquetas['NumeroDeCaracteres'].apply(lambda x: '0' * x)
     return etiquetas
