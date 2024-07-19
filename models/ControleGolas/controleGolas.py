@@ -93,6 +93,8 @@ order by s.dataMovimento desc
             del rows, colunas
 
     etiquetas['codbarras'] = etiquetas['codbarras'].astype(str)
+    etiquetas['seqPesagem'] = etiquetas['seqPesagem'].astype(str)
+
     etiquetas['NumeroDeCaracteres'] = etiquetas['seqPesagem'].str.len()
 
     etiquetas['Zeros'] = etiquetas['NumeroDeCaracteres'].apply(lambda x: '0' * x)
