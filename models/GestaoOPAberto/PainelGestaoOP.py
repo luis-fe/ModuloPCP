@@ -38,7 +38,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         OP_emAbertoAvimamento = OP_emAberto.copy()  # Criar uma cópia do DataFrame original
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='145']
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='406']
-        OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='407']
+        #OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='407']
 
         with ConexaoBanco.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor_csw:
