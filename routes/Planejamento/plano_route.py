@@ -34,6 +34,7 @@ def put_novoPlano():
     iniFat = data.get('iniFat', '-')
     fimFat = data.get('fimFat', '-')
     usuarioGerador = data.get('usuarioGerador', '-')
+    print(data)
 
 
     dados = plano.InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador)
