@@ -8,7 +8,8 @@ def RecarregarItens():
 SELECT i.codigo , i.nome , i.unidadeMedida, i2.codItemPai, i2.codSortimento , i2.codSeqTamanho  FROM cgi.Item i
 JOIN Cgi.Item2 i2 on i2.coditem = i.codigo and i2.Empresa = 1
 WHERE i.unidadeMedida in ('PC','KIT') and (i2.coditem like '1%' or i2.coditem like '2%'or i2.coditem like '3%'or i2.coditem like '5%'or i2.coditem like '6%' )
-    """
+and "codItemPai" is not null
+  """
 
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
