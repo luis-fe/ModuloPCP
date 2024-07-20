@@ -7,6 +7,7 @@ from datetime import datetime
 import pandas as pd
 import datetime
 import pytz
+from models.Planejamento import loteCsw
 def obterdiaAtual():
     fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
     agora = datetime.now(fuso_horario)
@@ -94,3 +95,30 @@ def InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, 
         conn.close()
 
         return pd.DataFrame([{'Status':True,'Mensagem':'Novo Plano Criado com sucesso !'}])
+
+def VincularLotesAoPlano(empresa, codigoPlano, arrayCodLoteCsw):
+
+    # Validando se o Plano ja existe
+    validador = ConsultaPlano()
+    validador = validador[validador['codigo'] == codigoPlano].reset_index()
+
+    if  validador.empty:
+
+        return pd.DataFrame([{'Status':False,'Mensagem':f'O Plano {codigoPlano} NAO existe'}])
+    else:
+
+        insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote") values (%s, %s, %s  )"""
+        conn = ConexaoPostgreWms.conexaoInsercao()
+        cur = conn.cursor()
+
+        for lote in range(arrayCodLoteCsw):
+
+            cur.execute(insert,(empresa, codigoPlano, lote))
+            conn.commit()
+
+        cur.close()
+        conn.close()
+
+        loteCsw.ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw )
+
+        return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes adicionados ao Plano com sucesso !'}])
