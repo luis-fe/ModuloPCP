@@ -2,7 +2,7 @@
 MODULO FEITO PARA CROD DO PLANO - CONJUNTO DE REGRAS QUE FORMAM A POLITICA A SER PROJETADA E SIMULADA
 '''
 
-from connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime
 import pandas as pd
 
@@ -18,7 +18,31 @@ def ObeterPlanos():
         inplace=True)
     planos.fillna('-', inplace=True)
 
+
+    sqlLoteporPlano = """
+    select
+	    plano, as "01- Codigo Plano"
+	    lote,
+	    nomelote
+    from
+	    "PCP".pcp."LoteporPlano"
+    """
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sqlLoteporPlano)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            lotes = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+
+    planos = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
+    planos = planos.groupby(['01- Codigo Plano', '02- Descricao do Plano'])['lote','nomelote'].apply(lambda x: ','.join(x)).reset_index()
+
     return planos
+
 
 
 
