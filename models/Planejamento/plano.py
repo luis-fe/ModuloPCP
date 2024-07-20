@@ -112,7 +112,7 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
         cur = conn.cursor()
 
         for lote in arrayCodLoteCsw:
-
+            print(lote)
             cur.execute(insert,(empresa, codigoPlano, lote))
             conn.commit()
 
