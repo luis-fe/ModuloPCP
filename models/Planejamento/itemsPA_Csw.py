@@ -5,9 +5,9 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 
 def RecarregarItens():
     sqlCSWItens = """
-    SELECT i.codigo , i.nome , i.unidadeMedida, i2.codItemPai, i2.codSortimento , i2.codSeqTamanho  FROM cgi.Item i
-    JOIN Cgi.Item2 i2 on i2.coditem = i.codigo and i2.Empresa = 1
-    WHERE i.unidadeMedida in ('PC','KIT')
+SELECT i.codigo , i.nome , i.unidadeMedida, i2.codItemPai, i2.codSortimento , i2.codSeqTamanho  FROM cgi.Item i
+JOIN Cgi.Item2 i2 on i2.coditem = i.codigo and i2.Empresa = 1
+WHERE i.unidadeMedida in ('PC','KIT') and (i2.coditem like '1%' or i2.coditem like '2%'or i2.coditem like '3%'or i2.coditem like '5%'or i2.coditem like '6%' )
     """
 
     with ConexaoBanco.Conexao2() as conn:
