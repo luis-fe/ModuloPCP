@@ -27,16 +27,9 @@ def ObeterPlanos():
     from
 	    "PCP".pcp."LoteporPlano"
     """
+    lotes = pd.read_sql(sqlLoteporPlano,conn)
 
-    with ConexaoBanco.Conexao2() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(sqlLoteporPlano)
-            colunas = [desc[0] for desc in cursor.description]
-            rows = cursor.fetchall()
-            lotes = pd.DataFrame(rows, columns=colunas)
 
-    # Libera memória manualmente
-    del rows
 
     planos = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
     planos = planos.groupby(['01- Codigo Plano', '02- Descricao do Plano'])['lote','nomelote'].apply(lambda x: ','.join(x)).reset_index()
