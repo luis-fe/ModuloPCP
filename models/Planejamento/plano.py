@@ -21,7 +21,7 @@ def ObeterPlanos():
 
     sqlLoteporPlano = """
     select
-	    plano, as "01- Codigo Plano"
+	    plano as "01- Codigo Plano",
 	    lote,
 	    nomelote
     from
