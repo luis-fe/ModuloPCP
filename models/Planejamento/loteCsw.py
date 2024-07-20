@@ -29,7 +29,7 @@ def lote(empresa):
 
 def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     novo = ", ".join(arrayCodLoteCsw)
-
+    print(novo)
     sqlLotes = """
     select Empresa , t.codLote, codengenharia, t.codSeqTamanho , t.codSortimento , t.qtdePecasImplementadas as previsao FROM tcl.LoteSeqTamanho t
     WHERE t.Empresa = """+ empresa +"""and t.codLote in ("""+novo+""") 
