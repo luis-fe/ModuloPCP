@@ -48,7 +48,7 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     gc.collect()
 
     #Implantando no banco de dados do Pcp
-    ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'replace')
+    ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
 
 
     return lotes
