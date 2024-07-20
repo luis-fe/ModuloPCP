@@ -5,7 +5,6 @@ MODULO FEITO PARA CROD DO PLANO - CONJUNTO DE REGRAS QUE FORMAM A POLITICA A SER
 from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime
 import pandas as pd
-import datetime
 import pytz
 from models.Planejamento import loteCsw
 def obterdiaAtual():
