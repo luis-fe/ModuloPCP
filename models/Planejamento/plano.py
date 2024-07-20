@@ -96,8 +96,8 @@ def InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, 
 
         return pd.DataFrame([{'Status':True,'Mensagem':'Novo Plano Criado com sucesso !'}])
 
-def VincularLotesAoPlano(empresa, codigoPlano, arrayCodLoteCsw):
-
+def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
+    empresa = '1'
     # Validando se o Plano ja existe
     validador = ConsultaPlano()
     validador = validador[validador['codigo'] == codigoPlano].reset_index()
