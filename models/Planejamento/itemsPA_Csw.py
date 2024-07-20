@@ -32,8 +32,9 @@ and i2.codItemPai > 0 and i.codigo > """+str(maximo)
     del rows
     gc.collect()
 
-
-    #Implantando no banco de dados do Pcp
-    ConexaoPostgreWms.Funcao_InserirOFF(itens, itens['codigo'].size, 'itens_csw', 'append')
-
+    try:
+        #Implantando no banco de dados do Pcp
+        ConexaoPostgreWms.Funcao_InserirOFF(itens, itens['codigo'].size, 'itens_csw', 'append')
+    except:
+        print('segue o baile ')
     return itens
