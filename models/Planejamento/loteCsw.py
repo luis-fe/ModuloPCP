@@ -52,3 +52,8 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
 
 
     return lotes
+
+
+def DesvincularLotePlano(empresa, arrayCodLoteCsw):
+
+    deletarLote = """"""

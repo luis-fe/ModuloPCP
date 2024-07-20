@@ -108,12 +108,15 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
     else:
 
         insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote") values (%s, %s, %s  )"""
+        delete = """Delete from pcp.lote_itens where "codLote" = %s """
         conn = ConexaoPostgreWms.conexaoInsercao()
         cur = conn.cursor()
 
         for lote in arrayCodLoteCsw:
             print(lote)
             cur.execute(insert,(empresa, codigoPlano, lote))
+            conn.commit()
+            cur.execute(delete,(lote,))
             conn.commit()
 
         cur.close()
