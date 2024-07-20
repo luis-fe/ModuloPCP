@@ -111,7 +111,7 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
         conn = ConexaoPostgreWms.conexaoInsercao()
         cur = conn.cursor()
 
-        for lote in range(len(arrayCodLoteCsw)):
+        for lote in arrayCodLoteCsw:
 
             cur.execute(insert,(empresa, codigoPlano, lote))
             conn.commit()
