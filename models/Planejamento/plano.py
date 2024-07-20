@@ -5,6 +5,13 @@ MODULO FEITO PARA CROD DO PLANO - CONJUNTO DE REGRAS QUE FORMAM A POLITICA A SER
 from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime
 import pandas as pd
+import datetime
+import pytz
+def obterdiaAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+    agora = datetime.now(fuso_horario)
+    agora = agora.strftime('%d/%m/%Y')
+    return agora
 
 def ObeterPlanos():
     conn = ConexaoPostgreWms.conexaoEngine()
@@ -48,10 +55,42 @@ def ObeterPlanos():
             '06- Final Faturamento': row['06- Final Faturamento'],
             '07- Usuario Gerador': row['07- Usuario Gerador'],
             '08- Data Geracao': row['08- Data Geracao'],
-            'lotes': row['lote'],
-            'nomelote': row['nomelote']
+            '09- lotes': row['lote'],
+            '10- nomelote': row['nomelote']
         }
         result.append(entry)
 
     return result
 
+
+def ConsultaPlano():
+    conn = ConexaoPostgreWms.conexaoEngine()
+    planos = pd.read_sql('SELECT * FROM pcp."Plano" ORDER BY codigo ASC;', conn)
+
+    return planos
+
+
+def InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador):
+
+    # Validando se o Plano ja existe
+    validador = ConsultaPlano()
+    validador = validador[validador['codigo'] == codigoPlano].reset_index()
+
+    if not validador.empty:
+
+        return pd.DataFrame([{'Status':False,'Mensagem':'O Plano ja existe'}])
+
+    else:
+
+        insert = """INSERT INTO pcp."Plano" ("codigo","descricao do Plano","inicioVenda","FimVenda","inicioFat","usuarioGerador","dataGeracao") 
+        values (%s, %s, %s, %s, %s, %s, %s ) """
+
+        data = obterdiaAtual()
+        conn = ConexaoPostgreWms.conexaoInsercao()
+        cur = conn.cursor()
+        cur.execute(insert,(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador, data))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return pd.DataFrame([{'Status':True,'Mensagem':'Novo Plano Criado com sucesso !'}])

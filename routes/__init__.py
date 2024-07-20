@@ -15,6 +15,7 @@ from .GestaoOPAberto.JustificativaOP import JustificativaOP_routes
 from .MonitorPedidos.FiltrosEspeciaisMonitor import FiltrosEspeciaisMonitor_routes
 from .GestaoOPAberto.FilaFases import FilaDasFases_routes
 from .ControleGolas.controleGolas import controleGolas_routes
+from .Planejamento.loteCsw_route import loteCsw_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -28,3 +29,4 @@ routes_blueprint.register_blueprint(JustificativaOP_routes)
 routes_blueprint.register_blueprint(FiltrosEspeciaisMonitor_routes)
 routes_blueprint.register_blueprint(FilaDasFases_routes)
 routes_blueprint.register_blueprint(controleGolas_routes)
+routes_blueprint.register_blueprint(loteCsw_routes)

@@ -3,7 +3,8 @@ import pandas as pd
 import gc
 
 def lote(empresa):
-    sql = """SELECT * FROM TCL.lote l WHERE l.codempresa = %s""" % empresa
+    sql = """ select codLote , descricao as nomeLote FROM tcl.Lote  l
+            WHERE l.descricao like '%PREV%' and l.codEmpresa = 1"""
 
     lotes = pd.DataFrame()  # Inicializa um DataFrame vazio para armazenar os dados
 
