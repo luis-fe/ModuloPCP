@@ -13,7 +13,7 @@ def lote(empresa):
         sql = """ select codLote , descricao as nomeLote FROM tcl.Lote  l
                     WHERE l.descricao like '%PREV%' and l.codEmpresa = 4 order by codLote desc """
 
-    with ConexaoBanco.Conexao2() as conn: 
+    with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
             cursor.execute(sql)
             colunas = [desc[0] for desc in cursor.description]
@@ -28,8 +28,8 @@ def lote(empresa):
 
 
 def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
-    novo = ", ".join(arrayCodLoteCsw)
-    print(novo)
+    nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
+    novo = ", ".join(nomes_com_aspas)
     sqlLotes = """
     select Empresa , t.codLote, codengenharia, t.codSeqTamanho , t.codSortimento , t.qtdePecasImplementadas as previsao FROM tcl.LoteSeqTamanho t
     WHERE t.Empresa = """+ empresa +"""and t.codLote in ("""+novo+""") 
@@ -51,5 +51,3 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
 
 
     return lotes
-
-
