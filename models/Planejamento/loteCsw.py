@@ -3,10 +3,12 @@ import pandas as pd
 import gc
 
 def lote(empresa):
-    sql = """ select codLote , descricao as nomeLote FROM tcl.Lote  l
-            WHERE l.descricao like '%PREV%' and l.codEmpresa = 1"""
-
-    lotes = pd.DataFrame()  # Inicializa um DataFrame vazio para armazenar os dados
+    if empresa == '1':
+        sql = """ select codLote , descricao as nomeLote FROM tcl.Lote  l
+            WHERE l.descricao like '%PREV%' and l.codEmpresa = 1 order by codLote desc """
+    else:
+        sql = """ select codLote , descricao as nomeLote FROM tcl.Lote  l
+                    WHERE l.descricao like '%PREV%' and l.codEmpresa = 4 order by codLote desc """
 
     with ConexaoBanco.Conexao2() as conn: 
         with conn.cursor() as cursor:
