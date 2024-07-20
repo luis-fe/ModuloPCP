@@ -3,6 +3,7 @@ import pandas as pd
 import gc
 
 from connection import ConexaoPostgreWms
+from models.Planejamento import itemsPA_Csw
 
 
 def lote(empresa):
@@ -49,7 +50,7 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
 
     #Implantando no banco de dados do Pcp
     ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
-
+    itemsPA_Csw.RecarregarItens()
 
     return lotes
 
