@@ -82,8 +82,8 @@ def InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, 
 
     else:
 
-        insert = """INSERT INTO pcp."Plano" ("codigo","descricao do Plano","inicioVenda","FimVenda","inicioFat","usuarioGerador","dataGeracao") 
-        values (%s, %s, %s, %s, %s, %s, %s ) """
+        insert = """INSERT INTO pcp."Plano" ("codigo","descricao do Plano","inicioVenda","FimVenda","inicioFat", "finalFat", "usuarioGerador","dataGeracao") 
+        values (%s, %s, %s, %s, %s, %s, %s, %s ) """
 
         data = obterdiaAtual()
         print('data'+data)
