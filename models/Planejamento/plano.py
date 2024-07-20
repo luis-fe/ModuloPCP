@@ -88,7 +88,7 @@ def InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, 
         data = obterdiaAtual()
         conn = ConexaoPostgreWms.conexaoInsercao()
         cur = conn.cursor()
-        cur.execute(insert,(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador, data,))
+        cur.execute(insert,(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador, str(data),))
         conn.commit()
         cur.close()
         conn.close()
