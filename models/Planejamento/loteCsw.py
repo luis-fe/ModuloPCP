@@ -30,6 +30,7 @@ def lote(empresa):
 def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
+    print(novo)
     sqlLotes = """
     select Empresa , t.codLote, codengenharia, t.codSeqTamanho , t.codSortimento , t.qtdePecasImplementadas as previsao FROM tcl.LoteSeqTamanho t
     WHERE t.Empresa = """+ empresa +"""and t.codLote in ("""+novo+""") 
@@ -47,7 +48,7 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     gc.collect()
 
     #Implantando no banco de dados do Pcp
-    ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codengenharia'].size, 'lote_itens', 'replace')
+    ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'replace')
 
 
     return lotes
