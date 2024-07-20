@@ -29,11 +29,11 @@ def ObeterPlanos():
     """
     lotes = pd.read_sql(sqlLoteporPlano,conn)
 
-
+    lotes['01- Codigo Plano'] = lotes['01- Codigo Plano'].astype(str)
 
     planos = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
     planos = planos.groupby(['01- Codigo Plano', '02- Descricao do Plano'])['lote','nomelote'].apply(lambda x: ','.join(x)).reset_index()
-
+    print(planos)
     return planos
 
 
