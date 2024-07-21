@@ -153,4 +153,47 @@ def ConsultarLotesVinculados(plano):
 
     return sql
 
+def AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat):
+    # Validando se o Plano ja existe
+    validador = ConsultaPlano()
+    validador = validador[validador['codigo'] == codigoPlano].reset_index()
+
+    if validador.empty:
+
+        return pd.DataFrame([{'Status':False,'Mensagem':'O Plano Informado nao existe'}])
+    else:
+        descricaoPlanoAtual = validador['descricao do Plano'][0]
+        if descricaoPlanoAtual == descricaoPlano or descricaoPlano == '-':
+            descricaoPlano = descricaoPlanoAtual
+
+        iniVendasAtual = validador['inicioVenda'][0]
+        if iniVendasAtual == iniVendas or iniVendas == '-':
+            iniVendas = iniVendasAtual
+
+        FimVendaAtual = validador['FimVenda'][0]
+        if FimVendaAtual == fimVendas or fimVendas == '-':
+            fimVendas = FimVendaAtual
+
+        inicoFatAtual = validador['inicoFat'][0]
+        if inicoFatAtual == iniFat or iniFat == '-':
+            iniFat = inicoFatAtual
+
+        finalFatAtual = validador['finalFat'][0]
+        if finalFatAtual == fimFat or fimFat == '-':
+            fimFat = finalFatAtual
+
+
+        update = """update pcp."Plano 
+        set "descricao do Plano" = %s, "inicioVenda" = %s, "FimVenda" = %s, "inicoFat" = %s, "finalFat" = %s
+        where "codigo" = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoInsercao()
+        cur = conn.cursor()
+        cur.execute(update, (descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, codigoPlano,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return pd.DataFrame([{'Status':True,'Mensagem':'O Plano foi alterado com sucesso !'}])
+
 

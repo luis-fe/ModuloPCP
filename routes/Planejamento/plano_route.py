@@ -21,9 +21,9 @@ def get_Plano():
     dados = plano.ObeterPlanos()
     return jsonify(dados)
 
-@planoPCP_routes.route('/pcp/api/NovoPlano', methods=['PUT'])
+@planoPCP_routes.route('/pcp/api/NovoPlano', methods=['POST'])
 @token_required
-def put_novoPlano():
+def pOST_novoPlano():
 
     data = request.get_json()
 
@@ -38,6 +38,32 @@ def put_novoPlano():
 
 
     dados = plano.InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador)
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)
+
+@planoPCP_routes.route('/pcp/api/AlterPlano', methods=['PUT'])
+@token_required
+def PUT_AlterPlano():
+
+    data = request.get_json()
+
+    codigoPlano = data.get('codigoPlano')
+    descricaoPlano = data.get('descricaoPlano', '-')
+    iniVendas = data.get('iniVendas', '-')
+    fimVendas = data.get('fimVendas', '-')
+    iniFat = data.get('iniFat', '-')
+    fimFat = data.get('fimFat', '-')
+    print(data)
+
+
+    dados = plano.AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
