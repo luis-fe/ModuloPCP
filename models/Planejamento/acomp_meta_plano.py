@@ -14,13 +14,20 @@ def MetasFase(plano, arrayCodLoteCsw):
     select * from "PCP".pcp."Eng_Roteiro" er 
     """
 
+    sqlApresentacao = """
+    select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
+    """
+
     conn = ConexaoPostgreWms.conexaoEngine()
     sqlMetas = pd.read_sql(sqlMetas,conn)
     sqlRoteiro = pd.read_sql(sqlRoteiro,conn)
+    sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
 
     Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlRoteiro,on='codEngenharia',how='left')
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum"}).reset_index()
+    Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
+    Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
 
     return Meta
 
