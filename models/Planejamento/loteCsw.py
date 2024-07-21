@@ -81,7 +81,7 @@ def DesvincularLotePlano(empresa, lote):
     conn.close()
 
 def ConsultarLoteEspecificoCsw(empresa, codLote):
-    sql = """Select codLote, descricao as nomeLote from tcl.lote where codEmpresa= """+str(empresa)+"""" and codLote ="""+ "'"+codLote+"'"
+    sql = """Select codLote, descricao as nomeLote from tcl.lote where codEmpresa= """+str(empresa)+""" and codLote ="""+ "'"+codLote+"'"
 
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
