@@ -18,3 +18,19 @@ def ObtendoTipoNotaCsw():
     gc.collect()
 
     return lotes
+
+def ConsultarTipoNotaEspecificoCsw(codTipoNota):
+    sql = """SELECT f.codigo , f.descricao  FROM fat.TipoDeNotaPadrao f where codigo = """+str(codTipoNota)
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            nota = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
+
+    return nota['descricao'][0]

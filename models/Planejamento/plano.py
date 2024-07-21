@@ -6,7 +6,7 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime
 import pandas as pd
 import pytz
-from models.Planejamento import loteCsw
+from models.Planejamento import loteCsw, TipoNotaCSW
 def obterdiaAtual():
     fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
     agora = datetime.now(fuso_horario)
@@ -116,7 +116,7 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
     else:
 
         # Deletando caso ja exista vinculo do lote no planto
-        deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s """
+        deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s AND plano = %s """
         insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
         delete = """Delete from pcp.lote_itens where "codLote" = %s """
         conn = ConexaoPostgreWms.conexaoInsercao()
@@ -124,7 +124,7 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
 
         for lote in arrayCodLoteCsw:
             nomelote = loteCsw.ConsultarLoteEspecificoCsw(empresa,lote)
-            cur.execute(deleteVinculo,(lote,))
+            cur.execute(deleteVinculo,(lote,codigoPlano,))
             conn.commit()
             cur.execute(insert,(empresa, codigoPlano, lote, nomelote,))
             conn.commit()
@@ -210,4 +210,32 @@ def AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat
         conn.close()
         return pd.DataFrame([{'Status':True,'Mensagem':'O Plano foi alterado com sucesso !'}])
 
+def VincularNotasAoPlano(codigoPlano, arrayTipoNotas):
+    empresa = '1'
+    # Validando se o Plano ja existe
+    validador = ConsultaPlano()
+    validador = validador[validador['codigo'] == codigoPlano].reset_index()
 
+    if  validador.empty:
+
+        return pd.DataFrame([{'Status':False,'Mensagem':f'O Plano {codigoPlano} NAO existe'}])
+    else:
+        delete = """DELETE FROM "PCP".pcp."tipoNotaporPlano" WHERE plano = %s and "tipo nota" = %s """
+
+        insert = """INSERT INTO "PCP".pcp."tipoNotaporPlano" ("tipo nota" , plano, nome ) values 
+        ( %s, %s, %s )"""
+
+        conn = ConexaoPostgreWms.conexaoInsercao()
+        cur = conn.cursor()
+
+        for codNota in arrayTipoNotas:
+            nomeNota = TipoNotaCSW.ConsultarTipoNotaEspecificoCsw(codNota)
+            cur.execute(delete, (codigoPlano, codNota,))
+            conn.commit()
+            cur.execute(insert,(codNota, codigoPlano, nomeNota,))
+            conn.commit()
+
+        cur.close()
+        conn.close()
+
+        return pd.DataFrame([{'Status': True, 'Mensagem': 'TipoNotas adicionados ao Plano com sucesso !'}])
