@@ -82,7 +82,7 @@ def InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, 
 
     else:
 
-        insert = """INSERT INTO pcp."Plano" ("codigo","descricao do Plano","inicioVenda","FimVenda","inicoFat", "finalFat", "usuarioGerador","dataGeracao") 
+        insert = """INSERT INTO pcp."Plano" ("codigo","descricaoPlano","inicioVenda","FimVenda","inicoFat", "finalFat", "usuarioGerador","dataGeracao") 
         values (%s, %s, %s, %s, %s, %s, %s, %s ) """
 
         data = obterdiaAtual()
@@ -162,7 +162,7 @@ def AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat
 
         return pd.DataFrame([{'Status':False,'Mensagem':'O Plano Informado nao existe'}])
     else:
-        descricaoPlanoAtual = validador['descricao do Plano'][0]
+        descricaoPlanoAtual = validador['descricaoPlano'][0]
         if descricaoPlanoAtual == descricaoPlano or descricaoPlano == '-':
             descricaoPlano = descricaoPlanoAtual
 
@@ -184,7 +184,7 @@ def AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat
 
 
         update = """update "PCP".pcp."Plano 
-        set "descricao do Plano" = %s , "inicioVenda" = %s, "FimVenda" = %s, "inicoFat" = %s, "finalFat" = %s
+        set "descricaoPlano" = %s , "inicioVenda" = %s, "FimVenda" = %s, "inicoFat" = %s, "finalFat" = %s
         where "codigo" = %s
         """
 
