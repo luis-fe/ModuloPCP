@@ -146,10 +146,10 @@ def DesvincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
 
         return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes Desvinculados do Plano com sucesso !'}])
 
-def ConsultarLotesVinculados():
-    sql = """Select plano, lote, nomelote  from pcp."LoteporPlano" WHERE lote = %s """
+def ConsultarLotesVinculados(plano):
+    sql = """Select plano, lote, nomelote  from pcp."LoteporPlano" WHERE plano = %s """
     conn = ConexaoPostgreWms.conexaoEngine()
-    sql = pd.read_sql(sql,conn)
+    sql = pd.read_sql(sql,conn,params=(plano,))
 
     return sql
 
