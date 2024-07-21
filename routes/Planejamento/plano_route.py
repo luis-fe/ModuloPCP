@@ -134,3 +134,18 @@ def GET_ConsultaLotesVinculados():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
     return jsonify(OP_data)
+
+@planoPCP_routes.route('/pcp/api/ConsultaTipoNotasVinculados', methods=['GET'])
+@token_required
+def GET_ConsultaTipoNotasVinculados():
+    planoParametro = request.args.get('plano', '-')
+    dados = plano.ConsultarTipoNotasVinculados(str(planoParametro))
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)

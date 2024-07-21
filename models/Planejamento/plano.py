@@ -161,6 +161,13 @@ def ConsultarLotesVinculados(plano):
 
     return sql
 
+def ConsultarTipoNotasVinculados(plano):
+    sql = """select "tipo nota","tipo nota"||'-'||nome as "Descricao" , plano  from pcp."tipoNotaporPlano" tnp  WHERE plano = %s """
+    conn = ConexaoPostgreWms.conexaoEngine()
+    sql = pd.read_sql(sql,conn,params=(plano,))
+
+    return sql
+
 def AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat):
     # Validando se o Plano ja existe
     validador = ConsultaPlano()
