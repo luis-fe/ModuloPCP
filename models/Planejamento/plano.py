@@ -229,7 +229,7 @@ def VincularNotasAoPlano(codigoPlano, arrayTipoNotas):
         cur = conn.cursor()
 
         for codNota in arrayTipoNotas:
-            nomeNota = TipoNotaCSW.ConsultarTipoNotaEspecificoCsw(codNota)
+            nomeNota = TipoNotaCSW.ConsultarTipoNotaEspecificoCsw(int(codNota))
             cur.execute(delete, (codigoPlano, str(codNota),))
             conn.commit()
             cur.execute(insert,(str(codNota), codigoPlano, nomeNota,))
