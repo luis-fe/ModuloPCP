@@ -41,15 +41,22 @@ def ObeterPlanos():
     lotes['01- Codigo Plano'] = lotes['01- Codigo Plano'].astype(str)
 
     merged = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
-    merged = pd.merge(merged, TipoNotas, on='01- Codigo Plano', how='left')
 
     # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
     grouped = merged.groupby(['01- Codigo Plano', '02- Descricao do Plano', '03- Inicio Venda', '04- Final Venda',
                               '05- Inicio Faturamento', '06- Final Faturamento', '07- Usuario Gerador', '08- Data Geracao']).agg({
         'lote': lambda x: list(x.dropna().astype(str)),
-        'nomelote': lambda x: list(x.dropna().astype(str)),
-        'tipoNota': lambda x: list(x.dropna().astype(str))
+        'nomelote': lambda x: list(x.dropna().astype(str))
     }).reset_index()
+
+    grouped = pd.merge(merged, grouped, on='01- Codigo Plano', how='left')
+
+    # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
+    grouped = grouped.groupby(['01- Codigo Plano', '02- Descricao do Plano', '03- Inicio Venda', '04- Final Venda',
+                              '05- Inicio Faturamento', '06- Final Faturamento', '07- Usuario Gerador', '08- Data Geracao', 'lote', 'nomelote']).agg({
+    'tipoNota': lambda x: list(x.dropna().astype(str))
+    }).reset_index()
+
 
     result = []
     for index, row in grouped.iterrows():
