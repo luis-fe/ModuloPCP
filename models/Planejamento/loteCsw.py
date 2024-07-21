@@ -126,7 +126,7 @@ p.codEngenharia in (select l.codEngenharia from tcl.LoteEngenharia l WHERE l.emp
     EngRoteiro = pd.merge(EngRoteiro,sqlPCP,on='codEngenharia',how='left')
     EngRoteiro.fillna('-',inplace=True)
     EngRoteiro = EngRoteiro[EngRoteiro['situacao']=='-'].reset_index()
-    EngRoteiro = EngRoteiro.drop(columns=['situacao'])
+    EngRoteiro = EngRoteiro.drop(columns=['situacao','index'])
     print(EngRoteiro)
     if EngRoteiro['codEngenharia'].size > 0:
         #Implantando no banco de dados do Pcp
