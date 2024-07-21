@@ -98,7 +98,7 @@ def Delete_DesvincularLotesPlano():
 @token_required
 def GET_ConsultaLotesVinculados():
     plano = request.args.get('plano', '-')
-    dados = plano.ConsultarLotesVinculados(plano)
+    dados = plano.ConsultarLotesVinculados(str(plano))
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
