@@ -17,6 +17,7 @@ from .GestaoOPAberto.FilaFases import FilaDasFases_routes
 from .ControleGolas.controleGolas import controleGolas_routes
 from .Planejamento.loteCsw_route import loteCsw_routes
 from .Planejamento.acomp_meta_plano import MetasFases_routes
+from .Planejamento.TipoNotaCSW import TipoNotaCsw_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -32,3 +33,4 @@ routes_blueprint.register_blueprint(FilaDasFases_routes)
 routes_blueprint.register_blueprint(controleGolas_routes)
 routes_blueprint.register_blueprint(loteCsw_routes)
 routes_blueprint.register_blueprint(MetasFases_routes)
+routes_blueprint.register_blueprint(TipoNotaCsw_routes)
