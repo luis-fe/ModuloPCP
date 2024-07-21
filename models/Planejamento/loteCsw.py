@@ -55,6 +55,29 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     return lotes
 
 
-def DesvincularLotePlano(empresa, arrayCodLoteCsw):
+def DesvincularLotePlano(empresa, lote):
+    # Passo 1: Excluir o lote do plano vinculado
+    deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s """
+    conn = ConexaoPostgreWms.conexaoInsercao()
+    cur = conn.cursor()
+    cur.execute(deletarLote, (lote,))
+    conn.commit()
 
-    deletarLote = """"""
+
+    # Passo 2: Verifica se o lote existe em outros planos
+    conn2 = ConexaoPostgreWms.conexaoEngine()
+    sql = """Select lote from pcp."LoteporPlano" WHERE lote = %s """
+    verifca = pd.read_sql(sql,conn2, params=(lote,))
+
+    if verifca.empty:
+
+        deletarLoteIntens = """Delete from pcp.lote_itens where "codLote" = %s  """
+        cur.execute(deletarLoteIntens, (lote,))
+        conn.commit()
+
+    else:
+        print('sem lote para exlcuir dos lotes engenharias')
+    cur.close()
+    conn.close()
+
+

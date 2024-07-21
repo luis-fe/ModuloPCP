@@ -125,3 +125,23 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
         loteCsw.ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw )
 
         return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes adicionados ao Plano com sucesso !'}])
+
+def DesvincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
+
+    empresa = '1'
+    # Validando se o Plano ja existe
+    validador = ConsultaPlano()
+    validador = validador[validador['codigo'] == codigoPlano].reset_index()
+
+    if  validador.empty:
+
+        return pd.DataFrame([{'Status':False,'Mensagem':f'O Plano {codigoPlano} NAO existe'}])
+    else:
+        for lote in arrayCodLoteCsw:
+            loteCsw.DesvincularLotePlano(empresa,lote)
+
+        return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes Desvinculados do Plano com sucesso !'}])
+
+
+
+
