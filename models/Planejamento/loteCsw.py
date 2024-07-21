@@ -80,4 +80,19 @@ def DesvincularLotePlano(empresa, lote):
     cur.close()
     conn.close()
 
+def ConsultarLoteEspecificoCsw(empresa, codLote):
+    sql = """Select codLote, descricao as nomeLote from tcl.lote where codEmpresa= """+str(empresa)+"""" and codLote ="""+ "'"+codLote+"'"
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            lotes = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
+
+    return lotes['nomeLote'][0]
 
