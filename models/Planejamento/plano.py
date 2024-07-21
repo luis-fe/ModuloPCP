@@ -31,17 +31,24 @@ def ObeterPlanos():
     from
         "PCP".pcp."LoteporPlano"
     """
+
+    sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as tipoNota , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
+
     lotes = pd.read_sql(sqlLoteporPlano, conn)
+    TipoNotas = pd.read_sql(sqlTipoNotasPlano, conn)
+
 
     lotes['01- Codigo Plano'] = lotes['01- Codigo Plano'].astype(str)
 
     merged = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
+    merged = pd.merge(merged, TipoNotas, on='01- Codigo Plano', how='left')
 
     # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
     grouped = merged.groupby(['01- Codigo Plano', '02- Descricao do Plano', '03- Inicio Venda', '04- Final Venda',
                               '05- Inicio Faturamento', '06- Final Faturamento', '07- Usuario Gerador', '08- Data Geracao']).agg({
         'lote': lambda x: list(x.dropna().astype(str)),
-        'nomelote': lambda x: list(x.dropna().astype(str))
+        'nomelote': lambda x: list(x.dropna().astype(str)),
+        'tipoNota': lambda x: list(x.dropna().astype(str))
     }).reset_index()
 
     result = []
@@ -56,7 +63,8 @@ def ObeterPlanos():
             '07- Usuario Gerador': row['07- Usuario Gerador'],
             '08- Data Geracao': row['08- Data Geracao'],
             '09- lotes': row['lote'],
-            '10- nomelote': row['nomelote']
+            '10- nomelote': row['nomelote'],
+            '11-TipoNotas':row['tipoNota']
         }
         result.append(entry)
 
