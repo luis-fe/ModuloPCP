@@ -10,9 +10,17 @@ def MetasFase(plano, arrayCodLoteCsw):
     "Empresa" , "codEngenharia" , "codSeqTamanho" , "codSortimento" , previsao  
     from "PCP".pcp.lote_itens li where  "codLote" in ("""+novo+""")"""
 
+    sqlRoteiro = """
+    select * from "PCP".pcp."Eng_Roteiro" er 
+    """
+
     conn = ConexaoPostgreWms.conexaoEngine()
     sqlMetas = pd.read_sql(sqlMetas,conn)
+    sqlRoteiro = pd.read_sql(sqlRoteiro,conn)
+
     Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
+    Meta = pd.merge(Meta,sqlRoteiro,on='codEngenharia',how='left')
+    Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum"}).reset_index()
 
     return Meta
 
