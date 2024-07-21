@@ -108,7 +108,7 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
     else:
 
         # Deletando caso ja exista vinculo do lote no planto
-        deleteVinculo = """Delete from pcp.LoteporPlano where "lote" = %s """
+        deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s """
         insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
         delete = """Delete from pcp.lote_itens where "codLote" = %s """
         conn = ConexaoPostgreWms.conexaoInsercao()
