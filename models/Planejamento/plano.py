@@ -183,8 +183,8 @@ def AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat
             fimFat = finalFatAtual
 
 
-        update = """update pcp."Plano 
-        set "descricao do Plano" = %s, "inicioVenda" = %s, "FimVenda" = %s, "inicoFat" = %s, "finalFat" = %s
+        update = """update "PCP".pcp."Plano 
+        set "descricao do Plano" = %s , "inicioVenda" = %s, "FimVenda" = %s, "inicoFat" = %s, "finalFat" = %s
         where "codigo" = %s
         """
 
