@@ -32,7 +32,7 @@ def ObeterPlanos():
         "PCP".pcp."LoteporPlano"
     """
 
-    sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as tipoNota , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
+    sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
 
     lotes = pd.read_sql(sqlLoteporPlano, conn)
     TipoNotas = pd.read_sql(sqlTipoNotasPlano, conn)
