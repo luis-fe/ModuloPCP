@@ -32,7 +32,7 @@ def MetasFase(plano, arrayCodLoteCsw):
     Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
     Meta.fillna('-',inplace=True)
     dados = {
-        '0-Total Pçs': f'{totalPc} pcs',
+        '0-Previcao Pçs': f'{totalPc} pcs',
         '1-Detalhamento': Meta.to_dict(orient='records')}
 
     return pd.DataFrame([dados])
