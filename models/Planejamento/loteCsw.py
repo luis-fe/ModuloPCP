@@ -104,8 +104,7 @@ def CarregarRoteiroEngLote(empresa, arrayCodLoteCsw):
     sql = """
     SELECT p.codEngenharia , p.codFase , p.nomeFase, p.seqProcesso  FROM tcp.ProcessosEngenharia p
 WHERE p.codEmpresa = 1 and p.codEngenharia like '%-0' and 
-p.codEngenharia in (select l.codEngenharia from tcl.LoteEngenharia l WHERE l.empresa ="""+str(empresa) + """ 
-and l.codlote in ( """+ novo+"""))"""
+p.codEngenharia in (select l.codEngenharia from tcl.LoteEngenharia l WHERE l.empresa ="""+str(empresa) + """ and l.codlote in ( """+ novo+"""))"""
 
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
