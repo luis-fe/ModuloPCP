@@ -118,7 +118,19 @@ and l.codlote in ( """+ novo+"""))"""
     del rows
     gc.collect()
 
-    #Implantando no banco de dados do Pcp
-    ConexaoPostgreWms.Funcao_InserirOFF(EngRoteiro, EngRoteiro['codEngenharia'].size, 'Eng_Roteiro', 'append')
+    # Verificando as engenharias que ja existe:
+    sqlPCP = """select distinct "codEngenharia", 'ok' as situacao from pcp."Eng_Roteiro" """
 
+    conn2 = ConexaoPostgreWms.conexaoEngine()
+    sqlPCP = pd.read_sql(sqlPCP,conn2)
+
+    EngRoteiro = pd.merge(EngRoteiro,sqlPCP,on='codEngenharia',how='left')
+    EngRoteiro.fillna('-',inplace=True)
+    EngRoteiro = EngRoteiro[EngRoteiro['situacao']=='-'].reset_index()
+
+    try:
+        #Implantando no banco de dados do Pcp
+        ConexaoPostgreWms.Funcao_InserirOFF(EngRoteiro, EngRoteiro['codEngenharia'].size, 'Eng_Roteiro', 'append')
+    except:
+        print('segue o baile')
 
