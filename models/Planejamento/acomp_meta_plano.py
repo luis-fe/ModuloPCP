@@ -24,10 +24,15 @@ def MetasFase(plano, arrayCodLoteCsw):
     sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
 
     Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
+    totalPc = Meta['previsao'].sum()
     Meta = pd.merge(Meta,sqlRoteiro,on='codEngenharia',how='left')
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
     Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
     Meta.fillna('-',inplace=True)
-    return Meta
+    dados = {
+        '0-Total Pçs': f'{totalPc}pcs',
+        '1-Detalhamento': Meta.to_dict(orient='records')}
+
+    return pd.DataFrame([dados])
 
