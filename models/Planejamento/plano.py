@@ -107,6 +107,8 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
         return pd.DataFrame([{'Status':False,'Mensagem':f'O Plano {codigoPlano} NAO existe'}])
     else:
 
+        # Deletando caso ja exista vinculo do lote no planto
+        deleteVinculo = """Delete from pcp.LoteporPlano where "lote" = %s """
         insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
         delete = """Delete from pcp.lote_itens where "codLote" = %s """
         conn = ConexaoPostgreWms.conexaoInsercao()
@@ -114,7 +116,8 @@ def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
 
         for lote in arrayCodLoteCsw:
             nomelote = loteCsw.ConsultarLoteEspecificoCsw(empresa,lote)
-            print(lote)
+            cur.execute(deleteVinculo,(lote,))
+            conn.commit()
             cur.execute(insert,(empresa, codigoPlano, lote, nomelote,))
             conn.commit()
             cur.execute(delete,(lote,))
