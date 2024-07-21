@@ -51,6 +51,7 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     #Implantando no banco de dados do Pcp
     ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
     itemsPA_Csw.RecarregarItens()
+    CarregarRoteiroEngLote(empresa,arrayCodLoteCsw)
 
     return lotes
 
@@ -95,4 +96,30 @@ def ConsultarLoteEspecificoCsw(empresa, codLote):
     gc.collect()
 
     return lotes['nomeLote'][0]
+
+def CarregarRoteiroEngLote(empresa, arrayCodLoteCsw):
+    nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
+    novo = ", ".join(nomes_com_aspas)
+
+    sql = """
+    SELECT p.codEngenharia , p.codFase , p.nomeFase, p.seqProcesso  FROM tcp.ProcessosEngenharia p
+WHERE p.codEmpresa = 1 and p.codEngenharia like '%-0' and 
+p.codEngenharia in (select l.codEngenharia from tcl.LoteEngenharia l WHERE l.empresa ="""+str(empresa) + """ 
+and l.codlote in ( """+ novo+""")
+    """
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            EngRoteiro = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
+
+    #Implantando no banco de dados do Pcp
+    ConexaoPostgreWms.Funcao_InserirOFF(EngRoteiro, EngRoteiro['codEngenharia'].size, 'Eng_Roteiro', 'append')
+
 
