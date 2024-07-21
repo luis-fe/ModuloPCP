@@ -128,9 +128,9 @@ p.codEngenharia in (select l.codEngenharia from tcl.LoteEngenharia l WHERE l.emp
     EngRoteiro = EngRoteiro[EngRoteiro['situacao']=='-'].reset_index()
     EngRoteiro = EngRoteiro.drop(columns=['situacao'])
     print(EngRoteiro)
-    try:
+    if EngRoteiro['codEngenharia'].size > 0:
         #Implantando no banco de dados do Pcp
         ConexaoPostgreWms.Funcao_InserirOFF(EngRoteiro, EngRoteiro['codEngenharia'].size, 'Eng_Roteiro', 'append')
-    except:
+    else:
         print('segue o baile')
 
