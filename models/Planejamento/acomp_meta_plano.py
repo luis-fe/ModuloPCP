@@ -70,10 +70,10 @@ def MetasFase(plano, arrayCodLoteCsw):
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
     Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
-    Meta.fillna('-',inplace=True)
 
     cronogramaS =cronograma.CronogramaFases(plano)
     Meta = pd.merge(Meta,cronogramaS,on='codFase',how='left')
+    Meta.fillna('-',inplace=True)
 
 
     dados = {
