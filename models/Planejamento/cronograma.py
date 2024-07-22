@@ -7,7 +7,7 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 def CronogramaFases(codPlano):
 
     sql = """
-    select plano, "codFase" datainico as "dataInicio", datafim as "dataFim" from "PCP".pcp.calendario_plano_fases
+    select plano, codfase as "codFase", datainico as "dataInicio", datafim as "dataFim" from "PCP".pcp.calendario_plano_fases
     where plano = %s
     """
     conn = ConexaoPostgreWms.conexaoEngine()
