@@ -48,7 +48,7 @@ def ObeterPlanos():
                               '05- Inicio Faturamento', '06- Final Faturamento', '07- Usuario Gerador', '08- Data Geracao']).agg({
         'lote': lambda x: list(x.dropna().astype(str)),
         'nomelote': lambda x: list(x.dropna().astype(str)),
-        'tipoNota': lambda x: list(x.dropna().astype(str))
+        'tipoNota': lambda x: list(x.dropna().astype(str).unique())
     }).reset_index()
 
     result = []
