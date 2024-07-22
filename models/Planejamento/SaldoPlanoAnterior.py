@@ -27,6 +27,19 @@ def SaldosAnterior(codigoPlano):
     pedidos['situacaobloq'].fillna('Liberado',inplace=True)
     pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
 
+
+    #4 Filtrando somente os tipo de notas desejados
+
+    sqlNotas = """
+    select tnp."tipo nota" as "codTipoNota"  from "PCP".pcp."tipoNotaporPlano" tnp 
+    where plano = %s
+    """
+    tipoNotas = pd.read_sql(sqlNotas,conn,params=(codigoPlano,))
+
+    pedidos = pd.merge(pedidos,tipoNotas,on='codTipoNota')
+    pedidos = pedidos.groupby("codItem").agg({"saldo":"sum"}).reset_index()
+    pedidos = pedidos.sort_values(by=['saldo'], ascending=False)
+
     return pedidos
 
 
