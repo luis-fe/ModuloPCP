@@ -18,7 +18,7 @@ def RecarregarItens():
     sqlCSWItens = """
 SELECT i.codigo , i.nome , i.unidadeMedida, i2.codItemPai, i2.codSortimento , i2.codSeqTamanho  FROM cgi.Item i
 JOIN Cgi.Item2 i2 on i2.coditem = i.codigo and i2.Empresa = 1
-WHERE i.unidadeMedida in ('PC','KIT') and (i2.coditem like '1%' or i2.coditem like '2%'or i2.coditem like '3%'or i2.coditem like '5%'or i2.coditem like '6%' )
+WHERE i.unidadeMedida in ('PC','KIT') and (i2.codItemPai like '1%' or i2.codItemPai like '2%'or i2.codItemPai like '3%'or i2.codItemPai like '5%'or i2.codItemPai like '6%' )
 and i2.codItemPai > 0 and i.codigo > """+str(maximo)
 
     with ConexaoBanco.Conexao2() as conn:
