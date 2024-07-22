@@ -1,6 +1,7 @@
 import pandas as pd
 from connection import ConexaoPostgreWms,ConexaoBanco
 from models.Planejamento import plano
+import fastparquet as fp
 
 def SaldosAnterior(codigoPlano):
     planoAtual = plano.ConsultaPlano()
@@ -11,15 +12,8 @@ def SaldosAnterior(codigoPlano):
 
 
     #2 - Pedidos anteriores:
-    sql = """
-    SELECT  p."codPedido", p."codProduto" as "codItem", (p."qtdePedida" - p."qtdeFaturada" - p."qtdeFaturada") as saldo, p."codTipoNota", ic."codSortimento" as "codSortimento" , ic."codSeqTamanho"  as "codSeqTamanho"
-    FROM "PCP".pcp."pedidosItemgrade" p 
-    inner join pcp.itens_csw ic on ic.codigo  = p."codProduto" 
-    WHERE "dataEmissao"::DATE >= %s ::date - INTERVAL '120 days';
-    """
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    pedidos = pd.read_sql(sql,conn,params=(IniVendas,))
+    pedidos = Monitor_nivelSku(IniVendas)
 
 
     # 3 - Filtrando os pedidos aprovados
@@ -65,3 +59,44 @@ def _PedidosBloqueados():
 
         del rows
         return consulta
+
+
+def Monitor_nivelSku(dataFim):
+    # Carregar o arquivo Parquet
+    parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+
+    # Converter para DataFrame do Pandas
+    df_loaded = parquet_file.to_pandas()
+
+    # Converter 'dataEmissao' para datetime
+    df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
+
+    # Convertendo a string para datetime
+    data_datetime = pd.to_datetime(dataFim)
+    # Subtraindo 100 dias
+    data_inic = data_datetime - pd.DateOffset(days=100)
+
+    # Filtrar as datas
+    df_loaded['filtro'] = (df_loaded['dataEmissao'] <= data_datetime) & (df_loaded['dataEmissao'] >= data_inic)
+
+    # Aplicar o filtro
+    df_filtered = df_loaded[df_loaded['filtro']].reset_index(drop=True)
+
+    # Selecionar colunas relevantes
+    df_filtered = df_filtered.loc[:,
+                  ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida',
+                   'PrecoLiquido']]
+
+    # Convertendo colunas para numérico
+    df_filtered['qtdeSugerida'] = pd.to_numeric(df_filtered['qtdeSugerida'], errors='coerce').fillna(0)
+    df_filtered['qtdePedida'] = pd.to_numeric(df_filtered['qtdePedida'], errors='coerce').fillna(0)
+    df_filtered['qtdeFaturada'] = pd.to_numeric(df_filtered['qtdeFaturada'], errors='coerce').fillna(0)
+    df_filtered['qtdeCancelada'] = pd.to_numeric(df_filtered['qtdeCancelada'], errors='coerce').fillna(0)
+
+    # Adicionando coluna 'codItem'
+    df_filtered['codItem'] = df_filtered['codProduto']
+
+    # Calculando saldo
+    df_filtered['saldo'] = df_filtered["qtdePedida"] - df_filtered["qtdeFaturada"] - df_filtered["qtdeCancelada"]
+
+    return df_filtered
