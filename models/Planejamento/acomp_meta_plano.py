@@ -1,6 +1,6 @@
 import pandas as pd
 from connection import ConexaoPostgreWms,ConexaoBanco
-from models.Planejamento import SaldoPlanoAnterior
+from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw
 
 def MetasFase(plano, arrayCodLoteCsw):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
@@ -35,9 +35,16 @@ def MetasFase(plano, arrayCodLoteCsw):
     )
     sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
     sqlMetas['codItem'].fillna('-',inplace=True)
-    sqlMetas.to_csv('./dados/analise.csv')
 
     saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
+    sqlMetas = pd.merge(sqlMetas,saldo,on='codItem',how='left')
+
+    estoque = itemsPA_Csw.EstoqueNaturezaPA()
+    sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
+
+
+    sqlMetas.to_csv('./dados/analise.csv')
+
 
 
 

@@ -38,3 +38,21 @@ and i2.codItemPai > 0 and i.codigo > """+str(maximo)
     except:
         print('segue o baile ')
     return itens
+
+
+def EstoqueNaturezaPA():
+    sql = """
+    SELECT d.codItem , d.estoqueAtual  FROM est.DadosEstoque d
+    WHERE d.codNatureza = 5 and d.codEmpresa = 1 and d.estoqueAtual > 0
+    """
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            estoque = pd.DataFrame(rows, columns=colunas)
+
+    return estoque
+
+
