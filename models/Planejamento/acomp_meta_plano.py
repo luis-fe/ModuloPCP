@@ -41,7 +41,9 @@ def MetasFase(plano, arrayCodLoteCsw):
 
     estoque = itemsPA_Csw.EstoqueNaturezaPA()
     sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
-
+    sqlMetas['saldo'].fillna(0,inplace=True)
+    sqlMetas['estoqueAtual'].fillna(0,inplace=True)
+    sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
 
     sqlMetas.to_csv('./dados/analise.csv')
 
