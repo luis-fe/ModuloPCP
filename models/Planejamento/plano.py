@@ -168,7 +168,7 @@ def DesvincularNotasAoPlano(codigoPlano, arrayTipoNotas):
         for nota in arrayTipoNotas:
             loteCsw.DesvincularNotaPlano(empresa,nota,codigoPlano)
 
-        return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes Desvinculados do Plano com sucesso !'}])
+        return pd.DataFrame([{'Status': True, 'Mensagem': 'Tipo Notas Desvinculados do Plano com sucesso !'}])
 
 def ConsultarLotesVinculados(plano):
     sql = """Select plano, lote, nomelote  from pcp."LoteporPlano" WHERE plano = %s """
