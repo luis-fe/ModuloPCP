@@ -35,7 +35,10 @@ def MetasFase(plano, arrayCodLoteCsw):
     )
     sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
     sqlMetas['codItem'].fillna('-',inplace=True)
+    sqlMetas.to_csv('./dados/analise.csv')
+
     saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
+
 
 
     Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
