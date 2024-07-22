@@ -33,8 +33,9 @@ def MetasFase(plano, arrayCodLoteCsw):
         lambda r: ('0' + r['codItemPai'] + '-0') if r['codItemPai'].startswith('1') or r['codItemPai'].startswith('2')  else (r['codItemPai'] + '-0'),
         axis=1
     )
-
     sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
+
+
     Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","codItem"]).agg({"previsao":"sum"}).reset_index()
     filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
     totalPc = filtro['previsao'].sum()
