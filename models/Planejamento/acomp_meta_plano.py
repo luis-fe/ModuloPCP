@@ -34,14 +34,15 @@ def MetasFase(plano, arrayCodLoteCsw):
         axis=1
     )
     sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
+    sqlMetas['codItem'].fillna('-',inplace=True)
+    saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
 
 
-    Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","codItem"]).agg({"previsao":"sum"}).reset_index()
+    Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
     filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
     totalPc = filtro['previsao'].sum()
 
     # Carregando o Saldo COLECAO ANTERIOR
-    saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
 
     Meta = pd.merge(Meta,sqlRoteiro,on='codEngenharia',how='left')
 
