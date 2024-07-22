@@ -56,12 +56,12 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
     return lotes
 
 
-def DesvincularLotePlano(empresa, lote):
+def DesvincularLotePlano(empresa, lote, plano):
     # Passo 1: Excluir o lote do plano vinculado
-    deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s """
+    deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s and plano = %s """
     conn = ConexaoPostgreWms.conexaoInsercao()
     cur = conn.cursor()
-    cur.execute(deletarLote, (lote,))
+    cur.execute(deletarLote, (lote,plano))
     conn.commit()
 
 
@@ -78,6 +78,19 @@ def DesvincularLotePlano(empresa, lote):
 
     else:
         print('sem lote para exlcuir dos lotes engenharias')
+    cur.close()
+    conn.close()
+
+
+
+def DesvincularNotaPlano(empresa, codigoNota, plano):
+    # Passo 1: Excluir o lote do plano vinculado
+    deletarNota = """DELETE FROM pcp."tipoNotaporPlano" WHERE "tipo nota" = %s and "plano" = %s """
+    conn = ConexaoPostgreWms.conexaoInsercao()
+    cur = conn.cursor()
+    cur.execute(deletarNota, (codigoNota,plano))
+    conn.commit()
+
     cur.close()
     conn.close()
 
