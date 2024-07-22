@@ -148,10 +148,10 @@ def Delete_DesvincularNotasPlano():
     data = request.get_json()
 
     codigoPlano = data.get('codigoPlano')
-    arrayCodNotaCsw = data.get('arrayCodNotaCsw', '-')
+    arrayTipoNotas = data.get('arrayTipoNotas', '-')
 
 
-    dados = plano.DesvincularNotasAoPlano(codigoPlano,arrayCodNotaCsw)
+    dados = plano.DesvincularNotasAoPlano(codigoPlano,arrayTipoNotas)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
