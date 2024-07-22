@@ -56,3 +56,16 @@ def EstoqueNaturezaPA():
     return estoque
 
 
+def CargaFases():
+
+    sql = """
+    select codreduzido , sum(total_pcs) as carga  from pcp.ordemprod o 
+    where codreduzido is not null
+    group by codreduzido 
+    """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    cargas = pd.read_sql(sql,conn)
+
+    return cargas
+
