@@ -102,3 +102,40 @@ def Monitor_nivelSku(dataFim):
     df_filtered['saldo'] = df_filtered["qtdePedida"] - df_filtered["qtdeFaturada"] - df_filtered["qtdeCancelada"]
 
     return df_filtered
+
+
+
+def Pedidos_saldo(codigoPlano, codItem):
+    planoAtual = plano.ConsultaPlano()
+    planoAtual = planoAtual[planoAtual['codigo']==codigoPlano].reset_index()
+
+    # 1 - Levantar a data de Inicio de vendas do plano atual
+    IniVendas = planoAtual['inicioVenda'][0]
+
+
+    #2 - Pedidos anteriores:
+
+    pedidos = Monitor_nivelSku(IniVendas)
+
+
+    # 3 - Filtrando os pedidos aprovados
+    pedidosBloqueados = _PedidosBloqueados()
+    pedidos = pd.merge(pedidos,pedidosBloqueados,on='codPedido',how='left')
+    pedidos['situacaobloq'].fillna('Liberado',inplace=True)
+    pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
+    pedidos = pedidos[pedidos['codItem'] == str(codItem)]
+
+
+    #4 Filtrando somente os tipo de notas desejados
+
+    sqlNotas = """
+    select tnp."tipo nota" as "codTipoNota"  from "PCP".pcp."tipoNotaporPlano" tnp 
+    where plano = %s
+    """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    tipoNotas = pd.read_sql(sqlNotas,conn,params=(codigoPlano,))
+
+    pedidos = pd.merge(pedidos,tipoNotas,on='codTipoNota')
+    pedidos = pedidos[pedidos['saldo'] > 0].reset_index()
+    return pedidos
