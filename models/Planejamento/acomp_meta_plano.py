@@ -1,6 +1,6 @@
 import pandas as pd
 from connection import ConexaoPostgreWms,ConexaoBanco
-from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw
+from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma
 
 def MetasFase(plano, arrayCodLoteCsw):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
@@ -71,6 +71,11 @@ def MetasFase(plano, arrayCodLoteCsw):
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
     Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
     Meta.fillna('-',inplace=True)
+
+    cronogramaS =cronograma.CronogramaFases(plano)
+    Meta = pd.merge(Meta,cronogramaS,on='codFase',how='left')
+
+
     dados = {
         '0-Previcao Pçs': f'{totalPc} pcs',
         '01-Falta Programar':f'{totalFaltaProgramar} pçs',
