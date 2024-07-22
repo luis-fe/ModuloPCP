@@ -8,7 +8,8 @@ def MetasFase(plano, arrayCodLoteCsw):
 
     sqlMetas = """select "codLote", 
     "Empresa" , "codEngenharia" , "codSeqTamanho" , "codSortimento" , previsao  
-    from "PCP".pcp.lote_itens li where  "codLote" in ("""+novo+""")"""
+    from "PCP".pcp.lote_itens li 
+    where  "codLote" in ("""+novo+""")"""
 
     sqlRoteiro = """
     select * from "PCP".pcp."Eng_Roteiro" er 
@@ -18,12 +19,23 @@ def MetasFase(plano, arrayCodLoteCsw):
     select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
     """
 
+    sqlItens = """
+    select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
+    """
+
     conn = ConexaoPostgreWms.conexaoEngine()
     sqlMetas = pd.read_sql(sqlMetas,conn)
     sqlRoteiro = pd.read_sql(sqlRoteiro,conn)
     sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
 
-    Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
+    sqlItens = pd.read_sql(sqlItens,conn)
+    sqlItens['codEngenharia'] = sqlItens.apply(
+        lambda r: ('0' + r['codItemPai'] + '-0') if r['codItemPai'].startswith('1') or r['codItemPai'].startswith('2')  else (r['codItemPai'] + '-0'),
+        axis=1
+    )
+
+    sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"])
+    Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","codItem"]).agg({"previsao":"sum"}).reset_index()
     filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
     totalPc = filtro['previsao'].sum()
 
