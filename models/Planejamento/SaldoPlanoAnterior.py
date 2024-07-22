@@ -39,7 +39,7 @@ def SaldosAnterior(codigoPlano):
     pedidos = pd.merge(pedidos,tipoNotas,on='codTipoNota')
     pedidos = pedidos.groupby("codItem").agg({"saldo":"sum"}).reset_index()
     pedidos = pedidos.sort_values(by=['saldo'], ascending=False)
-
+    pedidos = pedidos[pedidos['saldo'] > 0].reset_index()
     return pedidos
 
 
