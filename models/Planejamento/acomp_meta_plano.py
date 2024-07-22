@@ -1,7 +1,7 @@
 import pandas as pd
 from connection import ConexaoPostgreWms,ConexaoBanco
 from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma
-
+from models.GestaoOPAberto import FilaFases
 def MetasFase(plano, arrayCodLoteCsw):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
@@ -73,8 +73,13 @@ def MetasFase(plano, arrayCodLoteCsw):
 
     cronogramaS =cronograma.CronogramaFases(plano)
     Meta = pd.merge(Meta,cronogramaS,on='codFase',how='left')
-    Meta.fillna('-',inplace=True)
 
+    filaFase = FilaFases.ApresentacaoFila('-')
+    filaFase = filaFase.loc[:,
+                  ['codFase', 'Carga Atual', 'Fila']]
+
+    Meta = pd.merge(Meta,filaFase,on='codFase',how='left')
+    Meta.fillna('-',inplace=True)
 
     dados = {
         '0-Previcao Pçs': f'{totalPc} pcs',
@@ -82,4 +87,5 @@ def MetasFase(plano, arrayCodLoteCsw):
         '1-Detalhamento': Meta.to_dict(orient='records')}
 
     return pd.DataFrame([dados])
+
 
