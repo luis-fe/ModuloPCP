@@ -20,5 +20,10 @@ def CronogramaFases(codPlano):
     # Calculando a diferença entre as datas em dias e adicionando como nova coluna
     cronograma['dias'] = (cronograma['dataFim'] - cronograma['dataInicio']).dt.days + 1
     cronograma['codFase'] = cronograma['codFase'].astype(int)
+    cronograma['dataFim'] = pd.to_datetime(cronograma['dataFim'], format='%a, %d %b %Y %H:%M:%S %Z')
+    cronograma['dataFim'] = cronograma['dataFim'].dt.strftime('%d/%m/%Y')
+
+    cronograma['dataInicio'] = pd.to_datetime(cronograma['dataInicio'], format='%a, %d %b %Y %H:%M:%S %Z')
+    cronograma['dataInicio'] = cronograma['dataInicio'].dt.strftime('%d/%m/%Y')
 
     return cronograma
