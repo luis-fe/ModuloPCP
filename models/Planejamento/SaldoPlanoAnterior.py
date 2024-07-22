@@ -12,8 +12,9 @@ def SaldosAnterior(codigoPlano):
 
     #2 - Pedidos anteriores:
     sql = """
-    SELECT  p."codPedido", p."codProduto" as "codItem", (p."qtdePedida" - p."qtdeFaturada" - p."qtdeFaturada") as saldo, p."codTipoNota"
+    SELECT  p."codPedido", p."codProduto" as "codItem", (p."qtdePedida" - p."qtdeFaturada" - p."qtdeFaturada") as saldo, p."codTipoNota", ic."codSortimento" as "codSortimento" , ic."codSeqTamanho"  as "codSeqTamanho"
     FROM "PCP".pcp."pedidosItemgrade" p 
+    inner join pcp.itens_csw ic on ic.codigo  = p."codProduto" 
     WHERE "dataEmissao"::DATE >= %s ::date - INTERVAL '100 days';
     """
 
