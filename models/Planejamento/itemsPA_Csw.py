@@ -59,7 +59,7 @@ def EstoqueNaturezaPA():
 def CargaFases():
 
     sql = """
-    select codreduzido , sum(total_pcs) as carga  from pcp.ordemprod o 
+    select codreduzido as "codItem", sum(total_pcs) as carga  from pcp.ordemprod o 
     where codreduzido is not null
     group by codreduzido 
     """
