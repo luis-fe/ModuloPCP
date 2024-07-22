@@ -9,7 +9,7 @@ def calcular_dias_sem_domingos(dataInicio, dataFim):
     # Iterando através das datas
     while data_atual <= dataFim:
         # Se o dia não for domingo, incrementa o contador de dias
-        if data_atual.weekday() != 6:
+        if data_atual.weekday() != 6 and data_atual.weekday() !=5 :
             dias += 1
         # Incrementa a data atual em um dia
         data_atual += pd.Timedelta(days=1)
