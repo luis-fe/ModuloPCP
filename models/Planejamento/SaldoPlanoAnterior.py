@@ -15,7 +15,7 @@ def SaldosAnterior(codigoPlano):
     SELECT  p."codPedido", p."codProduto" as "codItem", (p."qtdePedida" - p."qtdeFaturada" - p."qtdeFaturada") as saldo, p."codTipoNota", ic."codSortimento" as "codSortimento" , ic."codSeqTamanho"  as "codSeqTamanho"
     FROM "PCP".pcp."pedidosItemgrade" p 
     inner join pcp.itens_csw ic on ic.codigo  = p."codProduto" 
-    WHERE "dataEmissao"::DATE >= %s ::date - INTERVAL '100 days';
+    WHERE "dataEmissao"::DATE >= %s ::date - INTERVAL '120 days';
     """
 
     conn = ConexaoPostgreWms.conexaoEngine()
