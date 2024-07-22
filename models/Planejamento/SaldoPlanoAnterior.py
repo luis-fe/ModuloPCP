@@ -29,6 +29,8 @@ def SaldosAnterior(codigoPlano):
     select tnp."tipo nota" as "codTipoNota"  from "PCP".pcp."tipoNotaporPlano" tnp 
     where plano = %s
     """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
     tipoNotas = pd.read_sql(sqlNotas,conn,params=(codigoPlano,))
 
     pedidos = pd.merge(pedidos,tipoNotas,on='codTipoNota')
