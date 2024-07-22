@@ -19,6 +19,6 @@ def CronogramaFases(codPlano):
 
     # Calculando a diferença entre as datas em dias e adicionando como nova coluna
     cronograma['dias'] = (cronograma['dataFim'] - cronograma['dataInicio']).dt.days + 1
-
+    cronograma['codFase'] = cronograma['codFase'].astype(int)
 
     return cronograma
