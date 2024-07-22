@@ -51,15 +51,15 @@ def MetasFase(plano, arrayCodLoteCsw):
     sqlMetas['carga'].fillna(0,inplace=True)
 
     sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
+    sqlMetas['FaltaProgramar'] = sqlMetas['estoqueAtual'](sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
+    sqlMetas['FaltaProgramar'] = sqlMetas.apply(lambda l: l['FaltaProgramar'] if l['FaltaProgramar'] >0 else 0 ,axis=1 )
 
     sqlMetas.to_csv('./dados/analise.csv')
 
-
-
-
-    Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum"}).reset_index()
+    Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
     totalPc = filtro['previsao'].sum()
+    totalFaltaProgramar = filtro['FaltaProgramar'].sum()
 
     # Carregando o Saldo COLECAO ANTERIOR
 
@@ -67,12 +67,13 @@ def MetasFase(plano, arrayCodLoteCsw):
 
 
 
-    Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum"}).reset_index()
+    Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
     Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
     Meta.fillna('-',inplace=True)
     dados = {
         '0-Previcao Pçs': f'{totalPc} pcs',
+        '01-Falta Programar':f'{totalFaltaProgramar} pçs',
         '1-Detalhamento': Meta.to_dict(orient='records')}
 
     return pd.DataFrame([dados])
