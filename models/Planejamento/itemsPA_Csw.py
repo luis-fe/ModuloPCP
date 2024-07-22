@@ -58,14 +58,30 @@ def EstoqueNaturezaPA():
 
 def CargaFases():
 
-    sql = """
-    select codreduzido as "codItem", sum(total_pcs) as carga  from pcp.ordemprod o 
-    where codreduzido is not null
-    group by codreduzido 
+    sqlCsw = """
+    SELECT op.numeroOP as numeroop ,op.codFaseAtual  FROM tco.OrdemProd op 
+WHERE op.situacao = 3 and op.codEmpresa = 1 and op.codFaseAtual <> 401
     """
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    cargas = pd.read_sql(sql,conn)
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sqlCsw)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            sqlCsw = pd.DataFrame(rows, columns=colunas)
+
+    sql = """
+    select codreduzido as "codItem", total_pcs as carga, o.numeroop  from pcp.ordemprod o 
+    where codreduzido is not null
+    """
+
+    conn2 = ConexaoPostgreWms.conexaoEngine()
+    cargas = pd.read_sql(sql,conn2)
+
+    cargas = pd.merge(cargas,sqlCsw,on='numeroop')
+
+    cargas = cargas.groupby(["codItem"]).agg({"carga":"sum"}).reset_index()
+
 
     return cargas
 
