@@ -1,10 +1,23 @@
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
+import pytz
+from datetime import datetime
+
+def obterdiaAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+    agora = datetime.now(fuso_horario)
+    agora = agora.strftime('%Y-%m-%d')
+    return agora
 
 def calcular_dias_sem_domingos(dataInicio, dataFim):
     # Inicializando o contador de dias
     dias = 0
     data_atual = dataInicio
+
+    dataHoje = obterdiaAtual()
+    if dataHoje >= data_atual:
+        data_atual = dataHoje
+
 
     # Iterando através das datas
     while data_atual <= dataFim:
@@ -28,6 +41,9 @@ def CronogramaFases(codPlano):
     # Convertendo as colunas de data para o tipo datetime
     cronograma['dataInicio'] = pd.to_datetime(cronograma['dataInicio'])
     cronograma['dataFim'] = pd.to_datetime(cronograma['dataFim'])
+
+
+
 
     # Calculando a diferença entre as datas em dias úteis (excluindo domingos) e adicionando como nova coluna
     cronograma['dias'] = cronograma.apply(lambda row: calcular_dias_sem_domingos(row['dataInicio'], row['dataFim']),
