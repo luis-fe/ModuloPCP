@@ -88,7 +88,7 @@ def DesvincularNotaPlano(empresa, codigoNota, plano):
     deletarNota = """DELETE FROM pcp."tipoNotaporPlano" WHERE "tipo nota" = %s and "plano" = %s """
     conn = ConexaoPostgreWms.conexaoInsercao()
     cur = conn.cursor()
-    cur.execute(deletarNota, (codigoNota,plano))
+    cur.execute(deletarNota, (str(codigoNota),plano))
     conn.commit()
 
     cur.close()
