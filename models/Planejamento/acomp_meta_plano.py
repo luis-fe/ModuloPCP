@@ -84,7 +84,7 @@ def MetasFase(plano, arrayCodLoteCsw):
     Meta['Falta Produzir'] = Meta['Carga Atual'] + Meta['Fila'] + Meta['FaltaProgramar']
     Meta['dias'].fillna(1,inplace=True)
     Meta['Meta Dia'] = Meta['Falta Produzir'] /Meta['dias']
-
+    Meta['Meta Dia'] = Meta['Meta Dia'] .round(0)
     Meta.fillna('-',inplace=True)
 
     dados = {
