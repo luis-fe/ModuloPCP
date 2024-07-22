@@ -79,6 +79,12 @@ def MetasFase(plano, arrayCodLoteCsw):
                   ['codFase', 'Carga Atual', 'Fila']]
 
     Meta = pd.merge(Meta,filaFase,on='codFase',how='left')
+    Meta['Carga Atual'].fillna(0,inplace=True)
+    Meta['Fila'].fillna(0,inplace=True)
+    Meta['Falta Produzir'] = Meta['Carga Atual'] + Meta['Fila'] + Meta['FaltaProgramar']
+    Meta['dias'].fillna(1,inplace=True)
+    Meta['Meta Dia'] = Meta['Falta Produzir'] /Meta['dias']
+
     Meta.fillna('-',inplace=True)
 
     dados = {
