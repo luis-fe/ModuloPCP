@@ -87,7 +87,7 @@ def Monitor_nivelSku(dataFim):
     # Selecionar colunas relevantes
     df_filtered = df_filtered.loc[:,
                   ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida',
-                   'PrecoLiquido']]
+                   'PrecoLiquido','codTipoNota']]
 
     # Convertendo colunas para numérico
     df_filtered['qtdeSugerida'] = pd.to_numeric(df_filtered['qtdeSugerida'], errors='coerce').fillna(0)
