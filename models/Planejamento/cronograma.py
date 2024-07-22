@@ -3,26 +3,36 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 import pytz
 from datetime import datetime
 
+
 def obterdiaAtual():
     fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
     agora = datetime.now(fuso_horario)
     agora = agora.strftime('%Y-%m-%d')
-    return agora
+    return pd.to_datetime(agora)
+
 
 def calcular_dias_sem_domingos(dataInicio, dataFim):
+    # Convertendo as datas para o tipo datetime, se necessário
+    if not isinstance(dataInicio, pd.Timestamp):
+        dataInicio = pd.to_datetime(dataInicio)
+    if not isinstance(dataFim, pd.Timestamp):
+        dataFim = pd.to_datetime(dataFim)
+
+    # Obtendo a data atual
+    dataHoje = obterdiaAtual()
+
+    # Ajustando a data de início se for anterior ao dia atual
+    if dataHoje > dataInicio:
+        dataInicio = dataHoje
+
     # Inicializando o contador de dias
     dias = 0
     data_atual = dataInicio
 
-    dataHoje = obterdiaAtual()
-    if dataHoje >= data_atual:
-        data_atual = dataHoje
-
-
     # Iterando através das datas
     while data_atual <= dataFim:
-        # Se o dia não for domingo, incrementa o contador de dias
-        if data_atual.weekday() != 6 and data_atual.weekday() !=5 :
+        # Se o dia não for sábado (5) ou domingo (6), incrementa o contador de dias
+        if data_atual.weekday() != 5 and data_atual.weekday() != 6:
             dias += 1
         # Incrementa a data atual em um dia
         data_atual += pd.Timedelta(days=1)
