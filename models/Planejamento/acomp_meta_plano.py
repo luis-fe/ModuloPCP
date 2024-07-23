@@ -2,6 +2,7 @@ import pandas as pd
 from connection import ConexaoPostgreWms,ConexaoBanco
 from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma
 from models.GestaoOPAberto import FilaFases
+import numpy as np
 def MetasFase(plano, arrayCodLoteCsw):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
@@ -64,7 +65,21 @@ def MetasFase(plano, arrayCodLoteCsw):
     # Carregando o Saldo COLECAO ANTERIOR
 
     Meta = pd.merge(Meta,sqlRoteiro,on='codEngenharia',how='left')
-    Meta = Meta[~((Meta['codFase'] == 401) & ~(Meta['codEngenharia'].str.startswith('0')))]
+    # Converter as colunas para arrays do NumPy
+    codFase_array = Meta['codFase'].values
+    codEngenharia_array = Meta['codEngenharia'].values
+
+    # Filtrar as linhas onde 'codFase' é 401
+    fase_401 = codFase_array == 401
+
+    # Filtrar as linhas onde 'codEngenharia' não começa com '0'
+    nao_comeca_com_0 = np.vectorize(lambda x: not x.startswith('0'))(codEngenharia_array)
+
+    # Combinar as duas condições para filtrar as linhas
+    filtro_comb = fase_401 & nao_comeca_com_0
+
+    # Aplicar o filtro invertido
+    Meta = Meta[~filtro_comb]
 
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
