@@ -113,7 +113,7 @@ def InserirIntervaloFase(codigoplano, codFase, dataInicio, dataFim):
             else:
 
                 insert = """
-                insert into pcp.calendario_plano_fases ("plano", "codFase","datainico", "datafim") values ( %s, %s, %s, %s)
+                insert into pcp.calendario_plano_fases ("plano", "codfase","datainico", "datafim") values ( %s, %s, %s, %s)
                 """
 
                 diasUteis = calcular_dias_sem_domingos(dataInicio, dataFim)
