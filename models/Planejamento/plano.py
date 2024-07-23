@@ -171,7 +171,9 @@ def DesvincularNotasAoPlano(codigoPlano, arrayTipoNotas):
         return pd.DataFrame([{'Status': True, 'Mensagem': 'Tipo Notas Desvinculados do Plano com sucesso !'}])
 
 def ConsultarLotesVinculados(plano):
-    sql = """Select plano, lote, nomelote  from pcp."LoteporPlano" WHERE plano = %s """
+    sql = """Select plano, lote, nomelote, p."descricaoPlano"  from pcp."LoteporPlano" l
+    inner join pcp."Plano" p on p.codigo = l.plano
+    WHERE plano = %s """
     conn = ConexaoPostgreWms.conexaoEngine()
     sql = pd.read_sql(sql,conn,params=(plano,))
 

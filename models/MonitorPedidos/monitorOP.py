@@ -280,7 +280,14 @@ def ReservaOPMonitor(dataInico, dataFim):
     consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual" from "pcp".ordemprod o   """, conn)
     monitor = pd.merge(monitor,consulta3,on='Op Reservada2',how='left')
 
+    #Avaliar se ficou op para tras sem incluir
+
+
     monitor.to_csv('./dados/monitorOps.csv')
+
+
+
+
 
     monitor1 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo"]]
     monitor2 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo","codProduto"]]
@@ -409,5 +416,9 @@ def ProdutosSemOP():
 
     df_selecionado = df_selecionado.sort_values(by=['01-codProduto', '04-codCor'], ascending=True)
 
+    df_selecionado.to_csv('./dados/necessidadeMonitorMP.csv')
+
     return df_selecionado
 
+def NecessidadeMateriaPrima():
+    monitorDetalhadoOps = pd.read_csv('./dados/necessidadeMonitorMP.csv')
