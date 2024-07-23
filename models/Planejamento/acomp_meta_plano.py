@@ -32,7 +32,6 @@ def MetasFase(plano, arrayCodLoteCsw):
     sqlItens = pd.read_sql(sqlItens,conn)
     # Verificar quais codItemPai começam com '1' ou '2'
     mask = sqlItens['codItemPai'].str.startswith(('1', '2'))
-
     # Aplicar as transformações usando a máscara
     sqlItens['codEngenharia'] = np.where(mask, '0' + sqlItens['codItemPai'] + '-0', sqlItens['codItemPai'] + '-0')
 
@@ -85,6 +84,8 @@ def MetasFase(plano, arrayCodLoteCsw):
 
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
+    Meta['apresentacao'] = Meta.apply(lambda x: 0 if x['codFase'] == 401 else x['apresentacao'] , axis=1)
+
     Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
 
     cronogramaS =cronograma.CronogramaFases(plano)
