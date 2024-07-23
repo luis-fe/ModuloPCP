@@ -81,6 +81,8 @@ def MetasFase(plano, arrayCodLoteCsw):
 
     # Aplicar o filtro invertido
     Meta = Meta[~filtro_comb]
+    Meta.to_csv('./dados/analiseFaltaProgrFases.csv')
+
 
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
