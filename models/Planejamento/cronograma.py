@@ -74,14 +74,14 @@ def ConsultarCronogramaFasesPlano(codigoPlano):
 
     sql = """
     select plano , codfase as "codFase" , datainico as "DataInicio" , datafim as "DataFim" from pcp.calendario_plano_fases cpf 
-    where cpf.plano  = %s
+    where cpf.plano  = %s order by codfase
     """
 
     conn = ConexaoPostgreWms.conexaoEngine()
     consulta = pd.read_sql(sql,conn,params=(codigoPlano,))
 
     fases = fases_csw.Fases()
-    pd.merge(consulta,fases,on='codFase')
+    consulta = pd.merge(consulta,fases,on='codFase')
 
 
     return consulta
