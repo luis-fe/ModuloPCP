@@ -114,12 +114,13 @@ def Pedidos_saldo(codigoPlano, codItem):
 
     # 1 - Levantar a data de Inicio de vendas do plano atual
     IniVendas = planoAtual['inicioVenda'][0]
-
+    data_datetime = datetime.strptime(IniVendas, '%Y-%m-%d')
+    data_nova = data_datetime - timedelta(days=1)
+    data_nova = data_nova.strftime('%Y-%m-%d')
 
     #2 - Pedidos anteriores:
 
-    pedidos = Monitor_nivelSku(IniVendas)
-
+    pedidos = Monitor_nivelSku(data_nova)
 
     # 3 - Filtrando os pedidos aprovados
     pedidosBloqueados = _PedidosBloqueados()
