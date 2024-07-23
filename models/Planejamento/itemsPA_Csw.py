@@ -120,11 +120,20 @@ def EstoquePartes():
     estoquePa = EstoqueNaturezaPA()
     relacaoPartes = pd.merge(relacaoPartes,estoquePa,on='codItem')
 
+    cargaFase = CargaFases()
+    cargaFasePartes = pd.merge(relacaoPartes, cargaFase, on='codItem')
 
     relacaoPartes['estoqueAtual'] = relacaoPartes['quantidade'] * relacaoPartes['estoqueAtual']
     relacaoPartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
+    cargaFasePartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
+
     relacaoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
+    cargaFasePartes.rename(columns={'redParte': 'codItem'}, inplace=True)
+
 
     relacaoPartes = pd.concat([estoquePa,relacaoPartes])
+    cargaFasePartes = pd.concat([cargaFasePartes,cargaFase])
 
-    return relacaoPartes
+
+
+    return relacaoPartes, cargaFasePartes
