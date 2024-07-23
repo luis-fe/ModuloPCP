@@ -19,6 +19,7 @@ from .Planejamento.loteCsw_route import loteCsw_routes
 from .Planejamento.acomp_meta_plano import MetasFases_routes
 from .Planejamento.TipoNotaCSW import TipoNotaCsw_routes
 from .Planejamento.SaldoPlanoAnterior import SaldoPlanoAnt_routes
+from .Planejamento.cronograma import cronograma_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -36,3 +37,4 @@ routes_blueprint.register_blueprint(loteCsw_routes)
 routes_blueprint.register_blueprint(MetasFases_routes)
 routes_blueprint.register_blueprint(TipoNotaCsw_routes)
 routes_blueprint.register_blueprint(SaldoPlanoAnt_routes)
+routes_blueprint.register_blueprint(cronograma_routes)
