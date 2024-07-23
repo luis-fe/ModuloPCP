@@ -125,7 +125,7 @@ def EstoquePartes():
 
     relacaoPartes['estoqueAtual'] = relacaoPartes['quantidade'] * relacaoPartes['estoqueAtual']
     relacaoPartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
-    cargaFasePartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
+    cargaFasePartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho','estoqueAtual'], axis=1, inplace=True)
 
     relacaoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
     cargaFasePartes.rename(columns={'redParte': 'codItem'}, inplace=True)
