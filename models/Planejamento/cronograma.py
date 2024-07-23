@@ -97,7 +97,7 @@ def InserirIntervaloFase(codigoplano, codFase, dataInicio, dataFim):
         return pd.DataFrame([{'Status':False,'Mensagem':'O Plano NAO existe'}])
 
     else:
-        verificar2 = ConsultarCronogramaFasesPlano(plano)
+        verificar2 = ConsultarCronogramaFasesPlano(codigoplano)
         verificar2 = verificar2[verificar2['codFase'] == codFase].reset_index()
 
         if not verificar2.empty:
