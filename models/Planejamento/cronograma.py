@@ -104,19 +104,27 @@ def InserirIntervaloFase(codigoplano, codFase, dataInicio, dataFim):
             return pd.DataFrame([{'Status': False, 'Mensagem': 'Ja existe intervalo nessa fase, use o alterarIntervalo!'}])
         else:
 
-            insert = """
-            insert into pcp.calendario_plano_fases ("plano", "codFase","datainico", "datafim") values ( %s, %s, %s, %s)
-            """
+            verificar3 = fases_csw.Fases()
+            verificar3 = verificar3[verificar3['codFase']==codFase].reset_index()
 
-            diasUteis = calcular_dias_sem_domingos(dataInicio, dataFim)
+            if verificar3.empty:
+                return pd.DataFrame(
+                    [{'Status': False, 'Mensagem': 'Fase Informada Nao existe!'}])
+            else:
 
-            conn = ConexaoPostgreWms.conexaoInsercao()
-            cur = conn.cursor()
-            cur.execute(insert, (plano, codFase, dataInicio, dataFim,))
-            conn.commit()
-            cur.close()
-            conn.close()
+                insert = """
+                insert into pcp.calendario_plano_fases ("plano", "codFase","datainico", "datafim") values ( %s, %s, %s, %s)
+                """
 
-            return pd.DataFrame([{'Status':True, 'Mensagem':'Inserido com sucesso','Dias Uteis':f'{diasUteis}'}])
+                diasUteis = calcular_dias_sem_domingos(dataInicio, dataFim)
+
+                conn = ConexaoPostgreWms.conexaoInsercao()
+                cur = conn.cursor()
+                cur.execute(insert, (codigoplano, codFase, dataInicio, dataFim,))
+                conn.commit()
+                cur.close()
+                conn.close()
+
+                return pd.DataFrame([{'Status':True, 'Mensagem':'Inserido com sucesso','Dias Uteis':f'{diasUteis}'}])
 
 
