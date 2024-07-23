@@ -2,7 +2,7 @@ import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 import pytz
 from datetime import datetime
-from models.Planejamento import fases_csw
+from models.Planejamento import fases_csw, plano
 
 
 def obterdiaAtual():
@@ -87,11 +87,11 @@ def ConsultarCronogramaFasesPlano(codigoPlano):
     return consulta
 
 
-def InserirIntervaloFase(plano, codFase, dataInicio, dataFim):
+def InserirIntervaloFase(codigoplano, codFase, dataInicio, dataFim):
 
     # Validando se o Plano ja existe
     validador = plano.ConsultaPlano()
-    validador = validador[validador['codigo'] == plano].reset_index()
+    validador = validador[validador['codigo'] == codigoplano].reset_index()
 
     if  validador.empty:
 
