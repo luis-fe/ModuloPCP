@@ -4,7 +4,7 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 
 def Fases():
 
-    sql = """ SELECT f.codFase , f.nome as nomeFase  FROM tcp.FasesProducao f
+    sql = """ SELECT f.codFase as codFase , f.nome as nomeFase  FROM tcp.FasesProducao f
             WHERE f.codEmpresa = 1 and f.codFase > 400 and f.codFase < 500 """
 
     with ConexaoBanco.Conexao2() as conn:
@@ -17,5 +17,5 @@ def Fases():
     # Libera memória manualmente
     del rows
     gc.collect()
-
+    fases['codFase'] = fases['codFase'].astype(str)
     return fases
