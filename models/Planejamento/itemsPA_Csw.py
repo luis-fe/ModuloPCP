@@ -126,5 +126,6 @@ def EstoquePartes():
     relacaoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
 
     relacaoPartes = pd.concat([estoquePa,relacaoPartes])
+    print(relacaoPartes)
 
     return relacaoPartes
