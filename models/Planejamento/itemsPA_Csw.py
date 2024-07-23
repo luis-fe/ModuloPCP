@@ -107,7 +107,7 @@ def EstoquePartes():
     relacaoPartes['codSortimento'] = relacaoPartes['codSortimento'].astype(str)
 
     sl2Itens2 = """
-    select codigo as codItem, "codSortimento", "codSeqTamanho", '0'||"codItemPai"||'-0' as "codProduto"  from "PCP".pcp.itens_csw ic 
+    select codigo as codItem, "codSortimento"::varchar, "codSeqTamanho"::varchar, '0'||"codItemPai"||'-0' as "codProduto"  from "PCP".pcp.itens_csw ic 
     where ic."codItemPai" like '1%'
     """
 
