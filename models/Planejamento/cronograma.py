@@ -72,8 +72,7 @@ def CronogramaFases(codPlano):
 
 def ConsultarCronogramaFasesPlano(codigoPlano):
 
-    sql = """
-    select plano , codfase as "codFase" , datainico as "DataInicio" , datafim as "DataFim" from pcp.calendario_plano_fases cpf 
+    sql = """select plano , codfase as "codFase" , datainico as "DataInicio" , datafim as "DataFim" from pcp.calendario_plano_fases cpf
     where cpf.plano  = %s order by codfase
     """
 
