@@ -39,7 +39,7 @@ def MetasFase(plano, arrayCodLoteCsw):
     saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
     sqlMetas = pd.merge(sqlMetas,saldo,on='codItem',how='left')
 
-    estoque = itemsPA_Csw.EstoqueNaturezaPA()
+    estoque = itemsPA_Csw.EstoquePartes()
     sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
 
     cargas = itemsPA_Csw.CargaFases()
