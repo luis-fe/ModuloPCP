@@ -34,3 +34,26 @@ def get_ConsultaCronogramaFasePlano():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+@cronograma_routes.route('/pcp/api/NovoIntervaloFasePla', methods=['POST'])
+@token_required
+def pOST_NovoIntervaloFasePla():
+
+    data = request.get_json()
+
+    codigoPlano = data.get('codigoPlano')
+    codFase = data.get('codFase')
+    dataInicio = data.get('dataInicio')
+    dataFim = data.get('dataFim')
+
+
+    dados = cronograma.InserirIntervaloFase(codigoPlano, codFase, dataInicio, dataFim)
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)

@@ -85,3 +85,39 @@ def ConsultarCronogramaFasesPlano(codigoPlano):
 
 
     return consulta
+
+
+def InserirIntervaloFase(plano, codFase, dataInicio, dataFim):
+
+    # Validando se o Plano ja existe
+    validador = plano.ConsultaPlano()
+    validador = validador[validador['codigo'] == plano].reset_index()
+
+    if  validador.empty:
+
+        return pd.DataFrame([{'Status':False,'Mensagem':'O Plano NAO existe'}])
+
+    else:
+        verificar2 = ConsultarCronogramaFasesPlano(plano)
+        verificar2 = verificar2[verificar2['codFase'] == codFase].reset_index()
+
+        if not verificar2.empty:
+            return pd.DataFrame([{'Status': False, 'Mensagem': 'Ja existe intervalo nessa fase, use o alterarIntervalo!'}])
+        else:
+
+            insert = """
+            insert into pcp.calendario_plano_fases ("plano", "codFase","datainico", "datafim") values ( %s, %s, %s, %s)
+            """
+
+            diasUteis = calcular_dias_sem_domingos(dataInicio, dataFim)
+
+            conn = ConexaoPostgreWms.conexaoInsercao()
+            cur = conn.cursor()
+            cur.execute(insert, (plano, codFase, dataInicio, dataFim,))
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            return pd.DataFrame([{'Status':True, 'Mensagem':'Inserido com sucesso','Dias Uteis':f'{diasUteis}'}])
+
+
