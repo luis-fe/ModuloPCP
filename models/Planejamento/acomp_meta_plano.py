@@ -30,10 +30,12 @@ def MetasFase(plano, arrayCodLoteCsw):
     sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
 
     sqlItens = pd.read_sql(sqlItens,conn)
-    sqlItens['codEngenharia'] = sqlItens.apply(
-        lambda r: ('0' + r['codItemPai'] + '-0') if r['codItemPai'].startswith('1') or r['codItemPai'].startswith('2')  else (r['codItemPai'] + '-0'),
-        axis=1
-    )
+    # Verificar quais codItemPai começam com '1' ou '2'
+    mask = sqlItens['codItemPai'].str.startswith(('1', '2'))
+
+    # Aplicar as transformações usando a máscara
+    sqlItens['codEngenharia'] = np.where(mask, '0' + sqlItens['codItemPai'] + '-0', sqlItens['codItemPai'] + '-0')
+
     sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
     sqlMetas['codItem'].fillna('-',inplace=True)
 
