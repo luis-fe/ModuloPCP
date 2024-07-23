@@ -54,7 +54,7 @@ def MetasFase(plano, arrayCodLoteCsw):
 
     sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
     sqlMetas['FaltaProgramar'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
-    sqlMetas['FaltaProgramar'] = sqlMetas.apply(lambda l: (-1*l['FaltaProgramar']) if l['FaltaProgramar'] <0 else 0 ,axis=1 )
+    sqlMetas['FaltaProgramar'] = sqlMetas.apply(lambda l: l['FaltaProgramar']if l['FaltaProgramar'] >0 else 0 ,axis=1 )
 
     sqlMetas.to_csv('./dados/analise.csv')
 
