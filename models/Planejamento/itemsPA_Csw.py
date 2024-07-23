@@ -104,7 +104,7 @@ def EstoquePartes():
             relacaoPartes = pd.DataFrame(rows, columns=colunas)
 
     sl2Itens2 = """
-    select codigo as codItem, "codSortimento", "codSeqTamanho", '0'||"codItemPai"||'-0' as codProduto  from "PCP".pcp.itens_csw ic 
+    select codigo as codItem, "codSortimento", "codSeqTamanho", '0'||"codItemPai"||'-0' as "codProduto"  from "PCP".pcp.itens_csw ic 
     where ic."codItemPai" like '1%'
     """
 
