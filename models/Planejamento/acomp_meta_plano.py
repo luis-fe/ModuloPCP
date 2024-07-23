@@ -103,6 +103,7 @@ def MetasFase(plano, arrayCodLoteCsw):
     Meta['Meta Dia'] = Meta['Falta Produzir'] /Meta['dias']
     Meta['Meta Dia'] = Meta['Meta Dia'] .round(0)
     Meta.fillna('-',inplace=True)
+    Meta = Meta[Meta['apresentacao']!='-']
 
     dados = {
         '0-Previcao Pçs': f'{totalPc} pcs',
