@@ -122,10 +122,9 @@ def EstoquePartes():
 
 
     relacaoPartes['estoqueAtual'] = relacaoPartes['quantidade'] * relacaoPartes['estoqueAtual']
-    relacaoPartes.drop(['codItem','quantidade','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
+    relacaoPartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
     relacaoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
 
     relacaoPartes = pd.concat([estoquePa,relacaoPartes])
-    print(relacaoPartes)
 
     return relacaoPartes
