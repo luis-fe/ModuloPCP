@@ -64,8 +64,7 @@ def MetasFase(plano, arrayCodLoteCsw):
     # Carregando o Saldo COLECAO ANTERIOR
 
     Meta = pd.merge(Meta,sqlRoteiro,on='codEngenharia',how='left')
-
-
+    Meta = Meta[~((Meta['codFase'] == '401') & (Meta['codEngenharia'].str.startswith('0')))]
 
     Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
     Meta = pd.merge(Meta,sqlApresentacao,on='nomeFase',how='left')
