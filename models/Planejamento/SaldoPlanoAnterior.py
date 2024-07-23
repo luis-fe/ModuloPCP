@@ -138,4 +138,7 @@ def Pedidos_saldo(codigoPlano, codItem):
 
     pedidos = pd.merge(pedidos,tipoNotas,on='codTipoNota')
     pedidos = pedidos[pedidos['saldo'] > 0].reset_index()
+    pedidos.drop(['codProduto','index','codProduto'], axis=1, inplace=True)
+    pedidos.rename(columns={'saldo': 'saldoEntregar'}, inplace=True)
+
     return pedidos
