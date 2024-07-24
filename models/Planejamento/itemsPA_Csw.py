@@ -132,8 +132,7 @@ def EstoquePartes():
 
 
     relacaoPartes = pd.concat([estoquePa,relacaoPartes])
-    cargaFasePartes = pd.concat([cargaFasePartes,cargaFase])
+    cargaFasePartes = pd.concat([cargaFasePartes,cargaFase]).drop_duplicates()
 
-    print(cargaFasePartes)
 
     return relacaoPartes, cargaFasePartes
