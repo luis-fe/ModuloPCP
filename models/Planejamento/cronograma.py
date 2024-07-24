@@ -82,6 +82,18 @@ def ConsultarCronogramaFasesPlano(codigoPlano):
     fases = fases_csw.Fases()
     consulta = pd.merge(consulta,fases,on='codFase')
 
+    # Convertendo as colunas de data para o tipo datetime
+    consulta['DataInicio'] = pd.to_datetime(consulta['DataInicio'])
+    consulta['DataFim'] = pd.to_datetime(consulta['DataFim'])
+
+    # Calculando a diferença entre as datas em dias úteis (excluindo domingos) e adicionando como nova coluna
+    consulta['dias'] = consulta.apply(lambda row: calcular_dias_sem_domingos(row['DataInicio'], row['DataFim']),
+                                          axis=1)
+
+    # Formatando as colunas de data para o formato desejado
+    consulta['DataFim'] = consulta['DataFim'].dt.strftime('%d/%m/%Y')
+    consulta['DataInicio'] = consulta['DataInicio'].dt.strftime('%d/%m/%Y')
+
 
     return consulta
 
