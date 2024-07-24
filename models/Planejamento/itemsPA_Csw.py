@@ -136,6 +136,8 @@ def EstoquePartes():
     cargaFasePartes = pd.concat([cargaFasePartes,cargaFase])
     cargaFasePartes.fillna(1,inplace=True)
     cargaFasePartes = cargaFasePartes.drop_duplicates()
-    print(cargaFasePartes[cargaFasePartes['codItem']=='635940'])
+    #print(cargaFasePartes[cargaFasePartes['codItem']=='635940'])
+    cargaFasePartes = cargaFasePartes.groupby('codItem').agg({'quantidade':'first','carga':'first'}).reset_index()
+
 
     return relacaoPartes, cargaFasePartes
