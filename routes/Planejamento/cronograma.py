@@ -35,6 +35,31 @@ def get_ConsultaCronogramaFasePlano():
     del dados
     return jsonify(OP_data)
 
+
+@cronograma_routes.route('/pcp/api/ConsultaCronogramaFasePlanoFase', methods=['GET'])
+@token_required
+def get_ConsultaCronogramaFasePlanoFase():
+    codigoPlano = request.args.get('codigoPlano')
+    codFase = request.args.get('codFase')
+
+    dados = cronograma.ConsultarCronogramaFasesPlano(codigoPlano)
+    dados = dados[dados['codFase']==str(codFase)]
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
 @cronograma_routes.route('/pcp/api/NovoIntervaloFasePla', methods=['POST'])
 @token_required
 def pOST_NovoIntervaloFasePla():
