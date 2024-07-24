@@ -137,7 +137,7 @@ def EstoquePartes():
     cargaFasePartes.fillna(1,inplace=True)
     cargaFasePartes = cargaFasePartes.drop_duplicates()
     cargaFasePartes = cargaFasePartes.groupby('codItem').agg({'quantidade':'first','carga':'first'}).reset_index()
-    print(cargaFasePartes[cargaFasePartes['codItem']=='635886'])
+    print(relacaoPartes[relacaoPartes['codItem']=='635886'])
 
 
     return relacaoPartes, cargaFasePartes
