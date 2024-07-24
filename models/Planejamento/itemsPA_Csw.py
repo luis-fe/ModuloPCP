@@ -134,6 +134,6 @@ def EstoquePartes():
     relacaoPartes = pd.concat([estoquePa,relacaoPartes])
     cargaFasePartes = pd.concat([cargaFasePartes,cargaFase])
 
-
+    print(cargaFasePartes)
 
     return relacaoPartes, cargaFasePartes
