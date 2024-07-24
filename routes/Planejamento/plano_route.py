@@ -26,8 +26,7 @@ def get_Plano():
 def get_PlanoPorPlano():
     codigoPlano = request.args.get('codigoPlano')
 
-    dados = plano.ObeterPlanos()
-    dados = dados[dados['01- Codigo Plano'] == codigoPlano]
+    dados = plano.ObeterPlanosPlano(codigoPlano)
     return jsonify(dados)
 
 @planoPCP_routes.route('/pcp/api/NovoPlano', methods=['POST'])
