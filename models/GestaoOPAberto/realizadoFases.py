@@ -6,7 +6,7 @@ import pandas as pd
 
 def CarregarRealizado(utimosDias):
 
-    sql = """SELECT f.numeroop, f.codfase, f.seqroteiro, f.databaixa, 
+    sql = """SELECT f.numeroop as numeroop, f.codfase as codfase, f.seqroteiro, f.databaixa, 
     f.nomeFaccionista, f.codFaccionista,
     f.horaMov, f.totPecasOPBaixadas, 
     f.descOperMov  FROM tco.MovimentacaoOPFase f
