@@ -61,7 +61,7 @@ where
     diasUteis = cronograma.calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     realizado['Realizado'] = realizado['Realizado']/diasUteis
     realizado['Realizado'] = realizado['Realizado'].round(0)
-
+    print('dias uteis'+dias)
     return realizado
 
 
