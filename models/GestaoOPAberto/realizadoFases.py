@@ -1,7 +1,7 @@
 import gc
 from connection import ConexaoPostgreWms,ConexaoBanco
 import pandas as pd
-
+from models.Planejamento import cronograma
 
 
 def CarregarRealizado(utimosDias):
@@ -39,7 +39,7 @@ def CarregarRealizado(utimosDias):
 
 
 
-def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim ):
+def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim):
     CarregarRealizado(60)
 
     sql = """
@@ -57,6 +57,10 @@ where
     conn = ConexaoPostgreWms.conexaoEngine()
     realizado = pd.read_sql(sql,conn,params=(dataMovFaseIni,dataMovFaseFim,))
     realizado = realizado.groupby(["codFase"]).agg({"Realizado":"sum"}).reset_index()
+
+    diasUteis = cronograma.calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
+    realizado['Realizado'] = realizado['Realizado']/diasUteis
+    realizado['Realizado'] = realizado['Realizado'].round(0)
 
     return realizado
 
