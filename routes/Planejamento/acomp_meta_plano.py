@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.Planejamento import plano, loteCsw, acomp_meta_plano
+from models.GestaoOPAberto import realizadoFases
 
 MetasFases_routes = Blueprint('MetasFases_routes', __name__)
 
@@ -26,6 +27,7 @@ def pOST_MetasFases():
 
 
     dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw)
+    realizadoFases.CarregarRealizado(500)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
