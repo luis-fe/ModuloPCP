@@ -39,8 +39,24 @@ def CarregarRealizado(utimosDias):
 
 
 
-def RealizadoMediaMovel():
-    sql = """"""
+def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim ):
+    sql = """
+    select
+	rf.numeroop ,
+	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" , rf."horaMov"::time,
+	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+from
+	"PCP".pcp.realizado_fase rf 
+where 
+	rf."dataBaixa"::date >= %s 
+	and rf."dataBaixa"::date <= %s ;
+    """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    realizado = pd.read_sql(sql,conn,params=(dataMovFaseIni,dataMovFaseFim,))
+    realizado = realizado.groupby(["codFase"]).agg({"Realizado":"sum"}).reset_index()
+
+    return realizado
 
 
 

@@ -23,10 +23,12 @@ def pOST_MetasFases():
 
     codigoPlano = data.get('codigoPlano')
     arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
-    print(data)
+    dataMovFaseIni = data.get('dataMovFaseIni', '2024-07-25')
+    dataMovFaseFim = data.get('dataMovFaseFim', '2024-07-25')
 
 
-    dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw)
+
+    dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim)
     realizadoFases.CarregarRealizado(60)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes

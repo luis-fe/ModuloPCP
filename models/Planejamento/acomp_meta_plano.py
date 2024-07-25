@@ -1,9 +1,9 @@
 import pandas as pd
 from connection import ConexaoPostgreWms,ConexaoBanco
 from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma
-from models.GestaoOPAberto import FilaFases
+from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
-def MetasFase(plano, arrayCodLoteCsw):
+def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
 
@@ -106,6 +106,11 @@ def MetasFase(plano, arrayCodLoteCsw):
     Meta['dias'].fillna(1,inplace=True)
     Meta['Meta Dia'] = Meta['Falta Produzir'] /Meta['dias']
     Meta['Meta Dia'] = Meta['Meta Dia'] .round(0)
+
+    realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
+    Meta = pd.merge(Meta,realizado,on='codFase',how='left')
+
+
     Meta.fillna('-',inplace=True)
     Meta = Meta[Meta['apresentacao']!='-']
 
