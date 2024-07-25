@@ -2,8 +2,17 @@ from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.Planejamento import plano, loteCsw, acomp_meta_plano
 from models.GestaoOPAberto import realizadoFases
+import datetime
+import pytz
 
 MetasFases_routes = Blueprint('MetasFases_routes', __name__)
+
+
+def dayAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')
+    agora = datetime.datetime.now(fuso_horario)
+    day = agora.strftime('%Y-%m-%d')
+    return day
 
 def token_required(f):
     @wraps(f)
@@ -20,11 +29,11 @@ def token_required(f):
 def pOST_MetasFases():
 
     data = request.get_json()
-
+    dia = dayAtual()
     codigoPlano = data.get('codigoPlano')
     arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
-    dataMovFaseIni = data.get('dataMovFaseIni', '2024-07-25')
-    dataMovFaseFim = data.get('dataMovFaseFim', '2024-07-25')
+    dataMovFaseIni = data.get('dataMovFaseIni', dia)
+    dataMovFaseFim = data.get('dataMovFaseFim', dia)
 
 
 
