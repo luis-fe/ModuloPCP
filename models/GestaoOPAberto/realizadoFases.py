@@ -26,7 +26,7 @@ def CarregarRealizado(utimosDias):
 
     if sql['numeroop'].size > 0:
         #Implantando no banco de dados do Pcp
-        ConexaoPostgreWms.Funcao_InserirOFF(sql, sql['numeroop'].size, 'Eng_Roteiro', 'replace')
+        ConexaoPostgreWms.Funcao_InserirOFF(sql, sql['numeroop'].size, 'realizado_fase', 'replace')
     else:
         print('segue o baile')
 
