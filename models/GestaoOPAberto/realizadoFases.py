@@ -24,11 +24,16 @@ def CarregarRealizado(utimosDias):
     del rows
     gc.collect()
 
+    verifica = ComparativoMovimentacoes(10000)
     sql['chave'] = sql['numeroop']+'||'+sql['codfase'].astype(str)
+    sql = pd.merge(sql,verifica,on='chave',how='left')
+    sql['status'].fillna('-',inplace=True)
+    sql = sql[sql['status'] == '-'].reset_index()
+    sql = sql.drop(columns=['status','index'])
 
     if sql['numeroop'].size > 0:
         #Implantando no banco de dados do Pcp
-        ConexaoPostgreWms.Funcao_InserirOFF(sql, sql['numeroop'].size, 'realizado_fase', 'replace')
+        ConexaoPostgreWms.Funcao_InserirOFF(sql, sql['numeroop'].size, 'realizado_fase', 'append')
     else:
         print('segue o baile')
 
@@ -38,3 +43,15 @@ def RealizadoMediaMovel():
     sql = """"""
 
 
+
+
+def ComparativoMovimentacoes(limit):
+    sql = """
+    select distinct CHAVE, 'ok' as status from "PCP".pcp.realizado_fase
+    order by CHAVE desc limit %s
+    """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    consulta = pd.read_sql(sql,conn,params=(limit,))
+
+    return consulta
