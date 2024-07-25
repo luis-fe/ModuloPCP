@@ -46,6 +46,20 @@ def RealizadoMediaMovel():
 
 
 def ComparativoMovimentacoes(limit):
+
+    sqlDelete = """
+    delete from "PCP".pcp.realizado_fase 
+    where "dataBaixa"::Date >=  CURRENT_DATE - INTERVAL '15 days'; 
+    """
+
+    conn1  =ConexaoPostgreWms.conexaoInsercao()
+    curr = conn1.cursor()
+    curr.execute(sqlDelete,)
+    conn1.commit()
+    curr.close()
+    conn1.close()
+
+
     sql = """
     select distinct CHAVE, 'ok' as status from "PCP".pcp.realizado_fase
     order by CHAVE desc limit %s
