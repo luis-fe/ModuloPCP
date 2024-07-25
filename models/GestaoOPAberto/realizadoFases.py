@@ -10,7 +10,7 @@ def CarregarRealizado(utimosDias):
     f.nomeFaccionista, f.codFaccionista,
     f.horaMov, f.totPecasOPBaixadas, 
     f.descOperMov  FROM tco.MovimentacaoOPFase f
-    WHERE f.codEmpresa = 1 and f.databaixa >=  DATEADD(DAY, """+str(utimosDias)+""", GETDATE())"""
+    WHERE f.codEmpresa = 1 and f.databaixa >=  DATEADD(DAY, -"""+str(utimosDias)+""", GETDATE())"""
 
 
     with ConexaoBanco.Conexao2() as conn:
