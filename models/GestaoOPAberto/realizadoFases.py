@@ -24,6 +24,8 @@ def CarregarRealizado(utimosDias):
     del rows
     gc.collect()
 
+    sql['chave'] = sql['numeroop']+'||'+sql['codfase']
+
     if sql['numeroop'].size > 0:
         #Implantando no banco de dados do Pcp
         ConexaoPostgreWms.Funcao_InserirOFF(sql, sql['numeroop'].size, 'realizado_fase', 'replace')
@@ -34,3 +36,5 @@ def CarregarRealizado(utimosDias):
 
 def RealizadoMediaMovel():
     sql = """"""
+
+
