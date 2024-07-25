@@ -40,6 +40,8 @@ def CarregarRealizado(utimosDias):
 
 
 def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim ):
+    CarregarRealizado(60)
+
     sql = """
     select
 	rf.numeroop ,
