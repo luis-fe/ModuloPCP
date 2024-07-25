@@ -108,6 +108,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim):
     Meta['Meta Dia'] = Meta['Meta Dia'] .round(0)
 
     realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
+    realizado['codFase'] = realizado['codFase'].astype(int)
     Meta = pd.merge(Meta,realizado,on='codFase',how='left')
 
 
