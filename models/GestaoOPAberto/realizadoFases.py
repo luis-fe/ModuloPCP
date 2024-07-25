@@ -24,7 +24,7 @@ def CarregarRealizado(utimosDias):
     del rows
     gc.collect()
 
-    verifica = ComparativoMovimentacoes(10000)
+    verifica = ComparativoMovimentacoes(100000)
     sql['chave'] = sql['numeroop']+'||'+sql['codfase'].astype(str)
     sql = pd.merge(sql,verifica,on='chave',how='left')
     sql['status'].fillna('-',inplace=True)
