@@ -27,7 +27,7 @@ def pOST_MetasFases():
 
 
     dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw)
-    realizadoFases.CarregarRealizado(60)
+    realizadoFases.CarregarRealizado(500)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
