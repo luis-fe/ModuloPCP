@@ -30,7 +30,7 @@ def CarregarRealizado(utimosDias):
     sql['status'].fillna('-',inplace=True)
     sql = sql[sql['status'] == '-'].reset_index()
     sql = sql.drop(columns=['status','index'])
-
+    print(sql)
     if sql['numeroop'].size > 0:
         #Implantando no banco de dados do Pcp
         ConexaoPostgreWms.Funcao_InserirOFF(sql, sql['numeroop'].size, 'realizado_fase', 'append')
