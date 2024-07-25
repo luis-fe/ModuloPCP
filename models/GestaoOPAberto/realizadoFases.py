@@ -24,7 +24,7 @@ def CarregarRealizado(utimosDias):
     del rows
     gc.collect()
 
-    sql['chave'] = sql['numeroop']+'||'+sql['codfase']
+    sql['chave'] = sql['numeroop']+'||'+sql['codfase'].astype(str)
 
     if sql['numeroop'].size > 0:
         #Implantando no banco de dados do Pcp
