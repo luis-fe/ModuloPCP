@@ -86,7 +86,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                 del rows
 
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,dataGeracaoRequisicao,on='numeroOP')
-        OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,reqAbertas,on='numeroOP')
+        OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,reqAbertas,on='numeroOP',how='left')
         OP_emAberto = pd.concat([OP_emAberto, OP_emAbertoAvimamento], ignore_index=True)
         OP_emAberto['codFase'] = OP_emAberto.apply(lambda row: '407' if row['codFase'] == '145'else row['codFase'], axis=1  )
 
@@ -846,7 +846,7 @@ def PesquisarSequenciaRoteiro(codfase):
 
 def RequisicoesAbertas():
     consulta = """
-    SELECT DISTINCT r.numOPConfec as numeroOP   from tcq.Requisicao r
+    SELECT DISTINCT r.numOPConfec as numeroOP , 'em aberto' as status_requisicoes  from tcq.Requisicao r
 WHERE r.codEmpresa = 1 and r.numOPConfec in (select numeroOP from tco.OrdemProd op WHERE op.codempresa =1 and op.situacao = 3)
 and sitBaixa <> 1 and r.seqRoteiro <> 408 
     """
