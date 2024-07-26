@@ -514,7 +514,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         tratamento = deletarOMovimentadoFasesEspeciais()
         consulta = pd.merge(consulta, tratamento,on='numeroOP',how='left')
         consulta['tratamento'].fillna('-',inplace=True)
-        #consulta = consulta[(consulta['tratamento']!='-')&(consulta['status_requisicoes']!='-')]
+        consulta = consulta[(consulta['tratamento']!='-')&(consulta['status_requisicoes']!='-')&(consulta['codFase']!=406)].reset_index()
 
 
         consulta.to_csv('./dados/cargaOP.csv',index=True)
