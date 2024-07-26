@@ -41,7 +41,7 @@ def CarregarRealizado(utimosDias):
     sql = """SELECT f.numeroop as numeroop, f.codfase as codfase, f.seqroteiro, f.databaixa, 
     f.nomeFaccionista, f.codFaccionista,
     f.horaMov, f.totPecasOPBaixadas, 
-    f.descOperMov  FROM tco.MovimentacaoOPFase f
+    f.descOperMov, (select op.codProduto  from tco.ordemprod op WHERE op.codempresa = 1 and op.numeroop = f.numeroop) as codEngenharia  FROM tco.MovimentacaoOPFase f
     WHERE f.codEmpresa = 1 and f.databaixa >=  DATEADD(DAY, -"""+str(utimosDias)+""", GETDATE())"""
 
 
