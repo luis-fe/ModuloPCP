@@ -111,7 +111,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim):
     realizado['codFase'] = realizado['codFase'].astype(int)
     Meta = pd.merge(Meta,realizado,on='codFase',how='left')
 
-
+    Meta['Realizado'].fillna(0,inplace=True)
     Meta.fillna('-',inplace=True)
     Meta = Meta[Meta['apresentacao']!='-']
 
