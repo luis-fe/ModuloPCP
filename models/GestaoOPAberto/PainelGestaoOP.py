@@ -735,7 +735,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         else:
 
                 filtrosNovo['Qtd Pcs'] = pd.to_numeric(filtrosNovo['Qtd Pcs'], errors='coerce').fillna(0).astype(int)
-                filtrosNovo['Qtd Pcs'] = filtrosNovo.apply(lambda r: 0 if r['codFase']=='406' and r['status_requisicoes']=='-' else r['Qtd Pcs'],axis=1)
+                filtrosNovo['Qtd Pcs'] = filtrosNovo.apply(lambda r: 0 if r['codFase']==406 and r['status_requisicoes']=='-' else r['Qtd Pcs'],axis=1)
 
                 QtdPcs = filtrosNovo['Qtd Pcs'].sum()
                 QtdPcs = str(QtdPcs).replace(',', '')
