@@ -86,7 +86,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                 del rows
 
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,dataGeracaoRequisicao,on='numeroOP')
-        OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,reqAbertas,on='numeroOP',how='left')
+        OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,reqAbertas,on='numeroOP')
+
+
         OP_emAberto = pd.concat([OP_emAberto, OP_emAbertoAvimamento], ignore_index=True)
         OP_emAberto['codFase'] = OP_emAberto.apply(lambda row: '407' if row['codFase'] == '145'else row['codFase'], axis=1  )
 
@@ -508,6 +510,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                       inplace=True)
 
         consulta = consulta[(consulta['codFase'] != '426') | (consulta['codTipoOP'] != '2-PARTE DE PECA')]
+
+        consultaTratamento = consulta[(consulta['codFase'] == '406') | (consulta['codFase'] == '407') | (consulta['codFase'] == '145')]
+
 
         consulta.to_csv('./dados/cargaOP.csv',index=True)
         # Retirar o "-" da prioridade :
@@ -983,3 +988,22 @@ def ReconhecerFiltro(filtro):
         return "N2"
     else:
         return 'N1'
+
+
+
+def deletarOMovimentadoFasesEspeciais():
+    sql = """
+    SELECT DISTINCT numeroOP  FROM tco.OrdemProd op
+    WHERE op.codEmpresa = 1 and op.situacao = 3
+    and codFaseAtual not in (406, 407, 145)
+    """
+    with ConexaoBanco.ConexaoInternoMPL() as conn:
+        with conn.cursor() as cursor_csw:
+            # Executa a primeira consulta e armazena os resultados
+            cursor_csw.execute(sql)
+            colunas = [desc[0] for desc in cursor_csw.description]
+            rows = cursor_csw.fetchall()
+            sql = pd.DataFrame(rows, columns=colunas)
+            del rows
+
+    return sql
