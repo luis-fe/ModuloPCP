@@ -519,6 +519,14 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                               (consulta['status_requisicoes'] == '-') &
                               (consulta['codFase'] == '406'))].reset_index(drop=True)
 
+        consulta = consulta[~((consulta['tratamento'] == '-') &
+                              (consulta['status_requisicoes'] == '-') &
+                              (consulta['codFase'] == '407'))].reset_index(drop=True)
+
+        consulta = consulta[~((consulta['tratamento'] == '-') &
+                              (consulta['status_requisicoes'] == '-') &
+                              (consulta['codFase'] == '145'))].reset_index(drop=True)
+
         consulta.to_csv('./dados/cargaOP.csv',index=True)
         # Retirar o "-" da prioridade :
         consulta['prioridade'] = consulta['prioridade'].str.split('-').str[1]
