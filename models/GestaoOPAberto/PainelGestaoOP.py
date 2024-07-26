@@ -735,8 +735,8 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         else:
                 print('bateu aqui')
                 filtrosNovo['Qtd Pcs'] = pd.to_numeric(filtrosNovo['Qtd Pcs'], errors='coerce').fillna(0).astype(int)
+                filtros['Qtd Pcs'] = filtros.apply(lambda r: 0 if r['codFase']=='406' and r['status_requisicoes']=='-' else r['Qtd Pcs'],axis=1)
                 QtdPcs = filtrosNovo['Qtd Pcs'].sum()
-
                 QtdPcs = str(QtdPcs).replace(',', '')
 
                 totalOP = filtrosNovo['numeroOP'].count()
