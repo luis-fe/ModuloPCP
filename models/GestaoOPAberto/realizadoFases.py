@@ -2,7 +2,7 @@ import gc
 from connection import ConexaoPostgreWms,ConexaoBanco
 import pandas as pd
 from models.Planejamento import cronograma
-
+import numpy as np
 
 def CarregarRealizado(utimosDias):
 
@@ -59,8 +59,8 @@ where
     realizado = realizado.groupby(["codFase"]).agg({"Realizado":"sum"}).reset_index()
 
     diasUteis = cronograma.calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
-    realizado['Realizado'] = realizado['Realizado']/diasUteis
-    realizado['Realizado'] = realizado['Realizado'].round(0)
+    # Evitar divisão por zero ou infinito
+    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
     print(f'dias uteis {diasUteis}')
     return realizado
 
