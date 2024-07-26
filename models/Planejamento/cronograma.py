@@ -13,14 +13,16 @@ def obterdiaAtual():
 
 
 def calcular_dias_sem_domingos(dataInicio, dataFim):
+    # Obtendo a data atual
+    dataHoje = obterdiaAtual()
     # Convertendo as datas para o tipo datetime, se necessário
     if not isinstance(dataInicio, pd.Timestamp):
         dataInicio = pd.to_datetime(dataInicio)
     if not isinstance(dataFim, pd.Timestamp):
         dataFim = pd.to_datetime(dataFim)
+    if not isinstance(dataHoje, pd.Timestamp):
+        dataHoje = pd.to_datetime(dataFim)
 
-    # Obtendo a data atual
-    dataHoje = obterdiaAtual()
 
     # Ajustando a data de início se for anterior ao dia atual
     if dataHoje > dataInicio:

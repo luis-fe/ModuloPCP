@@ -1,9 +1,41 @@
 import gc
 from connection import ConexaoPostgreWms,ConexaoBanco
 import pandas as pd
-from models.Planejamento import cronograma
 import numpy as np
+import pytz
+from datetime import datetime
 
+
+def obterdiaAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+    agora = datetime.now(fuso_horario)
+    agora = agora.strftime('%Y-%m-%d')
+    return pd.to_datetime(agora)
+
+def calcular_dias_sem_domingos(dataInicio, dataFim):
+    # Obtendo a data atual
+    dataHoje = obterdiaAtual()
+    # Convertendo as datas para o tipo datetime, se necessário
+    if not isinstance(dataInicio, pd.Timestamp):
+        dataInicio = pd.to_datetime(dataInicio)
+    if not isinstance(dataFim, pd.Timestamp):
+        dataFim = pd.to_datetime(dataFim)
+    if not isinstance(dataHoje, pd.Timestamp):
+        dataHoje = pd.to_datetime(dataFim)
+
+    # Inicializando o contador de dias
+    dias = 0
+    data_atual = dataInicio
+
+    # Iterando através das datas
+    while data_atual <= dataFim:
+        # Se o dia não for sábado (5) ou domingo (6), incrementa o contador de dias
+        if data_atual.weekday() != 5 and data_atual.weekday() != 6:
+            dias += 1
+        # Incrementa a data atual em um dia
+        data_atual += pd.Timedelta(days=1)
+
+    return dias
 def CarregarRealizado(utimosDias):
 
     sql = """SELECT f.numeroop as numeroop, f.codfase as codfase, f.seqroteiro, f.databaixa, 
@@ -58,7 +90,7 @@ where
     realizado = pd.read_sql(sql,conn,params=(dataMovFaseIni,dataMovFaseFim,))
     realizado = realizado.groupby(["codFase"]).agg({"Realizado":"sum"}).reset_index()
 
-    diasUteis = cronograma.calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
+    diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     # Evitar divisão por zero ou infinito
     realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
     print(f'dias uteis {diasUteis}')
