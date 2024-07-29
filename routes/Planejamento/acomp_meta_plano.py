@@ -34,10 +34,14 @@ def pOST_MetasFases():
     arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
     dataMovFaseIni = data.get('dataMovFaseIni', dia)
     dataMovFaseFim = data.get('dataMovFaseFim', dia)
+    congelado = data.get('congelado', False)
+    if congelado =='' or congelado == '-':
+        congelado = False
+    else:
+        congelado = congelado
 
 
-
-    dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim)
+    dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
