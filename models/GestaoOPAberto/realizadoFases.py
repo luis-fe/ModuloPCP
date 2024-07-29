@@ -90,6 +90,7 @@ where
     realizado = pd.read_sql(sql,conn,params=(dataMovFaseIni,dataMovFaseFim,))
     realizado['filtro'] = realizado['codFase'].astype(str) + '|'+realizado['codEngenharia'].str[0]
     realizado = realizado[(realizado['filtro']!='401|6')]
+    realizado = realizado[(realizado['filtro']!='401|5')]
 
 
     realizado = realizado.groupby(["codFase"]).agg({"Realizado":"sum"}).reset_index()
