@@ -91,7 +91,7 @@ where
     realizado['filtro'] = realizado['codFase'].astype(str) + '|'+realizado['codEngenharia'].str[0]
     realizado = realizado[(realizado['filtro']!='401|6')]
     realizado = realizado[(realizado['filtro']!='401|5')]
-
+    realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
 
     realizado = realizado.groupby(["codFase"]).agg({"Realizado":"sum"}).reset_index()
 
