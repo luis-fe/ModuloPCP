@@ -111,7 +111,7 @@ def ApresentacaoFila(COLECAO):
 
     if colecoes['COLECAO'][0] != '-':
         fila = pd.merge(fila, colecoes , on='COLECAO')
-        start = pd.DataFrame([{'numeroOP':'t-0','codFase':'449',"codFaseAtual":449,"Situacao":'em processo',"pcs":0,'COLECAO':'',"fase":"ENTRADA DE ESTOQUE"}])
+        start = pd.DataFrame([{'numeroOP':'t-0','codFase':449,"codFaseAtual":449,"Situacao":'em processo',"pcs":0,'COLECAO':'',"fase":"ENTRADA DE ESTOQUE"}])
         fila = pd.concat([fila,start])
 
     fila.to_csv('./dados/filaroteiroOP.csv')
