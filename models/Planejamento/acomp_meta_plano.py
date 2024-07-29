@@ -94,8 +94,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         filtro_comb2 = fase_426 & nao_comeca_com_0
 
         # Aplicar o filtro invertido
-        Meta = Meta[~filtro_comb]
-        Meta = Meta[~filtro_comb2]
+        Meta = Meta[~(filtro_comb | filtro_comb2)]
 
 
         Meta.to_csv('./dados/analiseFaltaProgrFases.csv')
