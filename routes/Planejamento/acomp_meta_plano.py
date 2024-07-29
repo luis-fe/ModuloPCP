@@ -35,6 +35,7 @@ def pOST_MetasFases():
     dataMovFaseIni = data.get('dataMovFaseIni', dia)
     dataMovFaseFim = data.get('dataMovFaseFim', dia)
     congelado = data.get('congelado', False)
+    print(data)
     if congelado =='' or congelado == '-':
         congelado = False
     else:
