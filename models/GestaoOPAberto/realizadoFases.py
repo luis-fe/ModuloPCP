@@ -92,6 +92,8 @@ where
     realizado = realizado[(realizado['filtro']!='401|6')]
     realizado = realizado[(realizado['filtro']!='401|5')]
     realizado = realizado[(realizado['filtro']!='426|6')]
+    realizado = realizado[(realizado['filtro']!='441|5')]
+    realizado = realizado[(realizado['filtro']!='412|5')]
 
     realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
 
