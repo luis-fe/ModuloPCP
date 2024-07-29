@@ -107,7 +107,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
 
         colecoes = TratamentoInformacaoColecao(arrayCodLoteCsw)
 
-        filaFase = FilaFases.ApresentacaoFila('-')
+        filaFase = FilaFases.ApresentacaoFila(colecoes)
         filaFase = filaFase.loc[:,
                       ['codFase', 'Carga Atual', 'Fila']]
 
