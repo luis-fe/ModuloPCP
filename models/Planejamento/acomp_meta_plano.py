@@ -3,6 +3,8 @@ from connection import ConexaoPostgreWms
 from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma, loteCsw
 from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
+import re
+
 def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
@@ -166,14 +168,26 @@ def TratamentoInformacaoColecao(ArraycodLote):
 
 
         if 'INVERNO' in descricaoLote:
-            colecoes.append('INVERNO')
+            nome = 'INVERNO'+' '+extrair_ano(descricaoLote)
+            colecoes.append(nome)
         elif 'PRI' in descricaoLote:
-            colecoes.append('VERAO')
+            nome = 'VERAO'+' '+extrair_ano(descricaoLote)
+            colecoes.append(nome)
         elif 'ALT' in descricaoLote:
-            colecoes.append('ALTO VERAO')
+            nome = 'ALTO VERAO'+' '+extrair_ano(descricaoLote)
+            colecoes.append(nome)
+
         elif 'VER' in descricaoLote:
-            colecoes.append('VERAO')
+            nome = 'VERAO'+' '+extrair_ano(descricaoLote)
+            colecoes.append(nome)
         else:
-            colecoes.append('ENCOMENDAS')
+            nome = 'ENCOMENDAS'+' '+extrair_ano(descricaoLote)
+            colecoes.append(nome)
 
     return colecoes
+def extrair_ano(descricaoLote):
+    match = re.search(r'\b2\d{3}\b', descricaoLote)
+    if match:
+        return match.group(0)
+    else:
+        return None
