@@ -56,7 +56,7 @@ def CarregarRealizado(utimosDias):
     del rows
     gc.collect()
 
-    verifica = ComparativoMovimentacoes(500000)
+    verifica = ComparativoMovimentacoes(20000)
     sql['chave'] = sql['numeroop']+'||'+sql['codfase'].astype(str)
     sql = pd.merge(sql,verifica,on='chave',how='left')
     sql['status'].fillna('-',inplace=True)
@@ -72,7 +72,7 @@ def CarregarRealizado(utimosDias):
 
 
 def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim):
-    CarregarRealizado(60)
+    CarregarRealizado(500)
 
     sql = """
     select
@@ -103,7 +103,7 @@ def ComparativoMovimentacoes(limit):
 
     sqlDelete = """
     delete from "PCP".pcp.realizado_fase 
-    where "dataBaixa"::Date >=  CURRENT_DATE - INTERVAL '500 days'; 
+    where "dataBaixa"::Date >=  CURRENT_DATE - INTERVAL '15 days'; 
     """
 
     conn1  =ConexaoPostgreWms.conexaoInsercao()
