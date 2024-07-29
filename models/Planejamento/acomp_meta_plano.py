@@ -163,7 +163,8 @@ def TratamentoInformacaoColecao(ArraycodLote):
 
     for codLote in ArraycodLote:
         descricaoLote = loteCsw.ConsultarLoteEspecificoCsw('1',codLote)
-        descricaoLote = descricaoLote['nomeLote'][0]
+
+
         if 'INVERNO' in descricaoLote:
             colecoes.append('INVERNO')
         elif 'PRI' in descricaoLote:
