@@ -1,6 +1,6 @@
 import pandas as pd
-from connection import ConexaoPostgreWms,ConexaoBanco
-from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma
+from connection import ConexaoPostgreWms
+from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma, loteCsw
 from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
 def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
@@ -103,7 +103,9 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         cronogramaS =cronograma.CronogramaFases(plano)
         Meta = pd.merge(Meta,cronogramaS,on='codFase',how='left')
 
-        filaFase = FilaFases.ApresentacaoFila('-')
+        colecoes = TratamentoInformacaoColecao(arrayCodLoteCsw)
+
+        filaFase = FilaFases.ApresentacaoFila(colecoes)
         filaFase = filaFase.loc[:,
                       ['codFase', 'Carga Atual', 'Fila']]
 
@@ -154,3 +156,23 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         '1-Detalhamento': Meta.to_dict(orient='records')}
 
         return pd.DataFrame([dados])
+
+def TratamentoInformacaoColecao(ArraycodLote):
+
+    colecoes = []
+
+    for codLote in ArraycodLote:
+        descricaoLote = loteCsw.ConsultarLoteEspecificoCsw('1',codLote)
+        descricaoLote = descricaoLote['nomeLote'][0]
+        if 'INVERNO' in descricaoLote:
+            colecoes.append('INVERNO')
+        elif 'PRI' in descricaoLote:
+            colecoes.append('VERAO')
+        elif 'ALT' in descricaoLote:
+            colecoes.append('ALTO VERAO')
+        elif 'VER' in descricaoLote:
+            colecoes.append('VERAO')
+        else:
+            colecoes.append('ENCOMENDAS')
+
+    return colecoes
