@@ -530,7 +530,7 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
     pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
 
     descricaoArquivo = iniVenda+'_'+finalVenda
-    fp.write(f'./dados/monitor.parquet{descricaoArquivo}', pedidos)
+    fp.write(f'./dados/monitor{descricaoArquivo}.parquet', pedidos)
 
     #etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
     return pedidos
