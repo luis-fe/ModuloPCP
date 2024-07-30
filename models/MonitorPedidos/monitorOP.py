@@ -13,11 +13,15 @@ def ReservaOPMonitor(dataInico, dataFim):
     consultaSql = """
     select o.codreduzido as "codProduto", id, "qtdAcumulada", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
     """
-
+    descricaoArquivo = dataInico+'_'+dataFim
     # Carregar o arquivo Parquet
-    parquet_file = fp.ParquetFile('./dados/monitor.parquet')
+    try:
+        parquet_file = fp.ParquetFile(f'./dados/monitor{descricaoArquivo}.parquet')
+    except:
+        parquet_file = fp.ParquetFile(f'./dados/monitor_filtro.parquet')
     # Converter para DataFrame do Pandas
     monitor = parquet_file.to_pandas()
+    fp.write(f'./dados/monitor_filtro.parquet', monitor)
 
     # Condição para o cálculo da coluna 'NecessodadeOP'
     condicao = (monitor['Qtd Atende'] > 0)

@@ -95,7 +95,6 @@ def FilaFases():
     fila['COLECAO'] = fila['COLECAO'] + ' ' + fila['desLote'].apply(extrair_ano)
     fila.fillna('-', inplace=True)
 
-    #fila.to_csv('./dados/filaroteiroOP.csv')
 
 
 
