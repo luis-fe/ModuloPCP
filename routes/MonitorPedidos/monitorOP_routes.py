@@ -43,7 +43,10 @@ def get_monitorOPs():
 @token_required
 def get_DelhalamentoOPMonitor():
     numeroOP = request.args.get('numeroOP', '-')
-    dados = monitorOP.DetalhaOPMonitor(numeroOP)
+    dataInico = request.args.get('dataInico', '-')
+    dataFim = request.args.get('dataFim', '-')
+
+    dados = monitorOP.DetalhaOPMonitor(numeroOP,dataInico, dataFim)
     # Converte o DataFrame em uma lista de dicionários
     OP_data = dados.to_dict(orient='records')
 

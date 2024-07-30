@@ -315,7 +315,7 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor1 = monitor1.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
     monitorDetalhadoOps = monitor2.groupby(['numeroop','codProduto']).agg({"QtdSaldo":"sum"}).reset_index()
 
-    monitorDetalhadoOps.to_csv('./dados/detalhadoops.csv')
+    monitorDetalhadoOps.to_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
 
 
     monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
@@ -359,7 +359,7 @@ WHERE op.situacao = 3 and op.codEmpresa = 1
     return pd.DataFrame([dados])
 
 
-def DetalhaOPMonitor(numeroop):
+def DetalhaOPMonitor(numeroop,dataInico, dataFim):
 
     sqlCSW = """
     SELECT DISTINCT t.codProduto as itemPai ,t.coditem as codProduto, op.numeroOP as numeroop, op.codTipoOP||'-'||fa.nome as tipoNota, e.descricao ,s.corBase ||'-'|| s.nomeCorBase as cor , ta.descricao, t.qtdePecas1Qualidade as pcsOP  FROM tco.OrdemProd op
@@ -378,8 +378,8 @@ Where op.numeroOP = '""" +numeroop+"""'"""
             rows = cursor_csw.fetchall()
             sqlCSW = pd.DataFrame(rows, columns=colunas)
             del rows
-
-    monitorDetalhadoOps = pd.read_csv('./dados/detalhadoops.csv')
+    descricaoArquivo = dataInico + '_' + dataFim
+    monitorDetalhadoOps = pd.read_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['numeroop']==numeroop]
     monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
 
