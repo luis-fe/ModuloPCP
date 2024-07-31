@@ -810,3 +810,12 @@ def DetalhaPedido(codPedido):
         print(f"Erro inesperado: {e}")
         return None
 
+
+def ConversaoMonitor(dataInicio, dataFim):
+    descricaoArquivo = dataInicio+'_'+dataFim
+    parquet_file = fp.ParquetFile(f'./dados/monitor{descricaoArquivo}.parquet')
+    # Converter para DataFrame do Pandas
+    monitor = parquet_file.to_pandas()
+    monitor.to_csv(f'./dados/monitor{descricaoArquivo}.csv')
+
+    return pd.DataFrame([{'Mensagem':'Monitor convertido para csv'}])

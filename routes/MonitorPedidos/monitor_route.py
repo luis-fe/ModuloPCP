@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request,  send_from_directory
 from functools import wraps
 from models.MonitorPedidos import monitor, MonitorSimulacaoEncerrOP
 
@@ -95,7 +95,16 @@ def POST_MonitorPedidos():
     return jsonify(OP_data)
 
 
+@MonitorPedidos_routes.route('/pcp/api/GerarMonitorCsv', methods=['GET'])
+@token_required
+def get_monitorPreFaturamentoSimulaOP():
+    iniVenda = request.args.get('iniVenda','-')
+    finalVenda = request.args.get('finalVenda')
 
+    monitor.ConversaoMonitor(iniVenda, finalVenda)
+    descricaoArquivo = iniVenda+'_'+finalVenda
+
+    return send_from_directory('./dados/', f'monitor{descricaoArquivo}.csv')
 
 
 @MonitorPedidos_routes.route('/pcp/api/monitorPreFaturamentoSimulaOP', methods=['GET'])
