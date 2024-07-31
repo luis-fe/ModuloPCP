@@ -97,7 +97,7 @@ def POST_MonitorPedidos():
 
 @MonitorPedidos_routes.route('/pcp/api/GerarMonitorCsv', methods=['GET'])
 @token_required
-def get_monitorPreFaturamentoSimulaOP():
+def get_GerarMonitorCsv():
     iniVenda = request.args.get('iniVenda','-')
     finalVenda = request.args.get('finalVenda')
 
