@@ -430,3 +430,6 @@ def ProdutosSemOP():
 
 def NecessidadeMateriaPrima():
     monitorDetalhadoOps = pd.read_csv('./dados/necessidadeMonitorMP.csv')
+
+
+

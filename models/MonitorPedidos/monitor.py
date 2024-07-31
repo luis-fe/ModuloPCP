@@ -34,7 +34,8 @@ def Monitor_CapaPedidosDataPrev(empresa, iniVenda, finalVenda, tiponota):
     "(select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, "\
     " codTipoNota, dataPrevFat, convert(varchar(9),codCliente) as codCliente, codRepresentante, descricaoCondVenda, vlrPedido as vlrSaldo, qtdPecasFaturadas "\
     " FROM Ped.Pedido p"\
-    " where codEmpresa = "+empresa+"  and  dataPrevFat >= '" + iniVenda + "' and dataPrevFat <= '" + finalVenda + "' and codTipoNota in (" + tiponota + ")  "
+    " where codEmpresa = "+empresa+"  and  dataPrevFat >= '" + iniVenda + "' and dataPrevFat <= '" + finalVenda + "' and codTipoNota in (" + tiponota + ") " \
+    "order by dataPrevFat asc "
 
 
     with ConexaoBanco.Conexao2() as conn:
