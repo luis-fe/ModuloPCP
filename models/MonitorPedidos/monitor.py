@@ -313,6 +313,13 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
 
     #10.1 Obtendo o Estoque Liquido para o calculo da necessidade
     pedidos['EstoqueLivre'] = pedidos['estoqueAtual']-pedidos['estReservPedido']
+    if tipoData == 'DataEmissao' :
+        pedidos = pedidos.sort_values(by=['dataEmissao'],
+                                      ascending=True)  # escolher como deseja classificar
+    else:
+        pedidos = pedidos.sort_values(by=['dataPrevFat'],
+                                      ascending=True)  # escolher como deseja classificar
+
     #10.2 Obtendo a necessidade de estoque
     pedidos['Necessidade'] = pedidos.groupby('codProduto')['QtdSaldo'].cumsum()
     #10.3 0 Obtendo a Qtd que antende para o pedido baseado no estoque
