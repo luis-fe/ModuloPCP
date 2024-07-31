@@ -14,14 +14,17 @@ def ReservaOPMonitor(dataInico, dataFim):
     select o.codreduzido as "codProduto", id, "qtdAcumulada", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
     """
     descricaoArquivo = dataInico+'_'+dataFim
-    # Carregar o arquivo Parquet
+    # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
     try:
         parquet_file = fp.ParquetFile(f'./dados/monitor{descricaoArquivo}.parquet')
+        # Converter para DataFrame do Pandas
+        monitor = parquet_file.to_pandas()
+        # disponibiliza um novo arquivo para ser utilizado com filtragem
+        fp.write(f'./dados/monitor_filtro.parquet', monitor)
     except:
         parquet_file = fp.ParquetFile(f'./dados/monitor_filtro.parquet')
-    # Converter para DataFrame do Pandas
-    monitor = parquet_file.to_pandas()
-    fp.write(f'./dados/monitor_filtro.parquet', monitor)
+        # Converter para DataFrame do Pandas
+        monitor = parquet_file.to_pandas()
 
     # Condição para o cálculo da coluna 'NecessodadeOP'
     condicao = (monitor['Qtd Atende'] > 0)
@@ -394,7 +397,7 @@ Where op.numeroOP = '""" +numeroop+"""'"""
     return monitorDetalhadoOps
 
 def ProdutosSemOP():
-    monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
+    monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps.csv')
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index(drop=True)
     # Filtrando pedidos com 'QtdSaldo' maior que 0
     pedido = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index(drop=True)
