@@ -313,12 +313,7 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
 
     #10.1 Obtendo o Estoque Liquido para o calculo da necessidade
     pedidos['EstoqueLivre'] = pedidos['estoqueAtual']-pedidos['estReservPedido']
-    if tipoData == 'DataEmissao' :
-        pedidos = pedidos.sort_values(by=['dataEmissao'],
-                                      ascending=True)  # escolher como deseja classificar
-    else:
-        pedidos = pedidos.sort_values(by=['dataPrevFat'],
-                                      ascending=True)  # escolher como deseja classificar
+
 
     #10.2 Obtendo a necessidade de estoque
     pedidos['Necessidade'] = pedidos.groupby('codProduto')['QtdSaldo'].cumsum()
@@ -652,8 +647,7 @@ def Ciclo2(pedidos,avaliar_grupo):
 
     pedidos1 = pedidos[pedidos['StatusSugestao'] == 'Nao Sugerido']
     pedidos2 = pedidos[pedidos['StatusSugestao'] != 'Nao Sugerido']
-    print('testando os pedios 2 no cilco')
-    print(pedidos2[pedidos2['codPedido']=='323256'])
+
 
 
     pedidos1['codProduto'].fillna(0,inplace=True)
