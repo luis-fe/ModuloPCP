@@ -97,6 +97,7 @@ def DesvincularNotaPlano(empresa, codigoNota, plano):
 def ConsultarLoteEspecificoCsw(empresa, codLote):
     sql = """Select codLote, descricao as nomeLote from tcl.lote where codEmpresa= """+str(empresa)+""" and codLote ="""+ "'"+codLote+"'"
 
+
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
             cursor.execute(sql)
@@ -108,7 +109,10 @@ def ConsultarLoteEspecificoCsw(empresa, codLote):
     del rows
     gc.collect()
 
-    return lotes['nomeLote'][0]
+    nomeLote =lotes['nomeLote'][0]
+    nomeLote = nomeLote[:2]+'-'+nomeLote
+
+    return nomeLote
 
 def CarregarRoteiroEngLote(empresa, arrayCodLoteCsw):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
