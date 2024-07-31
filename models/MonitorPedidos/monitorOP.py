@@ -27,6 +27,8 @@ def ReservaOPMonitor(dataInico, dataFim):
         monitor = parquet_file.to_pandas()
 
     # Condição para o cálculo da coluna 'NecessodadeOP'
+
+    monitor['Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
     condicao = (monitor['Qtd Atende'] > 0)
     # Cálculo da coluna 'NecessodadeOP' de forma vetorizada
     monitor['NecessodadeOP'] = numpy.where(condicao, 0, monitor['QtdSaldo'])
