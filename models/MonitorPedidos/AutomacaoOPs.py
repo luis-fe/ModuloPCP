@@ -52,7 +52,7 @@ def BuscandoOPCSW(empresa):
             get['seqTamanho'] = get['seqTamanho'].astype(str)
             get = pd.merge(get, sku, on=["codProduto", "codSortimento", "seqTamanho"], how='left')
             # Atribui valores iniciais à coluna 'id' com base na coluna 'codTipoOP'
-            get['id'] = np.where(get['codTipoOP'].isin([1, 4]), 9000, 2000)
+            get['id'] = np.where(get['codTipoOP'].isin([1, 3]), 9000, 2000)
             # Atualiza os valores da coluna 'id' com base na coluna 'codfaseatual'
             get['id'] = np.where(get['codFaseAtual'].isin(['1', '401']), 1000, get['id'])
 
@@ -61,7 +61,7 @@ def BuscandoOPCSW(empresa):
             get['concatenar'] = get['codreduzido']+get['codFaseAtual']
             get['pesquisa'] = get.groupby('concatenar')['concatenar'].transform('count')
 
-            get2 = get[(get['pesquisa']>1) & (get['codTipoOP']==1)]
+            get2 = get[(get['pesquisa']>1) & (get['codTipoOP'].isin([1, 3]))]
             get2 = get2.sort_values(by=['codreduzido', 'numeroop'], ascending=True)  # escolher como deseja classificar
             get2['NovoseqAtual'] = 1-((get2.groupby('concatenar')['concatenar'].cumcount()+1)*0.1)
             get2['seqAtual'] = get2['seqAtual'].astype(int)
