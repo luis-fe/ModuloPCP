@@ -60,7 +60,7 @@ def BuscandoOPCSW(empresa):
 
             # contagem de duplicaçoes : reduzido + codTipoOP + codFaseAtual
             get['concatenar'] = get['codreduzido']+get['codFaseAtual']
-            get['pesquisa'] = get.groupby(['codreduzido', 'codTipoOP', 'codFaseAtual'])['concatenar'].transform('count')+ 1
+            get['pesquisa'] = get.groupby('concatenar')['concatenar'].transform('count')
 
             get2 = get[(get['pesquisa']>1) & (get['codTipoOP']==1)]
             get2 = get2.sort_values(by=['codreduzido', 'numeroop'], ascending=True)  # escolher como deseja classificar
