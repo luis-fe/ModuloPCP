@@ -63,6 +63,8 @@ def BuscandoOPCSW(empresa):
                 'count') + 1
 
             get2 = get[(get['pesquisa']>1) & (get['codTipoOP']==1)]
+            get2 = get2.sort_values(by=['codreduzido', 'numeroop'], ascending=True)  # escolher como deseja classificar
+
             print(get2)
             get.drop(['pesquisa'],
                           axis=1,
