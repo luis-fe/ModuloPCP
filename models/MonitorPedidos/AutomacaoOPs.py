@@ -64,7 +64,7 @@ def BuscandoOPCSW(empresa):
 
             get2 = get[(get['pesquisa']>1) & (get['codTipoOP']==1)]
             get2 = get2.sort_values(by=['codreduzido', 'numeroop'], ascending=True)  # escolher como deseja classificar
-            get2['NovoseqAtual'] = get2.groupby('concatenar')['concatenar'].cumsum()+1
+            get2['NovoseqAtual'] = get2.groupby('concatenar')['concatenar'].cumcount()+1
             get2['NovoseqAtual'] = get['NovoseqAtual'] + get['seqAtual'].astype(int)
 
             print(get2)
