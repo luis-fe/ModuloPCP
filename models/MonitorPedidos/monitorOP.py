@@ -294,8 +294,12 @@ def ReservaOPMonitor(dataInico, dataFim):
     descricaoArquivo = dataInico + '_' + dataFim
 
     monitor.to_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
-    monitor['Ocorrencia Pedidos'] = monitor['numeroop'] + monitor['codPedido'].astype(str)
-    monitor['Ocorrencia Pedidos'] = monitor.groupby('Ocorrencia Pedidos')['Ocorrencia Pedidos'].transform('count')
+    # Contar a quantidade de pedidos distintos para cada 'numeroop'
+    unique_counts = monitor.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')[
+        'codPedido'].transform('count')
+
+    # Adicionar essa contagem ao DataFrame original
+    monitor['Ocorrencia Pedidos'] = monitor['numeroop'].map(unique_counts.set_index(monitor['numeroop']))
 
     monitor1 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo","Ocorrencia Pedidos"]]
     monitor2 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo","codProduto"]]
