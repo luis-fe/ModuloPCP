@@ -54,7 +54,7 @@ def BuscandoOPCSW(empresa):
             # Atribui valores iniciais à coluna 'id' com base na coluna 'codTipoOP'
             get['id'] = np.where(get['codTipoOP'].isin([1, 4]), 9000, 2000)
             # Atualiza os valores da coluna 'id' com base na coluna 'codfaseatual'
-            get['id'] = np.where(get['codfaseatual'].isin([1, 401]), 1000, get['id'])
+            get['id'] = np.where(get['codFaseAtual'].isin([1, 401]), 1000, get['id'])
 
             get['id'] = get['id'] + get['seqAtual'].astype(int)
             get['id'] = get['id'].astype(str) + '||' + get['codreduzido'].astype(str)
