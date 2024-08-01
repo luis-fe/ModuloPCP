@@ -66,6 +66,7 @@ def BuscandoOPCSW(empresa):
             get2 = get2.sort_values(by=['codreduzido', 'numeroop'], ascending=True)  # escolher como deseja classificar
 
             print(get2)
+            get2.to_csv('./dados/analiseOp.csv')
             get.drop(['pesquisa'],
                           axis=1,
                           inplace=True)
