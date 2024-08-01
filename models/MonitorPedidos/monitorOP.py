@@ -295,10 +295,6 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     monitor.to_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
 
-
-
-
-
     monitor1 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo"]]
     monitor2 = monitor[['numeroop','dataPrevAtualizada2','codFaseAtual',"codItemPai","QtdSaldo","codProduto"]]
 
@@ -317,6 +313,7 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     monitor1 = monitor1[monitor1['numeroop'] != '-']
 
+    #monitor1['Ocorrencia Pedidos'] = df.groupby(['produto', 'pedido']).cumcount() + 1
     monitor1['Ocorrencia Pedidos'] =1
     monitor1 = monitor1.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'sum',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
     monitorDetalhadoOps = monitor2.groupby(['numeroop','codProduto']).agg({"QtdSaldo":"sum"}).reset_index()

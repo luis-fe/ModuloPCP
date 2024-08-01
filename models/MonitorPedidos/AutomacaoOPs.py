@@ -57,6 +57,13 @@ def BuscandoOPCSW(empresa):
             get['id'] = np.where(get['codFaseAtual'].isin(['1', '401']), 1000, get['id'])
 
             get['id'] = get['id'] + get['seqAtual'].astype(int)
+
+            # contagem de duplicaçoes : reduzido + codTipoOP + codFaseAtual
+            get['pesquisa'] = get.groupby(['codreduzido','codTipoOP','codFaseAtual']).count() + 1
+
+            get2 = get[get['pesquisa']>1]
+            print(get2)
+
             get['id'] = get['id'].astype(str) + '||' + get['codreduzido'].astype(str)
             get = get.sort_values(by=['codreduzido', 'id'], ascending=False)  # escolher como deseja classificar
 
