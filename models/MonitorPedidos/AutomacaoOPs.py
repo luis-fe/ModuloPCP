@@ -56,7 +56,6 @@ def BuscandoOPCSW(empresa):
             # Atualiza os valores da coluna 'id' com base na coluna 'codfaseatual'
             get['id'] = np.where(get['codFaseAtual'].isin(['1', '401']), 1000, get['id'])
 
-            get['id'] = get['id'] + get['seqAtual'].astype(int)
 
             # contagem de duplicaçoes : reduzido + codTipoOP + codFaseAtual
             get['concatenar'] = get['codreduzido']+get['codFaseAtual']
@@ -69,9 +68,14 @@ def BuscandoOPCSW(empresa):
             get2['seqAtual'] = get2.groupby('concatenar')['seqAtual'].transform('max')
             get2['NovoseqAtual'] = get2['seqAtual'].astype(str) + get2['NovoseqAtual'].astype(str)
 
-            print(get2)
-            get2.to_csv('./dados/analiseOp.csv')
-            get.drop(['pesquisa','concatenar'],
+            get2 = get2.groupby(['numeroop','codFaseAtual','codreduzido','NovoseqAtual']).agg({'codProduto':'first'}).reset_index()
+
+            get = pd.merge(get,get2,on=['numeroop','codFaseAtual','codreduzido','codProduto'],how='left')
+            get['NovoseqAtual'].fillna('-',inplace=True)
+            get['seqAtual'] =  get.apply(lambda r: r['NovoseqAtual'] if r['NovoseqAtual'] != '-' else r['seqAtual'], axis=1 )
+            get['id'] = get['id'] + get['seqAtual'].astype(float)
+
+            get.drop(['pesquisa','concatenar','NovoseqAtual'],
                           axis=1,
                           inplace=True)
 
