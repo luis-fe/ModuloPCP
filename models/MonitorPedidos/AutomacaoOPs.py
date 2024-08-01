@@ -59,7 +59,8 @@ def BuscandoOPCSW(empresa):
             get['id'] = get['id'] + get['seqAtual'].astype(int)
 
             # contagem de duplicaçoes : reduzido + codTipoOP + codFaseAtual
-            get['pesquisa'] = get.groupby(['codreduzido','codTipoOP','codFaseAtual']).count() + 1
+            get['pesquisa'] = get.groupby(['codreduzido', 'codTipoOP', 'codFaseAtual'])['qualquer_coluna'].transform(
+                'count') + 1
 
             get2 = get[get['pesquisa']>1]
             print(get2)
