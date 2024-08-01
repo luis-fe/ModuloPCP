@@ -59,15 +59,15 @@ def BuscandoOPCSW(empresa):
             get['id'] = get['id'] + get['seqAtual'].astype(int)
 
             # contagem de duplicaçoes : reduzido + codTipoOP + codFaseAtual
-            get['pesquisa'] = get.groupby(['codreduzido', 'codTipoOP', 'codFaseAtual'])[
-                                  ['codreduzido', 'codFaseAtual','codTipoOP']].transform('count').iloc[:, 0] + 1
+            get['concatenar'] = get['codreduzido']+get['codFaseAtual']
+            get['pesquisa'] = get.groupby(['codreduzido', 'codTipoOP', 'codFaseAtual'])['concatenar'].transform('count')+ 1
 
             get2 = get[(get['pesquisa']>1) & (get['codTipoOP']==1)]
             get2 = get2.sort_values(by=['codreduzido', 'numeroop'], ascending=True)  # escolher como deseja classificar
 
             print(get2)
             get2.to_csv('./dados/analiseOp.csv')
-            get.drop(['pesquisa'],
+            get.drop(['pesquisa','concatenar'],
                           axis=1,
                           inplace=True)
 
