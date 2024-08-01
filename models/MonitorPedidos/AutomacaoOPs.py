@@ -62,7 +62,7 @@ def BuscandoOPCSW(empresa):
             get['pesquisa'] = get.groupby(['codreduzido', 'codTipoOP', 'codFaseAtual'])['codreduzido'].transform(
                 'count') + 1
 
-            get2 = get[get['pesquisa']>1]
+            get2 = get[(get['pesquisa']>1) & (get['codTipoOP']==1)]
             print(get2)
             get.drop(['pesquisa'],
                           axis=1,
