@@ -1021,3 +1021,19 @@ def deletarOMovimentadoFasesEspeciais():
             del rows
 
     return sql
+
+def ExcluindoDuplicatasJustificativas():
+    delete = """
+    delete from "PCP".pcp.justificativa j where ordemprod||FASE in (
+select ordemprod||FASE from "PCP".pcp.justificativa j 
+group by ordemprod , fase 
+having count(justificativa)>1 
+)
+    """
+
+    conn = ConexaoPostgreWms.conexaoInsercao()
+    curr = conn.cursor()
+    curr.execute(delete,)
+    conn.commit()
+    curr.close()
+    conn.close()

@@ -35,6 +35,7 @@ def CargadasOPs():
     rotina = 'Portal Consulta OP'
     classificar = data.get('classificar', '-')
     colecao = data.get('colecao','')
+    PainelGestaoOP.ExcluindoDuplicatasJustificativas()
 
     if colecao == []:
         colecao = ''
