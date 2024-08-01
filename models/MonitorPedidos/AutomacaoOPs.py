@@ -64,6 +64,9 @@ def BuscandoOPCSW(empresa):
 
             get2 = get[get['pesquisa']>1]
             print(get2)
+            get.drop(['pesquisa'],
+                          axis=1,
+                          inplace=True)
 
             get['id'] = get['id'].astype(str) + '||' + get['codreduzido'].astype(str)
             get = get.sort_values(by=['codreduzido', 'id'], ascending=False)  # escolher como deseja classificar
