@@ -231,12 +231,12 @@ def DesvincularNotasAoPlano(codigoPlano, arrayTipoNotas):
 
 def IncluirData(mes, nomeLote):
     if mes == 'L':
-        mes = '/07/'
+        mes1 = '/07/'
     elif mes == 'G':
-        mes = '/08/'
+        mes1 = '/08/'
     else:
-        mes = '//'
-    return mes + '20' + nomeLote[:2] + '-' + nomeLote
+        mes1 = '//'
+    return mes1 + '20' + mes[:2] + '-' + nomeLote
 
 
 def ConsultarLotesVinculados(plano):
