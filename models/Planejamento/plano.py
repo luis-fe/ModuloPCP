@@ -229,14 +229,14 @@ def DesvincularNotasAoPlano(codigoPlano, arrayTipoNotas):
         return pd.DataFrame([{'Status': True, 'Mensagem': 'Tipo Notas Desvinculados do Plano com sucesso !'}])
 
 
-def IncluirData(mes, nomeLote):
+def IncluirData(mes, nomeLote,lote):
     if mes == 'L':
         mes1 = '/07/'
     elif mes == 'G':
         mes1 = '/08/'
     else:
         mes1 = '//'
-    return mes1 + '20' + mes[:2] + '-' + nomeLote
+    return mes1 + '20' + lote[:2] + '-' + nomeLote
 
 
 def ConsultarLotesVinculados(plano):
@@ -248,7 +248,7 @@ def ConsultarLotesVinculados(plano):
     conn = ConexaoPostgreWms.conexaoEngine()
     try:
         df = pd.read_sql(sql, conn, params=(plano,))
-        df['nomelote'] = df.apply(lambda r: IncluirData(r['lote'][2] if len(r['lote']) > 2 else '', r['nomelote']),
+        df['nomelote'] = df.apply(lambda r: IncluirData(r['lote'][2] if len(r['lote']) > 2 else '', r['nomelote'],r['lote']),
                                   axis=1)
     finally:
         conn.dispose()
