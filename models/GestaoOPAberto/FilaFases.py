@@ -138,7 +138,7 @@ def ApresentacaoFila(COLECAO):
         fila = pd.merge(fila, colecoes , on='COLECAO')
         start = pd.DataFrame(
             {'numeroOP': ['t-0', 't-0','t-0'], 'codFase': [449, 437,412], "codFaseAtual": [449, 437,412], "Situacao": ['em processo','em processo','a produzir'],
-             "pcs": 0, 'COLECAO': ['', ''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
+             "pcs": 0, 'COLECAO': ['', '',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
         fila = pd.concat([fila,start])
 
     fila.to_csv('./dados/filaroteiroOP.csv')
