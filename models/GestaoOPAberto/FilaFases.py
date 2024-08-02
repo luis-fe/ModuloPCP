@@ -51,7 +51,7 @@ def FilaFases():
 
     sqlOrdemAbertoCsw = """
     SELECT op.codLote , codTipoOP , numeroOP, codSeqRoteiroAtual, lot.descricao as desLote, codfaseatual from tco.OrdemProd op 
-    inner join tcl.Lote lot on lot.codLote = op.codLote  
+    inner join tcl.Lote lot on lot.codLote = op.codLote  and lot.codEmpresa  = 1 
     WHERE op.codempresa = 1 and op.situacao = 3 and op.codTipoOP||op.codFaseAtual <> '2426'
     """
 
