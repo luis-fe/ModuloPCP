@@ -29,7 +29,7 @@ def BuscandoOPCSW(empresa):
         inner join tco.ordemprod op on op.codempresa = ot.codempresa and op.numeroop = ot.numeroop
         having ot.codEmpresa = """ + empresa + """ and ot.numeroOP IN """ + ' (select o.numeroOP  from tco.ordemprod o where o.situacao = 3 and o.codempresa = ' + empresa + ')'
 
-    sqlCsw_em_aberto2 = ' select o.numeroOP as numeroop,  o.codTipoOP, codSeqRoteiroAtual as seqAtual  from tco.ordemprod o where o.situacao = 3 and o.codempresa = ' + empresa
+    sqlCsw_em_aberto2 = ' select o.numeroOP as numeroop,  o.codTipoOP, codSeqRoteiroAtual as seqAtual  from tco.ordemprod o where o.situacao = 3 and codTipoOP <> 13 and o.codempresa = ' + empresa
     with ConexaoBanco.ConexaoInternoMPL() as conn:  ##Abrindo Conexao Com o CSW
         with conn.cursor() as cursor_csw:
             # Executa a primeira consulta e armazena os resultados
