@@ -228,27 +228,31 @@ def DesvincularNotasAoPlano(codigoPlano, arrayTipoNotas):
 
         return pd.DataFrame([{'Status': True, 'Mensagem': 'Tipo Notas Desvinculados do Plano com sucesso !'}])
 
+
+def IncluirData(mes, nomeLote):
+    if mes == 'L':
+        mes = '/07/'
+    elif mes == 'G':
+        mes = '/08/'
+    else:
+        mes = '//'
+    return mes + '20' + nomeLote[:2] + '-' + nomeLote
+
+
 def ConsultarLotesVinculados(plano):
-    sql = """Select plano, lote, nomelote, p."descricaoPlano"  from pcp."LoteporPlano" l
-    inner join pcp."Plano" p on p.codigo = l.plano
-    WHERE plano = %s """
+    sql = """SELECT plano, lote, nomelote, p."descricaoPlano" 
+             FROM pcp."LoteporPlano" l
+             INNER JOIN pcp."Plano" p ON p.codigo = l.plano
+             WHERE plano = %s"""
+
     conn = ConexaoPostgreWms.conexaoEngine()
-    sql = pd.read_sql(sql,conn,params=(plano,))
+    try:
+        df = pd.read_sql(sql, conn, params=(plano,))
+        df['nomelote'] = df.apply(lambda r: IncluirData(r['plano'][2], r['nomelote']), axis=1)
+    finally:
+        conn.dispose()
 
-    sql['nomelote'] = sql.apply(lambda r: IncluirData(r['plano'][2],r['nomelote']),axis=1)
-
-    def IncluirData(mes,nomeLote):
-        if mes=='L':
-            mes ='/07/'
-        elif mes =='G':
-            mes = '/08/'
-        else:
-            mes= '//'
-        return mes + '20' + nomeLote[:2] + '-' + nomeLote
-
-
-
-    return sql
+    return df
 
 def ConsultarTipoNotasVinculados(plano):
     sql = """select "tipo nota","tipo nota"||'-'||nome as "Descricao" , plano  from pcp."tipoNotaporPlano" tnp  WHERE plano = %s """
