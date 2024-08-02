@@ -230,10 +230,30 @@ def DesvincularNotasAoPlano(codigoPlano, arrayTipoNotas):
 
 
 def IncluirData(mes, nomeLote,lote):
-    if mes == 'L':
+    if mes == 'R':
+        mes1 = '/01/'
+    elif mes == 'F':
+        mes1 = '/02/'
+    elif mes == 'M':
+        mes1 = '/03/'
+    elif mes == 'A':
+        mes1 = '/04/'
+    elif mes == 'I':
+        mes1 = '/05/'
+    elif mes == 'L':
+        mes1 = '/06/'
+    elif mes == 'L':
         mes1 = '/07/'
     elif mes == 'G':
         mes1 = '/08/'
+    elif mes == 'S':
+        mes1 = '/09/'
+    elif mes == 'O':
+        mes1 = '/10/'
+    elif mes == 'N':
+        mes1 = '/10/'
+    elif mes == 'D':
+        mes1 = '/12/'
     else:
         mes1 = '//'
     return lote[3:5]+ mes1 + '20' + lote[:2]  + '-' + nomeLote
