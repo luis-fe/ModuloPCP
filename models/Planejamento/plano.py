@@ -248,7 +248,8 @@ def ConsultarLotesVinculados(plano):
     conn = ConexaoPostgreWms.conexaoEngine()
     try:
         df = pd.read_sql(sql, conn, params=(plano,))
-        df['nomelote'] = df.apply(lambda r: IncluirData(r['plano'][2], r['nomelote']), axis=1)
+        df['nomelote'] = df.apply(lambda r: IncluirData(r['plano'][2] if len(r['plano']) > 2 else '', r['nomelote']),
+                                  axis=1)
     finally:
         conn.dispose()
 
