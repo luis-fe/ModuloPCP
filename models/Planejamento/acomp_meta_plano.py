@@ -55,8 +55,8 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         #cargas = itemsPA_Csw.CargaFases()
         sqlMetas = pd.merge(sqlMetas,cargas,on='codItem',how='left')
 
-
         sqlMetas['saldo'].fillna(0,inplace=True)
+        sqlMetas['qtdeFaturada'].fillna(0,inplace=True)
         sqlMetas['estoqueAtual'].fillna(0,inplace=True)
         sqlMetas['carga'].fillna(0,inplace=True)
 
