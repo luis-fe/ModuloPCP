@@ -235,6 +235,9 @@ def ConsultarLotesVinculados(plano):
     conn = ConexaoPostgreWms.conexaoEngine()
     sql = pd.read_sql(sql,conn,params=(plano,))
 
+    sql['descricaoPlano'] = sql.apply(lambda r: r['descricaoPlano'][:2]+'-'+r['descricaoPlano'],axis=1)
+
+
     return sql
 
 def ConsultarTipoNotasVinculados(plano):
