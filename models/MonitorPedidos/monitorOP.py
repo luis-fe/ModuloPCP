@@ -331,7 +331,7 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
     sqlCswPrioridade = """
-    SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao  FROM TCO.OrdemProd OP 
+    SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao, (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
 INNER JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
 join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
 WHERE op.situacao = 3 and op.codEmpresa = 1
