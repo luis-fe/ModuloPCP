@@ -6,9 +6,32 @@ from models.GestaoOPAberto import PainelGestaoOP
 
 def RoteiroOPsAberto():
     sqlCsw = """
-SELECT numeroOP  , codSeqRoteiro, codFase  FROM tco.RoteiroOP r
-WHERE r.codEmpresa = 1 and 
-numeroOP in (SELECT numeroOP from tco.OrdemProd op WHERE op.codempresa = 1 and op.situacao = 3 and op.codFaseAtual not in  (1, 401))
+SELECT
+	numeroOP ,
+	codSeqRoteiro,
+	codFase,
+	(
+	SELECT
+		codtipoop
+	from
+		tco.OrdemProd o
+	WHERE
+		o.codempresa = 1
+		and o.numeroop = r.numeroOP) as tipoOP
+FROM
+	tco.RoteiroOP r
+WHERE
+	r.codEmpresa = 1
+	and 
+numeroOP in (
+	SELECT
+		numeroOP
+	from
+		tco.OrdemProd op
+	WHERE
+		op.codempresa = 1
+		and op.situacao = 3
+		and op.codFaseAtual not in (1, 401))
     """
 
     with ConexaoBanco.ConexaoInternoMPL() as conn:
@@ -50,6 +73,9 @@ def FilaFases():
                                 'produzido', fila['Situacao'])
     fila['Situacao'] = np.where((fila['codSeqRoteiroAtual'] < fila['codSeqRoteiro']) & (fila['Situacao'] == '-'),
                                 'a produzir', fila['Situacao'])
+    fila['Situacao'] = np.where((fila['codFase'] == 426) & (fila['tipoOP'] == 2),
+                                'prouzido', fila['Situacao'])
+
 
     sql_nomeFases = """
     SELECT f.codFase , f.nome as fase FROM tcp.FasesProducao f
