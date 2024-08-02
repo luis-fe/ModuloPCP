@@ -235,7 +235,17 @@ def ConsultarLotesVinculados(plano):
     conn = ConexaoPostgreWms.conexaoEngine()
     sql = pd.read_sql(sql,conn,params=(plano,))
 
-    sql['nomelote'] = sql.apply(lambda r: '20'+r['lote'][:2]+'-'+r['nomelote'],axis=1)
+    sql['nomelote'] = sql.apply(lambda r: IncluirData(r['plano'][2],r['nomelote']),axis=1)
+
+    def IncluirData(mes,nomeLote):
+        if mes=='L':
+            mes ='/07/'
+        elif mes =='G':
+            mes = '/08/'
+        else:
+            mes= '//'
+        return mes + '20' + nomeLote[:2] + '-' + nomeLote
+
 
 
     return sql
