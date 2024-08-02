@@ -46,6 +46,9 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
         sqlMetas = pd.merge(sqlMetas,saldo,on='codItem',how='left')
 
+        faturado = SaldoPlanoAnterior.FaturamentoPlano(plano)
+        sqlMetas = pd.merge(sqlMetas,faturado,on='codItem',how='left')
+
         estoque, cargas = itemsPA_Csw.EstoquePartes()
         sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
 

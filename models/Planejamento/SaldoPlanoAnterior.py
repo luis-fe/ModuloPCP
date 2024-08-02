@@ -162,6 +162,29 @@ def FaturamentoPlano(codigoPlano):
     FimFat = planoAtual['finalFat'][0]
 
     #Filtrando somente os pedidos
+    pedidos = Monitor_nivelSkuFaturamento(IniFat,FimFat)
+
+    # 3 - Filtrando os pedidos aprovados
+    pedidosBloqueados = _PedidosBloqueados()
+    pedidos = pd.merge(pedidos, pedidosBloqueados, on='codPedido', how='left')
+    pedidos['situacaobloq'].fillna('Liberado', inplace=True)
+    pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
+
+    # 4 Filtrando somente os tipo de notas desejados
+
+    sqlNotas = """
+        select tnp."tipo nota" as "codTipoNota"  from "PCP".pcp."tipoNotaporPlano" tnp 
+        where plano = %s
+        """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    tipoNotas = pd.read_sql(sqlNotas, conn, params=(codigoPlano,))
+
+    pedidos = pd.merge(pedidos, tipoNotas, on='codTipoNota')
+    pedidos = pedidos.groupby("codItem").agg({"qtdeFaturada": "sum"}).reset_index()
+    pedidos = pedidos.sort_values(by=['saldo'], ascending=False)
+    pedidos = pedidos[pedidos['saldo'] > 0].reset_index()
+    return pedidos
 
 
 
@@ -189,7 +212,7 @@ def Monitor_PedidosBloqueados():
         return consulta
 
 
-def Monitor_nivelSkuFaturamento(dataEmissaoIni, dataEmissaoFinal):
+def Monitor_nivelSkuFaturamento(dataFatIni, dataFatFinal):
     # Carregar o arquivo Parquet
     parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
 
@@ -200,12 +223,11 @@ def Monitor_nivelSkuFaturamento(dataEmissaoIni, dataEmissaoFinal):
     df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
 
     # Convertendo a string para datetime
-    data_datetime = pd.to_datetime(dataEmissaoIni)
-    # Subtraindo 100 dias
-    data_inic = data_datetime - pd.DateOffset(days=100)
+    dataFatIni = pd.to_datetime(dataFatIni)
+    dataFatFinal = pd.to_datetime(dataFatFinal)
 
     # Filtrar as datas
-    df_loaded['filtro'] = (df_loaded['dataPrevFat'] <= data_datetime) & (df_loaded['dataEmissao'] >= data_inic)
+    df_loaded['filtro'] = (df_loaded['dataPrevFat'] <= dataFatIni) & (df_loaded['dataPrevFat'] >= dataFatFinal)
 
     # 2 - Filtrar Apenas Pedidos Não Bloqueados
     pedidosBloqueados = Monitor_PedidosBloqueados()
@@ -231,6 +253,6 @@ def Monitor_nivelSkuFaturamento(dataEmissaoIni, dataEmissaoFinal):
     df_filtered['codItem'] = df_filtered['codProduto']
 
     # Calculando saldo
-    df_filtered['saldo'] = df_filtered["qtdePedida"] - df_filtered["qtdeFaturada"] - df_filtered["qtdeCancelada"]
+    df_filtered['saldoPedido'] = df_filtered["qtdePedida"] - df_filtered["qtdeFaturada"] - df_filtered["qtdeCancelada"]
 
     return df_filtered
