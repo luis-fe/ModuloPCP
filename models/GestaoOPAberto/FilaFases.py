@@ -76,9 +76,9 @@ def FilaFases():
     fila['Situacao'] = np.where((fila['codFase'] == 426) & (fila['tipoOP'] == 2),
                                 'prouzido', fila['Situacao'])
     fila['Situacao'] = np.where((fila['codFase'] == 412) & (fila['tipoOP'] == 4),
-                                'prouzido', fila['Situacao'])
+                                'produzido', fila['Situacao'])
     fila['Situacao'] = np.where((fila['codFase'] == 441) & (fila['tipoOP'] == 4),
-                                'prouzido', fila['Situacao'])
+                                'produzido', fila['Situacao'])
 
 
     sql_nomeFases = """
