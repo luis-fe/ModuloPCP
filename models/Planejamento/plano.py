@@ -236,7 +236,7 @@ def IncluirData(mes, nomeLote,lote):
         mes1 = '/08/'
     else:
         mes1 = '//'
-    return +lote[3:5]+ mes1 + '20' + lote[:2]  + '-' + nomeLote
+    return lote[3:5]+ mes1 + '20' + lote[:2]  + '-' + nomeLote
 
 
 def ConsultarLotesVinculados(plano):
