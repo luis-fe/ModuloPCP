@@ -86,6 +86,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         fase_401 = codFase_array == 401
         fase_426 = codFase_array == 426
         fase_412 = codFase_array == 412
+        fase_441 = codFase_array == 441
 
         # Filtrar as linhas onde 'codEngenharia' não começa com '0'
         nao_comeca_com_0 = np.vectorize(lambda x: not x.startswith('0'))(codEngenharia_array)
@@ -94,9 +95,10 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         filtro_comb = fase_401 & nao_comeca_com_0
         filtro_comb2 = fase_426 & nao_comeca_com_0
         filtro_comb3 = fase_412 & nao_comeca_com_0
+        filtro_comb4 = fase_441 & nao_comeca_com_0
 
         # Aplicar o filtro invertido
-        Meta = Meta[~(filtro_comb | filtro_comb2 | filtro_comb3)]
+        Meta = Meta[~(filtro_comb | filtro_comb2 | filtro_comb3 | filtro_comb4)]
 
 
         Meta.to_csv('./dados/analiseFaltaProgrFases.csv')
