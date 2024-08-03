@@ -52,3 +52,32 @@ def pOST_MetasFases():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
     return jsonify(OP_data)
+
+@MetasFases_routes.route('/pcp/api/MetasFasesCostura', methods=['POST'])
+@token_required
+def pOST_MetasFasesCostura():
+
+    data = request.get_json()
+    dia = dayAtual()
+    codigoPlano = data.get('codigoPlano')
+    arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
+    dataMovFaseIni = data.get('dataMovFaseIni', dia)
+    dataMovFaseFim = data.get('dataMovFaseFim', dia)
+    congelado = data.get('congelado', False)
+    print(data)
+    if congelado =='' or congelado == '-':
+        congelado = False
+    else:
+        congelado = congelado
+
+
+    dados = acomp_meta_plano.MetasCostura(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)
