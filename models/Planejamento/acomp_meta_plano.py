@@ -77,6 +77,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             lambda row: Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
         consulta['categoria'] = consulta.apply(
             lambda row: Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
 
 
 
@@ -128,7 +130,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             print('verificar')
         sqlMetas.to_csv('./dados/analise.csv')
 
-        Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
+        Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
         filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
         totalPc = filtro['previsao'].sum()
         totalFaltaProgramar = filtro['FaltaProgramar'].sum()
