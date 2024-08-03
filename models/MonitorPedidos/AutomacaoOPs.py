@@ -16,7 +16,7 @@ def PesquisandoReduzido():
     consulta['codProduto'] = consulta['codProduto'].apply(lambda x: '0'+ x if x.startswith(('1', '2')) else x)
     consulta['codSortimento'] = consulta['codSortimento'] .astype(str)
     consulta['seqTamanho'] = consulta['seqTamanho'] .astype(str)
-
+    print(consulta)
     return consulta
 
 
