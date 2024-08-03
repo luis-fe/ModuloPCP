@@ -277,3 +277,206 @@ def Categoria(contem, valorReferencia, valorNovo, categoria):
         return valorNovo
     else:
         return categoria
+
+def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
+    nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
+    novo = ", ".join(nomes_com_aspas)
+
+    if congelado == False:
+
+        sqlMetas = """select "codLote", 
+           "Empresa" , "codEngenharia" , "codSeqTamanho" , "codSortimento" , previsao  
+           from "PCP".pcp.lote_itens li 
+           where  "codLote" in (""" + novo + """)"""
+
+        sqlRoteiro = """
+           select * from "PCP".pcp."Eng_Roteiro" er 
+           """
+
+        sqlApresentacao = """
+           select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
+           """
+
+        consulta = """
+           select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
+           """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        sqlMetas = pd.read_sql(sqlMetas, conn)
+        sqlRoteiro = pd.read_sql(sqlRoteiro, conn)
+        sqlApresentacao = pd.read_sql(sqlApresentacao, conn)
+
+        consulta = pd.read_sql(consulta, conn)
+        consulta['categoria'] = '-'
+
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
+
+        # Verificar quais codItemPai começam com '1' ou '2'
+        mask = consulta['codItemPai'].str.startswith(('1', '2'))
+        # Aplicar as transformações usando a máscara
+        consulta['codEngenharia'] = np.where(mask, '0' + consulta['codItemPai'] + '-0', consulta['codItemPai'] + '-0')
+
+        sqlMetas = pd.merge(sqlMetas, consulta, on=["codEngenharia", "codSeqTamanho", "codSortimento"], how='left')
+        sqlMetas['codItem'].fillna('-', inplace=True)
+
+        saldo = SaldoPlanoAnterior.SaldosAnterior(Codplano)
+        sqlMetas = pd.merge(sqlMetas, saldo, on='codItem', how='left')
+
+        faturado = SaldoPlanoAnterior.FaturamentoPlano(Codplano)
+        sqlMetas = pd.merge(sqlMetas, faturado, on='codItem', how='left')
+
+        estoque, cargas = itemsPA_Csw.EstoquePartes()
+        sqlMetas = pd.merge(sqlMetas, estoque, on='codItem', how='left')
+
+        # cargas = itemsPA_Csw.CargaFases()
+        sqlMetas = pd.merge(sqlMetas, cargas, on='codItem', how='left')
+
+        sqlMetas['saldo'].fillna(0, inplace=True)
+        sqlMetas['qtdeFaturada'].fillna(0, inplace=True)
+        sqlMetas['estoqueAtual'].fillna(0, inplace=True)
+        sqlMetas['carga'].fillna(0, inplace=True)
+
+        # Analisando se esta no periodo de faturamento
+        diaAtual = obterDiaAtual()
+        diaAtual = datetime.strptime(diaAtual, '%Y-%m-%d')
+
+        planoAtual = plano.ConsultaPlano()
+        planoAtual = planoAtual[planoAtual['codigo'] == Codplano].reset_index()
+
+        # Levantar as data de início e fim do faturamento:
+        IniFat = planoAtual['inicoFat'][0]
+        IniFat = datetime.strptime(IniFat, '%Y-%m-%d')
+
+        if diaAtual >= IniFat:
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (
+                        sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
+        else:
+            sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
+        try:
+            sqlMetas['FaltaProgramar'] = sqlMetas.apply(
+                lambda l: l['FaltaProgramar1'] if l['FaltaProgramar1'] > 0 else 0, axis=1)
+        except:
+            print('verificar')
+
+        Meta = sqlMetas.groupby(["codEngenharia", "codSeqTamanho", "codSortimento", "categoria"]).agg(
+            {"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
+        filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
+        totalPc = filtro['previsao'].sum()
+        totalFaltaProgramar = filtro['FaltaProgramar'].sum()
+        novo2 = novo.replace('"', "-")
+        Totais = pd.DataFrame(
+            [{'0-Previcao Pçs': f'{totalPc} pcs', '01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
+        Totais.to_csv(f'./dados/TotaisCostura{novo2}.csv')
+
+        # Carregando o Saldo COLECAO ANTERIOR
+
+        Meta = pd.merge(Meta, sqlRoteiro, on='codEngenharia', how='left')
+
+
+
+        Meta = Meta[Meta['codFase']==429].reset_index()
+
+        Meta.to_csv('./dados/analiseFaltaProgrFasesCOSTURA.csv')
+
+        Meta = Meta.groupby(["codFase", "nomeFase","categoria"]).agg({"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
+        Meta = pd.merge(Meta, sqlApresentacao, on='nomeFase', how='left')
+        Meta['apresentacao'] = Meta.apply(lambda x: 0 if x['codFase'] == 401 else x['apresentacao'], axis=1)
+
+        Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
+
+        cronogramaS = cronograma.CronogramaFases(Codplano)
+        Meta = pd.merge(Meta, cronogramaS, on='codFase', how='left')
+
+        colecoes = TratamentoInformacaoColecao(arrayCodLoteCsw)
+
+        filaFase = FilaFases.ApresentacaoFila(colecoes)
+        filaFase = filaFase.loc[:,
+                   ['codFase', 'Carga Atual', 'Fila']]
+
+        Meta = pd.merge(Meta, filaFase, on='codFase', how='left')
+        Meta['Carga Atual'].fillna(0, inplace=True)
+        Meta['Fila'].fillna(0, inplace=True)
+        Meta['Falta Produzir'] = Meta['Carga Atual'] + Meta['Fila'] + Meta['FaltaProgramar']
+        Meta['dias'].fillna(1, inplace=True)
+        Meta['Meta Dia'] = Meta['Falta Produzir'] / Meta['dias']
+        Meta['Meta Dia'] = Meta['Meta Dia'].round(0)
+
+        # Ponto de Congelamento do lote:
+        Meta.to_csv(f'./dados/analiseLoteCostura{novo2}.csv')
+
+        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
+        realizado['codFase'] = realizado['codFase'].astype(int)
+        Meta = pd.merge(Meta, realizado, on='codFase', how='left')
+
+        Meta['Realizado'].fillna(0, inplace=True)
+        Meta.fillna('-', inplace=True)
+        Meta = Meta[Meta['apresentacao'] != '-']
+
+        dados = {
+            '0-Previcao Pçs': f'{totalPc} pcs',
+            '01-Falta Programar': f'{totalFaltaProgramar} pçs',
+            '1-Detalhamento': Meta.to_dict(orient='records')}
+
+        return pd.DataFrame([dados])
+
+    else:
+        novo2 = novo.replace('"', "-")
+        Meta = pd.read_csv(f'./dados/analiseLoteCostura{novo2}.csv')
+        Totais = pd.read_csv(f'./dados/TotaisCostura{novo2}.csv')
+        totalPc = Totais['0-Previcao Pçs'][0]
+        totalFaltaProgramar = Totais['01-Falta Programar'][0]
+
+        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
+        realizado['codFase'] = realizado['codFase'].astype(int)
+        Meta = pd.merge(Meta, realizado, on='codFase', how='left')
+
+        Meta['Realizado'].fillna(0, inplace=True)
+        Meta.fillna('-', inplace=True)
+        Meta = Meta[Meta['apresentacao'] != '-']
+
+        dados = {
+            '0-Previcao Pçs': f'{totalPc} pcs',
+            '01-Falta Programar': f'{totalFaltaProgramar} pçs',
+            '1-Detalhamento': Meta.to_dict(orient='records')}
+
+        return pd.DataFrame([dados])
