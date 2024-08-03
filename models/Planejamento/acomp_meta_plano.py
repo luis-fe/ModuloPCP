@@ -4,7 +4,6 @@ from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma, lot
 from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
 import re
-import datetime
 import pytz
 from datetime import datetime
 
