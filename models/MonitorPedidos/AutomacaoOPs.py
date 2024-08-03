@@ -13,7 +13,7 @@ def PesquisandoReduzido():
     consulta = pd.read_sql(consulta,conn)
     consulta['codProduto'] = consulta['codProduto'].astype(str)
     consulta['codProduto'] = consulta['codProduto'] + "-0"
-    consulta['codProduto'] = consulta.apply(lambda x: '0'+ x['codProduto'] if x['codProduto'].startswith(('1', '2')) else x['codProduto'])
+    consulta['codProduto'] = consulta.apply(lambda x: '0'+ x['codProduto'] if x['codProduto'].startswith(('1', '2')) else x['codProduto'], axis=1)
     consulta['codSortimento'] = consulta['codSortimento'] .astype(str)
     consulta['seqTamanho'] = consulta['seqTamanho'] .astype(str)
     print(consulta)
