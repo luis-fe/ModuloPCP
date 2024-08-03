@@ -50,8 +50,9 @@ def BuscandoOPCSW(empresa):
             get['codProduto'] = get['codProduto'].astype(str)
             get['codSortimento'] = get['codSortimento'].astype(str)
             get['seqTamanho'] = get['seqTamanho'].astype(str)
+            print(sku.dtypes)
             get = pd.merge(get, sku, on=["codProduto", "codSortimento", "seqTamanho"], how='left')
-            print(get[get['categoria'] != '-'])
+            print(get.dtypes)
 
             # Atribui valores iniciais à coluna 'id' com base na coluna 'codTipoOP'
             get['id'] = np.where(get['codTipoOP'].isin([1, 3]), 9000, 2000)
