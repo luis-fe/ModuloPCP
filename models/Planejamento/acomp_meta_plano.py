@@ -4,6 +4,9 @@ from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma, lot
 from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
 import re
+import datetime
+import pytz
+from datetime import datetime
 
 def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
@@ -60,8 +63,22 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         sqlMetas['estoqueAtual'].fillna(0,inplace=True)
         sqlMetas['carga'].fillna(0,inplace=True)
 
-        sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
-        sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
+
+        # Analisando se esta no periodo de faturamento
+        diaAtual = obterDiaAtual()
+        diaAtual = datetime.strptime(diaAtual, '%Y-%m-%d')
+
+        planoAtual = plano.ConsultaPlano()
+        planoAtual = planoAtual[planoAtual['codigo'] == plano].reset_index()
+
+        # Levantar as data de início e fim do faturamento:
+        IniFat = planoAtual['inicoFat'][0]
+
+        if diaAtual >= IniFat:
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
+        else:
+            sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
         try:
             sqlMetas['FaltaProgramar'] = sqlMetas.apply(lambda l: l['FaltaProgramar1']if l['FaltaProgramar1'] >0 else 0 ,axis=1 )
         except:
@@ -202,3 +219,10 @@ def extrair_ano(descricaoLote):
         return match.group(0)
     else:
         return None
+
+
+def obterDiaAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+    agora = datetime.datetime.now(fuso_horario)
+    agora = agora.strftime('%d/%m/%Y')
+    return agora
