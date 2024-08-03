@@ -27,7 +27,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
         """
 
-        sqlItens = """
+        consulta = """
         select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
         """
 
@@ -36,13 +36,56 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         sqlRoteiro = pd.read_sql(sqlRoteiro,conn)
         sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
 
-        sqlItens = pd.read_sql(sqlItens,conn)
-        # Verificar quais codItemPai começam com '1' ou '2'
-        mask = sqlItens['codItemPai'].str.startswith(('1', '2'))
-        # Aplicar as transformações usando a máscara
-        sqlItens['codEngenharia'] = np.where(mask, '0' + sqlItens['codItemPai'] + '-0', sqlItens['codItemPai'] + '-0')
+        consulta = pd.read_sql(consulta, conn)
+        consulta['categoria'] = '-'
 
-        sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
+
+
+
+        # Verificar quais codItemPai começam com '1' ou '2'
+        mask = consulta['codItemPai'].str.startswith(('1', '2'))
+        # Aplicar as transformações usando a máscara
+        consulta['codEngenharia'] = np.where(mask, '0' + consulta['codItemPai'] + '-0', consulta['codItemPai'] + '-0')
+
+        sqlMetas = pd.merge(sqlMetas, consulta, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"], how='left')
         sqlMetas['codItem'].fillna('-',inplace=True)
 
         saldo = SaldoPlanoAnterior.SaldosAnterior(Codplano)
@@ -226,3 +269,9 @@ def obterDiaAtual():
     agora = datetime.now(fuso_horario)
     agora = agora.strftime('%Y-%m-%d')
     return agora
+
+def Categoria(contem, valorReferencia, valorNovo, categoria):
+    if contem in valorReferencia:
+        return valorNovo
+    else:
+        return categoria
