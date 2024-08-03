@@ -44,9 +44,30 @@ def get_FilaDasFases_routes():
 
         return jsonify(OP_data)
 
-    #except Exception as e:
-       # return jsonify({'error': str(e)}), 500
 
+@FilaDasFases_routes.route('/pcp/api/FilaFasesPorCategoria', methods=['POST'])
+@token_required
+def get_FilaFasesPorCategoria():
+    #try:
+        data = request.get_json()
+
+        colecao = data.get('Colecao', '-')
+        codFase = data.get('codFase','-')
+
+        usuarios = FilaFases.ApresentacaoFilaFaseCategoria(colecao,codFase)
+
+        # Obtém os nomes das colunas
+        column_names = usuarios.columns
+
+        # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+        OP_data = []
+        for index, row in usuarios.iterrows():
+            op_dict = {}
+            for column_name in column_names:
+                op_dict[column_name] = row[column_name]
+            OP_data.append(op_dict)
+
+        return jsonify(OP_data)
 @FilaDasFases_routes.route('/pcp/api/DetalhaOpFilas', methods=['POST'])
 @token_required
 def get_DetalhaOpFilas():

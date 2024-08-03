@@ -113,8 +113,8 @@ def FilaFases():
     fila = pd.merge(fila,sql_nomeFases2,on='codFaseAtual')
 
     sqlBuscarPecas = """
-    select o.numeroop as "numeroOP", sum(o.total_pcs) as pcs from pcp.ordemprod o 
-    group by numeroop
+    select o.numeroop as "numeroOP", categoria, sum(o.total_pcs) as pcs from pcp.ordemprod o 
+    group by numeroop, categoria
     """
 
     conn2 = ConexaoPostgreWms.conexaoEngine()
@@ -231,3 +231,51 @@ def FiltroColecao(colecao):
         print(colecao)
         return df
 
+
+def ApresentacaoFilaFaseCategoria(COLECAO, codFase):
+    fila = FilaFases()
+
+
+    colecoes = FiltroColecao(COLECAO)
+
+
+    if colecoes['COLECAO'][0] != '-':
+        fila = pd.merge(fila, colecoes , on='COLECAO')
+        start = pd.DataFrame(
+            {'numeroOP': ['t-0', 't-0','t-0'], 'codFase': [449, 437,412], "codFaseAtual": [449, 437,412], "Situacao": ['em processo','em processo','a produzir'],
+             "pcs": 0, 'COLECAO': ['', '',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
+        fila = pd.concat([fila,start])
+
+    fila = fila[fila['codFase'] == codFase]
+    fila_carga_atual = fila[fila['Situacao'] == 'em processo'].reset_index()
+    fila_fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
+
+    fila = fila.groupby(['codFase','categoria']).agg({"fase": 'first'}).reset_index()
+
+    fila_carga_atual = fila_carga_atual.groupby(['codFase','categoria']).agg({"pcs": 'sum'}).reset_index()
+    fila_carga_atual.rename(columns={'pcs': 'Carga Atual'}, inplace=True)
+
+    fila_fila = fila_fila.groupby(['codFase','categoria']).agg({"pcs": 'sum'}).reset_index()
+    fila_fila.rename(columns={'pcs': 'Fila'}, inplace=True)
+
+    fila = pd.merge(fila, fila_carga_atual, on='codFase')
+    fila = pd.merge(fila, fila_fila, on='codFase')
+
+    apresentacao_query = """
+        SELECT x."nomeFase" as "fase", apresentacao 
+        FROM pcp."SeqApresentacao" x
+        ORDER BY x.apresentacao
+    """
+
+    conn2 = ConexaoPostgreWms.conexaoEngine()
+    apresentacao = pd.read_sql(apresentacao_query, conn2)
+    fila = pd.merge(fila, apresentacao, on='fase')
+    fila = fila[(fila['codFase'] < 599)]
+
+    fila['Carga Atual'] =fila['Carga Atual'].astype(int).round()
+    fila['Fila'] =fila['Fila'].astype(int).round()
+
+
+
+
+    return fila
