@@ -1,13 +1,13 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
-from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma, loteCsw
+from models.Planejamento import SaldoPlanoAnterior, itemsPA_Csw, cronograma, loteCsw, plano
 from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
 import re
 import pytz
 from datetime import datetime
 
-def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
+def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
 
@@ -45,10 +45,10 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         sqlMetas = pd.merge(sqlMetas,sqlItens,on=["codEngenharia" , "codSeqTamanho" , "codSortimento"],how='left')
         sqlMetas['codItem'].fillna('-',inplace=True)
 
-        saldo = SaldoPlanoAnterior.SaldosAnterior(plano)
+        saldo = SaldoPlanoAnterior.SaldosAnterior(Codplano)
         sqlMetas = pd.merge(sqlMetas,saldo,on='codItem',how='left')
 
-        faturado = SaldoPlanoAnterior.FaturamentoPlano(plano)
+        faturado = SaldoPlanoAnterior.FaturamentoPlano(Codplano)
         sqlMetas = pd.merge(sqlMetas,faturado,on='codItem',how='left')
 
         estoque, cargas = itemsPA_Csw.EstoquePartes()
@@ -68,7 +68,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
         diaAtual = datetime.strptime(diaAtual, '%Y-%m-%d')
 
         planoAtual = plano.ConsultaPlano()
-        planoAtual = planoAtual[planoAtual['codigo'] == plano].reset_index()
+        planoAtual = planoAtual[planoAtual['codigo'] == Codplano].reset_index()
 
         # Levantar as data de início e fim do faturamento:
         IniFat = planoAtual['inicoFat'][0]
@@ -129,7 +129,7 @@ def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado 
 
         Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
 
-        cronogramaS =cronograma.CronogramaFases(plano)
+        cronogramaS =cronograma.CronogramaFases(Codplano)
         Meta = pd.merge(Meta,cronogramaS,on='codFase',how='left')
 
         colecoes = TratamentoInformacaoColecao(arrayCodLoteCsw)
