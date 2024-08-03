@@ -26,18 +26,60 @@ and i2.codItemPai > 0 and i.codigo > """+str(maximo)
             cursor.execute(sqlCSWItens)
             colunas = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
-            itens = pd.DataFrame(rows, columns=colunas)
+            consulta = pd.DataFrame(rows, columns=colunas)
 
         # Libera memória manualmente
     del rows
     gc.collect()
+    consulta['categoria'] = '-'
+
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
+    consulta['categoria'] = consulta.apply(
+        lambda row: Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
 
     try:
         #Implantando no banco de dados do Pcp
-        ConexaoPostgreWms.Funcao_InserirOFF(itens, itens['codigo'].size, 'itens_csw', 'append')
+        ConexaoPostgreWms.Funcao_InserirOFF(consulta, consulta['codigo'].size, 'itens_csw', 'append')
     except:
         print('segue o baile ')
-    return itens
+    return consulta
 
 
 def EstoqueNaturezaPA():
@@ -141,3 +183,9 @@ def EstoquePartes():
 
 
     return relacaoPartes, cargaFasePartes
+
+def Categoria(contem, valorReferencia, valorNovo, categoria):
+    if contem in valorReferencia:
+        return valorNovo
+    else:
+        return categoria
