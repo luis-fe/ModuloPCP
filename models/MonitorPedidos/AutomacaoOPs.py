@@ -7,15 +7,14 @@ import numpy as np
 def PesquisandoReduzido():
     conn = ConexaoPostgreWms.conexaoEngine()
 
-    consulta = """select "codItemPai" as "codProduto", "codSortimento" as "codSortimento", 
-    "codSeqTamanho" as "seqTamanho", "codigo" as codreduzido, categoria  from "PCP".pcp.itens_csw ic """
+    consulta = """select "codItemPai" as "codProduto", "codSortimento"::varchar as "codSortimento", 
+    "codSeqTamanho"::varchar as "seqTamanho", "codigo" as codreduzido, categoria  from "PCP".pcp.itens_csw ic """
 
     consulta = pd.read_sql(consulta,conn)
 
     consulta['codProduto'] = consulta['codProduto'] + "-0"
     consulta['codProduto'] = consulta['codProduto'].apply(lambda x: '0'+ x if x.startswith(('1', '2')) else x)
     consulta['codSortimento'] = consulta['codSortimento'] .astype(str)
-    consulta['codSortimento'] = consulta['codSortimento'].replace('.0',inplace=True)
     consulta['seqTamanho'] = consulta['seqTamanho'] .astype(str)
     return consulta
 
