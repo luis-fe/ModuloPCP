@@ -50,7 +50,7 @@ def BuscandoOPCSW(empresa):
             get['codProduto'] = get['codProduto'].astype(str)
             get['codSortimento'] = get['codSortimento'].astype(str)
             get['seqTamanho'] = get['seqTamanho'].astype(str)
-            print(sku.dtypes)
+            print(sku["codProduto"] == '010220012-0')
             get = pd.merge(get, sku, on=["codProduto", "codSortimento", "seqTamanho"], how='left')
             print(get.dtypes)
 
