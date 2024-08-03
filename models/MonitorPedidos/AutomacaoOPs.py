@@ -7,7 +7,7 @@ import numpy as np
 def PesquisandoReduzido():
     conn = ConexaoPostgreWms.conexaoEngine()
 
-    consulta = """select "codItemPai" as "codProduto"  ,"codSortimento" as "codSortimento" , "codSeqTamanho" as "seqTamanho", "codSKU" as codreduzido from "pcp"."SKU" """
+    consulta = """select "codItemPai" as "codProduto", "codSortimento" as "codSortimento", "codSeqTamanho" as "seqTamanho", "codigo" as codreduzido  from "PCP".pcp.itens_csw ic """
 
     consulta = pd.read_sql(consulta,conn)
 
