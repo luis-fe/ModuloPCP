@@ -16,7 +16,6 @@ def PesquisandoReduzido():
     consulta['codProduto'] = consulta['codProduto'].apply(lambda x: '0'+ x if x.startswith(('1', '2')) else x)
     consulta['codSortimento'] = consulta['codSortimento'] .astype(str)
     consulta['seqTamanho'] = consulta['seqTamanho'] .astype(str)
-    print(consulta.dtypes)
     return consulta
 
 
@@ -51,7 +50,9 @@ def BuscandoOPCSW(empresa):
             get['codProduto'] = get['codProduto'].astype(str)
             get['codSortimento'] = get['codSortimento'].astype(str)
             get['seqTamanho'] = get['seqTamanho'].astype(str)
+            print(sku[sku['categoria'] != '-'])
             get = pd.merge(get, sku, on=["codProduto", "codSortimento", "seqTamanho"], how='left')
+
             # Atribui valores iniciais à coluna 'id' com base na coluna 'codTipoOP'
             get['id'] = np.where(get['codTipoOP'].isin([1, 3]), 9000, 2000)
             # Atualiza os valores da coluna 'id' com base na coluna 'codfaseatual'
