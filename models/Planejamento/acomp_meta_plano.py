@@ -5,7 +5,7 @@ from models.GestaoOPAberto import FilaFases, realizadoFases
 import numpy as np
 import re
 import pytz
-from datetime import datetime
+import datetime
 
 def MetasFase(plano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
