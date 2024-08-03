@@ -72,6 +72,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
         # Levantar as data de início e fim do faturamento:
         IniFat = planoAtual['inicoFat'][0]
+        IniFat = datetime.strptime(IniFat, '%Y-%m-%d')
 
         if diaAtual >= IniFat:
             sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
