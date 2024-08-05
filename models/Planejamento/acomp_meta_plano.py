@@ -10,14 +10,16 @@ from datetime import datetime
 def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
+    conn = ConexaoPostgreWms.conexaoEngine()
 
     if congelado == False:
 
 
-        sqlMetas = """select "codLote", 
-        "Empresa" , "codEngenharia" , "codSeqTamanho" , "codSortimento" , previsao  
-        from "PCP".pcp.lote_itens li 
-        where  "codLote" in ("""+novo+""")"""
+        sqlMetas = """
+        SELECT "codLote", "Empresa", "codEngenharia", "codSeqTamanho", "codSortimento", previsao
+        FROM "PCP".pcp.lote_itens li
+        WHERE "codLote" IN (%s)
+        """ % novo
 
         sqlRoteiro = """
         select * from "PCP".pcp."Eng_Roteiro" er 
@@ -31,7 +33,6 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
         """
 
-        conn = ConexaoPostgreWms.conexaoEngine()
         sqlMetas = pd.read_sql(sqlMetas,conn)
         sqlRoteiro = pd.read_sql(sqlRoteiro,conn)
         sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
@@ -81,22 +82,23 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         #cargas = itemsPA_Csw.CargaFases()
         sqlMetas = pd.merge(sqlMetas,cargas,on='codItem',how='left')
 
-        sqlMetas['saldo'].fillna(0,inplace=True)
-        sqlMetas['qtdeFaturada'].fillna(0,inplace=True)
-        sqlMetas['estoqueAtual'].fillna(0,inplace=True)
-        sqlMetas['carga'].fillna(0,inplace=True)
+        sqlMetas.fillna({
+            'saldo': 0,
+            'qtdeFaturada': 0,
+            'estoqueAtual': 0,
+            'carga': 0
+        }, inplace=True)
 
 
         # Analisando se esta no periodo de faturamento
-        diaAtual = obterDiaAtual()
-        diaAtual = datetime.strptime(diaAtual, '%Y-%m-%d')
+        diaAtual = datetime.strptime(obterDiaAtual(), '%Y-%m-%d')
 
         planoAtual = plano.ConsultaPlano()
         planoAtual = planoAtual[planoAtual['codigo'] == Codplano].reset_index()
 
         # Levantar as data de início e fim do faturamento:
-        IniFat = planoAtual['inicoFat'][0]
-        IniFat = datetime.strptime(IniFat, '%Y-%m-%d')
+        IniFat = datetime.strptime(planoAtual['inicoFat'][0], '%Y-%m-%d')
+
 
         if diaAtual >= IniFat:
             sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
