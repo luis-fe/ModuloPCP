@@ -12,7 +12,6 @@ WHERE
 	f.Empresa = 1"""
     conn = ConexaoBanco.ConexaoInternoMPL()
     consulta = pd.read_sql(sql,conn)
-    conn.close()
 
     return consulta
 
