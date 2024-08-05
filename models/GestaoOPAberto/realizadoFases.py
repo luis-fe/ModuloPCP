@@ -134,7 +134,7 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     NomeEngenharia['codEngenharia'] = '0'+NomeEngenharia['codItemPai']+'-0'
     realizado = pd.merge(realizado,NomeEngenharia,on='codEngenharia',how='left')
     realizado['categoria'] = '-'
-
+    realizado['nome'] = realizado['nome'].astype(str)
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
     realizado = realizado.groupby(["codFase","categoria"]).agg({"Realizado":"sum"}).reset_index()
 
