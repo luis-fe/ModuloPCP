@@ -234,8 +234,6 @@ def FiltroColecao(colecao):
 
 def ApresentacaoFilaFaseCategoria(COLECAO, codFase):
     fila = FilaFases()
-
-
     colecoes = FiltroColecao(COLECAO)
 
 
@@ -258,8 +256,8 @@ def ApresentacaoFilaFaseCategoria(COLECAO, codFase):
     fila_fila = fila_fila.groupby(['codFase','categoria']).agg({"pcs": 'sum'}).reset_index()
     fila_fila.rename(columns={'pcs': 'Fila'}, inplace=True)
 
-    fila = pd.merge(fila, fila_carga_atual, on='codFase')
-    fila = pd.merge(fila, fila_fila, on='codFase')
+    fila = pd.merge(fila, fila_carga_atual, on=['codFase','categoria'])
+    fila = pd.merge(fila, fila_fila, on=['codFase','categoria'])
 
     apresentacao_query = """
         SELECT x."nomeFase" as "fase", apresentacao 
