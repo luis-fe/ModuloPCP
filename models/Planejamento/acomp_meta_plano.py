@@ -288,48 +288,28 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         sqlApresentacao = pd.read_sql(sqlApresentacao, conn)
 
         consulta = pd.read_sql(consulta, conn)
-        consulta['categoria'] = '-'
-
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
+        # Mapeamento de categorias mais eficiente
+        categorias_map = {
+            'CAMISA': 'CAMISA',
+            'POLO': 'POLO',
+            'BATA': 'CAMISA',
+            'TRICOT': 'TRICOT',
+            'BONE': 'BONE',
+            'CARTEIRA': 'CARTEIRA',
+            'TSHIRT': 'CAMISETA',
+            'REGATA': 'CAMISETA',
+            'BLUSAO': 'AGASALHOS',
+            'BABY': 'CAMISETA',
+            'JAQUETA': 'JAQUETA',
+            'CINTO': 'CINTO',
+            'PORTA CAR': 'CARTEIRA',
+            'CUECA': 'CUECA',
+            'MEIA': 'MEIA',
+            'SUNGA': 'SUNGA',
+            'SHORT': 'SHORT',
+            'BERMUDA': 'BERMUDA M'
+        }
+        consulta['categoria'] = consulta['nome'].map(categorias_map).fillna('-')
 
         # Verificar quais codItemPai começam com '1' ou '2'
         mask = consulta['codItemPai'].str.startswith(('1', '2'))
@@ -351,14 +331,15 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         # cargas = itemsPA_Csw.CargaFases()
         sqlMetas = pd.merge(sqlMetas, cargas, on='codItem', how='left')
 
-        sqlMetas['saldo'].fillna(0, inplace=True)
-        sqlMetas['qtdeFaturada'].fillna(0, inplace=True)
-        sqlMetas['estoqueAtual'].fillna(0, inplace=True)
-        sqlMetas['carga'].fillna(0, inplace=True)
+        sqlMetas.fillna({
+            'saldo': 0,
+            'qtdeFaturada': 0,
+            'estoqueAtual': 0,
+            'carga': 0
+        }, inplace=True)
 
         # Analisando se esta no periodo de faturamento
-        diaAtual = obterDiaAtual()
-        diaAtual = datetime.strptime(diaAtual, '%Y-%m-%d')
+        diaAtual = datetime.strptime(obterDiaAtual(), '%Y-%m-%d')
 
         planoAtual = plano.ConsultaPlano()
         planoAtual = planoAtual[planoAtual['codigo'] == Codplano].reset_index()
@@ -410,11 +391,11 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
 
         colecoes = TratamentoInformacaoColecao(arrayCodLoteCsw)
 
-        filaFase = FilaFases.ApresentacaoFila(colecoes)
+        filaFase = FilaFases.ApresentacaoFilaFaseCategoria(colecoes,429)
         filaFase = filaFase.loc[:,
-                   ['codFase', 'Carga Atual', 'Fila']]
+                   ['codFase', 'Carga Atual', 'Fila','categoria']]
 
-        Meta = pd.merge(Meta, filaFase, on='codFase', how='left')
+        Meta = pd.merge(Meta, filaFase, on=['codFase','categoria'], how='left')
         Meta['Carga Atual'].fillna(0, inplace=True)
         Meta['Fila'].fillna(0, inplace=True)
         Meta['Falta Produzir'] = Meta['Carga Atual'] + Meta['Fila'] + Meta['FaltaProgramar']
