@@ -403,8 +403,6 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta['Meta Dia'] = Meta['Falta Produzir'] / Meta['dias']
         Meta['Meta Dia'] = Meta['Meta Dia'].round(0)
 
-        # Ponto de Congelamento do lote:
-        Meta.to_csv(f'./dados/analiseLoteCostura{novo2}.csv')
 
         realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
         realizado['codFase'] = realizado['codFase'].astype(int)
@@ -414,19 +412,14 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta.fillna('-', inplace=True)
         Meta = Meta[Meta['apresentacao'] != '-']
 
-        dados = {
-            '0-Previcao Pçs': f'{totalPc} pcs',
-            '01-Falta Programar': f'{totalFaltaProgramar} pçs',
-            '1-Detalhamento': Meta.to_dict(orient='records')}
 
-        return pd.DataFrame([dados])
+
+        return Meta
 
     else:
         novo2 = novo.replace('"', "-")
         Meta = pd.read_csv(f'./dados/analiseLoteCostura{novo2}.csv')
-        Totais = pd.read_csv(f'./dados/TotaisCostura{novo2}.csv')
-        totalPc = Totais['0-Previcao Pçs'][0]
-        totalFaltaProgramar = Totais['01-Falta Programar'][0]
+
 
         realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
         realizado['codFase'] = realizado['codFase'].astype(int)
@@ -436,9 +429,4 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta.fillna('-', inplace=True)
         Meta = Meta[Meta['apresentacao'] != '-']
 
-        dados = {
-            '0-Previcao Pçs': f'{totalPc} pcs',
-            '01-Falta Programar': f'{totalFaltaProgramar} pçs',
-            '1-Detalhamento': Meta.to_dict(orient='records')}
-
-        return pd.DataFrame([dados])
+        return Meta
