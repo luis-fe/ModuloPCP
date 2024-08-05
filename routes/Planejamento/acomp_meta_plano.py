@@ -53,7 +53,7 @@ def pOST_MetasFases():
         OP_data.append(op_dict)
     return jsonify(OP_data)
 
-@MetasFases_routes.route('/pcp/api/MetasFasesCostura', methods=['POST'])
+@MetasFases_routes.route('/pcp/api/MetasFasesCosturaCategorias', methods=['POST'])
 @token_required
 def pOST_MetasFasesCostura():
 
