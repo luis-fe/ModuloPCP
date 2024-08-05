@@ -128,7 +128,7 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
 
     conn = ConexaoPostgreWms.conexaoEngine()
     sqlNomeEngenharia = """
-    select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where "codItemPai" like '1%' group by "codItemPai"
+    select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') group by "codItemPai"
     """
     NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
 
