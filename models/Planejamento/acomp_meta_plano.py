@@ -422,7 +422,7 @@ def mapear_categoria(nome):
         'MEIA': 'MEIA',
         'SUNGA': 'SUNGA',
         'SHORT': 'SHORT',
-        'BERMUDA': 'BERMUDA M'
+        'BERMUDA M': 'BERMUDA'
     }
     for chave, valor in categorias_map.items():
         if chave in nome.upper():
