@@ -39,49 +39,28 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         consulta = pd.read_sql(consulta, conn)
         consulta['categoria'] = '-'
 
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
-        consulta['categoria'] = consulta.apply(
-            lambda row: Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
-
-
-
+        # Mapeamento de categorias mais eficiente
+        categorias_map = {
+            'CAMISA': 'CAMISA',
+            'POLO': 'POLO',
+            'BATA': 'CAMISA',
+            'TRICOT': 'TRICOT',
+            'BONE': 'BONE',
+            'CARTEIRA': 'CARTEIRA',
+            'TSHIRT': 'CAMISETA',
+            'REGATA': 'CAMISETA',
+            'BLUSAO': 'AGASALHOS',
+            'BABY': 'CAMISETA',
+            'JAQUETA': 'JAQUETA',
+            'CINTO': 'CINTO',
+            'PORTA CAR': 'CARTEIRA',
+            'CUECA': 'CUECA',
+            'MEIA': 'MEIA',
+            'SUNGA': 'SUNGA',
+            'SHORT': 'SHORT',
+            'BERMUDA': 'BERMUDA M'
+        }
+        consulta['categoria'] = consulta['nome'].map(categorias_map).fillna('-')
         # Verificar quais codItemPai começam com '1' ou '2'
         mask = consulta['codItemPai'].str.startswith(('1', '2'))
         # Aplicar as transformações usando a máscara
