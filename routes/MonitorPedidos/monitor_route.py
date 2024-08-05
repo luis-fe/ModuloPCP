@@ -27,9 +27,12 @@ def get_MonitorPedidos():
     arrayRepres_excluir = request.args.get('arrayRepres_excluir','')
     arrayRepre_Incluir = request.args.get('arrayRepre_Incluir','')
     nomeCliente = request.args.get('nomeCliente','')
+    FiltrodataEmissaoInicial = request.args.get('FiltrodataEmissaoInicial','')
+    FiltrodataEmissaoFinal = request.args.get('FiltrodataEmissaoFinal','')
+
 
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente)
+    dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente,FiltrodataEmissaoInicial ,FiltrodataEmissaoFinal)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
