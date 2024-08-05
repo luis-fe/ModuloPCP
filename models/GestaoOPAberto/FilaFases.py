@@ -259,16 +259,7 @@ def ApresentacaoFilaFaseCategoria(COLECAO, codFase):
     fila = pd.merge(fila, fila_carga_atual, on=['codFase','categoria'])
     fila = pd.merge(fila, fila_fila, on=['codFase','categoria'])
 
-    apresentacao_query = """
-        SELECT x."nomeFase" as "fase", apresentacao 
-        FROM pcp."SeqApresentacao" x
-        ORDER BY x.apresentacao
-    """
 
-    conn2 = ConexaoPostgreWms.conexaoEngine()
-    apresentacao = pd.read_sql(apresentacao_query, conn2)
-    fila = pd.merge(fila, apresentacao, on='fase')
-    fila = fila[(fila['codFase'] < 599)]
 
     fila['Carga Atual'] =fila['Carga Atual'].astype(int).round()
     fila['Fila'] =fila['Fila'].astype(int).round()
