@@ -132,7 +132,7 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     """
     NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
     NomeEngenharia['codEngenharia'] = '0'+NomeEngenharia['codItemPai']+'-0'
-    realizado = pd.merge(realizado,sqlNomeEngenharia,on='codEngenharia',how='left')
+    realizado = pd.merge(realizado,NomeEngenharia,on='codEngenharia',how='left')
     realizado['categoria'] = '-'
 
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
