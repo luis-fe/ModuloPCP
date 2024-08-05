@@ -53,6 +53,11 @@ def POST_MonitorPedidos():
     # Parametros obrigatorios no POST
     iniVenda = data.get('iniVenda','-')
     finalVenda = data.get('finalVenda')
+    FiltrodataEmissaoInicial = data.get('FiltrodataEmissaoInicial','')
+    FiltrodataEmissaoFinal = data.get('FiltrodataEmissaoFinal','')
+
+
+
     parametroClassificacao = data.get('parametroClassificacao', 'DataPrevisao')  # Faturamento ou DataPrevisao
     tipoData = data.args.get('tipoData','DataEmissao') #DataEmissao x DataPrevOri
 
@@ -80,7 +85,7 @@ def POST_MonitorPedidos():
 
 
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, ArrayCodRepresExcluir, ArrayCodRepres, ArrayNomeCliente)
+    dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, ArrayCodRepresExcluir, ArrayCodRepres, ArrayNomeCliente,FiltrodataEmissaoInicial ,FiltrodataEmissaoFinal)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
