@@ -15,11 +15,11 @@ def obterHoraAtual():
     return agora
 
 #Carregando a Capa de pedidos do CSW : Opcao 1: pela dataEmissao
-def Monitor_CapaPedidos(empresa, iniVenda, finalVenda, tiponota, dataEmissaoInicial):
+def Monitor_CapaPedidos(empresa, iniVenda, finalVenda, tiponota, dataEmissaoInicial,dataEmissaoFinal):
     empresa = "'"+str(empresa)+"'"
 
     #1.4 - Verificar se o filtro esta aplicado para FiltrodataEmissaoInicial
-    if dataEmissaoInicial != '':
+    if dataEmissaoInicial != '' and dataEmissaoFinal != '' :
         sqlCswCapaPedidos = "SELECT   dataEmissao, convert(varchar(9), codPedido) as codPedido, " \
                             "(select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
                             " codTipoNota, dataPrevFat, convert(varchar(9),codCliente) as codCliente, codRepresentante, descricaoCondVenda, vlrPedido as vlrSaldo, qtdPecasFaturadas " \
@@ -40,16 +40,16 @@ def Monitor_CapaPedidos(empresa, iniVenda, finalVenda, tiponota, dataEmissaoInic
     return consulta
 
 #Carregando a Capa de pedidos do CSW : Opcao 2: pela dataPrevisao
-def Monitor_CapaPedidosDataPrev(empresa, iniVenda, finalVenda, tiponota,dataEmissaoInicial):
+def Monitor_CapaPedidosDataPrev(empresa, iniVenda, finalVenda, tiponota,dataEmissaoInicial,dataEmissaoFinal):
     empresa = "'"+str(empresa)+"'"
 
     #1.4 - Verificar se o filtro esta aplicado para FiltrodataEmissaoInicial
-    if dataEmissaoInicial != '':
+    if dataEmissaoInicial != '' and dataEmissaoFinal != '':
         sqlCswCapaPedidosDataPrev = "SELECT   dataEmissao, convert(varchar(9), codPedido) as codPedido, " \
                                     "(select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
                                     " codTipoNota, dataPrevFat, convert(varchar(9),codCliente) as codCliente, codRepresentante, descricaoCondVenda, vlrPedido as vlrSaldo, qtdPecasFaturadas " \
                                     " FROM Ped.Pedido p" \
-                                    " where codEmpresa = " + empresa + " and dataEmissao >= '" + dataEmissaoInicial + "' and  dataPrevFat >= '" + iniVenda + "' and dataPrevFat <= '" + finalVenda + "' and codTipoNota in (" + tiponota + ") " \
+                                    " where codEmpresa = " + empresa + " and dataEmissao >= '" + dataEmissaoInicial + "' and dataEmissao <= '" + dataEmissaoFinal + "' and  dataPrevFat >= '" + iniVenda + "' and dataPrevFat <= '" + finalVenda + "' and codTipoNota in (" + tiponota + ") " \
                                                                                                                                                                                             "order by dataPrevFat asc "
     else:
 
@@ -244,12 +244,12 @@ def ConfiguracaoCategoria():
 
     return consultar
 
-def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao, tipoData, Representante_excluir, escolherRepresentante,escolhernomeCliente, FiltrodataEmissaoInicial =''  ):
+def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, datainicio,parametroClassificacao, tipoData, Representante_excluir, escolherRepresentante,escolhernomeCliente, FiltrodataEmissaoInicial ='',FiltrodataEmissaoFinal =''  ):
     # 1 - Carregar Os pedidos (etapa 1)
     if tipoData == 'DataEmissao':
-        pedidos = Monitor_CapaPedidos(empresa, iniVenda, finalVenda, tiponota,FiltrodataEmissaoInicial)
+        pedidos = Monitor_CapaPedidos(empresa, iniVenda, finalVenda, tiponota,FiltrodataEmissaoInicial,FiltrodataEmissaoFinal)
     else:
-        pedidos = Monitor_CapaPedidosDataPrev(empresa, iniVenda, finalVenda, tiponota,FiltrodataEmissaoInicial)
+        pedidos = Monitor_CapaPedidosDataPrev(empresa, iniVenda, finalVenda, tiponota,FiltrodataEmissaoInicial,FiltrodataEmissaoFinal)
 
     # 1.1 - Verificar se tem representantes a serem excuidos da analise
     if Representante_excluir != '':

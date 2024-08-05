@@ -26,7 +26,8 @@ WHERE
 
 
 def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade):
-    sql =""""""
+    sql ="""SELECT * FROM pcp.faccionista """
+    sql2= """SELECT * FROM pcp."" """
 
 def ObterCategorias():
     sql = """Select "nomecategoria" as categoria from pcp.categoria """
