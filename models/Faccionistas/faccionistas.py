@@ -10,7 +10,7 @@ def ListaFaccionistasCsw():
 FROM
 	tcg.Faccionista f
 WHERE
-	f.Empresa = 1 order by noome """
+	f.Empresa = 1 order by nome """
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
             cursor.execute(sql)
