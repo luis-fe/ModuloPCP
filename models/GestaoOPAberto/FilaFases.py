@@ -243,8 +243,8 @@ def ApresentacaoFilaFaseCategoria(COLECAO, codFase):
             {'numeroOP': ['t-0', 't-0','t-0'], 'codFase': [449, 437,412], "codFaseAtual": [449, 437,412], "Situacao": ['em processo','em processo','a produzir'],
              "pcs": 0, 'COLECAO': ['', '',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
         fila = pd.concat([fila,start])
-
-    fila = fila[fila['codFase'] == codFase]
+    fila['codFase'] = np.where(fila['codFase'].isin([431, 455, 459]), 429, fila['codFase'])
+    fila = fila[fila['codFase'] == int(codFase)]
     fila_carga_atual = fila[fila['Situacao'] == 'em processo'].reset_index()
     fila_fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
 
