@@ -51,6 +51,12 @@ def RegistroFaccionistas():
         'Capacidade/dia': lambda x: list(x.dropna().astype(str).unique())
     }).reset_index()
 
+    grouped.rename(
+        columns={'codfaccionista': '01- codfaccionista', 'nome': '02- nome',
+                 'nomecategoria': '03- nomecategoria',
+                 'Capacidade/dia': '04- Capacidade/dia'},
+        inplace=True)
+
 
     return grouped
 
