@@ -1,3 +1,4 @@
+import gc
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
@@ -10,8 +11,16 @@ FROM
 	tcg.Faccionista f
 WHERE
 	f.Empresa = 1"""
-    conn = ConexaoBanco.ConexaoInternoMPL()
-    consulta = pd.read_sql(sql,conn)
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
 
     return consulta
 
