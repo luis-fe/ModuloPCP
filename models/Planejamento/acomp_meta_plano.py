@@ -291,28 +291,8 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         consulta = pd.read_sql(consulta, conn)
         consulta['categoria'] = '-'
 
-        # Mapeamento de categorias mais eficiente
-        categorias_map = {
-            'CAMISA': 'CAMISA',
-            'POLO': 'POLO',
-            'BATA': 'CAMISA',
-            'TRICOT': 'TRICOT',
-            'BONE': 'BONE',
-            'CARTEIRA': 'CARTEIRA',
-            'TSHIRT': 'CAMISETA',
-            'REGATA': 'CAMISETA',
-            'BLUSAO': 'AGASALHOS',
-            'BABY': 'CAMISETA',
-            'JAQUETA': 'JAQUETA',
-            'CINTO': 'CINTO',
-            'PORTA CAR': 'CARTEIRA',
-            'CUECA': 'CUECA',
-            'MEIA': 'MEIA',
-            'SUNGA': 'SUNGA',
-            'SHORT': 'SHORT',
-            'BERMUDA': 'BERMUDA M'
-        }
-        consulta['categoria'] = consulta['nome'].map(categorias_map).fillna('-')
+
+        consulta['categoria'] = consulta['nome'].apply(mapear_categoria)
 
         # Verificar quais codItemPai começam com '1' ou '2'
         mask = consulta['codItemPai'].str.startswith(('1', '2'))
@@ -365,22 +345,10 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
 
         Meta = sqlMetas.groupby(["codEngenharia", "codSeqTamanho", "codSortimento", "categoria"]).agg(
             {"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
-        filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
-        totalPc = filtro['previsao'].sum()
-        totalFaltaProgramar = filtro['FaltaProgramar'].sum()
-        novo2 = novo.replace('"', "-")
-        Totais = pd.DataFrame(
-            [{'0-Previcao Pçs': f'{totalPc} pcs', '01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
-        Totais.to_csv(f'./dados/TotaisCostura{novo2}.csv')
 
         # Carregando o Saldo COLECAO ANTERIOR
-
         Meta = pd.merge(Meta, sqlRoteiro, on='codEngenharia', how='left')
-
-
-
         Meta = Meta[Meta['codFase']==429].reset_index()
-
         Meta.to_csv('./dados/analiseFaltaProgrFasesCOSTURA.csv')
 
         Meta = Meta.groupby(["codFase", "nomeFase","categoria"]).agg({"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
@@ -433,3 +401,30 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta = Meta[Meta['apresentacao'] != '-']
 
         return Meta
+
+
+def mapear_categoria(nome):
+    categorias_map = {
+        'CAMISA': 'CAMISA',
+        'POLO': 'POLO',
+        'BATA': 'CAMISA',
+        'TRICOT': 'TRICOT',
+        'BONE': 'BONE',
+        'CARTEIRA': 'CARTEIRA',
+        'TSHIRT': 'CAMISETA',
+        'REGATA': 'CAMISETA',
+        'BLUSAO': 'AGASALHOS',
+        'BABY': 'CAMISETA',
+        'JAQUETA': 'JAQUETA',
+        'CINTO': 'CINTO',
+        'PORTA CAR': 'CARTEIRA',
+        'CUECA': 'CUECA',
+        'MEIA': 'MEIA',
+        'SUNGA': 'SUNGA',
+        'SHORT': 'SHORT',
+        'BERMUDA': 'BERMUDA M'
+    }
+    for chave, valor in categorias_map.items():
+        if chave in nome.upper():
+            return valor
+    return '-'
