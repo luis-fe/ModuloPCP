@@ -39,29 +39,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
         consulta = pd.read_sql(consulta, conn)
         consulta['categoria'] = '-'
+        consulta['categoria'] = consulta['nome'].apply(mapear_categoria)
 
-        # Mapeamento de categorias mais eficiente
-        categorias_map = {
-            'CAMISA': 'CAMISA',
-            'POLO': 'POLO',
-            'BATA': 'CAMISA',
-            'TRICOT': 'TRICOT',
-            'BONE': 'BONE',
-            'CARTEIRA': 'CARTEIRA',
-            'TSHIRT': 'CAMISETA',
-            'REGATA': 'CAMISETA',
-            'BLUSAO': 'AGASALHOS',
-            'BABY': 'CAMISETA',
-            'JAQUETA': 'JAQUETA',
-            'CINTO': 'CINTO',
-            'PORTA CAR': 'CARTEIRA',
-            'CUECA': 'CUECA',
-            'MEIA': 'MEIA',
-            'SUNGA': 'SUNGA',
-            'SHORT': 'SHORT',
-            'BERMUDA': 'BERMUDA M'
-        }
-        consulta['categoria'] = consulta['nome'].map(categorias_map).fillna('-')
         # Verificar quais codItemPai começam com '1' ou '2'
         mask = consulta['codItemPai'].str.startswith(('1', '2'))
         # Aplicar as transformações usando a máscara
