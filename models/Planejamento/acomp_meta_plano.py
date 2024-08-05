@@ -375,9 +375,9 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta['Meta Dia'] = Meta['Meta Dia'].round(0)
 
 
-        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
+        realizado = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim,429)
         realizado['codFase'] = realizado['codFase'].astype(int)
-        Meta = pd.merge(Meta, realizado, on='codFase', how='left')
+        Meta = pd.merge(Meta, realizado, on=['codFase','categoria'], how='left')
 
         Meta['Realizado'].fillna(0, inplace=True)
         Meta.fillna('-', inplace=True)
@@ -392,9 +392,9 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta = pd.read_csv(f'./dados/analiseLoteCostura{novo2}.csv')
 
 
-        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim)
+        realizado = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim,429)
         realizado['codFase'] = realizado['codFase'].astype(int)
-        Meta = pd.merge(Meta, realizado, on='codFase', how='left')
+        Meta = pd.merge(Meta, realizado, on=['codFase','categoria'], how='left')
 
         Meta['Realizado'].fillna(0, inplace=True)
         Meta.fillna('-', inplace=True)

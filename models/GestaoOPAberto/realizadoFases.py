@@ -105,6 +105,44 @@ where
     print(f'dias uteis {diasUteis}')
     return realizado
 
+def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
+    CarregarRealizado(60)
+
+    sql = """
+        select rf."codEngenharia",
+    	rf.numeroop ,
+    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" , rf."horaMov"::time,
+    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+    from
+    	"PCP".pcp.realizado_fase rf 
+    where 
+    	rf."dataBaixa"::date >= %s 
+    	and rf."dataBaixa"::date <= %s ;
+        """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    realizado = pd.read_sql(sql, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+
+    realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
+    realizado = realizado[realizado['codFase']==str(codFase)].reset_index()
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    sqlNomeEngenharia = """
+    select ic."codItemPai" , max(ic.nome) as nome from "PCP".pcp.itens_csw ic where "codItemPai" like '1%' group by "codItemPai"
+    """
+    NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
+    NomeEngenharia['codEngenharia'] = '0'+NomeEngenharia['codItemPai']+'-0'
+    realizado = pd.merge(realizado,sqlNomeEngenharia,on='codEngenharia',how='left')
+    realizado['categoria'] = '-'
+
+    realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
+    realizado = realizado.groupby(["codFase","categoria"]).agg({"Realizado":"sum"}).reset_index()
+
+    diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
+    # Evitar divisão por zero ou infinito
+    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
+    return realizado
+
 
 
 
@@ -132,3 +170,30 @@ def ComparativoMovimentacoes(limit):
     consulta = pd.read_sql(sql,conn,params=(limit,))
 
     return consulta
+
+
+def mapear_categoria(nome):
+    categorias_map = {
+        'CAMISA': 'CAMISA',
+        'POLO': 'POLO',
+        'BATA': 'CAMISA',
+        'TRICOT': 'TRICOT',
+        'BONE': 'BONE',
+        'CARTEIRA': 'CARTEIRA',
+        'TSHIRT': 'CAMISETA',
+        'REGATA': 'CAMISETA',
+        'BLUSAO': 'AGASALHOS',
+        'BABY': 'CAMISETA',
+        'JAQUETA': 'JAQUETA',
+        'CINTO': 'CINTO',
+        'PORTA CAR': 'CARTEIRA',
+        'CUECA': 'CUECA',
+        'MEIA': 'MEIA',
+        'SUNGA': 'SUNGA',
+        'SHORT': 'SHORT',
+        'BERMUDA M': 'BERMUDA'
+    }
+    for chave, valor in categorias_map.items():
+        if chave in nome.upper():
+            return valor
+    return '-'
