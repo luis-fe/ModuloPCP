@@ -265,22 +265,23 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
 
     if congelado == False:
 
-        sqlMetas = """select "codLote", 
-           "Empresa" , "codEngenharia" , "codSeqTamanho" , "codSortimento" , previsao  
-           from "PCP".pcp.lote_itens li 
-           where  "codLote" in (""" + novo + """)"""
+        sqlMetas = """
+        SELECT "codLote", "Empresa", "codEngenharia", "codSeqTamanho", "codSortimento", previsao
+        FROM "PCP".pcp.lote_itens li
+        WHERE "codLote" IN (%s)
+        """ % novo
 
         sqlRoteiro = """
-           select * from "PCP".pcp."Eng_Roteiro" er 
-           """
+        select * from "PCP".pcp."Eng_Roteiro" er 
+        """
 
         sqlApresentacao = """
-           select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
-           """
+        select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
+        """
 
         consulta = """
-           select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
-           """
+        select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
+        """
 
         conn = ConexaoPostgreWms.conexaoEngine()
         sqlMetas = pd.read_sql(sqlMetas, conn)
@@ -288,6 +289,8 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         sqlApresentacao = pd.read_sql(sqlApresentacao, conn)
 
         consulta = pd.read_sql(consulta, conn)
+        consulta['categoria'] = '-'
+
         # Mapeamento de categorias mais eficiente
         categorias_map = {
             'CAMISA': 'CAMISA',
