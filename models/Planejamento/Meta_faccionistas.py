@@ -15,14 +15,14 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     consulta2 = pd.read_sql(sql,conn)
 
     #Passo3 Realizando o merge
-    consulta1 = pd.merge(consulta1,consulta2,on='categoria',how='left')
-    consulta1['Capacidade/dia'].fillna(0,inplace=True)
-    consulta1.fillna('-',inplace=True)
+    consulta1_ = pd.merge(consulta1,consulta2,on='categoria',how='left')
+    consulta1_['Capacidade/dia'].fillna(0,inplace=True)
+    consulta1_.fillna('-',inplace=True)
 
     #Passo4 obtendo o exedente por categoria
-    consulta1['capacidadeSoma'] = consulta1.groupby('categoria')['Capacidade/dia'].transform('sum')
-    consulta1['exedente'] = consulta1['Meta Dia'] - consulta1['capacidadeSoma']
-    consulta1_ = consulta1[consulta1['exedente']>0]
+    consulta1_['capacidadeSoma'] = consulta1_.groupby('categoria')['Capacidade/dia'].transform('sum')
+    consulta1_['exedente'] = consulta1_['Meta Dia'] - consulta1_['capacidadeSoma']
+    consulta1_ = consulta1_[consulta1_['exedente']>0]
     consulta1_ = consulta1_.groupby('categoria').agg({'exedente':'first'}).reset_index()
 
     consulta1_.rename(
@@ -35,6 +35,8 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo = pd.concat([Consultafaccionistas,consulta1_])
     resumo['nome'].fillna('EXCEDENTE',inplace=True)
     resumo.fillna('-',inplace=True)
+    resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
+
 
 
     return resumo
