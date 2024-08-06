@@ -26,11 +26,42 @@ WHERE
 
 
 def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade):
-    sql ="""SELECT * FROM pcp.faccionista """
-    sql2= """SELECT * FROM pcp."faccaoCategoria" """
+    inserir1 ="""insert into ("codfaccionista","apelido") values ( %s , %s ) pcp.faccionista """
+    inserir2= """insert into ("codfaccionista", "nomecategoria", "Capacidade/dia") pcp."faccaoCategoria" """
+    sql = """SELECT * FROM pcp.faccionista where "codfaccionista"= %s """
+    sql2 = """SELECT * FROM pcp."faccaoCategoria" where "codfaccionista"= %s and nomecategoria = %s """
+
+    conn1 = ConexaoPostgreWms.conexaoEngine()
 
 
 
+    with ConexaoPostgreWms.conexaoInsercao() as conn:
+        sql = pd.read_sql(sql,conn1,params=(codFaccionista))
+        if sql.empty:
+
+            with conn.cursor() as curr:
+                curr.execute(inserir1,(codFaccionista,apelido))
+                conn.commit()
+
+        else:
+            update = """update pcp.faccionista set  apelido = %s where "codfaccionista" = %s """
+            with conn.cursor() as curr:
+                curr.execute(update,(apelido, codFaccionista))
+                conn.commit()
+
+        for categoria, capacidade in ArrayCategorias, ArrayCapacidade:
+            sql2 = pd.read_sql(sql2, conn1,params=(codFaccionista, categoria))
+
+            if sql2.empty:
+                with conn.cursor() as curr:
+                    curr.execute(inserir2, (codFaccionista, categoria, capacidade))
+                    conn.commit()
+            else:
+                update = """UPDATE  pcp."faccaoCategoria" set nomecategoria = %s, "Capacidade/dia" = %s where "codfaccionista"= %s and nomecategoria = %s    """
+
+                with conn.cursor() as curr:
+                    curr.execute(update, (categoria,capacidade,codFaccionista,categoria))
+                    conn.commit()
 
     return pd.DataFrame([{'Status':True,'Mensagem':'Registrado com Sucesso !'}])
 
