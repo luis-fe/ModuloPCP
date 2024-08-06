@@ -19,10 +19,10 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     consulta1['Capacidade/dia'].fillna(0,inplace=True)
     consulta1.fillna('-',inplace=True)
 
-    consulta1['capacidadeSoma'] = consulta1.groupby('categoria')['Capacidade/dia'].sum()
+    consulta1['capacidadeSoma'] = consulta1.groupby('categoria')['Capacidade/dia'].transform('sum')
     consulta1['exedente'] = consulta1['Meta Dia'] - consulta1['capacidadeSoma']
     consulta1_ = consulta1[consulta1['exedente']>0]
     consulta1_ = consulta1_.groupby('categoria').agg({'exedente':'first'}).reset_index()
 
 
-    return consulta1
+    return consulta1_
