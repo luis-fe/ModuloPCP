@@ -60,7 +60,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
 
     resumo.rename(
         columns={'codfaccionista': '00- codFac', 'nome':'01-nomeFac', 'categoria': '03- categoria','01- AcordadoDia':'04- AcordadoDia',
-                 '04-%Capacidade':'05-%Cap.','FaltaProgramar':'06-FaltaProgramar','Fila':'07-Fila','carga':'08-Carga',"Falta Produzir":"09-Falta Produzir"},
+                 '04-%Capacidade':'05-%Cap.','FaltaProgramar':'06-FaltaProgramar','Fila':'07-Fila','carga':'08-Carga',"Falta Produzir":"09-Falta Produzir","dias":"10-dias"},
         inplace=True)
 
     return resumo
