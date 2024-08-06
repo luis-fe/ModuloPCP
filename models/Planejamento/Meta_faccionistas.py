@@ -99,6 +99,7 @@ WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
 
     consulta = consulta.groupby(['categoria','codfaccionista']).agg({'carga':'sum'}).reset_index()
     consulta['codfaccionista'] =consulta['codfaccionista'].astype(str)
+    print(consulta)
     return consulta
 
 
