@@ -42,7 +42,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo = resumo.sort_values(by=['categoria','01- AcordadoDia'], ascending=[True,False])
     resumo = pd.merge(resumo,consulta1,on='categoria')
     colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
-                           'Fila']
+                           'Fila','dias']
     colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
     resumo = resumo.loc[:, colunas_existentes]
     resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade']/100)
@@ -51,6 +51,10 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo['FaltaProgramar'] = resumo['FaltaProgramar'].round(0)
     cargaFac = CargaFaccionista()
     resumo = pd.merge(resumo,cargaFac,on=['categoria','codfaccionista'],how='left')
+    resumo['carga'].fillna(0,inplace=True)
+    resumo['FaltaProduzir'] = resumo['carga'] + resumo['Fila'] + resumo['FaltaProgramar']
+    resumo['Meta Dia'] = resumo['Falta Produzir'] / resumo['dias']
+    resumo['Meta Dia'] = resumo['Meta Dia'].round(0)
 
     return resumo
 
@@ -100,7 +104,6 @@ WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
 
     consulta = consulta.groupby(['categoria','codfaccionista']).agg({'carga':'sum'}).reset_index()
     consulta['codfaccionista'] =consulta['codfaccionista'].astype(str)
-    print(consulta)
     return consulta
 
 
