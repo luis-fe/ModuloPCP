@@ -43,6 +43,8 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
                            'Fila']
     colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
     resumo = resumo.loc[:, colunas_existentes]
+    resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * resumo['04-%Capacidade']
+    resumo['Fila'] = resumo['Fila'] * resumo['04-%Capacidade']
 
     return resumo
 
