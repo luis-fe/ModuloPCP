@@ -1,6 +1,6 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
-
+from models.Faccionistas import faccionistas
 
 def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado):
     # passo 1 Carregar o plano informado
@@ -26,7 +26,25 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     consulta1_ = consulta1_.groupby('categoria').agg({'exedente':'first'}).reset_index()
 
     #Passo5 obtendo faccionistas
+    Consultafaccionistas = RegistroFaccionistas2()
 
 
 
-    return consulta1_
+    return Consultafaccionistas
+
+
+
+def RegistroFaccionistas2():
+    sql = """SELECT * FROM pcp.faccionista """
+    sql2 = """SELECT * FROM pcp."faccaoCategoria" """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    sql = pd.read_sql(sql,conn)
+    sql2 = pd.read_sql(sql2,conn)
+    merged = pd.merge(sql, sql2, on='codfaccionista', how='left')
+    merged.fillna('-',inplace=True)
+    merged['nome'] = merged.apply(lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] != '-' else r['nomefaccionista'],axis=1)
+
+
+
+    return merged
