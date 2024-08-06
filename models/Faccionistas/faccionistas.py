@@ -36,7 +36,7 @@ def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCa
 
 
     with ConexaoPostgreWms.conexaoInsercao() as conn:
-        sql = pd.read_sql(sql,conn1,params=(codFaccionista))
+        sql = pd.read_sql(sql,conn1,params=(str(codFaccionista),))
         if sql.empty:
 
             with conn.cursor() as curr:
