@@ -52,7 +52,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     cargaFac = CargaFaccionista()
     resumo = pd.merge(resumo,cargaFac,on=['categoria','codfaccionista'],how='left')
     resumo['carga'].fillna(0,inplace=True)
-    resumo['FaltaProduzir'] = resumo['carga'] + resumo['Fila'] + resumo['FaltaProgramar']
+    resumo['Falta Produzir'] = resumo['carga'] + resumo['Fila'] + resumo['FaltaProgramar']
     resumo['Meta Dia'] = resumo['Falta Produzir'] / resumo['dias']
     resumo['Meta Dia'] = resumo['Meta Dia'].round(0)
 
