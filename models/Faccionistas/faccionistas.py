@@ -26,8 +26,8 @@ WHERE
 
 
 def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade):
-    inserir1 ="""insert into ("codfaccionista","apelido") values ( %s , %s ) pcp.faccionista """
-    inserir2= """insert into ("codfaccionista", "nomecategoria", "Capacidade/dia") pcp."faccaoCategoria" """
+    inserir1 ="""insert into pcp.faccionista  ("codfaccionista","apelido") values ( %s , %s ) """
+    inserir2= """insert into pcp."faccaoCategoria" ("codfaccionista", "nomecategoria", "Capacidade/dia")  """
     sql = """SELECT * FROM pcp.faccionista where "codfaccionista"= %s """
     sql2 = """SELECT * FROM pcp."faccaoCategoria" where "codfaccionista"= %s and nomecategoria = %s """
 
