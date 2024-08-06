@@ -76,7 +76,7 @@ def RegistroFaccionistas():
     sql2 = pd.read_sql(sql2,conn)
     merged = pd.merge(sql, sql2, on='codfaccionista', how='left')
     merged.fillna('-',inplace=True)
-    merged['nome'] = merged.apply(lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] == '-' else r['nomefaccionista'],axis=1)
+    merged['nome'] = merged.apply(lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] != '-' else r['nomefaccionista'],axis=1)
     # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
     grouped = merged.groupby(['codfaccionista','nome']).agg({
         'nomecategoria': lambda x: list(x.dropna().astype(str).unique()),
