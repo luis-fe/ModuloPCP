@@ -70,9 +70,9 @@ def RegistroFaccionistas2():
         columns={'Capacidade/dia': '01- AcordadoDia',  'nomecategoria': 'categoria'},
         inplace=True)
     cargaFac = CargaFaccionista()
-    merged = pd.merge(merged,cargaFac,on=['categoria','codfaccionista'],how='left')
+    consulta1_ = pd.merge(merged,cargaFac,on=['categoria','codfaccionista'],how='left')
 
-    return merged
+    return consulta1_
 
 
 def CargaFaccionista():
