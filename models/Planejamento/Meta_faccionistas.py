@@ -49,6 +49,8 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade']/100)
     resumo['Fila'] = resumo['Fila'].round(0)
     resumo['FaltaProgramar'] = resumo['FaltaProgramar'].round(0)
+    cargaFac = CargaFaccionista()
+    resumo = pd.merge(resumo,cargaFac,on=['categoria','codfaccionista'],how='left')
 
     return resumo
 
@@ -69,10 +71,9 @@ def RegistroFaccionistas2():
     merged.rename(
         columns={'Capacidade/dia': '01- AcordadoDia',  'nomecategoria': 'categoria'},
         inplace=True)
-    cargaFac = CargaFaccionista()
-    consulta1_ = pd.merge(merged,cargaFac,on=['categoria','codfaccionista'],how='left')
 
-    return consulta1_
+
+    return merged
 
 
 def CargaFaccionista():
