@@ -25,12 +25,18 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     consulta1_ = consulta1[consulta1['exedente']>0]
     consulta1_ = consulta1_.groupby('categoria').agg({'exedente':'first'}).reset_index()
 
+    consulta1_.rename(
+        columns={'exedente': '01- AcordadoDia'},
+        inplace=True)
+
     #Passo5 obtendo faccionistas
     Consultafaccionistas = RegistroFaccionistas2()
 
+    resumo = pd.concat([Consultafaccionistas,consulta1_])
 
 
-    return Consultafaccionistas
+
+    return resumo
 
 
 
