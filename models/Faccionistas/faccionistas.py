@@ -26,7 +26,7 @@ WHERE
 
 
 def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade):
-    inserir1 ="""insert into pcp.faccionista  ("codfaccionista","apelidofaccionista") values ( %s , %s ) """
+    inserir1 ="""insert into pcp.faccionista  ("codfaccionista","apelidofaccionista", "nomefaccionista") values ( %s , %s, %s ) """
     inserir2= """insert into pcp."faccaoCategoria" ("codfaccionista", "nomecategoria", "Capacidade/dia")  """
     sql = """SELECT * FROM pcp.faccionista where "codfaccionista"= %s """
     sql2 = """SELECT * FROM pcp."faccaoCategoria" where "codfaccionista"= %s and nomecategoria = %s """
@@ -36,17 +36,18 @@ def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCa
 
 
     with ConexaoPostgreWms.conexaoInsercao() as conn:
+        nomefaccionista = ObterNomeCSW(int(codFaccionista))
         sql = pd.read_sql(sql,conn1,params=(str(codFaccionista),))
         if sql.empty:
 
             with conn.cursor() as curr:
-                curr.execute(inserir1,(codFaccionista,apelido))
+                curr.execute(inserir1,(codFaccionista,apelido,nomefaccionista))
                 conn.commit()
 
         else:
-            update = """update pcp.faccionista set  "apelidofaccionista" = %s where "codfaccionista" = %s """
+            update = """update pcp.faccionista set  "apelidofaccionista" = %s, "nomefaccionista" = %s where "codfaccionista" = %s """
             with conn.cursor() as curr:
-                curr.execute(update,(apelido, codFaccionista))
+                curr.execute(update,(apelido, nomefaccionista, codFaccionista))
                 conn.commit()
 
         for categoria, capacidade in ArrayCategorias, ArrayCapacidade:
@@ -98,3 +99,9 @@ def ObterCategorias():
     consulta = pd.read_sql(sql,conn)
 
     return consulta
+
+def ObterNomeCSW(codfaccionista):
+    consulta = ListaFaccionistasCsw()
+    consulta = consulta[consulta['codFaccionista']==int(codfaccionista)].reset_index()
+
+    return consulta['nomeFaccionista'][0]
