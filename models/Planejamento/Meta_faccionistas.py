@@ -36,7 +36,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo['nome'].fillna('EXCEDENTE',inplace=True)
     resumo.fillna('-',inplace=True)
     resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
-    resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia']/resumo['04-%Capacidade'])
+    resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia']/resumo['04-%Capacidade'])*100
 
 
     return resumo
