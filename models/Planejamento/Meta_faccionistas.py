@@ -45,6 +45,6 @@ def RegistroFaccionistas2():
     merged.fillna('-',inplace=True)
     merged['nome'] = merged.apply(lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] != '-' else r['nomefaccionista'],axis=1)
     merged = merged.loc[:, ['Capacidade/dia', 'codfaccionista', 'nome', 'nomecategoria']]
-
+    merged['Capacidade/dia'] = merged['Capacidade/dia'].astype(int)
 
     return merged
