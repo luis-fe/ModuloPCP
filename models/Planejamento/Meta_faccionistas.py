@@ -95,7 +95,7 @@ WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
     del rows
     gc.collect()
     consulta['categoria'] = '-'
-    consulta['categoria'] = consulta['consulta'].apply(mapear_categoria)
+    consulta['categoria'] = consulta['nome'].apply(mapear_categoria)
 
     consulta = consulta.groupby(['categoria','codfaccionista']).agg({'carga':'sum'}).reset_index()
 
