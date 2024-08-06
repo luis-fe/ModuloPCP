@@ -78,8 +78,8 @@ def post_CadastrarCapacidadeDiariaFac():
 
     codFaccionista = data.get('codFaccionista')
     apelido = data.get('apelido', '-')
-    ArrayCategorias = data.args.get('ArrayCategorias')
-    ArrayCapacidade = data.args.get('ArrayCapacidade')
+    ArrayCategorias = data.get('ArrayCategorias')
+    ArrayCapacidade = data.get('ArrayCapacidade')
 
     dados = faccionistas.CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade)
 
