@@ -26,7 +26,7 @@ WHERE
 
 
 def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade):
-    inserir1 ="""insert into pcp.faccionista  ("codfaccionista","apelido") values ( %s , %s ) """
+    inserir1 ="""insert into pcp.faccionista  ("codfaccionista","apelidofaccionista") values ( %s , %s ) """
     inserir2= """insert into pcp."faccaoCategoria" ("codfaccionista", "nomecategoria", "Capacidade/dia")  """
     sql = """SELECT * FROM pcp.faccionista where "codfaccionista"= %s """
     sql2 = """SELECT * FROM pcp."faccaoCategoria" where "codfaccionista"= %s and nomecategoria = %s """
@@ -44,7 +44,7 @@ def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCa
                 conn.commit()
 
         else:
-            update = """update pcp.faccionista set  apelido = %s where "codfaccionista" = %s """
+            update = """update pcp.faccionista set  "apelidofaccionista" = %s where "codfaccionista" = %s """
             with conn.cursor() as curr:
                 curr.execute(update,(apelido, codFaccionista))
                 conn.commit()
