@@ -19,4 +19,6 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     consulta1['Capacidade/dia'].fillna(0,inplace=True)
     consulta1.fillna('-',inplace=True)
 
+    consulta1['capacidadeSoma'] = consulta1.groupby('categoria')['Capacidade/dia'].cumsum()
+
     return consulta1
