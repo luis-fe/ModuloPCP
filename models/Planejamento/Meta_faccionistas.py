@@ -56,6 +56,12 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo['Meta Dia'] = resumo['Falta Produzir'] / resumo['dias']
     resumo['Meta Dia'] = resumo['Meta Dia'].round(0)
 
+
+
+    resumo.rename(
+        columns={'codfaccionista': '00- codfaccionista',  'categoria': '03- categoria'},
+        inplace=True)
+
     return resumo
 
 
