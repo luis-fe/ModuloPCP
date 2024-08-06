@@ -50,7 +50,7 @@ def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCa
                 curr.execute(update,(apelido, nomefaccionista, codFaccionista))
                 conn.commit()
 
-        for categoria, capacidade in ArrayCategorias, ArrayCapacidade:
+        for categoria, capacidade in zip(ArrayCategorias, ArrayCapacidade):
             sql2 = pd.read_sql(sql2, conn1,params=(codFaccionista, categoria))
 
             if sql2.empty:
