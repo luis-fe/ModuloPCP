@@ -362,8 +362,13 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         Meta.fillna('-', inplace=True)
         Meta = Meta[Meta['apresentacao'] != '-']
         Meta['codLote'] = arrayCodLoteCsw[0]
+        delete = """DELETE FROM backup."metaCategoria" where "codLote" = %s and "plano"= %s """
 
-
+        with ConexaoPostgreWms.conexaoInsercao() as conn1:
+            with conn1.cursor() as curr:
+                curr.execute(delete,(Meta['codLote'][0],Meta['plano'][0]))
+                conn1.commit()
+        ConexaoPostgreWms.Funcao_InserirBackup(Meta,Meta['codLote'].size,"metaCategoria","append")
 
         return Meta
 
