@@ -67,7 +67,57 @@ def RegistroFaccionistas2():
     merged.rename(
         columns={'Capacidade/dia': '01- AcordadoDia',  'nomecategoria': 'categoria'},
         inplace=True)
-
-
+    cargaFac = CargaFaccionista()
+    merged = pd.merge(merged,cargaFac,on=['categoria','codfaccionista'],how='left')
 
     return merged
+
+
+def CargaFaccionista():
+    sql = """
+    SELECT op.numeroOP, op.codProduto, d.codOP, d.codFac as codfaccionista,l.qtdPecasRem as carga, e.descricao as nome  
+FROM tco.OrdemProd op 
+left join tct.RemessaOPsDistribuicao d on d.Empresa = 1 and d.codOP = op.numeroOP and d.situac = 2 and d.codFase = op.codFaseAtual 
+left join tct.RemessasLoteOP l on l.Empresa = d.Empresa  and l.codRemessa = d.numRem 
+join tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
+    """
+    conn = ConexaoPostgreWms.conexaoEngine()
+    consulta = pd.read_sql(sql,conn)
+    consulta['categoria'] = '-'
+    consulta['categoria'] = consulta['consulta'].apply(mapear_categoria)
+
+    consulta = consulta.groupby(['categoria','codfaccionista']).agg({'carga':'sum'}).reset_index()
+
+    return consulta
+
+
+
+
+
+def mapear_categoria(nome):
+    categorias_map = {
+        'CAMISA': 'CAMISA',
+        'POLO': 'POLO',
+        'BATA': 'CAMISA',
+        'TRICOT': 'TRICOT',
+        'BONE': 'BONE',
+        'CARTEIRA': 'CARTEIRA',
+        'TSHIRT': 'CAMISETA',
+        'REGATA': 'CAMISETA',
+        'BLUSAO': 'AGASALHOS',
+        'BABY': 'CAMISETA',
+        'JAQUETA': 'JAQUETA',
+        'CINTO': 'CINTO',
+        'PORTA CAR': 'CARTEIRA',
+        'CUECA': 'CUECA',
+        'MEIA': 'MEIA',
+        'SUNGA': 'SUNGA',
+        'SHORT': 'SHORT',
+        'BERMUDA': 'BERMUDA'
+    }
+    for chave, valor in categorias_map.items():
+        if chave in nome.upper():
+            return valor
+    return '-'
+
