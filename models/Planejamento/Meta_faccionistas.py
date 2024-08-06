@@ -1,5 +1,7 @@
+import gc
+
 import pandas as pd
-from connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms, ConexaoBanco
 from models.Faccionistas import faccionistas
 
 def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado):
@@ -82,8 +84,16 @@ left join tct.RemessasLoteOP l on l.Empresa = d.Empresa  and l.codRemessa = d.nu
 join tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
 WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
     """
-    conn = ConexaoPostgreWms.conexaoEngine()
-    consulta = pd.read_sql(sql,conn)
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consulta = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
     consulta['categoria'] = '-'
     consulta['categoria'] = consulta['consulta'].apply(mapear_categoria)
 
