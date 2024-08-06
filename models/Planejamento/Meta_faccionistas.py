@@ -33,7 +33,8 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     Consultafaccionistas = RegistroFaccionistas2()
 
     resumo = pd.concat([Consultafaccionistas,consulta1_])
-
+    resumo['nome'].fillna('EXCEDENTE',inplace=True)
+    resumo.fillna('-',inplace=True)
 
 
     return resumo
