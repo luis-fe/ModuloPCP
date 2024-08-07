@@ -58,6 +58,8 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
 
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,roteiroSeparacao,on='numeroOP')
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,roteiroCDCostura,on='numeroOP')
+
+
         OP_emAbertoAvimamento['seqAtual'] = OP_emAbertoAvimamento['seqAtual'].astype(int)
         OP_emAbertoAvimamento['seq409'] = OP_emAbertoAvimamento['seq409'].astype(int)
         OP_emAbertoAvimamento['seq428'] = OP_emAbertoAvimamento['seq428'].astype(int)
@@ -521,7 +523,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                               (consulta['codFase'] == '406'))].reset_index(drop=True)
 
         consulta = consulta[~((consulta['tratamento'] == '-') &
-                              (consulta['status_requisicoes'] == '-') &
+                              #(consulta['status_requisicoes'] == '-') &
                               (consulta['codFase'] == '407'))].reset_index(drop=True)
 
         consulta = consulta[~((consulta['tratamento'] == '-') &
