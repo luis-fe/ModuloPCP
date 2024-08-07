@@ -202,7 +202,7 @@ def mapear_categoria(nome):
 
 
 
-def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim):
+def RemetidoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim):
 
     sql = """
 SELECT
@@ -239,7 +239,52 @@ WHERE
 
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     # Evitar divisão por zero ou infinito
-    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Remetido'] / diasUteis)
+    realizado['Remetido'] = np.where(diasUteis == 0, 0, realizado['Remetido'] / diasUteis)
+    realizado['codFaccionista'] = realizado['codFaccionista'] .astype(str)
+    realizado.rename(
+        columns={'categoria': '03- categoria','codFaccionista':'00- codFac'},
+        inplace=True)
+
+    return realizado
+
+def RetornadoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim):
+
+    sql = """
+SELECT
+	r.codFase  ,
+	r.codFaccio ,
+	r.codOP ,
+	r.quantidade as Realizado ,
+	r.dataEntrada , op.codProduto , e.descricao as nome
+FROM
+	tct.RetSimbolicoNFERetorno r
+inner join 
+	tco.OrdemProd op on op.codEmpresa = 1 and op.numeroOP = r.codOP 
+inner JOIN 
+	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+WHERE
+	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEntrada >= '"""+dataMovFaseIni+"""'and r.dataEntrada <=  '"""+dataMovFaseFim +"""'"""
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            realizado = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
+
+
+    realizado['categoria'] = '-'
+    realizado['nome'] = realizado['nome'].astype(str)
+    realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
+
+    realizado = realizado.groupby(["categoria","codFaccionista"]).agg({"Realizado":"sum"}).reset_index()
+
+    diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
+    # Evitar divisão por zero ou infinito
+    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
     realizado['codFaccionista'] = realizado['codFaccionista'] .astype(str)
     realizado.rename(
         columns={'categoria': '03- categoria','codFaccionista':'00- codFac'},
