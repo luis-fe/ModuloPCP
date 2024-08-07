@@ -208,7 +208,7 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     sql = """
         select rf."codEngenharia",
     	rf.numeroop ,
-    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" as '00- codFac' , rf."horaMov"::time,
+    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" as "00- codFac" , rf."horaMov"::time,
     	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
     from
     	"PCP".pcp.realizado_fase rf 
