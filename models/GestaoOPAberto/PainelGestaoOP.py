@@ -12,7 +12,6 @@ import pytz
 def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999, limite = 60, classificar = '-', colecaoF = ''):
     filtro = filtro.upper()
     colecao = FiltroColecao(colecaoF)
-    print(f'Printando a colecao {colecao}')
 
     if (filtro == '-' and filtroDiferente == '' and tempo >= limite and colecaoF =='' ) or (filtro == '' and filtroDiferente == '' and tempo >= limite and colecaoF =='')   :
         sqlOpsAberto = """
@@ -36,10 +35,13 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
 
         ##Excecao Almoxarifado aviamentos
         OP_emAbertoAvimamento = OP_emAberto.copy()  # Criar uma cópia do DataFrame original
+
+        #Retira-se as Ops Estacionadas nas fases 145, 406 ,407 porque sao relativos a Partes Aviamentos, trata-das de uma maneira especial####
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='145']
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='406']
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='407']
 
+        #Carrega a sequencia de roteiro das fases separacao e cd costurar , com o objetivo de descobrir quais ops estao com a requisicao em aberto no ALMOX AVIAMENTO
         roteiroSeparacao = PesquisarSequenciaRoteiro('409')
         roteiroCDCostura = PesquisarSequenciaRoteiro('428')
 
@@ -51,12 +53,12 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         OP_emAbertoAvimamento['seq409'] = OP_emAbertoAvimamento['seq409'].astype(int)
         OP_emAbertoAvimamento['seq428'] = OP_emAbertoAvimamento['seq428'].astype(int)
         OP_emAbertoAvimamento = OP_emAbertoAvimamento[(OP_emAbertoAvimamento['seq409'] < OP_emAbertoAvimamento['seqAtual']) &(OP_emAbertoAvimamento['seq428'] >= OP_emAbertoAvimamento['seqAtual']) ].reset_index()
-        OP_emAbertoAvimamento['codFase'] = OP_emAbertoAvimamento.apply(lambda row: '145' if row['codFase'] == '407'else row['codFase'], axis=1  )
-        OP_emAbertoAvimamento['codFase'] = OP_emAbertoAvimamento.apply(lambda row: '145' if row['codFase'] == '145'else '406', axis=1  )
-        OP_emAbertoAvimamento['nomeFase'] = OP_emAbertoAvimamento.apply(lambda row: row['nomeFase'] if row['codFase'] == '145'else 'ALMOX. DE AVIAMENTOS', axis=1  )
+        OP_emAbertoAvimamento['codFase'] = OP_emAbertoAvimamento.apply(lambda row: '407' if row['codFase'] == '145'else row['codFase'], axis=1  )
+        OP_emAbertoAvimamento['codFase'] = OP_emAbertoAvimamento.apply(lambda row: '407' if row['codFase'] == '407'else '406', axis=1  )
+        OP_emAbertoAvimamento['nomeFase'] = OP_emAbertoAvimamento.apply(lambda row: row['nomeFase'] if row['codFase'] == '407'else 'ALMOX. DE AVIAMENTOS', axis=1  )
 
         dataGeracaoRequisicao = """SELECT r.numeroOP,r.dataBaixa as dataGerReqOP  FROM tco.MovimentacaoOPFase  r
-        WHERE r.codEmpresa = 1 and r.codFase = 409 and r.numeroOP in (select numeroOP from tco.OrdemProd op WHERE op.codempresa =1 and op.situacao = 3)
+        WHERE r.codEmpresa = 1 and r.codFase in (409, 426) and r.numeroOP in (select numeroOP from tco.OrdemProd op WHERE op.codempresa =1 and op.situacao = 3)
         """
 
         with ConexaoBanco.ConexaoInternoMPL() as conn:
