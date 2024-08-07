@@ -235,7 +235,7 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
-    realizado = realizado.groupby(["codFase","categoria","00- codFac"]).agg({"Realizado":"sum"}).reset_index()
+    realizado = realizado.groupby(["categoria","00- codFac"]).agg({"Realizado":"sum"}).reset_index()
 
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     # Evitar divisão por zero ou infinito
