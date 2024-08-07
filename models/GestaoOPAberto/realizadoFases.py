@@ -202,26 +202,33 @@ def mapear_categoria(nome):
 
 
 
-def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
-    CarregarRealizado(60)
+def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim):
 
     sql = """
-        select rf."codEngenharia",
-    	rf.numeroop ,
-    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista", rf."horaMov"::time,
-    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
-    from
-    	"PCP".pcp.realizado_fase rf 
-    where 
-    	rf."dataBaixa"::date >= %s 
-    	and rf."dataBaixa"::date <= %s ;
-        """
+SELECT
+	r.codFase ,
+	r.codFaccio as codFaccionista ,
+	r.codOP ,
+	r.qtdRetornadas as Realizado ,
+	r.dataEmissao, op.codProduto , e.descricao as nome
+FROM
+	tct.RetSimbolicoNF r
+inner join 
+	tco.OrdemProd op on op.codEmpresa = 1 and op.numeroOP = r.codOP 
+inner JOIN 
+	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+WHERE
+	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= '"""+dataMovFaseIni+"""'and r.dataEmissao <=  '"""+dataMovFaseFim +"""';"""
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            realizado = pd.DataFrame(rows, columns=colunas)
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    realizado = pd.read_sql(sql, conn, params=(dataMovFaseIni, dataMovFaseFim,))
-
-    realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
-    realizado = realizado[realizado['codFase']==str(codFase)].reset_index()
+    # Libera memória manualmente
+    del rows
+    gc.collect()
 
     conn = ConexaoPostgreWms.conexaoEngine()
     sqlNomeEngenharia = """
@@ -242,7 +249,7 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     # Evitar divisão por zero ou infinito
     realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
-    realizado['00- codFac'] = realizado['00- codFac'] .astype(str)
+    realizado['codFaccionista'] = realizado['codFaccionista'] .astype(str)
     realizado.rename(
         columns={'categoria': '03- categoria','codFaccionista':'00- codFac'},
         inplace=True)
