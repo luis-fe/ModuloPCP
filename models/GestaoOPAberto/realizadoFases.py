@@ -252,7 +252,7 @@ def RetornadoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim):
     sql = """
 SELECT
 	r.codFase  ,
-	r.codFaccio ,
+	r.codFaccio as codFaccionista,
 	r.codOP ,
 	r.quantidade as Realizado ,
 	r.dataEntrada , op.codProduto , e.descricao as nome
