@@ -241,4 +241,8 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     # Evitar divisão por zero ou infinito
     realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
     realizado['00- codFac'] = realizado['00- codFac'] .astype(str)
+    realizado.rename(
+        columns={'categoria': '03- categoria'},
+        inplace=True)
+
     return realizado
