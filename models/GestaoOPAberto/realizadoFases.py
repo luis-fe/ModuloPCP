@@ -208,7 +208,7 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     sql = """
         select rf."codEngenharia",
     	rf.numeroop ,
-    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" as "00- codFac" , rf."horaMov"::time,
+    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista", rf."horaMov"::time,
     	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
     from
     	"PCP".pcp.realizado_fase rf 
@@ -237,14 +237,14 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
     print(realizado)
 
-    realizado = realizado.groupby(["categoria","00- codFac"]).agg({"Realizado":"sum"}).reset_index()
+    realizado = realizado.groupby(["categoria","codFaccionista"]).agg({"Realizado":"sum"}).reset_index()
 
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     # Evitar divisão por zero ou infinito
     realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
     realizado['00- codFac'] = realizado['00- codFac'] .astype(str)
     realizado.rename(
-        columns={'categoria': '03- categoria'},
+        columns={'categoria': '03- categoria','codFaccionista':'00- codFac'},
         inplace=True)
     print(realizado)
 
