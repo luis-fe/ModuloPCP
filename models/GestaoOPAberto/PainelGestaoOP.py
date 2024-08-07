@@ -856,7 +856,7 @@ def PesquisarSequenciaRoteiro(codfase):
                         WHERE r.codEmpresa = 1 and r.codFase = 426
                         and r.numeroOP in ( 
                         SELECT r.numOPConfec  FROM tcq.Requisicao r
-                        WHERE r.codEmpresa = 1 and r.numOPConfec in (
+                        WHERE r.codEmpresa = 1 and r.sitBaixa <0 and r.numOPConfec in (
                          select numeroOP from tco.OrdemProd op   WHERE op.codempresa =1 and op.situacao = 3 and op.codTipoOP = 2
                         ))
                 """
@@ -867,7 +867,7 @@ def PesquisarSequenciaRoteiro(codfase):
                         WHERE r.codEmpresa = 1 and r.codFase = 415
                         and r.numeroOP in ( 
                         SELECT r.numOPConfec  FROM tcq.Requisicao r
-                        WHERE r.codEmpresa = 1 and r.numOPConfec in (
+                        WHERE r.codEmpresa = 1 and r.sitBaixa <0 and r.numOPConfec in (
                          select numeroOP from tco.OrdemProd op   WHERE op.codempresa =1 and op.situacao = 3 and op.codTipoOP = 2
                         ))
                 """
