@@ -209,7 +209,7 @@ SELECT
 	r.codFase ,
 	r.codFaccio as codFaccionista ,
 	r.codOP ,
-	r.qtdRetornadas as Realizado ,
+	r.qtdRemetidas as Remetido ,
 	r.dataEmissao, op.codProduto , e.descricao as nome
 FROM
 	tct.RetSimbolicoNF r
@@ -234,17 +234,15 @@ WHERE
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
-    print(realizado['codFaccionista'])
 
-    realizado = realizado.groupby(["categoria","codFaccionista"]).agg({"Realizado":"sum"}).reset_index()
+    realizado = realizado.groupby(["categoria","codFaccionista"]).agg({"Remetido":"sum"}).reset_index()
 
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     # Evitar divisão por zero ou infinito
-    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
+    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Remetido'] / diasUteis)
     realizado['codFaccionista'] = realizado['codFaccionista'] .astype(str)
     realizado.rename(
         columns={'categoria': '03- categoria','codFaccionista':'00- codFac'},
         inplace=True)
-    print(realizado)
 
     return realizado
