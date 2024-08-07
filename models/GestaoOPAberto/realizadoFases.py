@@ -218,7 +218,7 @@ inner join
 inner JOIN 
 	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
 WHERE
-	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= '"""+dataMovFaseIni+"""'and r.dataEmissao <=  '"""+dataMovFaseFim +"""';"""
+	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= '"""+dataMovFaseIni+"""'and r.dataEmissao <=  '"""+dataMovFaseFim +"""'"""
     with ConexaoBanco.Conexao2() as conn:
         with conn.cursor() as cursor:
             cursor.execute(sql)
