@@ -244,5 +244,6 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado.rename(
         columns={'categoria': '03- categoria'},
         inplace=True)
+    print(realizado)
 
     return realizado
