@@ -235,7 +235,7 @@ def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
-    print(realizado)
+    print(realizado['codFaccionista'])
 
     realizado = realizado.groupby(["categoria","codFaccionista"]).agg({"Realizado":"sum"}).reset_index()
 
