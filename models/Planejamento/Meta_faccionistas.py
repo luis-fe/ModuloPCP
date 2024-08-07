@@ -65,7 +65,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
         inplace=True)
 
     Realizacao = realizadoFases.RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,429)
-    resumo = pd.merge(resumo,Realizacao,on=['categoria','00- codFac'],how='left')
+    resumo = pd.merge(resumo,Realizacao,on=['03- categoria','00- codFac'],how='left')
 
     return resumo
 
