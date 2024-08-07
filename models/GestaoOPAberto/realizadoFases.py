@@ -291,3 +291,37 @@ WHERE
         inplace=True)
 
     return realizado
+
+def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
+
+    sqlMovPCP = """
+        select rf."codEngenharia",
+    	rf.numeroop ,
+    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
+    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+    from
+    	"PCP".pcp.realizado_fase rf 
+    where 
+    	rf."dataBaixa"::date >= %s 
+    	and rf."dataBaixa"::date <= %s and codFase in (401, 1) ;
+        """
+
+    sqlMovEntradaEstoque = """
+        select rf."codEngenharia",
+    	rf.numeroop ,
+    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
+    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+    from
+    	"PCP".pcp.realizado_fase rf 
+    where 
+    	rf."dataBaixa"::date >= %s 
+    	and rf."dataBaixa"::date <= %s and codFase in (236, 449) ;
+        """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+    MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+
+    leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='numeroop',how='left')
+
+    return leadTime
