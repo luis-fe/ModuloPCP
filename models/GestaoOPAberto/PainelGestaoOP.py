@@ -41,6 +41,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='407']
 
         roteiroSeparacao = PesquisarSequenciaRoteiro('409')
+        print(roteiroSeparacao)
         roteiroCDCostura = PesquisarSequenciaRoteiro('428')
 
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,roteiroSeparacao,on='numeroOP')
