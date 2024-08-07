@@ -40,21 +40,8 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='406']
         OP_emAberto = OP_emAberto[OP_emAberto['codFase']!='407']
 
-        with ConexaoBanco.ConexaoInternoMPL() as conn:
-            with conn.cursor() as cursor_csw:
-                # Executa a primeira consulta e armazena os resultados
-                cursor_csw.execute(PesquisarSequenciaRoteiro('409'))
-                colunas = [desc[0] for desc in cursor_csw.description]
-                rows = cursor_csw.fetchall()
-                roteiroSeparacao = pd.DataFrame(rows, columns=colunas)
-                del rows
-
-                cursor_csw.execute(PesquisarSequenciaRoteiro('428'))
-                colunas = [desc[0] for desc in cursor_csw.description]
-                rows = cursor_csw.fetchall()
-                roteiroCDCostura = pd.DataFrame(rows, columns=colunas)
-                del rows
-
+        roteiroSeparacao = PesquisarSequenciaRoteiro('409')
+        roteiroCDCostura = PesquisarSequenciaRoteiro('428')
 
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,roteiroSeparacao,on='numeroOP')
         OP_emAbertoAvimamento = pd.merge(OP_emAbertoAvimamento,roteiroCDCostura,on='numeroOP')
@@ -523,7 +510,7 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                               (consulta['codFase'] == '406'))].reset_index(drop=True)
 
         consulta = consulta[~((consulta['tratamento'] == '-') &
-                              #(consulta['status_requisicoes'] == '-') &
+                              (consulta['status_requisicoes'] == '-') &
                               (consulta['codFase'] == '407'))].reset_index(drop=True)
 
         consulta = consulta[~((consulta['tratamento'] == '-') &
@@ -863,6 +850,37 @@ def PesquisarSequenciaRoteiro(codfase):
                        + codfase + \
                        """ and r.numeroOP in (select numeroOP from tco.OrdemProd op WHERE op.codempresa =1 and op.situacao = 3)
                        """
+            if codfase == '409':
+                consulta = consulta+""" union 
+                        SELECT r.numeroOP , r.codSeqRoteiro as seq409 FROM tco.RoteiroOP r
+                        WHERE r.codEmpresa = 1 and r.codFase = 426
+                        and r.numeroOP in ( 
+                        SELECT r.numOPConfec  FROM tcq.Requisicao r
+                        WHERE r.codEmpresa = 1 and r.numOPConfec in (
+                         select numeroOP from tco.OrdemProd op   WHERE op.codempresa =1 and op.situacao = 3 and op.codTipoOP = 2
+                        ))
+                """
+
+            if codfase == '428':
+                consulta = consulta+""" union 
+                        SELECT r.numeroOP , r.codSeqRoteiro as seq428 FROM tco.RoteiroOP r
+                        WHERE r.codEmpresa = 1 and r.codFase = 415
+                        and r.numeroOP in ( 
+                        SELECT r.numOPConfec  FROM tcq.Requisicao r
+                        WHERE r.codEmpresa = 1 and r.numOPConfec in (
+                         select numeroOP from tco.OrdemProd op   WHERE op.codempresa =1 and op.situacao = 3 and op.codTipoOP = 2
+                        ))
+                """
+
+            with ConexaoBanco.ConexaoInternoMPL() as conn:
+                with conn.cursor() as cursor_csw:
+                    # Executa a primeira consulta e armazena os resultados
+                    cursor_csw.execute(consulta)
+                    colunas = [desc[0] for desc in cursor_csw.description]
+                    rows = cursor_csw.fetchall()
+                    consulta = pd.DataFrame(rows, columns=colunas)
+                    del rows
+
             return consulta
 
 
