@@ -230,15 +230,7 @@ WHERE
     del rows
     gc.collect()
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    sqlNomeEngenharia = """
-    select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') group by "codItemPai"
-    """
-    NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
 
-    NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
-        lambda r: '0' + r['codItemPai'] + '-0' if r['codItemPai'].startswith('1') else r['codItemPai'] + '-0', axis=1)
-    realizado = pd.merge(realizado,NomeEngenharia,on='codEngenharia',how='left')
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
