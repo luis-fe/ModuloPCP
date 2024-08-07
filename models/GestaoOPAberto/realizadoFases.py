@@ -199,3 +199,46 @@ def mapear_categoria(nome):
         if chave in nome.upper():
             return valor
     return '-'
+
+
+
+def RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,codFase):
+    CarregarRealizado(60)
+
+    sql = """
+        select rf."codEngenharia",
+    	rf.numeroop ,
+    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" as '00- codFac' , rf."horaMov"::time,
+    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+    from
+    	"PCP".pcp.realizado_fase rf 
+    where 
+    	rf."dataBaixa"::date >= %s 
+    	and rf."dataBaixa"::date <= %s ;
+        """
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    realizado = pd.read_sql(sql, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+
+    realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
+    realizado = realizado[realizado['codFase']==str(codFase)].reset_index()
+
+    conn = ConexaoPostgreWms.conexaoEngine()
+    sqlNomeEngenharia = """
+    select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') group by "codItemPai"
+    """
+    NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
+
+    NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
+        lambda r: '0' + r['codItemPai'] + '-0' if r['codItemPai'].startswith('1') else r['codItemPai'] + '-0', axis=1)
+    realizado = pd.merge(realizado,NomeEngenharia,on='codEngenharia',how='left')
+    realizado['categoria'] = '-'
+    realizado['nome'] = realizado['nome'].astype(str)
+    realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
+    realizado = realizado.groupby(["codFase","categoria","00- codFac"]).agg({"Realizado":"sum"}).reset_index()
+
+    diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
+    # Evitar divisão por zero ou infinito
+    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
+    realizado['00- codFac'] = realizado['00- codFac'] .astype(str)
+    return realizado

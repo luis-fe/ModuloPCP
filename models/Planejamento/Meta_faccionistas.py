@@ -1,5 +1,5 @@
 import gc
-
+from models.GestaoOPAberto import realizadoFases
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 from models.Faccionistas import faccionistas
@@ -63,6 +63,9 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
                  '04-%Capacidade':'05-%Cap.','FaltaProgramar':'06-FaltaProgramar','Fila':'07-Fila','carga':'08-Carga',
                  "Falta Produzir":"09-Falta Produzir","dias":"10-dias","Meta Dia":"11-Meta Dia"},
         inplace=True)
+
+    Realizacao = realizadoFases.RealizadoFaseCategoriaFaccionista(dataMovFaseIni,dataMovFaseFim,429)
+    resumo = pd.merge(resumo,Realizacao,on=['categoria','00- codFac'],how='left')
 
     return resumo
 
