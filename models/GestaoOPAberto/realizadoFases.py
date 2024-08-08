@@ -347,7 +347,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
         lambda r: '0' + r['codItemPai'] + '-0' if (r['codItemPai'].startswith('1') )| (r['codItemPai'].startswith('2')) else r['codItemPai'] + '-0', axis=1)
     leadTime = pd.merge(leadTime,NomeEngenharia,on='codEngenharia',how='left')
-    #leadTime['categoria'] = leadTime['nome'].apply(mapear_categoria)
+    leadTime['categoria'] = leadTime['nome'].apply(mapear_categoria)
 
 
 
