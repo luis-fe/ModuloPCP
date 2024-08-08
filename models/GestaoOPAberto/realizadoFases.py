@@ -369,6 +369,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime_ = leadTime_[leadTime_['categoria']!='-']
     leadTime_['LeadTime(diasCorridos)'] = leadTime_['LeadTime(diasCorridos)'].round()
     leadTime_['LeadTimePonderado(diasCorridos)'] = leadTime_['LeadTimePonderado(diasCorridos)']/100
+    leadTime_['LeadTimePonderado(diasCorridos)'] = leadTime_['LeadTimePonderado(diasCorridos)'].apply(np.ceil)
 
     dados = {
         '01-leadTimeMedioGeral': f'{leadTimeMedioGeral} dias',
