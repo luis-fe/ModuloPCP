@@ -349,7 +349,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime = pd.merge(leadTime,NomeEngenharia,on='codEngenharia',how='left')
     leadTime['categoria'] = leadTime['nome'].apply(mapear_categoria)
 
-    leadTime = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)":"mean"}).reset_index()
-
+    leadTime = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)":"mean","Realizado":"sum"}).reset_index()
+    leadTime = leadTime[leadTime['categoria']!='-']
 
     return leadTime
