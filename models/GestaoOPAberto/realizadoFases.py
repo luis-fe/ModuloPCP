@@ -353,7 +353,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime = leadTime.drop_duplicates()
     TotalPecas = leadTime['Realizado'].sum()
     leadTime['LeadTime(PonderadoPorQtd)'] = (leadTime['Realizado']/TotalPecas)*leadTime['LeadTime(diasCorridos)']
-    leadTimePonderado = leadTime['LeadTime(diasCorridos)'].sum()
+    leadTimePonderado = leadTime['LeadTime(PonderadoPorQtd)'].sum()
     leadTime.to_csv('./dados/leadtime_.csv')
     leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
 
