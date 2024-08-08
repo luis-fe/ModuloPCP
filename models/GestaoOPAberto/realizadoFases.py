@@ -340,12 +340,12 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
 
     sqlNomeEngenharia = """
-    select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') group by "codItemPai"
+    select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') or ("codItemPai" like '2%') group by "codItemPai"
     """
     NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
 
     NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
-        lambda r: '0' + r['codItemPai'] + '-0' if r['codItemPai'].startswith('1') else r['codItemPai'] + '-0', axis=1)
+        lambda r: '0' + r['codItemPai'] + '-0' if (r['codItemPai'].startswith('1') )| (r['codItemPai'].startswith('2')) else r['codItemPai'] + '-0', axis=1)
     leadTime = pd.merge(leadTime,NomeEngenharia,on='codEngenharia',how='left')
     #leadTime['categoria'] = leadTime['nome'].apply(mapear_categoria)
 
