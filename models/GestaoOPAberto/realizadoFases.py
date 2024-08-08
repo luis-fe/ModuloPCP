@@ -295,10 +295,11 @@ WHERE
 def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
 
     sqlMovPCP = """
-        select rf."codEngenharia",
+        select
     	rf.numeroop ,
-    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
-    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+    	rf."dataBaixa"::date as "dataBaixaPCP",
+    	rf."horaMov"::time as "horaMovPCP",
+    	rf."totPecasOPBaixadas" as "RealizadoPCP"
     from
     	"PCP".pcp.realizado_fase rf 
     where 
