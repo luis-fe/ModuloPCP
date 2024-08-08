@@ -319,8 +319,8 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
         """
 
     conn = ConexaoPostgreWms.conexaoEngine()
-    MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseFim,))
-    MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+    MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+    MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,))
 
     leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='numeroop',how='left')
 
