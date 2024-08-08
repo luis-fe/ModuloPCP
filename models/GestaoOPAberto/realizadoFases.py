@@ -337,6 +337,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%Y-%m-%d')
     leadTime['horaMovPCP'] = leadTime['horaMovPCP'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
     leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
+    leadTime['LeadTime(diasCorridos)'] = (leadTime['dataBaixa'] - leadTime['dataBaixaPCP']).dt.days
 
 
     return leadTime
