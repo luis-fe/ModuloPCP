@@ -302,9 +302,8 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     	rf."totPecasOPBaixadas" as "RealizadoPCP"
     from
     	"PCP".pcp.realizado_fase rf 
-    where 
-    	rf."dataBaixa"::date >= %s 
-    	and rf."dataBaixa"::date <= %s and codFase in (401, 1) ;
+    where  
+    	rf."dataBaixa"::date <= %s and codFase in (401, 1) ;
         """
 
     sqlMovEntradaEstoque = """
