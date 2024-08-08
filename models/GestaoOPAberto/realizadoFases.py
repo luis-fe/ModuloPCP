@@ -360,9 +360,8 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime['LeadTimePonderado(categoria)'] = (leadTime['Realizado']/leadTime['RealizadoCategoria'])*100
 
     leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTime(diasCorridos)'] * leadTime['LeadTimePonderado(categoria)'].round(2)
-
-    leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTimePonderado(diasCorridos)']/100
     leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTimePonderado(diasCorridos)'].round()
+
     leadTime.to_csv('./dados/leadtime_.csv')
     leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
 
