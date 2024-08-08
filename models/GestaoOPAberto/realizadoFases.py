@@ -331,13 +331,13 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime['horaMovPCP'] = pd.to_datetime(leadTime['horaMovPCP'], format='%H:%M:%S', errors='coerce').dt.time
     leadTime['dataBaixa'] = pd.to_datetime(leadTime['dataBaixa'], errors='coerce')
     leadTime['horaMov'] = pd.to_datetime(leadTime['horaMov'], format='%H:%M:%S', errors='coerce').dt.time
+    leadTime['LeadTime(diasCorridos)'] = (leadTime['dataBaixa'] - leadTime['dataBaixaPCP']).dt.days
 
     # Converter para string usando o formato desejado
     leadTime['dataBaixaPCP'] = leadTime['dataBaixaPCP'].dt.strftime('%Y-%m-%d')
     leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%Y-%m-%d')
     leadTime['horaMovPCP'] = leadTime['horaMovPCP'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
     leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
-    leadTime['LeadTime(diasCorridos)'] = (leadTime['dataBaixa'] - leadTime['dataBaixaPCP']).dt.days
 
 
     return leadTime
