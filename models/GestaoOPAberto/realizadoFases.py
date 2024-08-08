@@ -325,9 +325,16 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
 
     leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='numeroop',how='left')
 
+    # Verifica e converte para datetime se necessário
+    leadTime['dataBaixaPCP'] = pd.to_datetime(leadTime['dataBaixaPCP'], errors='coerce')
+    leadTime['horaMovPCP'] = pd.to_datetime(leadTime['horaMovPCP'], format='%H:%M:%S', errors='coerce').dt.time
+    leadTime['dataBaixa'] = pd.to_datetime(leadTime['dataBaixa'], errors='coerce')
+    leadTime['horaMov'] = pd.to_datetime(leadTime['horaMov'], format='%H:%M:%S', errors='coerce').dt.time
+
+    # Converter para string usando o formato desejado
     leadTime['dataBaixaPCP'] = leadTime['dataBaixaPCP'].dt.strftime('%Y-%m-%d')
-    leadTime['horaMovPCP'] = leadTime['dataBaixaPCP'].dt.strftime('%Y-%m-%d')
-    leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%H:%M:%S')
-    leadTime['horaMov'] = leadTime['horaMov'].dt.strftime('%H:%M:%S')
+    leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%Y-%m-%d')
+    leadTime['horaMovPCP'] = leadTime['horaMovPCP'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
+    leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
 
     return leadTime
