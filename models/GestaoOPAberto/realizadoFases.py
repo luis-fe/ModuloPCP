@@ -353,9 +353,14 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime = leadTime.drop_duplicates()
 
     leadTime.to_csv('./dados/leadtime_.csv')
+    leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
 
     leadTime_ = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)":"mean","Realizado":"sum"}).reset_index()
     leadTime_ = leadTime_[leadTime_['categoria']!='-']
     leadTime_['LeadTime(diasCorridos)'] = leadTime_['LeadTime(diasCorridos)'].round()
 
-    return leadTime_
+    dados = {
+        '0-leadTimeMedioGeral': f'{leadTimeMedioGeral} pcs',
+        '03-LeadTimeCategorias': leadTime_.to_dict(orient='records')}
+
+    return pd.DataFrame([dados])
