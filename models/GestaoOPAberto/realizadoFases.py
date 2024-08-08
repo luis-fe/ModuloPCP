@@ -354,8 +354,8 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     TotalPecas = leadTime['Realizado'].sum()
     leadTime['LeadTime(PonderadoPorQtd)'] = (leadTime['Realizado']/TotalPecas)*leadTime['LeadTime(diasCorridos)']
     leadTimePonderado = leadTime['LeadTime(PonderadoPorQtd)'].sum()
-    leadTime['LeadTimePonderado(diasCorridos)'] = leadTime.groupby('categoria')['Realizado'].transform('sum')
-    leadTime['LeadTimePonderado(diasCorridos)'] = (leadTime['Realizado']/leadTime['LeadTimePonderado(diasCorridos)'])*leadTime['LeadTime(diasCorridos)']
+    leadTime['RealizadoCategoria'] = leadTime.groupby('categoria')['Realizado'].transform('sum')
+    leadTime['LeadTimePonderado(diasCorridos)'] = (leadTime['Realizado']/leadTime['RealizadoCategoria'])*leadTime['LeadTime(diasCorridos)']
     leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTimePonderado(diasCorridos)'].round()
     leadTime.to_csv('./dados/leadtime_.csv')
     leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
