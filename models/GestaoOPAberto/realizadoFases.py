@@ -325,4 +325,9 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
 
     leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='numeroop',how='left')
 
+    leadTime['dataBaixaPCP'] = leadTime['dataBaixaPCP'].dt.strftime('%Y-%m-%d')
+    leadTime['horaMovPCP'] = leadTime['dataBaixaPCP'].dt.strftime('%Y-%m-%d')
+    leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%H:%M:%S')
+    leadTime['horaMov'] = leadTime['horaMov'].dt.strftime('%H:%M:%S')
+
     return leadTime
