@@ -356,6 +356,6 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
 
     leadTime_ = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)":"mean","Realizado":"sum"}).reset_index()
     leadTime_ = leadTime_[leadTime_['categoria']!='-']
-
+    leadTime_['LeadTime(diasCorridos)'] = leadTime_['LeadTime(diasCorridos)'].round()
 
     return leadTime_
