@@ -296,7 +296,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
 
     sqlMovPCP = """
         select
-    	rf.numeroop ,
+    	rf.numeroop as "OpPCP",
     	rf."dataBaixa"::date as "dataBaixaPCP",
     	rf."horaMov"::time as "horaMovPCP",
     	rf."totPecasOPBaixadas" as "RealizadoPCP"
@@ -320,9 +320,11 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
 
     conn = ConexaoPostgreWms.conexaoEngine()
     MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+    MovEntradaEstoque['OpPCP'] = MovEntradaEstoque['numeroop'].apply(lambda x: x if x.endswith('-001') else x[:-4] + '-001')
+
     MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,))
 
-    leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='numeroop',how='left')
+    leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='OpPCP',how='left')
 
     # Verifica e converte para datetime se necessário
     leadTime['dataBaixaPCP'] = pd.to_datetime(leadTime['dataBaixaPCP'], errors='coerce')
@@ -335,5 +337,6 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
     leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%Y-%m-%d')
     leadTime['horaMovPCP'] = leadTime['horaMovPCP'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
     leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
+
 
     return leadTime
