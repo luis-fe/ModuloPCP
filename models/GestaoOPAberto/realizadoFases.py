@@ -294,6 +294,7 @@ WHERE
     return realizado
 
 def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
+    conn = ConexaoPostgreWms.conexaoEngine()
 
     if arrayTipoOP != []:
 
@@ -311,7 +312,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
         where  
             rf."dataBaixa"::date <= %s and codFase in (401, 1) and codtipoop in %s
             ;
-            """,result
+            """
 
         sqlMovEntradaEstoque = """
             select rf."codEngenharia",
@@ -323,7 +324,11 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
         where 
             rf."dataBaixa"::date >= %s 
             and rf."dataBaixa"::date <= %s and codFase in (236, 449) and codtipoop in %s ;
-            """,result
+            """
+        MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,result))
+        MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,result))
+
+
 
     else:
         sqlMovPCP = """
@@ -349,13 +354,11 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
             rf."dataBaixa"::date >= %s 
             and rf."dataBaixa"::date <= %s and codFase in (236, 449) ;
             """
+        MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))
+        MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,))
 
-
-    conn = ConexaoPostgreWms.conexaoEngine()
-    MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))
     MovEntradaEstoque['OpPCP'] = MovEntradaEstoque['numeroop'].apply(lambda x: x if x.endswith('-001') else x[:-4] + '-001')
 
-    MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,))
 
     leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='OpPCP',how='left')
 
