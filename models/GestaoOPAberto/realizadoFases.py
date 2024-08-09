@@ -74,7 +74,7 @@ def CarregarRealizado(utimosDias):
 
 
 def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim):
-    CarregarRealizado(500)
+    CarregarRealizado(50)
 
     sql = """
     select rf."codEngenharia",
