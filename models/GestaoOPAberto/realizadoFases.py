@@ -293,31 +293,63 @@ WHERE
 
     return realizado
 
-def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
+def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
 
-    sqlMovPCP = """
-        select
-    	rf.numeroop as "OpPCP",
-    	rf."dataBaixa"::date as "dataBaixaPCP",
-    	rf."horaMov"::time as "horaMovPCP",
-    	rf."totPecasOPBaixadas" as "RealizadoPCP"
-    from
-    	"PCP".pcp.realizado_fase rf 
-    where  
-    	rf."dataBaixa"::date <= %s and codFase in (401, 1) ;
-        """
+    if arrayTipoOP != []:
 
-    sqlMovEntradaEstoque = """
-        select rf."codEngenharia",
-    	rf.numeroop ,
-    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
-    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
-    from
-    	"PCP".pcp.realizado_fase rf 
-    where 
-    	rf."dataBaixa"::date >= %s 
-    	and rf."dataBaixa"::date <= %s and codFase in (236, 449) ;
-        """
+        result = [int(item.split('-')[0]) for item in arrayTipoOP]
+        result = f"({', '.join(str(x) for x in result)})"
+
+        sqlMovPCP = """
+            select
+            rf.numeroop as "OpPCP",
+            rf."dataBaixa"::date as "dataBaixaPCP",
+            rf."horaMov"::time as "horaMovPCP",
+            rf."totPecasOPBaixadas" as "RealizadoPCP"
+        from
+            "PCP".pcp.realizado_fase rf 
+        where  
+            rf."dataBaixa"::date <= %s and codFase in (401, 1) and codtipoop in %s
+            ;
+            """,result
+
+        sqlMovEntradaEstoque = """
+            select rf."codEngenharia",
+            rf.numeroop ,
+            rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
+            rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+        from
+            "PCP".pcp.realizado_fase rf 
+        where 
+            rf."dataBaixa"::date >= %s 
+            and rf."dataBaixa"::date <= %s and codFase in (236, 449) and codtipoop in %s ;
+            """,result
+
+    else:
+        sqlMovPCP = """
+            select
+            rf.numeroop as "OpPCP",
+            rf."dataBaixa"::date as "dataBaixaPCP",
+            rf."horaMov"::time as "horaMovPCP",
+            rf."totPecasOPBaixadas" as "RealizadoPCP"
+        from
+            "PCP".pcp.realizado_fase rf 
+        where  
+            rf."dataBaixa"::date <= %s and codFase in (401, 1) ;
+            """
+
+        sqlMovEntradaEstoque = """
+            select rf."codEngenharia",
+            rf.numeroop ,
+            rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
+            rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+        from
+            "PCP".pcp.realizado_fase rf 
+        where 
+            rf."dataBaixa"::date >= %s 
+            and rf."dataBaixa"::date <= %s and codFase in (236, 449) ;
+            """
+
 
     conn = ConexaoPostgreWms.conexaoEngine()
     MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))

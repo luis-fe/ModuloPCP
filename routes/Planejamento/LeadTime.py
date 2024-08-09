@@ -22,9 +22,10 @@ def get_LeadTimesRealizados():
 
     dataIncio = data.get('dataIncio')
     dataFim = data.get('dataFim')
+    arrayTipoOP = data.get('arrayTipoOP',[])
 
 
-    dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim)
+    dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim,arrayTipoOP)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
