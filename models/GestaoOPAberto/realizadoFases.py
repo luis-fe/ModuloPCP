@@ -310,8 +310,8 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
         from
             "PCP".pcp.realizado_fase rf 
         where  
-            rf."dataBaixa"::date <= %s and codFase in (401, 1) and codtipoop in %s
-            """
+            rf."dataBaixa"::date <= %s and codFase in (401, 1) and codtipoop in """+result
+
 
         sqlMovEntradaEstoque = """
             select rf."codEngenharia",
@@ -322,8 +322,9 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
             "PCP".pcp.realizado_fase rf 
         where 
             rf."dataBaixa"::date >= %s 
-            and rf."dataBaixa"::date <= %s and codFase in (236, 449) and codtipoop in %s
-            """
+            and rf."dataBaixa"::date <= %s and codFase in (236, 449) and codtipoop in """+result
+
+
         MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,result))
         MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,result))
 
