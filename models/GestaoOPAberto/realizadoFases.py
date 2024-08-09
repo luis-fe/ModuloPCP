@@ -300,7 +300,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
 
         result = [int(item.split('-')[0]) for item in arrayTipoOP]
         result = f"({', '.join(str(x) for x in result)})"
-
+        print(result)
         sqlMovPCP = """
             select
             rf.numeroop as "OpPCP",
