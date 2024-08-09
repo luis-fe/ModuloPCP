@@ -42,7 +42,7 @@ def CarregarRealizado(utimosDias):
     f.nomeFaccionista, f.codFaccionista,
     f.horaMov, f.totPecasOPBaixadas, 
     f.descOperMov, (select op.codProduto  from tco.ordemprod op WHERE op.codempresa = 1 and op.numeroop = f.numeroop) as codEngenharia,
-      (select op.codTipoOP  from tco.ordemprod op WHERE op.codempresa = 1 and op.numeroop = f.numeroop) as coditipoop 
+      (select op.codTipoOP  from tco.ordemprod op WHERE op.codempresa = 1 and op.numeroop = f.numeroop) as codtipoop 
       FROM tco.MovimentacaoOPFase f
     WHERE f.codEmpresa = 1 and f.databaixa >=  DATEADD(DAY, -"""+str(utimosDias)+""", GETDATE())"""
 
