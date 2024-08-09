@@ -379,3 +379,29 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim):
         '04-LeadTimeCategorias': leadTime_.to_dict(orient='records')}
 
     return pd.DataFrame([dados])
+
+def ObterTipoOPs():
+    sql = """
+    SELECT
+	t.codTipo || '-' || t.nome as tipoOP
+FROM
+	tcp.TipoOP t
+WHERE
+	t.Empresa = 1
+order by
+	codTipo asc
+    """
+
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            tipoOP = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
+
+    return tipoOP
+
