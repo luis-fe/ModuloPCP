@@ -74,7 +74,7 @@ def CarregarRealizado(utimosDias):
 
 
 def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim):
-    CarregarRealizado(500)
+    CarregarRealizado(60)
 
     sql = """
     select rf."codEngenharia",
@@ -109,7 +109,6 @@ where
 
 def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     CarregarRealizado(60)
-
     sql = """
         select rf."codEngenharia",
     	rf.numeroop ,
