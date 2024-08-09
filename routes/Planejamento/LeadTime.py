@@ -15,11 +15,13 @@ def token_required(f):
     return decorated_function
 
 
-@LeadTime_routes.route('/pcp/api/LeadTimesRealizados', methods=['GET'])
+@LeadTime_routes.route('/pcp/api/LeadTimesRealizados', methods=['POST'])
 @token_required
 def get_LeadTimesRealizados():
-    dataIncio = request.args.get('dataIncio')
-    dataFim = request.args.get('dataFim')
+    data = request.get_json()
+
+    dataIncio = data.get('dataIncio')
+    dataFim = data.get('dataFim')
 
 
     dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim)
