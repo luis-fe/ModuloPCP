@@ -326,7 +326,7 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
 
 
         MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim))
-        MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim))
+        MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,))
 
 
 
