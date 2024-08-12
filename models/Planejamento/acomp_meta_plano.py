@@ -88,7 +88,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             sqlMetas['FaltaProgramar'] = sqlMetas.apply(lambda l: l['FaltaProgramar1']if l['FaltaProgramar1'] >0 else 0 ,axis=1 )
         except:
             print('verificar')
-        sqlMetas.to_csv('./dados/analise.csv')
+        #sqlMetas.to_csv('./dados/analise.csv')
 
         Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
         filtro = Meta[Meta['codEngenharia'].str.startswith('0')]

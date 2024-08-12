@@ -23,6 +23,7 @@ from .Planejamento.cronograma import cronograma_routes
 from .Faccionista.faccionista import faccionista_routes
 from .Planejamento.Meta_faccionistas import MetasFacicionista_routes
 from .Planejamento.LeadTime import LeadTime_routes
+from .NecessidadesDeMP.necessidadeMP import NecessidadesMP_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -44,3 +45,4 @@ routes_blueprint.register_blueprint(cronograma_routes)
 routes_blueprint.register_blueprint(faccionista_routes)
 routes_blueprint.register_blueprint(MetasFacicionista_routes)
 routes_blueprint.register_blueprint(LeadTime_routes)
+routes_blueprint.register_blueprint(NecessidadesMP_routes)
