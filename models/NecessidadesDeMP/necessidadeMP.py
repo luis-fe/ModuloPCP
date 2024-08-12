@@ -12,9 +12,9 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
         sqlMetas = """
         SELECT "codLote", "Empresa", "codEngenharia", "codSeqTamanho", "codSortimento", previsao
         FROM "PCP".pcp.lote_itens li
-        WHERE "codLote" IN (' %s ')
-        """ % codLote
-        sqlMetas = pd.read_sql(sqlMetas,conn)
+        WHERE "codLote" = %s
+        """
+        sqlMetas = pd.read_sql(sqlMetas,conn, params=(codLote,))
 
         #Obtendo os consumos de todos os componentes relacionados nas engenharias
         sqlcsw = """
