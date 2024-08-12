@@ -10,7 +10,7 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
 
         # Obtendo as Previsao do Lote
         sqlMetas = """
-        SELECT "codLote", "Empresa", "codEngenharia", "codSeqTamanho", "codSortimento", previsao
+        SELECT "codLote", "Empresa", "codEngenharia", "codSeqTamanho"::varchar, "codSortimento"::varchar, previsao
         FROM "PCP".pcp.lote_itens li
         WHERE "codLote" = %s
         """
