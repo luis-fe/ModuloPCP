@@ -29,7 +29,7 @@ def pOST_AnaliseDeMateriais():
 
     data = request.get_json()
     codigoPlano = data.get('codigoPlano')
-    arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
+    codLote = data.get('arrayCodLoteCsw', '-')
     congelado = data.get('congelado', False)
 
     if congelado =='' or congelado == '-':
@@ -38,7 +38,7 @@ def pOST_AnaliseDeMateriais():
         congelado = congelado
 
 
-    dados = necessidadeMP.AnaliseDeMateriais(codigoPlano,arrayCodLoteCsw, congelado)
+    dados = necessidadeMP.AnaliseDeMateriais(codigoPlano,codLote, congelado)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
