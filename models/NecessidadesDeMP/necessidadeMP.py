@@ -78,6 +78,7 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
         join tcp.CompVarSorGraTam cv on cv.codEmpresa = v.codEmpresa and cv.codProduto = v.codProduto and cv.sequencia = v.codSequencia 
         WHERE v.codEmpresa = 1
         and v.codProduto in (select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '"""+codLote+"""')
+        and v.codClassifComponente <> 12
         UNION 
         SELECT v.codProduto as codEngenharia,  l.codSortimento ,l.codSeqTamanho as codSeqTamanho, v.CodComponente,
         (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
@@ -97,6 +98,20 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
 	    and d.estoqueAtual > 0
         """
 
+        sqlRequisicaoAberto = """
+        SELECT
+	ri.codMaterial as CodComponente ,
+	ri.qtdeRequisitada as EmRequisicao
+    FROM
+	tcq.RequisicaoItem ri
+    join tcq.Requisicao r on
+	r.codEmpresa = ri.codEmpresa
+	and r.numero = ri.codRequisicao
+    where
+	ri.codEmpresa = 1
+	and r.sitBaixa <0
+        """
+
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sqlcsw)
@@ -109,6 +124,13 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
                 rows = cursor.fetchall()
                 sqlEstoque = pd.DataFrame(rows, columns=colunas)
 
+                cursor.execute(sqlRequisicaoAberto)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                sqlRequisicaoAberto = pd.DataFrame(rows, columns=colunas)
+                sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
+                    {"qtdeRequisitada": "sum"}).reset_index()
+
         # Libera memória manualmente
         del rows
         gc.collect()
@@ -120,6 +142,7 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
         Necessidade["FaltaProgramarMeta"] = Necessidade['quantidade'] * Necessidade['FaltaProgramar']
         Necessidade = Necessidade.groupby(["CodComponente"]).agg({"descricaoComponente":"first","quantidade Prevista":"sum","FaltaProgramarMeta":"sum","unid":"first"}).reset_index()
         Necessidade = pd.merge(Necessidade, sqlEstoque, on=["CodComponente"], how='left')
+        Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on=["CodComponente"], how='left')
 
 
         return Necessidade
