@@ -85,6 +85,18 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
         v.quantidade  from tcp.ComponentesPadroes  v 
         join tcl.LoteSeqTamanho l on l.Empresa = v.codEmpresa and l.codEngenharia = v.codProduto and l.codlote = '"""+codLote+"""'"""
 
+        sqlEstoque = """
+        SELECT
+	    d.codItem as CodComponente ,
+	    d.estoqueAtual
+        FROM
+	    est.DadosEstoque d
+        WHERE
+	    d.codEmpresa = 1
+	    and d.codNatureza in (1, 3, 2)
+	    and d.estoqueAtual > 0
+        """
+
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sqlcsw)
@@ -92,15 +104,22 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
                 rows = cursor.fetchall()
                 consumo = pd.DataFrame(rows, columns=colunas)
 
+                cursor.execute(sqlEstoque)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                sqlEstoque = pd.DataFrame(rows, columns=colunas)
+
         # Libera memória manualmente
         del rows
         gc.collect()
 
         Necessidade = pd.merge(sqlMetas, consumo, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"], how='left')
+
         Necessidade['quantidade'].fillna(0,inplace=True)
         Necessidade['quantidade Prevista'] = Necessidade['quantidade'] * Necessidade['previsao']
         Necessidade["FaltaProgramarMeta"] = Necessidade['quantidade'] * Necessidade['FaltaProgramar']
-        Necessidade = Necessidade.groupby(["CodComponente"]).agg({"descricaoComponente":"first","quantidade Prevista":"sum","FaltaProgramarMeta":"sum"}).reset_index()
+        Necessidade = Necessidade.groupby(["CodComponente"]).agg({"descricaoComponente":"first","quantidade Prevista":"sum","FaltaProgramarMeta":"sum","unid":"first"}).reset_index()
+        Necessidade = pd.merge(Necessidade, sqlEstoque, on=["CodComponente"], how='left')
 
 
         return Necessidade
