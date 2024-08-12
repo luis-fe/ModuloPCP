@@ -240,8 +240,8 @@ def ApresentacaoFilaFaseCategoria(COLECAO, codFase):
     if colecoes['COLECAO'][0] != '-':
         fila = pd.merge(fila, colecoes , on='COLECAO')
         start = pd.DataFrame(
-            {'numeroOP': ['t-0', 't-0','t-0'], 'codFase': [449, 437,412], "codFaseAtual": [449, 437,412], "Situacao": ['em processo','em processo','a produzir'],
-             "pcs": 0, 'COLECAO': ['', '',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
+            {'numeroOP': ['t-0', 't-0','t-0'], 'codFase': [449, 437,412,429], "codFaseAtual": [449, 437,412,429], "Situacao": ['em processo','em processo','a produzir','a produzir'],
+             "pcs": 0, 'COLECAO': ['', '','',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS','COSTURA EXTERNA']})
         fila = pd.concat([fila,start])
     fila['codFase'] = np.where(fila['codFase'].isin([431, 455, 459]), 429, fila['codFase'])
     fila = fila[fila['codFase'] == int(codFase)]
