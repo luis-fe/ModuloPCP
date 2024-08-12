@@ -129,7 +129,7 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
                 rows = cursor.fetchall()
                 sqlRequisicaoAberto = pd.DataFrame(rows, columns=colunas)
                 sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
-                    {"qtdeRequisitada": "sum"}).reset_index()
+                    {"EmRequisicao": "sum"}).reset_index()
 
         # Libera memória manualmente
         del rows
