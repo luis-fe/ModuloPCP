@@ -398,7 +398,6 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
     leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTime(diasCorridos)'] * leadTime['LeadTimePonderado(categoria)'].round(2)
     leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTimePonderado(diasCorridos)'].round()
 
-    leadTime.to_csv('./dados/leadtime_.csv')
     leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
 
     leadTime_ = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)":"mean","Realizado":"sum","LeadTimePonderado(diasCorridos)":'sum'}).reset_index()
@@ -406,6 +405,9 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
     leadTime_['LeadTime(diasCorridos)'] = leadTime_['LeadTime(diasCorridos)'].round()
     leadTime_['LeadTimePonderado(diasCorridos)'] = leadTime_['LeadTimePonderado(diasCorridos)']/100
     leadTime_['LeadTimePonderado(diasCorridos)'] = leadTime_['LeadTimePonderado(diasCorridos)'].apply(np.ceil)
+
+    MetaCategoria = ObterCategorias()
+    leadTime_ = pd.merge(leadTime_, MetaCategoria, on='categoria',how='left')
 
     dados = {
         '01-leadTimeMedioGeral': f'{leadTimeMedioGeral} dias',
@@ -440,3 +442,9 @@ order by
 
     return tipoOP
 
+def ObterCategorias():
+    sql = """Select "nomecategoria" as categoria, "leadTime" as meta from pcp.categoria """
+    conn = ConexaoPostgreWms.conexaoEngine()
+    consulta = pd.read_sql(sql,conn)
+
+    return consulta
