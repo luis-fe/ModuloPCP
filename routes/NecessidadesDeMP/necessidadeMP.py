@@ -29,7 +29,7 @@ def pOST_AnaliseDeMateriais():
 
     data = request.get_json()
     codigoPlano = data.get('codigoPlano')
-    codLote = data.get('arrayCodLoteCsw', '-')
+    codLote = data.get('codLote', '-')
     congelado = data.get('congelado', False)
 
     if congelado =='' or congelado == '-':
