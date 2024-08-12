@@ -19,7 +19,7 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
         sqlMetas = pd.read_sql(sqlMetas,conn, params=(codLote,))
 
         consulta = """
-               select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
+               select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento"::varchar as "codSortimento" , "codSeqTamanho"::varchar as "codSeqTamanho"  from pcp.itens_csw ic 
                """
         consulta = pd.read_sql(consulta, conn)
         # Verificar quais codItemPai começam com '1' ou '2'
