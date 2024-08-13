@@ -526,7 +526,7 @@ WHERE
     del rows
     gc.collect()
 
-    realizado = realizado.groupby(["dataEntrada"]).agg({"Realizado":"sum"}).reset_index()
+    realizado = realizado.groupby(["dataEntrada","codFaccionista"]).agg({"Realizado":"sum"}).reset_index()
     realizado['codFaccionista'] = realizado['codFaccionista'] .astype(str)
     realizado = realizado[realizado['codFaccionista']==codFaccionista].reset_index()
     # Convertendo a coluna dataBaixa para o formato de datetime
