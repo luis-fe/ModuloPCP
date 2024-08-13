@@ -81,3 +81,27 @@ def pOST_MetasFasesCostura():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
     return jsonify(OP_data)
+
+
+@MetasFases_routes.route('/pcp/api/RealizadoGeralCostura', methods=['POST'])
+@token_required
+def pOST_RealizadoGeralCostura():
+
+    data = request.get_json()
+    dia = dayAtual()
+
+    dataMovFaseIni = data.get('dataMovFaseIni', dia)
+    dataMovFaseFim = data.get('dataMovFaseFim', dia)
+
+
+    dados = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim, 429)
+
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)
