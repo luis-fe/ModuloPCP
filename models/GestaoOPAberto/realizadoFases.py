@@ -496,3 +496,60 @@ def RealizadoFaseDia(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado.drop(['dataBaixa'], axis=1, inplace=True)
 
     return realizado
+
+
+def RealizadoFaseDiaFaccionista(dataMovFaseIni, dataMovFaseFim,codFaccionista):
+
+    sql = """
+SELECT
+	r.codFase  ,
+	r.codFaccio as codFaccionista,
+	r.codOP ,
+	r.quantidade as Realizado ,
+	r.dataEntrada , op.codProduto , e.descricao as nome
+FROM
+	tct.RetSimbolicoNFERetorno r
+inner join 
+	tco.OrdemProd op on op.codEmpresa = 1 and op.numeroOP = r.codOP 
+inner JOIN 
+	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+WHERE
+	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEntrada >= '"""+dataMovFaseIni+"""'and r.dataEntrada <=  '"""+dataMovFaseFim +"""'"""
+    with ConexaoBanco.Conexao2() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            realizado = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
+
+    realizado = realizado.groupby(["dataEntrada"]).agg({"Realizado":"sum"}).reset_index()
+    realizado['codFaccionista'] = realizado['codFaccionista'] .astype(str)
+    realizado = realizado[realizado['codFaccionista']==codFaccionista].reset_index()
+    # Convertendo a coluna dataBaixa para o formato de datetime
+    realizado['dataEntrada'] = pd.to_datetime(realizado['dataEntrada'], format='%Y-%m-%d')
+
+    # Criando a coluna 'data' no formato desejado
+    realizado['data'] = realizado['dataEntrada'].dt.strftime('%d/%m/%Y')
+
+    # Criando a coluna 'dia' com o nome do dia da semana em português
+    realizado['dia'] = realizado['dataEntrada'].dt.strftime('%A').str.lower()
+
+    # Mapeando os dias da semana para português
+    dias_semana_map = {
+        'monday': 'segunda-feira',
+        'tuesday': 'terça-feira',
+        'wednesday': 'quarta-feira',
+        'thursday': 'quinta-feira',
+        'friday': 'sexta-feira',
+        'saturday': 'sábado',
+        'sunday': 'domingo'
+    }
+
+    realizado['dia'] = realizado['dia'].map(dias_semana_map)
+    realizado.drop(['dataEntrada'], axis=1, inplace=True)
+
+    return realizado
