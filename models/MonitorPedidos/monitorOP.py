@@ -431,7 +431,7 @@ def ProdutosSemOP():
 
 def ProdutosSemOP_(dataInico, dataFim):
     descricaoArquivo = dataInico + '_' + dataFim
-    monitorDetalhadoOps = pd.read_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
+    monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
 
 
     monitorDetalhadoOps2 = monitorDetalhadoOps[(monitorDetalhadoOps['id_op2'] == 'Atendeu')&(monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
