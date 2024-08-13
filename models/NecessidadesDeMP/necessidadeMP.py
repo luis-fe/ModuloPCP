@@ -114,33 +114,31 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
 
         sqlAtendidoParcial = """
         SELECT
-		i.codPedido as pedCompra,
-		i.codPedidoItem as seqitem,
-		i.quantidade as qtAtendida
-	FROM
-		Est.NotaFiscalEntradaItens i
-	WHERE
-		i.codempresa = 1 
-		and i.codPedido >0 
-		and codPedido in (select codpedido FROM
-	sup.PedidoCompraItem p
-WHERE
-	p.situacao in (0, 2))
+		    i.codPedido as pedCompra,
+		    i.codPedidoItem as seqitem,
+		    i.quantidade as qtAtendida
+	    FROM
+		    Est.NotaFiscalEntradaItens i
+	    WHERE
+		    i.codempresa = 1 
+		    and i.codPedido >0 
+		    and codPedido in (select codpedido FROM up.PedidoCompraItem p WHERE
+	        p.situacao in (0, 2))
         """
 
         sqlPedidos = """
         SELECT
-	p.codPedido pedCompra,
-	p.codProduto as CodComponente,
-	p.quantidade as qtdPedida,
-	p.dataPrevisao,
-	p.itemPedido as seqitem,
-	p.situacao
-from 
-	sup.PedidoCompraItem p
-WHERE
-	p.situacao in (0, 2)
-	and p.codEmpresa = 1
+	        p.codPedido pedCompra,
+	        p.codProduto as CodComponente,
+	        p.quantidade as qtdPedida,
+	        p.dataPrevisao,
+	        p.itemPedido as seqitem,
+	        p.situacao
+        from 
+	        sup.PedidoCompraItem p
+        WHERE
+	        p.situacao in (0, 2)
+	        and p.codEmpresa = 1
         """
 
 

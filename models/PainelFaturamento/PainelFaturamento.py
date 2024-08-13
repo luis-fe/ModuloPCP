@@ -359,7 +359,7 @@ def GetMetas(empresa, ano):
                            "where empresa = %s and ano = %s   order by mes " , conn, params=(empresa,ano))
     else:
         consulta = pd.read_sql('select mes as "Mês", meta from "PCP"."DashbordTV".metas '
-                           "where ano = %s and  empresa <> 'Varejo' order by mes" , conn, params=(ano,))
+                           "where ano = %s  order by mes" , conn, params=(ano,))
         consulta = consulta.groupby('Mês').agg({
             'Mês': 'first',
             'meta':'sum'

@@ -431,8 +431,11 @@ def ProdutosSemOP():
 
     return df_selecionado
 
-def NecessidadeMateriaPrima():
-    monitorDetalhadoOps = pd.read_csv('./dados/necessidadeMonitorMP.csv')
+def ProdutosSemOP_(dataInico, dataFim):
+    descricaoArquivo = dataInico + '_' + dataFim
+    monitorDetalhadoOps = pd.read_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index()
+    monitorDetalhadoOps = monitorDetalhadoOps.groupby['nomeSKU'].agg({'QtdSaldo':'sum','codItemPai':'first'}).reset_index()
 
-
-
+    return monitorDetalhadoOps
