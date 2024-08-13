@@ -448,7 +448,7 @@ def ProdutosSemOP_(dataInico, dataFim):
 
     monitorDetalhadoOps = monitorDetalhadoOps.sort_values(by=['QtdSaldo'],
                                       ascending=[False]).reset_index()
-    monitorDetalhadoOps.rename(columns={'codEngenharia': 'codItemPai'}, inplace=True)
+    monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
     monitorDetalhadoOps['codEngenharia'] = '0'+monitorDetalhadoOps['codEngenharia']+'-0'
 
