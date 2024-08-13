@@ -377,7 +377,7 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         conn = ConexaoPostgreWms.conexaoEngine()
         sql = """select * from "backup"."metaCategoria" where "plano" = %s and "codLote" = %s """
         codLote = arrayCodLoteCsw[0]
-        Meta = pd.read_sql(sql, conn, params=(plano, codLote,))
+        Meta = pd.read_sql(sql, conn, params=(Codplano, codLote,))
 
         realizado = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim,429)
         realizado['codFase'] = realizado['codFase'].astype(int)
