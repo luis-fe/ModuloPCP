@@ -64,9 +64,9 @@ def get_ProdutosSemOP():
 @MonitorOp_routes.route('/pcp/api/ProdutosSemOP', methods=['POST'])
 @token_required
 def POST_ProdutosSemOP():
-
-    dataInico = request.args.get('dataInico', '-')
-    dataFim = request.args.get('dataFim', '-')
+    data = request.get_json()
+    dataInico = data.get('dataInico', '-')
+    dataFim = data.get('dataFim', '-')
     dados = monitorOP.ProdutosSemOP_(dataInico,dataFim)
     # Converte o DataFrame em uma lista de dicionários
     OP_data = dados.to_dict(orient='records')
