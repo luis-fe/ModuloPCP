@@ -473,7 +473,7 @@ def RealizadoFaseDia(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado = realizado.groupby(["dataBaixa"]).agg({"Realizado":"sum"}).reset_index()
 
     # Convertendo a coluna dataBaixa para o formato de datetime
-    realizado['dataBaixa'] = pd.to_datetime(realizado['dataBaixa'], format='%a, %d %b %Y %H:%M:%S %Z')
+    realizado['dataBaixa'] = pd.to_datetime(realizado['dataBaixa'], format='%Y-%m-%d')
 
     # Criando a coluna 'data' no formato desejado
     realizado['data'] = realizado['dataBaixa'].dt.strftime('%d/%m/%Y')
