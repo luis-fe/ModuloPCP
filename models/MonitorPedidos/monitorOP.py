@@ -450,6 +450,6 @@ def ProdutosSemOP_(dataInico, dataFim):
                                       ascending=[False]).reset_index()
     monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
-    monitorDetalhadoOps['codEngenharia'] = '0'+monitorDetalhadoOps['codEngenharia']+'-0'
+    monitorDetalhadoOps['codEngenharia'] = '0'+monitorDetalhadoOps['codEngenharia'].replace('.0','-0')
 
     return monitorDetalhadoOps
