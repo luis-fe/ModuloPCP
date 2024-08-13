@@ -470,7 +470,7 @@ def RealizadoFaseDia(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
     realizado = realizado[realizado['codFase']==str(codFase)].reset_index()
 
-    realizado = realizado.groupby(["codFase","dataBaixa"]).agg({"Realizado":"sum"}).reset_index()
+    realizado = realizado.groupby(["dataBaixa"]).agg({"Realizado":"sum"}).reset_index()
 
     # Convertendo a coluna dataBaixa para o formato de datetime
     realizado['dataBaixa'] = pd.to_datetime(realizado['dataBaixa'], format='%a, %d %b %Y %H:%M:%S %Z')
