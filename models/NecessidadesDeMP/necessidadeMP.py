@@ -112,6 +112,38 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
 	and r.sitBaixa <0
         """
 
+        sqlAtendidoParcial = """
+        SELECT
+		i.codPedido as pedCompra,
+		i.codPedidoItem as seqitem,
+		i.quantidade as qtAtendida
+	FROM
+		Est.NotaFiscalEntradaItens i
+	WHERE
+		i.codempresa = 1 
+		and i.codPedido >0 
+		and codPedido in (select codpedido FROM
+	sup.PedidoCompraItem p
+WHERE
+	p.situacao in (0, 2))
+        """
+
+        sqlPedidos = """
+        SELECT
+	p.codPedido pedCompra,
+	p.codProduto as CodComponente,
+	p.quantidade as qtdPedida,
+	p.dataPrevisao,
+	p.itemPedido as seqitem,
+	p.situacao
+from 
+	sup.PedidoCompraItem p
+WHERE
+	p.situacao in (0, 2)
+	and p.codEmpresa = 1
+        """
+
+
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sqlcsw)
@@ -131,6 +163,22 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
                 sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
                     {"EmRequisicao": "sum"}).reset_index()
 
+                cursor.execute(sqlAtendidoParcial)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                sqlAtendidoParcial = pd.DataFrame(rows, columns=colunas)
+
+                cursor.execute(sqlPedidos)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                sqlPedidos = pd.DataFrame(rows, columns=colunas)
+
+                sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['pedCompra','seqitem'],how='left')
+                sqlPedidos['qtAtendida'].fillna(0,inplace=True)
+                sqlPedidos['QtdSaldo'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
+                sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
+                    {"QtdSaldo": "sum"}).reset_index()
+
         # Libera memória manualmente
         del rows
         gc.collect()
@@ -143,6 +191,8 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
         Necessidade = Necessidade.groupby(["CodComponente"]).agg({"descricaoComponente":"first","quantidade Prevista":"sum","FaltaProgramarMeta":"sum","unid":"first"}).reset_index()
         Necessidade = pd.merge(Necessidade, sqlEstoque, on=["CodComponente"], how='left')
         Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on=["CodComponente"], how='left')
+        Necessidade = pd.merge(Necessidade, sqlPedidos, on=["CodComponente"], how='left')
+        Necessidade['QtdSaldo'].fillna(0,inplace=True)
 
 
         return Necessidade
