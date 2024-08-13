@@ -94,7 +94,7 @@ def pOST_RealizadoGeralCostura():
     dataMovFaseFim = data.get('dataMovFaseFim', dia)
 
 
-    dados = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim, 429)
+    dados = realizadoFases.RealizadoFaseDia(dataMovFaseIni, dataMovFaseFim, 429)
 
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
