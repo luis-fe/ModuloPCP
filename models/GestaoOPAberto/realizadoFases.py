@@ -550,6 +550,6 @@ WHERE
     }
 
     realizado['dia'] = realizado['dia'].map(dias_semana_map)
-    realizado.drop(['dataEntrada'], axis=1, inplace=True)
+    realizado.drop(['dataEntrada','index'], axis=1, inplace=True)
 
     return realizado
