@@ -175,9 +175,9 @@ WHERE
 
                 sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['pedCompra','seqitem'],how='left')
                 sqlPedidos['qtAtendida'].fillna(0,inplace=True)
-                sqlPedidos['QtdSaldo'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
+                sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
                 sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
-                    {"QtdSaldo": "sum"}).reset_index()
+                    {"SaldoPedCompras": "sum"}).reset_index()
 
         # Libera memória manualmente
         del rows
@@ -192,8 +192,11 @@ WHERE
         Necessidade = pd.merge(Necessidade, sqlEstoque, on=["CodComponente"], how='left')
         Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on=["CodComponente"], how='left')
         Necessidade = pd.merge(Necessidade, sqlPedidos, on=["CodComponente"], how='left')
-        Necessidade['QtdSaldo'].fillna(0,inplace=True)
-
+        Necessidade['SaldoPedCompras'].fillna(0,inplace=True)
+        Necessidade['EmRequisicao'].fillna(0,inplace=True)
+        Necessidade['estoqueAtual'].fillna(0,inplace=True)
+        Necessidade['NecessidadeCompras'] = (Necessidade["FaltaProgramarMeta"]+Necessidade["EmRequisicao"])-(Necessidade["estoqueAtual"]+Necessidade["SaldoPedCompras"])
+        Necessidade['NecessidadeCompras'] = Necessidade.apply(lambda r: 0 if r['NecessidadeCompras']<0 else r['NecessidadeCompras'], axis=1 )
 
         return Necessidade
 def obterDiaAtual():
