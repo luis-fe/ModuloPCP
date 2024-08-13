@@ -27,7 +27,6 @@ def ReservaOPMonitor(dataInico, dataFim):
         monitor = parquet_file.to_pandas()
 
     # Condição para o cálculo da coluna 'NecessodadeOP'
-
     monitor['Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
     condicao = (monitor['Qtd Atende'] > 0)
     # Cálculo da coluna 'NecessodadeOP' de forma vetorizada
@@ -36,7 +35,6 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     conn = ConexaoPostgreWms.conexaoEngine()
     consulta = pd.read_sql(consultaSql, conn)
-
     monitor['id_op'] = '-'
     monitor['Op Reservada'] = '-'
     for i in range(7):
@@ -60,9 +58,9 @@ def ReservaOPMonitor(dataInico, dataFim):
 
         # Define NecessodadeOP para 0 onde id_op é 'Atendeu'
         monitor.loc[monitor['id_op'] == 'Atendeu', 'NecessodadeOP'] = 0
-
         # Remove as colunas para depois fazer novo merge
         monitor = monitor.drop(['id', 'qtdAcumulada','ocorrencia_sku'], axis=1)
+
     monitor.loc[monitor['Valor Atende por Cor(Distrib.)'] > 0, 'id_op'] = 'AtendeuDistribuido'
     monitor.loc[monitor['QtdSaldo'] == 0, 'id_op'] = 'JaFaturada'
 
@@ -434,6 +432,13 @@ def ProdutosSemOP():
 def ProdutosSemOP_(dataInico, dataFim):
     descricaoArquivo = dataInico + '_' + dataFim
     monitorDetalhadoOps = pd.read_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
+
+
+    monitorDetalhadoOps2 = monitorDetalhadoOps[(monitorDetalhadoOps['id_op2'] == 'Atendeu')&(monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
+    monitorDetalhadoOps2 = monitorDetalhadoOps.groupby['nomeSKU'].agg({'QtdSaldo':'sum','codItemPai':'first'}).reset_index()
+    monitorDetalhadoOps2.rename(columns={'QtdAtendido': 'QtdSaldo'}, inplace=True)
+
+
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index()
     monitorDetalhadoOps = monitorDetalhadoOps.groupby['nomeSKU'].agg({'QtdSaldo':'sum','codItemPai':'first'}).reset_index()
