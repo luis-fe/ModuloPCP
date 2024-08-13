@@ -440,8 +440,8 @@ def ProdutosSemOP_(dataInico, dataFim):
     monitorDetalhadoOps2.rename(columns={'QtdAtendido': 'QtdSaldo'}, inplace=True)
 
 
-    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
-    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index()
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0]
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu']
     monitorDetalhadoOps = monitorDetalhadoOps.groupby(['nomeSKU']).agg({'QtdSaldo':'sum','codItemPai':'first'}).reset_index()
 
     return monitorDetalhadoOps
