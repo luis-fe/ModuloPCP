@@ -328,7 +328,6 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         # Carregando o Saldo COLECAO ANTERIOR
         Meta = pd.merge(Meta, sqlRoteiro, on='codEngenharia', how='left')
         Meta = Meta[Meta['codFase']==429].reset_index()
-        Meta.to_csv('./dados/analiseFaltaProgrFasesCOSTURA.csv')
 
         Meta = Meta.groupby(["codFase", "nomeFase","categoria"]).agg({"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
         Meta = pd.merge(Meta, sqlApresentacao, on='nomeFase', how='left')
@@ -373,12 +372,10 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         return Meta
 
     else:
-        novo2 = novo.replace('"', "-")
         conn = ConexaoPostgreWms.conexaoEngine()
         sql = """select * from "backup"."metaCategoria" where "plano" = %s and "codLote" = %s """
-
-
         codLote = arrayCodLoteCsw[0]
+
         Meta = pd.read_sql(sql, conn, params=(Codplano, codLote,))
         Meta.drop(['Realizado','codLote'], axis=1, inplace=True)
 
