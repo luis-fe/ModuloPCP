@@ -47,10 +47,11 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
                            'Fila','dias']
     colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
     resumo = resumo.loc[:, colunas_existentes]
-    resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade']/100)
-    resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade']/100)
-    resumo['Fila'] = resumo['Fila'].round(0)
-    resumo['FaltaProgramar'] = resumo['FaltaProgramar'].round(0)
+
+    resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
+    resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade'] / 100)
+
+
     cargaFac = CargaFaccionista()
     resumo = pd.merge(resumo,cargaFac,on=['categoria','codfaccionista'],how='left')
     resumo['carga'].fillna(0,inplace=True)
