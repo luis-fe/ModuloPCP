@@ -370,7 +370,6 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         ConexaoPostgreWms.Funcao_InserirBackup(Meta,Meta['codLote'].size,"metaCategoria","append")
 
         return Meta
-
     else:
         conn = ConexaoPostgreWms.conexaoEngine()
         sql = """select * from "backup"."metaCategoria" where "plano" = %s and "codLote" = %s """
