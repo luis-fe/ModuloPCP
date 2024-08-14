@@ -89,7 +89,7 @@ def RegistroFaccionistas2():
     conn = ConexaoPostgreWms.conexaoEngine()
 
     # Consultas SQL
-    sql = """SELECT f.*, fc.nomecategoria 
+    sql = """SELECT f.*, fc.* 
              FROM pcp.faccionista f
              LEFT JOIN pcp."faccaoCategoria" fc 
              ON f.codfaccionista = fc.codfaccionista"""
