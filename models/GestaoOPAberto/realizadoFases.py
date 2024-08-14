@@ -457,7 +457,7 @@ def ObterCategorias():
 
 
 def RealizadoFaseDia(dataMovFaseIni,dataMovFaseFim,codFase):
-    CarregarRealizado(30)
+    #CarregarRealizado(30)
     sql = """
         select rf."codEngenharia",
     	rf.numeroop ,
