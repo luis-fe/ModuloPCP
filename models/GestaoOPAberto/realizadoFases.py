@@ -118,7 +118,8 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     	"PCP".pcp.realizado_fase rf 
     where 
     	rf."dataBaixa"::date >= %s 
-    	and rf."dataBaixa"::date <= %s ;
+    	and rf."dataBaixa"::date <= %s 
+    	and "codFase" in ('431', '455', '459', '429')
         """
 
     conn = ConexaoPostgreWms.conexaoEngine()
