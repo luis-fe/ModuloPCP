@@ -468,7 +468,7 @@ def RealizadoFaseDia(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado = pd.read_sql(sql, conn, params=(dataMovFaseIni, dataMovFaseFim,))
 
     realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
-    realizado = realizado[realizado['codFase'] == str(codFase)].reset_index(drop=True)
+    realizado = realizado[realizado['codFase'] == str(codFase)].reset_index()
 
     realizado = realizado.groupby(["dataBaixa"]).agg({"Realizado":"sum"})
 
