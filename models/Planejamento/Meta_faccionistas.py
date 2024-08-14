@@ -35,6 +35,8 @@ def MetasFaccionistas(codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseF
     resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
 
     resumo = pd.merge(resumo, consulta, on='categoria')
+    print(resumo)
+
     resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
     resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade'] / 100)
 
