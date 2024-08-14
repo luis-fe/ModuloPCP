@@ -43,7 +43,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia']/resumo['04-%Capacidade']*100)
     resumo = resumo.sort_values(by=['categoria','01- AcordadoDia'], ascending=[True,False])
 
-    resumo = pd.merge(resumo,consulta1_,on='categoria')
+    resumo = pd.merge(resumo,consulta1,on='categoria')
 
     colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
                            'Fila','dias']
