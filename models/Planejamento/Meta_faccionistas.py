@@ -4,71 +4,75 @@ import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 from models.Faccionistas import faccionistas
 
-def MetasFaccionistas(codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado):
+def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado):
+    # passo 1 Carregar o plano informado
     conn = ConexaoPostgreWms.conexaoEngine()
-
-    # Carregando plano e capacidades em uma única consulta, se possível
+    sql = """select * from "backup"."metaCategoria" where "plano" = %s and "codLote" = %s """
     codLote = arrayCodLoteCsw[0]
-    sql_plano = """
-    SELECT mc.*, fc."Capacidade/dia"::int, fc.codfaccionista 
-    FROM "backup"."metaCategoria" mc
-    LEFT JOIN "PCP".pcp."faccaoCategoria" fc ON mc.categoria = fc.nomecategoria
-    WHERE mc."plano" = %s AND mc."codLote" = %s
-    """
-    consulta = pd.read_sql(sql_plano, conn, params=(codigoPlano, codLote))
-    consulta['Capacidade/dia'].fillna(0, inplace=True)
+    consulta1 = pd.read_sql(sql,conn,params=(codigoPlano,codLote,))
 
-    # Calculando capacidade e exedente em uma única etapa
-    consulta['capacidadeSoma'] = consulta.groupby('categoria')['Capacidade/dia'].transform('sum')
-    consulta['exedente'] = consulta['Meta Dia'] - consulta['capacidadeSoma']
-    consulta = consulta[consulta['exedente'] > 0].groupby('categoria').agg({'exedente': 'first'}).reset_index()
+    #Passo2 carregando as capacidades dos faccionistas
+    sql = """select nomecategoria as categoria, codfaccionista, "Capacidade/dia"::int from "PCP".pcp."faccaoCategoria" fc   """
+    consulta2 = pd.read_sql(sql,conn)
 
-    consulta.rename(columns={'exedente': '01- AcordadoDia'}, inplace=True)
+    #Passo3 Realizando o merge
+    consulta1_ = pd.merge(consulta1,consulta2,on='categoria',how='left')
+    consulta1_['Capacidade/dia'].fillna(0,inplace=True)
+    consulta1_.fillna('-',inplace=True)
 
-    # Merge com faccionistas e calculando %Capacidade
+    #Passo4 obtendo o exedente por categoria
+    consulta1_['capacidadeSoma'] = consulta1_.groupby('categoria')['Capacidade/dia'].transform('sum')
+    consulta1_['exedente'] = consulta1_['Meta Dia'] - consulta1_['capacidadeSoma']
+    consulta1_ = consulta1_[consulta1_['exedente']>0]
+    consulta1_ = consulta1_.groupby('categoria').agg({'exedente':'first'}).reset_index()
+
+    consulta1_.rename(
+        columns={'exedente': '01- AcordadoDia'},
+        inplace=True)
+
+    #Passo5 obtendo faccionistas e agregando o exedente ao registro de faccionista
     Consultafaccionistas = RegistroFaccionistas2()
-    resumo = pd.concat([Consultafaccionistas, consulta], ignore_index=True)
-    resumo['nome'].fillna('EXCEDENTE', inplace=True)
+
+    resumo = pd.concat([Consultafaccionistas,consulta1_])
+    resumo['nome'].fillna('EXCEDENTE',inplace=True)
+    resumo.fillna('-',inplace=True)
+
+
 
     resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
-    resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia'] / resumo['04-%Capacidade'] * 100)
-    resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
-
-    resumo = pd.merge(resumo, consulta, on='categoria')
-    print(resumo.dtypes)
-
-    resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
-    resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade'] / 100)
-
-    # Calculando 'Falta Produzir' e 'Meta Dia' uma vez
+    resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia']/resumo['04-%Capacidade']*100)
+    resumo = resumo.sort_values(by=['categoria','01- AcordadoDia'], ascending=[True,False])
+    resumo = pd.merge(resumo,consulta1,on='categoria')
+    colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
+                           'Fila','dias']
+    colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
+    resumo = resumo.loc[:, colunas_existentes]
+    resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade']/100)
+    resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade']/100)
+    resumo['Fila'] = resumo['Fila'].round(0)
+    resumo['FaltaProgramar'] = resumo['FaltaProgramar'].round(0)
     cargaFac = CargaFaccionista()
-    resumo = pd.merge(resumo, cargaFac, on=['categoria', 'codfaccionista'], how='left')
-    resumo['carga'].fillna(0, inplace=True)
-    resumo['Falta Produzir'] = resumo[['carga', 'Fila', 'FaltaProgramar']].sum(axis=1)
-    resumo['Meta Dia'] = (resumo['Falta Produzir'] / resumo['dias']).round(0)
+    resumo = pd.merge(resumo,cargaFac,on=['categoria','codfaccionista'],how='left')
+    resumo['carga'].fillna(0,inplace=True)
+    resumo['Falta Produzir'] = resumo['carga'] + resumo['Fila'] + resumo['FaltaProgramar']
+    resumo['Meta Dia'] = resumo['Falta Produzir'] / resumo['dias']
+    resumo['Meta Dia'] = resumo['Meta Dia'].round(0)
 
-    # Renomeando colunas
-    resumo.rename(columns={
-        'codfaccionista': '00- codFac',
-        'nome': '01-nomeFac',
-        'categoria': '03- categoria',
-        '01- AcordadoDia': '04- AcordadoDia',
-        '04-%Capacidade': '05-%Cap.',
-        'FaltaProgramar': '06-FaltaProgramar',
-        'Fila': '07-Fila',
-        'carga': '08-Carga',
-        'Falta Produzir': '09-Falta Produzir',
-        'dias': '10-dias',
-        'Meta Dia': '11-Meta Dia'}, inplace=True)
 
-    # Incorporando realizações
+
+    resumo.rename(
+        columns={'codfaccionista': '00- codFac', 'nome':'01-nomeFac', 'categoria': '03- categoria','01- AcordadoDia':'04- AcordadoDia',
+                 '04-%Capacidade':'05-%Cap.','FaltaProgramar':'06-FaltaProgramar','Fila':'07-Fila','carga':'08-Carga',
+                 "Falta Produzir":"09-Falta Produzir","dias":"10-dias","Meta Dia":"11-Meta Dia"},
+        inplace=True)
+
     Realizacao = realizadoFases.RemetidoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim)
-    resumo = pd.merge(resumo, Realizacao, on=['03- categoria', '00- codFac'], how='left')
-    resumo['Remetido'].fillna(0, inplace=True)
+    resumo = pd.merge(resumo,Realizacao,on=['03- categoria','00- codFac'],how='left')
+    resumo['Remetido'].fillna(0,inplace=True)
 
     Retornado = realizadoFases.RetornadoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim)
-    resumo = pd.merge(resumo, Retornado, on=['03- categoria', '00- codFac'], how='left')
-    resumo['Realizado'].fillna(0, inplace=True)
+    resumo = pd.merge(resumo,Retornado,on=['03- categoria','00- codFac'],how='left')
+    resumo['Realizado'].fillna(0,inplace=True)
 
     return resumo
 
