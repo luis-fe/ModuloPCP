@@ -493,7 +493,9 @@ def RealizadoFaseDia(dataMovFaseIni,dataMovFaseFim,codFase):
     }
 
     realizado['dia'] = realizado['dia'].map(dias_semana_map)
-    realizado.drop(['dataBaixa'], axis=1, inplace=True)
+
+    # Removendo a coluna 'dataBaixa'
+    realizado.drop(columns=['dataBaixa'], inplace=True)
 
     return realizado
 
