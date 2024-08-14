@@ -55,16 +55,21 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo = pd.merge(resumo,cargaFac,on=['categoria','codfaccionista'],how='left')
     resumo['carga'].fillna(0,inplace=True)
     resumo['Falta Produzir'] = resumo['carga'] + resumo['Fila'] + resumo['FaltaProgramar']
-    resumo['Meta Dia'] = resumo['Falta Produzir'] / resumo['dias']
-    resumo['Meta Dia'] = resumo['Meta Dia'].round(0)
+    resumo['Meta Dia'] = (resumo['Falta Produzir'] / resumo['dias']).round(0)
 
-
-
-    resumo.rename(
-        columns={'codfaccionista': '00- codFac', 'nome':'01-nomeFac', 'categoria': '03- categoria','01- AcordadoDia':'04- AcordadoDia',
-                 '04-%Capacidade':'05-%Cap.','FaltaProgramar':'06-FaltaProgramar','Fila':'07-Fila','carga':'08-Carga',
-                 "Falta Produzir":"09-Falta Produzir","dias":"10-dias","Meta Dia":"11-Meta Dia"},
-        inplace=True)
+    # Renomeando colunas
+    resumo.rename(columns={
+        'codfaccionista': '00- codFac',
+        'nome': '01-nomeFac',
+        'categoria': '03- categoria',
+        '01- AcordadoDia': '04- AcordadoDia',
+        '04-%Capacidade': '05-%Cap.',
+        'FaltaProgramar': '06-FaltaProgramar',
+        'Fila': '07-Fila',
+        'carga': '08-Carga',
+        'Falta Produzir': '09-Falta Produzir',
+        'dias': '10-dias',
+        'Meta Dia': '11-Meta Dia'}, inplace=True)
 
     Realizacao = realizadoFases.RemetidoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim)
     resumo = pd.merge(resumo,Realizacao,on=['03- categoria','00- codFac'],how='left')
