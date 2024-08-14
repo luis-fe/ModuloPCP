@@ -101,6 +101,16 @@ def RegistroFaccionistas2():
     merged = merged[['Capacidade/dia', 'codfaccionista', 'nome', 'nomecategoria']]
 
     # Conversão e renomeação de colunas
+    # Substituir valores '-' por NaN
+    merged['Capacidade/dia'] = merged['Capacidade/dia'].replace('-', np.nan)
+
+    # Remover valores não numéricos (opcional, se desejar apenas remover linhas inválidas)
+    merged = merged[pd.to_numeric(merged['Capacidade/dia'], errors='coerce').notnull()]
+
+    # Substituir valores NaN por 0 (ou outro valor padrão)
+    merged['Capacidade/dia'] = merged['Capacidade/dia'].fillna(0)
+
+    # Converter para int
     merged['Capacidade/dia'] = merged['Capacidade/dia'].astype(int)
     merged.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
 
