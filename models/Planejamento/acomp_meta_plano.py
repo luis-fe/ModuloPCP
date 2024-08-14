@@ -392,7 +392,7 @@ from
 	"backup"."metaCategoria" m where "plano" = %s and "codLote" = %s """
         codLote = arrayCodLoteCsw[0]
         Meta = pd.read_sql(sql, conn, params=(Codplano, codLote,))
-        realizado = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim,429)
+        realizado = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim,429,True)
         realizado['codFase'] = realizado['codFase'].astype(int)
         Meta = pd.merge(Meta, realizado, on=['codFase','categoria'], how='left')
 

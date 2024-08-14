@@ -107,8 +107,10 @@ where
     print(f'dias uteis {diasUteis}')
     return realizado
 
-def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
-    CarregarRealizado(60)
+def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase, congelado=False):
+    if congelado == True:
+        CarregarRealizado(60)
+
     sql = """
         select rf."codEngenharia",
     	rf.numeroop ,
