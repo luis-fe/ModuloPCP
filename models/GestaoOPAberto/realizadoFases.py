@@ -132,8 +132,12 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     """
     NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
 
-    NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
-        lambda r: '0' + r['codItemPai'] + '-0' if r['codItemPai'].startswith('1') else r['codItemPai'] + '-0', axis=1)
+
+    # Substituir apply por uma operação vetorizada para criar 'codEngenharia'
+    NomeEngenharia['codEngenharia'] = np.where(NomeEngenharia['codItemPai'].str.startswith('1'),
+                                               '0' + NomeEngenharia['codItemPai'] + '-0',
+                                               NomeEngenharia['codItemPai'] + '-0')
+
     realizado = pd.merge(realizado,NomeEngenharia,on='codEngenharia',how='left')
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
