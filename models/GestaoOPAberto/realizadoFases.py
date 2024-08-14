@@ -127,8 +127,6 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
 
     realizado['codFase'] = np.where(realizado['codFase'].isin(['431', '455', '459']), '429', realizado['codFase'])
     realizado = realizado[realizado['codFase']==str(codFase)].reset_index()
-
-    conn = ConexaoPostgreWms.conexaoEngine()
     sqlNomeEngenharia = """
     select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') group by "codItemPai"
     """
