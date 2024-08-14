@@ -2,7 +2,7 @@ import gc
 from models.GestaoOPAberto import realizadoFases
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
-from models.Faccionistas import faccionistas
+import numpy as np
 
 def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado):
     # passo 1 Carregar o plano informado
@@ -85,21 +85,26 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
 
 
 def RegistroFaccionistas2():
-    sql = """SELECT * FROM pcp.faccionista """
-    sql2 = """SELECT * FROM pcp."faccaoCategoria" """
-
+    # Conexão com o banco de dados
     conn = ConexaoPostgreWms.conexaoEngine()
-    sql = pd.read_sql(sql,conn)
-    sql2 = pd.read_sql(sql2,conn)
-    merged = pd.merge(sql, sql2, on='codfaccionista', how='left')
-    merged.fillna('-',inplace=True)
-    merged['nome'] = merged.apply(lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] != '-' else r['nomefaccionista'],axis=1)
-    merged = merged.loc[:, ['Capacidade/dia', 'codfaccionista', 'nome', 'nomecategoria']]
-    merged['Capacidade/dia'] = merged['Capacidade/dia'].astype(int)
-    merged.rename(
-        columns={'Capacidade/dia': '01- AcordadoDia',  'nomecategoria': 'categoria'},
-        inplace=True)
 
+    # Consultas SQL
+    sql = """SELECT f.*, fc.nomecategoria 
+             FROM pcp.faccionista f
+             LEFT JOIN pcp."faccaoCategoria" fc 
+             ON f.codfaccionista = fc.codfaccionista"""
+
+    # Leitura dos dados com uma única consulta SQL
+    merged = pd.read_sql(sql, conn)
+
+    # Preenchimento e seleção de colunas
+    merged.fillna('-', inplace=True)
+    merged['nome'] = np.where(merged['apelidofaccionista'] != '-', merged['apelidofaccionista'], merged['nomefaccionista'])
+    merged = merged[['Capacidade/dia', 'codfaccionista', 'nome', 'nomecategoria']]
+
+    # Conversão e renomeação de colunas
+    merged['Capacidade/dia'] = merged['Capacidade/dia'].astype(int)
+    merged.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
 
     return merged
 
