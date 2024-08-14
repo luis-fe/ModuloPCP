@@ -372,13 +372,25 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         return Meta
     else:
         conn = ConexaoPostgreWms.conexaoEngine()
-        sql = """select * from "backup"."metaCategoria" where "plano" = %s and "codLote" = %s """
+        sql = """         select
+	m.categoria ,
+	m."FaltaProgramar" ,
+	m."Carga Atual" ,
+	m."Falta Produzir",
+	m."Fila" ,
+	m."Meta Dia" ,
+	m.apresentacao ,
+	m."codFase" ,
+	m."dataFim" ,
+	m."dataInicio" ,
+	m.dias ,
+	m."nomeFase" ,
+	m.plano ,
+	m.previsao
+from
+	"backup"."metaCategoria" m where "plano" = %s and "codLote" = %s """
         codLote = arrayCodLoteCsw[0]
-
         Meta = pd.read_sql(sql, conn, params=(Codplano, codLote,))
-        Meta.drop(['Realizado','codLote'], axis=1, inplace=True)
-
-
         realizado = realizadoFases.RealizadoFaseCategoria(dataMovFaseIni, dataMovFaseFim,429)
         realizado['codFase'] = realizado['codFase'].astype(int)
         Meta = pd.merge(Meta, realizado, on=['codFase','categoria'], how='left')
