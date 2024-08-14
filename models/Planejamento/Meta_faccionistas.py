@@ -23,8 +23,8 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     #Passo4 obtendo o exedente por categoria
     consulta1_['capacidadeSoma'] = consulta1_.groupby('categoria')['Capacidade/dia'].transform('sum')
     consulta1_['exedente'] = consulta1_['Meta Dia'] - consulta1_['capacidadeSoma']
-    consulta1_ = consulta1_[consulta1_['exedente']>0]
-    consulta1_ = consulta1_.groupby('categoria').agg({'exedente':'first'}).reset_index()
+    consulta1_ = consulta1_[consulta1_['exedente'] > 0].groupby('categoria').agg({'exedente': 'first'}).reset_index()
+
 
     consulta1_.rename(
         columns={'exedente': '01- AcordadoDia'},
@@ -36,12 +36,10 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     resumo = pd.concat([Consultafaccionistas,consulta1_])
     resumo['nome'].fillna('EXCEDENTE',inplace=True)
     resumo.fillna('-',inplace=True)
-
-
-
     resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
     resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia']/resumo['04-%Capacidade']*100)
     resumo = resumo.sort_values(by=['categoria','01- AcordadoDia'], ascending=[True,False])
+
 
     resumo = pd.merge(resumo,consulta1,on='categoria')
 
