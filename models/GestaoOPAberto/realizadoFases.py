@@ -108,7 +108,7 @@ where
     return realizado
 
 def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase, congelado=False):
-    if congelado == True:
+    if congelado == False:
         CarregarRealizado(60)
 
     sql = """
