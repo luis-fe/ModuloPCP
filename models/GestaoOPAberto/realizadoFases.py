@@ -134,13 +134,15 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     """
     NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
 
-    NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
-        lambda r: '0' + r['codItemPai'] + '-0' if r['codItemPai'].startswith('1') else r['codItemPai'] + '-0', axis=1)
-    realizado = pd.merge(realizado,NomeEngenharia,on='codEngenharia',how='left')
+    # Substituir apply por uma operação vetorizada para criar 'codEngenharia'
+    NomeEngenharia['codEngenharia'] = np.where(NomeEngenharia['codItemPai'].str.startswith('1'),
+                                               '0' + NomeEngenharia['codItemPai'] + '-0',
+                                               NomeEngenharia['codItemPai'] + '-0')
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
     realizado['categoria'] = realizado['nome'].apply(mapear_categoria)
-    realizado = realizado.groupby(["codFase","categoria"]).agg({"Realizado":"sum"}).reset_index()
+    realizado = realizado.groupby(["codFase", "categoria"], as_index=False)["Realizado"].sum()
+
 
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     realizado['Realizado'] = realizado['Realizado'] / diasUteis if diasUteis > 0 else 0
