@@ -430,7 +430,7 @@ def ObterTipoOPs():
 FROM
 	tcp.TipoOP t
 WHERE
-	t.Empresa = 1
+	t.Empresa = 1 and t.codTipo in (1, 2, 3, 4, 5,6,7,8,10,12,16,17,22,28)
 order by
 	codTipo asc
     """

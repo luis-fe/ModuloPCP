@@ -1,5 +1,4 @@
 import jaydebeapi
-import gc
 from contextlib import contextmanager
 
 @contextmanager
@@ -31,3 +30,9 @@ def ConexaoInternoMPL():
     finally:
         if conn is not None:
             conn.close()
+
+
+
+
+
+
