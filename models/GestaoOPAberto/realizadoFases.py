@@ -143,8 +143,8 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase):
     realizado = realizado.groupby(["codFase","categoria"]).agg({"Realizado":"sum"}).reset_index()
 
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
-    # Evitar divisão por zero ou infinito
-    realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
+    realizado['Realizado'] = realizado['Realizado'] / diasUteis if diasUteis > 0 else 0
+
     return realizado
 
 
