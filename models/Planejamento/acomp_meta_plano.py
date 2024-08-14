@@ -372,7 +372,8 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         return Meta
     else:
         conn = ConexaoPostgreWms.conexaoEngine()
-        sql = """         select
+        sql = """         
+        select
 	m.categoria ,
 	m."FaltaProgramar" ,
 	m."Carga Atual" ,
@@ -395,8 +396,10 @@ from
         realizado['codFase'] = realizado['codFase'].astype(int)
         Meta = pd.merge(Meta, realizado, on=['codFase','categoria'], how='left')
 
-        Meta['Realizado'].fillna(0, inplace=True)
-        Meta.fillna('-', inplace=True)
+        # Preencher valores nulos de maneira eficiente
+        Meta['Realizado'] = Meta['Realizado'].fillna(0)
+        Meta = Meta.fillna('-')
+
         Meta = Meta[Meta['apresentacao'] != '-']
 
         return Meta
