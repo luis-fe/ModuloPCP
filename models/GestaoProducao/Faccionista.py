@@ -27,7 +27,7 @@ class MetasFaccionistas:
         capacidadeFaccionista['Capacidade/dia'].fillna(0, inplace=True)
         capacidadeFaccionista.fillna('-', inplace=True)
         capacidadeFaccionista['capacidadeSoma'] = capacidadeFaccionista.groupby('categoria')['Capacidade/dia'].transform('sum')
-        capacidadeFaccionista['excedente'] = capacidadeFaccionista['Meta Dia'] - capacidadeFaccionista['capacidadeSoma']
+        capacidadeFaccionista['exedente'] = capacidadeFaccionista['Meta Dia'] - capacidadeFaccionista['capacidadeSoma']
         capacidadeFaccionista = capacidadeFaccionista[capacidadeFaccionista['exedente'] > 0].groupby('categoria').agg({'exedente': 'first'}).reset_index()
         capacidadeFaccionista.rename(columns={'exedente': '01- AcordadoDia'}, inplace=True)
         return capacidadeFaccionista
@@ -172,17 +172,13 @@ class MetasFaccionistas:
         return merged
 
     def calcular_resumo(self):
-        consulta1 = self.carregarBackupPlanoFac()
-        consulta1_ = self.carregar_capacidades(consulta1)
-
-
+        backupPLano = self.carregarBackupPlanoFac()
+        consulta1_ = self.carregar_capacidades(backupPLano)
         resumo = self.obter_resumo(consulta1_)
         resumo = self.ajustar_colunas(resumo)
-
         cargaFac = self.obter_carga_faccionista()
         resumo = self.calcular_metas(resumo, cargaFac)
         resumo = self.adicionar_realizacao(resumo)
-
         os.system('clear')
 
         return resumo
