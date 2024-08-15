@@ -362,8 +362,11 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
         MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(dataMovFaseIni, dataMovFaseFim,))
         MovPCP = pd.read_sql(sqlMovPCP, conn, params=(dataMovFaseFim,))
 
-    MovEntradaEstoque['OpPCP'] = MovEntradaEstoque['numeroop'].apply(lambda x: x if x.endswith('-001') else x[:-4] + '-001')
-
+    MovEntradaEstoque['OpPCP'] = np.where(
+        MovEntradaEstoque['numeroop'].str.endswith('-001'),
+        MovEntradaEstoque['numeroop'],
+        MovEntradaEstoque['numeroop'].str.slice(stop=-4) + '-001'
+    )
 
     leadTime = pd.merge(MovEntradaEstoque,MovPCP,on='OpPCP',how='left')
 
