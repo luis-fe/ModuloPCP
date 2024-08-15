@@ -26,7 +26,6 @@ def get_LeadTimesRealizados():
 
 
     dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim,arrayTipoOP)
-    #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
     column_names = dados.columns

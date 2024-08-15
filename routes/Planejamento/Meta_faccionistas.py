@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.Planejamento import plano, loteCsw, Meta_faccionistas
-from models.GestaoOPAberto import realizadoFases
+from models.GestaoProducao import Faccionista
 import datetime
 import pytz
 
@@ -42,8 +42,10 @@ def pOST_MetasFaccionista():
     else:
         congelado = congelado
 
-    dados = Meta_faccionistas.MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
+    metas = Faccionista.MetasFaccionistas(codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado)
+    dados = metas.calcular_resumo()
     column_names = dados.columns
+
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
     for index, row in dados.iterrows():
