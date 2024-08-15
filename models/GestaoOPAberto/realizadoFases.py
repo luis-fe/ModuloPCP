@@ -306,7 +306,6 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
 
         result = [int(item.split('-')[0]) for item in arrayTipoOP]
         result = f"({', '.join(str(x) for x in result)})"
-        print(result)
         sqlMovPCP = """
             select
             rf.numeroop as "OpPCP",
@@ -386,8 +385,11 @@ def LeadTimeRealizado(dataMovFaseIni, dataMovFaseFim, arrayTipoOP):
     """
     NomeEngenharia = pd.read_sql(sqlNomeEngenharia,conn)
 
-    NomeEngenharia['codEngenharia'] = NomeEngenharia.apply(
-        lambda r: '0' + r['codItemPai'] + '-0' if (r['codItemPai'].startswith('1') )| (r['codItemPai'].startswith('2')) else r['codItemPai'] + '-0', axis=1)
+    NomeEngenharia['codEngenharia'] = np.where(
+        NomeEngenharia['codItemPai'].str.startswith(('1', '2')),
+        '0' + NomeEngenharia['codItemPai'] + '-0',
+        NomeEngenharia['codItemPai'] + '-0'
+    )
     leadTime = pd.merge(leadTime,NomeEngenharia,on='codEngenharia',how='left')
 
 
