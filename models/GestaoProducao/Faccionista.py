@@ -80,9 +80,7 @@ class MetasFaccionistas:
         consulta['codfaccionista'] = consulta['codfaccionista'].astype(str)
         return consulta
 
-    def mapear_categoria(self):
-
-        def mapear_categoria(nome):
+    def mapear_categoria(self, nome):
             categorias_map = {
                 'CAMISA': 'CAMISA',
                 'POLO': 'POLO',
