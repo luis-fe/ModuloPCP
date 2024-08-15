@@ -3,7 +3,7 @@ from models.GestaoOPAberto import realizadoFases
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 import numpy as np
-
+import os
 def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado):
     # passo 1 Carregar o plano informado
     conn = ConexaoPostgreWms.conexaoEngine()
@@ -79,6 +79,7 @@ def MetasFaccionistas(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim
     Retornado = realizadoFases.RetornadoFaseCategoriaFaccionista(dataMovFaseIni, dataMovFaseFim)
     resumo = pd.merge(resumo,Retornado,on=['03- categoria','00- codFac'],how='left')
     resumo['Realizado'].fillna(0,inplace=True)
+    os.system('clear')
 
     return resumo
 
