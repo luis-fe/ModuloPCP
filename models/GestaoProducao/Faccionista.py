@@ -29,9 +29,6 @@ class MetasFaccionistas:
         consulta1_ = pd.merge(consulta1, consulta2, on='categoria', how='left')
         consulta1_['Capacidade/dia'].fillna(0, inplace=True)
         consulta1_.fillna('-', inplace=True)
-        return consulta1_
-
-    def calcular_excedente(self, consulta1_):
         consulta1_['capacidadeSoma'] = consulta1_.groupby('categoria')['Capacidade/dia'].transform('sum')
         consulta1_['excedente'] = consulta1_['Meta Dia'] - consulta1_['capacidadeSoma']
         consulta1_ = consulta1_[consulta1_['exedente'] > 0].groupby('categoria').agg({'exedente': 'first'}).reset_index()
@@ -178,8 +175,6 @@ class MetasFaccionistas:
         consulta2 = self.carregar_capacidades()
 
         consulta1_ = self.realizar_merge(consulta1, consulta2)
-        consulta1_ = self.calcular_excedente(consulta1_)
-
         Consultafaccionistas = self.RegistroFaccionistas2()  # Presume-se que esta função esteja definida em algum lugar
 
         resumo = self.obter_resumo(consulta1_, Consultafaccionistas)
