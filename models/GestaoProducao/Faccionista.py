@@ -7,41 +7,42 @@ import os
 
 class MetasFaccionistas:
     def __init__(self, codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado):
-        self.codigoPlano = codigoPlano
-        self.arrayCodLoteCsw = arrayCodLoteCsw
-        self.dataMovFaseIni = dataMovFaseIni
-        self.dataMovFaseFim = dataMovFaseFim
-        self.congelado = congelado
-        self.conn = ConexaoPostgreWms.conexaoEngine()
+        self.codigoPlano = codigoPlano #Codigo do Plano Escolhido
+        self.arrayCodLoteCsw = arrayCodLoteCsw # codigo do Lote escolhido
+        self.dataMovFaseIni = dataMovFaseIni # Data Inicio do Realizado
+        self.dataMovFaseFim = dataMovFaseFim # Data Final do Realizado
+        self.congelado = congelado # O usuario da api quer passar congelado ou nao
+        self.conn = ConexaoPostgreWms.conexaoEngine() # Conexao com o banco de dados
 
-    def carregar_plano(self):
+    def carregarBackupPlanoFac(self):
         sql = """select * from "backup"."metaCategoria" where "plano" = %s and "codLote" = %s """
         codLote = self.arrayCodLoteCsw[0]
-        consulta1 = pd.read_sql(sql, self.conn, params=(self.codigoPlano, codLote))
-        return consulta1
+        backupPLano = pd.read_sql(sql, self.conn, params=(self.codigoPlano, codLote))
+        return backupPLano
 
-    def carregar_capacidades(self):
+    def carregar_capacidades(self, DataFrameBackupPlano):
         sql = """select nomecategoria as categoria, codfaccionista, "Capacidade/dia"::int from "PCP".pcp."faccaoCategoria" fc"""
         consulta2 = pd.read_sql(sql, self.conn)
-        return consulta2
+        capacidadeFaccionista = pd.merge(DataFrameBackupPlano, consulta2, on='categoria', how='left')
+        capacidadeFaccionista['Capacidade/dia'].fillna(0, inplace=True)
+        capacidadeFaccionista.fillna('-', inplace=True)
+        capacidadeFaccionista['capacidadeSoma'] = capacidadeFaccionista.groupby('categoria')['Capacidade/dia'].transform('sum')
+        capacidadeFaccionista['excedente'] = capacidadeFaccionista['Meta Dia'] - capacidadeFaccionista['capacidadeSoma']
+        capacidadeFaccionista = capacidadeFaccionista[capacidadeFaccionista['exedente'] > 0].groupby('categoria').agg({'exedente': 'first'}).reset_index()
+        capacidadeFaccionista.rename(columns={'exedente': '01- AcordadoDia'}, inplace=True)
+        return capacidadeFaccionista
 
-    def realizar_merge(self, consulta1, consulta2):
-        consulta1_ = pd.merge(consulta1, consulta2, on='categoria', how='left')
-        consulta1_['Capacidade/dia'].fillna(0, inplace=True)
-        consulta1_.fillna('-', inplace=True)
-        consulta1_['capacidadeSoma'] = consulta1_.groupby('categoria')['Capacidade/dia'].transform('sum')
-        consulta1_['excedente'] = consulta1_['Meta Dia'] - consulta1_['capacidadeSoma']
-        consulta1_ = consulta1_[consulta1_['exedente'] > 0].groupby('categoria').agg({'exedente': 'first'}).reset_index()
-        consulta1_.rename(columns={'exedente': '01- AcordadoDia'}, inplace=True)
-        return consulta1_
-
-    def obter_resumo(self, consulta1_, Consultafaccionistas):
-        resumo = pd.concat([Consultafaccionistas, consulta1_], ignore_index=True)
+    def obter_resumo(self, capacidadeFaccionista):
+        Consultafaccionistas = self.RegistroFaccionistas2()  # Presume-se que esta função esteja definida em algum lugar
+        resumo = pd.concat([Consultafaccionistas, capacidadeFaccionista], ignore_index=True)
         resumo['nome'].fillna('EXCEDENTE', inplace=True)
         resumo.fillna('-', inplace=True)
         resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
         resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia'] / resumo['04-%Capacidade'] * 100)
         resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
+        consulta1 = self.carregarBackupPlanoFac()
+        resumo = pd.merge(resumo, consulta1, on='categoria')
+
         return resumo
 
     def ajustar_colunas(self, resumo):
@@ -171,14 +172,11 @@ class MetasFaccionistas:
         return merged
 
     def calcular_resumo(self):
-        consulta1 = self.carregar_plano()
-        consulta2 = self.carregar_capacidades()
+        consulta1 = self.carregarBackupPlanoFac()
+        consulta1_ = self.carregar_capacidades(consulta1)
 
-        consulta1_ = self.realizar_merge(consulta1, consulta2)
-        Consultafaccionistas = self.RegistroFaccionistas2()  # Presume-se que esta função esteja definida em algum lugar
 
-        resumo = self.obter_resumo(consulta1_, Consultafaccionistas)
-        resumo = pd.merge(resumo, consulta1, on='categoria')
+        resumo = self.obter_resumo(consulta1_)
         resumo = self.ajustar_colunas(resumo)
 
         cargaFac = self.obter_carga_faccionista()
