@@ -77,10 +77,15 @@ class Faccionista():
         if Novoapelidofaccionista == None:
             Novoapelidofaccionista = consultarFaccionista['apelidofaccionista'][0]
 
-        update ="""UPDATE "PCP".pcp."faccaoCategoria" 
-        SET "Capacidade/dia" = %s , nomecategoria = %s
-        where codfaccionista = %s
-        """
+        VerificarCategoria = consultarCategoriaMeta[consultarCategoriaMeta['nomecategoria']==NovaCategoria].reset_index()
+        if VerificarCategoria.empty:
+            update ="""INSERT INTO "PCP".pcp."faccaoCategoria" ("Capacidade/dia" ,nomecategoria, codfaccionista ) values (%s, %s, %s)
+            """
+        else:
+            update ="""UPDATE "PCP".pcp."faccaoCategoria" 
+            SET "Capacidade/dia" = %s , nomecategoria = %s
+            where codfaccionista = %s
+            """
 
         updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista = %s """
 
