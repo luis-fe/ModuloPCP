@@ -181,6 +181,3 @@ class MetasFaccionistas:
 
         return resumo
 
-# Uso da classe:
-# metas = MetasFaccionistas(codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado)
-# resultado = metas.calcular_resumo()
