@@ -66,17 +66,10 @@ class Faccionista():
 
         return consulta
 
-    def AlterarFaccionista(self,Novoapelidofaccionista= None,NovoCapacidade_dia= None):
+    def AlterarFaccionista(self):
         consultarCategoriaMeta = self.ConsultarCategoriaMetaFaccionista()
-        consultarFaccionista = self.ConsultarFaccionista()
-
-        if NovoCapacidade_dia ==None:
-            NovoCapacidade_dia = consultarCategoriaMeta['Capacidade/dia'][0]
-
-        if Novoapelidofaccionista == None:
-            Novoapelidofaccionista = consultarFaccionista['apelidofaccionista'][0]
-
         VerificarCategoria = consultarCategoriaMeta[consultarCategoriaMeta['nomecategoria']==self.nomecategoria].reset_index()
+
 
         if VerificarCategoria.empty:
             inserirCategoria ="""INSERT INTO "PCP".pcp."faccaoCategoria" ("Capacidade/dia" ,nomecategoria, codfaccionista ) values (%s, %s, %s)
@@ -85,9 +78,9 @@ class Faccionista():
 
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
                 with connInsert.cursor() as curr:
-                    curr.execute(inserirCategoria,(NovoCapacidade_dia,self.nomecategoria,self.codfaccionista))
+                    curr.execute(inserirCategoria,(self.Capacidade_dia,self.nomecategoria,self.codfaccionista))
                     connInsert.commit()
-                    curr.execute(updateFaccionista,(Novoapelidofaccionista,self.codfaccionista))
+                    curr.execute(updateFaccionista,(self.apelidofaccionista,self.codfaccionista))
                     connInsert.commit()
 
         else:
@@ -100,9 +93,9 @@ class Faccionista():
 
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
                 with connInsert.cursor() as curr:
-                    curr.execute(update,(NovoCapacidade_dia,self.nomecategoria,self.codfaccionista,self.nomecategoria))
+                    curr.execute(update,(self.Capacidade_dia,self.nomecategoria,self.codfaccionista,self.nomecategoria))
                     connInsert.commit()
-                    curr.execute(updateFaccionista,(Novoapelidofaccionista,self.codfaccionista))
+                    curr.execute(updateFaccionista,(self.apelidofaccionista,self.codfaccionista))
                     connInsert.commit()
 
 
@@ -127,9 +120,7 @@ class Faccionista():
                 [{'Status': True, 'Mensagem': f'Faccionista {self.codfaccionista} Incluido com sucesso !'}])
 
         else:
-            Novoapelidofaccionista = self.apelidofaccionista
-            NovoCapacidade_dia = self.Capacidade_dia
-            alterar = self.AlterarFaccionista(Novoapelidofaccionista,NovoCapacidade_dia)
+            alterar = self.AlterarFaccionista()
             return alterar
 
     def ExcluirFaccinonistaCategoria(self):
