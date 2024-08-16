@@ -96,7 +96,7 @@ class Faccionista():
 
     def InserirFaccionista(self):
         VerificaFaccionista = self.ConsultarFaccionista()
-        if VerificaFaccionista['Status'] == False:
+        if VerificaFaccionista['Status'][0] == False:
             insert = """insert into "PCP".pcp.faccionista (codfaccionista, nomefaccionista, apelidofaccionista ) values (%s, %s, %s )"""
             insert2 = """insert into "PCP".pcp."faccaoCategoria" (codfaccionista, nomecategoria, "Capacidade/dia" ) values (%s, %s, %s) """
             self.nomefaccionista = self.ObterNomeCSW()
