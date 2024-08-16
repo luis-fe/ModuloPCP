@@ -66,35 +66,44 @@ class Faccionista():
 
         return consulta
 
-    def AlterarFaccionista(self,Novoapelidofaccionista= None,NovoCapacidade_dia= None, NovaCategoria= None):
+    def AlterarFaccionista(self,Novoapelidofaccionista= None,NovoCapacidade_dia= None):
         consultarCategoriaMeta = self.ConsultarCategoriaMetaFaccionista()
         consultarFaccionista = self.ConsultarFaccionista()
 
         if NovoCapacidade_dia ==None:
             NovoCapacidade_dia = consultarCategoriaMeta['Capacidade/dia'][0]
-        if NovaCategoria ==None:
-            NovaCategoria = consultarCategoriaMeta['nomecategoria'][0]
+
         if Novoapelidofaccionista == None:
             Novoapelidofaccionista = consultarFaccionista['apelidofaccionista'][0]
 
-        VerificarCategoria = consultarCategoriaMeta[consultarCategoriaMeta['nomecategoria']==NovaCategoria].reset_index()
+        VerificarCategoria = consultarCategoriaMeta[consultarCategoriaMeta['nomecategoria']==self.nomecategoria].reset_index()
+
         if VerificarCategoria.empty:
-            update ="""INSERT INTO "PCP".pcp."faccaoCategoria" ("Capacidade/dia" ,nomecategoria, codfaccionista ) values (%s, %s, %s)
+            inserirCategoria ="""INSERT INTO "PCP".pcp."faccaoCategoria" ("Capacidade/dia" ,nomecategoria, codfaccionista ) values (%s, %s, %s)
             """
+            updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista = %s """
+
+            with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                with connInsert.cursor() as curr:
+                    curr.execute(inserirCategoria,(NovoCapacidade_dia,self.codfaccionista,self.nomecategoria))
+                    connInsert.commit()
+                    curr.execute(updateFaccionista,(Novoapelidofaccionista,self.codfaccionista))
+                    connInsert.commit()
+
         else:
             update ="""UPDATE "PCP".pcp."faccaoCategoria" 
             SET "Capacidade/dia" = %s , nomecategoria = %s
-            where codfaccionista = %s
+            where codfaccionista = %s and nomecategoria = %s
             """
 
-        updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista = %s """
+            updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista = %s """
 
-        with ConexaoPostgreWms.conexaoInsercao() as connInsert:
-            with connInsert.cursor() as curr:
-                curr.execute(update,(NovoCapacidade_dia,NovaCategoria,self.codfaccionista))
-                connInsert.commit()
-                curr.execute(updateFaccionista,(Novoapelidofaccionista,self.codfaccionista))
-                connInsert.commit()
+            with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                with connInsert.cursor() as curr:
+                    curr.execute(update,(NovoCapacidade_dia,self.nomecategoria,self.codfaccionista,self.nomecategoria))
+                    connInsert.commit()
+                    curr.execute(updateFaccionista,(Novoapelidofaccionista,self.codfaccionista))
+                    connInsert.commit()
 
 
         return pd.DataFrame([{'Status':True,'Mensagem':f'Faccionista {self.codfaccionista} alterado com sucesso !'}])
@@ -120,8 +129,7 @@ class Faccionista():
         else:
             Novoapelidofaccionista = self.apelidofaccionista
             NovoCapacidade_dia = self.Capacidade_dia
-            NovaCategoria = self.nomecategoria
-            alterar = self.AlterarFaccionista(Novoapelidofaccionista,NovoCapacidade_dia, NovaCategoria)
+            alterar = self.AlterarFaccionista(Novoapelidofaccionista,NovoCapacidade_dia)
             return alterar
 
     def ExcluirFaccinonistaCategoria(self):
