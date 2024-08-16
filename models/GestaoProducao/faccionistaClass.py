@@ -85,7 +85,7 @@ class Faccionista():
 
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
                 with connInsert.cursor() as curr:
-                    curr.execute(inserirCategoria,(NovoCapacidade_dia,self.codfaccionista,self.nomecategoria))
+                    curr.execute(inserirCategoria,(NovoCapacidade_dia,self.nomecategoria,self.codfaccionista))
                     connInsert.commit()
                     curr.execute(updateFaccionista,(Novoapelidofaccionista,self.codfaccionista))
                     connInsert.commit()
