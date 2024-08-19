@@ -1,6 +1,8 @@
 '''
 Arquivo para as justificativas no modulo Painel de Gestao da OP
 '''
+import gc
+
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
@@ -13,13 +15,25 @@ def ConsultarJustificativa(ordemProd, fase):
     consultaPostgre = pd.read_sql(consultaPostgre,conn,params=(ordemProd, fase,))
 
 
-    conn2 = ConexaoBanco.Conexao2()
-    consultaCSW_justificativa =pd.read_sql('SELECT CONVERT(varchar(12), codop) as numeroOP, codfase as codFase, textolinha as justificativa FROM tco.ObservacoesGiroFasesTexto  t '
-                                    'WHERE empresa = 1 and textolinha is not null',conn2)
+
+    sql = """SELECT CONVERT(varchar(12), codop) as numeroOP, codfase as codFase, textolinha as justificativa
+    FROM tco.ObservacoesGiroFasesTexto  t 
+    WHERE empresa = 1 and textolinha is not null
+    """
+
+    with ConexaoBanco.Conexao2() as connCsw:
+        with connCsw.cursor() as cursor:
+            cursor.execute(sql)
+            colunas = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            consultaCSW_justificativa = pd.DataFrame(rows, columns=colunas)
+
+    # Libera memória manualmente
+    del rows
+    gc.collect()
     consultaCSW_justificativa['codFase'] = consultaCSW_justificativa['codFase'].astype(str)
     consultaCSW_justificativa = consultaCSW_justificativa[consultaCSW_justificativa['numeroOP'] == ordemProd]
     consultaCSW_justificativa = consultaCSW_justificativa[consultaCSW_justificativa['codFase'] == str(fase)]
-    conn2.close()
 
 
     # Caso nao tenha justificativa no CSW porém tenha justificativa no banco do PCP
