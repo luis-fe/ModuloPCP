@@ -465,11 +465,18 @@ group by
                                       ascending=[False]).reset_index()
     monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
-
+    monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].repl
     monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU',how='left')
     monitorDetalhadoOps.fillna(0, inplace=True)
     monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdAtendido']
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
-    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc'], axis=1)
+    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc','codProduto'], axis=1)
+    # Alternativa para transformar o valor
+    monitorDetalhadoOps['codEngenharia'] = (
+            monitorDetalhadoOps['codEngenharia']
+            .str[:-2]  # Remove os dois últimos caracteres ".0"
+            .str.zfill(9)  # Preenche com zeros à esquerda até 9 caracteres
+            + '-0'  # Adiciona o sufixo "-0"
+    )
 
     return monitorDetalhadoOps
