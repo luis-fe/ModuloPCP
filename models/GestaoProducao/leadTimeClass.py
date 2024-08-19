@@ -23,7 +23,7 @@ class LeadTime():
         Entrada = pd.read_sql(sql, conn, params=(self.dataInicio, self.dataFinal))
         Entrada['seqRoteiro'] = Entrada['seqRoteiro'] +1
         Entrada.drop(['codfase','totPecasOPBaixadas'], axis=1, inplace=True)
-        Entrada.rename(columns={'dataEntrada': 'dataBaixa'}, inplace=True)
+        Entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
         Saida = pd.merge(Saida,Entrada,on=['numeroop','seqRoteiro'])
 
         # Verifica e converte para datetime se necessário
