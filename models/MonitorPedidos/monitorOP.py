@@ -471,7 +471,7 @@ group by
     monitorDetalhadoOps.fillna(0, inplace=True)
     monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdAtendido']
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
-    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc'], axis=1)
+    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc','codProduto'], axis=1)
     # Alternativa para transformar o valor
     monitorDetalhadoOps['codEngenharia'] = (
             monitorDetalhadoOps['codEngenharia']
