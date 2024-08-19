@@ -453,7 +453,7 @@ group by
     sql = pd.merge(sql, monitorDetalhadoOps2, on='codProduto',how='left')
     sql['QtdSaldo'] = sql['total_pc'] -sql['QtdSaldo']
     sql.rename(columns={'QtdSaldo': 'QtdAtendido'}, inplace=True)
-
+    sql = sql[sql['QtdAtendido']>0]
 
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0]
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu']
@@ -466,7 +466,7 @@ group by
     monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
 
-    monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU')
+    monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU',how='left')
 
 
     return monitorDetalhadoOps
