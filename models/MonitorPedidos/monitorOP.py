@@ -453,7 +453,7 @@ group by
     sql = pd.merge(sql, monitorDetalhadoOps2, on='codProduto',how='left')
     sql['QtdSaldo'] = sql['total_pc'] -sql['QtdSaldo']
     sql.rename(columns={'QtdSaldo': 'QtdComprometido','total_pc':'Total em OPs'}, inplace=True)
-    sql = sql[sql['QtdAtendido']>0]
+    sql = sql[sql['QtdComprometido']>0]
     sql = sql.drop(['codProduto'], axis=1)
 
 
