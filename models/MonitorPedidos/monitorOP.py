@@ -467,6 +467,6 @@ group by
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
 
     monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU',how='left')
-    monitorDetalhadoOps.fillna(0)
+    monitorDetalhadoOps.fillna(0, inplace=True)
 
     return monitorDetalhadoOps
