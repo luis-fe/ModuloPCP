@@ -440,7 +440,7 @@ def ProdutosSemOP_(dataInico, dataFim):
 
     sql = """
     select
-	o.codreduzido AS "codProduto",
+	o.codreduzido::int AS "codProduto",
 	sum(o.total_pcs) as total_pc
 from
 	"PCP".pcp.ordemprod o
