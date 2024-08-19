@@ -25,48 +25,6 @@ WHERE
     return consulta
 
 
-def CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade):
-    inserir1 ="""insert into pcp.faccionista  ("codfaccionista","apelidofaccionista", "nomefaccionista") values ( %s , %s, %s ) """
-    inserir2= """insert into pcp."faccaoCategoria" ("codfaccionista", "nomecategoria", "Capacidade/dia")  values ( %s , %s, %s) """
-    sql = """SELECT * FROM pcp.faccionista where "codfaccionista"= %s """
-    sql2 = """SELECT * FROM pcp."faccaoCategoria" where "codfaccionista"= %s and nomecategoria = %s """
-
-    conn1 = ConexaoPostgreWms.conexaoEngine()
-
-
-
-    with ConexaoPostgreWms.conexaoInsercao() as conn:
-        nomefaccionista = ObterNomeCSW(int(codFaccionista))
-        sql = pd.read_sql(sql,conn1,params=(str(codFaccionista),))
-        if sql.empty:
-
-            with conn.cursor() as curr:
-                curr.execute(inserir1,(codFaccionista,apelido,nomefaccionista))
-                conn.commit()
-
-        else:
-            update = """update pcp.faccionista set  "apelidofaccionista" = %s, "nomefaccionista" = %s where "codfaccionista" = %s """
-            with conn.cursor() as curr:
-                curr.execute(update,(apelido, nomefaccionista, codFaccionista))
-                conn.commit()
-
-        for categoria, capacidade in zip(ArrayCategorias, ArrayCapacidade):
-            sql2 = pd.read_sql(sql2, conn1,params=(codFaccionista, categoria))
-
-            if sql2.empty:
-                with conn.cursor() as curr:
-                    curr.execute(inserir2, (codFaccionista, categoria, capacidade))
-                    conn.commit()
-            else:
-                update = """UPDATE  pcp."faccaoCategoria" set nomecategoria = %s, "Capacidade/dia" = %s where "codfaccionista"= %s and nomecategoria = %s    """
-
-                with conn.cursor() as curr:
-                    curr.execute(update, (categoria,capacidade,codFaccionista,categoria))
-                    conn.commit()
-
-    return pd.DataFrame([{'Status':True,'Mensagem':'Registrado com Sucesso !'}])
-
-
 def RegistroFaccionistas():
     sql = """SELECT * FROM pcp.faccionista """
     sql2 = """SELECT * FROM pcp."faccaoCategoria" """
@@ -99,9 +57,3 @@ def ObterCategorias():
     consulta = pd.read_sql(sql,conn)
 
     return consulta
-
-def ObterNomeCSW(codfaccionista):
-    consulta = ListaFaccionistasCsw()
-    consulta = consulta[consulta['codFaccionista']==int(codfaccionista)].reset_index()
-
-    return consulta['nomeFaccionista'][0]

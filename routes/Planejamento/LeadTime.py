@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.GestaoOPAberto import realizadoFases
-
+from models.GestaoProducao import leadTimeClass
 LeadTime_routes = Blueprint('LeadTime_routes', __name__)
 
 def token_required(f):
@@ -45,6 +45,32 @@ def get_LeadTimesRealizados():
 def get_ObterTipoOP():
 
     dados = realizadoFases.ObterTipoOPs()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+@LeadTime_routes.route('/pcp/api/LeadTimesFases', methods=['POST'])
+@token_required
+def get_LeadTimesFases():
+    data = request.get_json()
+
+    dataIncio = data.get('dataIncio')
+    dataFim = data.get('dataFim')
+    arrayTipoOP = data.get('arrayTipoOP',[])
+
+
+    #dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim,arrayTipoOP)
+    leadTime1 = leadTimeClass.LeadTime(dataIncio,dataFim)
+    dados = leadTime1.ObterLeadTimeFases()
 
     # Obtém os nomes das colunas
     column_names = dados.columns

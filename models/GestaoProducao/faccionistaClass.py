@@ -1,5 +1,4 @@
 import gc
-
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
