@@ -35,7 +35,7 @@ class LeadTimeCalculator:
             rf.codfase,
             rf."seqRoteiro",
             rf."dataBaixa",
-            rf."totPecasOPBaixadas as "Realizado" "
+            rf."totPecasOPBaixadas as "Realizado"
         FROM
             "PCP".pcp.realizado_fase rf 
         WHERE
