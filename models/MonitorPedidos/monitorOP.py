@@ -452,7 +452,7 @@ group by
     sql = pd.read_sql(sql,conn)
     sql = pd.merge(sql, monitorDetalhadoOps2, on='codProduto',how='left')
     sql['QtdSaldo'] = sql['total_pc'] -sql['QtdSaldo']
-    sql.rename(columns={'QtdSaldo': 'QtdAtendido'}, inplace=True)
+    sql.rename(columns={'QtdSaldo': 'QtdComprometido','total_pc':'Total em OPs'}, inplace=True)
     sql = sql[sql['QtdAtendido']>0]
     sql = sql.drop(['codProduto'], axis=1)
 
@@ -469,9 +469,8 @@ group by
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
     monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU',how='left')
     monitorDetalhadoOps.fillna(0, inplace=True)
-    monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdAtendido']
+    monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdComprometido']
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
-    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc','codProduto'], axis=1)
     # Alternativa para transformar o valor
     monitorDetalhadoOps['codEngenharia'] = (
             monitorDetalhadoOps['codEngenharia']
@@ -480,5 +479,8 @@ group by
             + '-0'  # Adiciona o sufixo "-0"
     )
     monitorDetalhadoOps['tamanho'] = monitorDetalhadoOps['nomeSKU'].apply(lambda x: x.split()[-2])
+    monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
+    monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido'}, inplace=True)
+
 
     return monitorDetalhadoOps
