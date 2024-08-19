@@ -468,5 +468,8 @@ group by
 
     monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU',how='left')
     monitorDetalhadoOps.fillna(0, inplace=True)
+    monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdAtendido']
+    monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
+    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc'], axis=1)
 
     return monitorDetalhadoOps
