@@ -4,6 +4,7 @@ from flask_cors import CORS
 import pandas as pd
 from models.PainelFaturamento import PainelFaturamento
 import subprocess
+import os
 
 dashboardTVroute = Blueprint('dashboardTVroute', __name__)
 CORS(dashboardTVroute)
@@ -32,6 +33,7 @@ def dashboarTV():
             usuarios = PainelFaturamento.Faturamento_ano(ano, empresa)
             usuarios = pd.DataFrame(usuarios)
 
+        os.system("clear")
         # Obtém os nomes das colunas
         column_names = usuarios.columns
         # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes

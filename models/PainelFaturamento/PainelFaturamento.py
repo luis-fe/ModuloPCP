@@ -313,7 +313,6 @@ def Faturamento_ano(ano, empresa):
 
     df_faturamento['meta'] = 'R$ '+df_faturamento['meta'].str.replace(';', '.')
     df_faturamento['meta acum.'] = 'R$ ' + df_faturamento['meta acum.'].str.replace(';', '.')
-    print(df_faturamento['Mês'] )
     df_faturamento['Mês'] = df_faturamento['Mês'].str.split('-', n=1).str[1]
 
     # Dados que você deseja adicionar
@@ -660,8 +659,6 @@ def Backup(ano, empresa):
 
     if empresa == 'Todas':
 
-        print(dataInicio)
-        print(dataFim)
 
         query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
             'FROM Fat.NotaFiscal n ' \
