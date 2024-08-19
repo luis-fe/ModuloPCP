@@ -72,7 +72,12 @@ class LeadTimeCalculator:
             saida['dataBaixa'] = pd.to_datetime(saida['dataBaixa'], errors='coerce')
             saida['LeadTime(diasCorridos)'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.days
 
-            TotalPecas = saida['Realizado'].sum()
+            saida['RealizadoFase'] = saida.groupby('codfase')['Realizado'].transform('sum')
+            saida['LeadTime(PonderadoPorQtd)'] = (saida['Realizado'] / saida['RealizadoCategoria']) * 100
+
+            saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
+            saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
+                                                             "LeadTimePonderado(diasCorridos)": 'sum'}).reset_index()
 
             return saida
 
