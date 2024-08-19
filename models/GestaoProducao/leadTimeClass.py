@@ -39,7 +39,7 @@ class LeadTimeCalculator:
         FROM
             "PCP".pcp.realizado_fase rf 
         WHERE
-            rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s 
+            rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
         """
 
         # Consulta SQL para obter os dados de entrada
