@@ -454,10 +454,12 @@ group by
     sql['QtdSaldo'] = sql['total_pc'] -sql['QtdSaldo']
     sql.rename(columns={'QtdSaldo': 'QtdAtendido'}, inplace=True)
     sql = sql[sql['QtdAtendido']>0]
+    sql = sql.drop(['codProduto'], axis=1)
+
 
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0]
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu']
-    monitorDetalhadoOps = monitorDetalhadoOps.groupby(['nomeSKU']).agg({'QtdSaldo':'sum','codItemPai':'first'}).reset_index()
+    monitorDetalhadoOps = monitorDetalhadoOps.groupby(['nomeSKU']).agg({'QtdSaldo':'sum','codItemPai':'first','codProduto':'first'}).reset_index()
     monitorDetalhadoOps.fillna('-',inplace=True)
     monitorDetalhadoOps= monitorDetalhadoOps[monitorDetalhadoOps['codItemPai']!='-']
 
@@ -469,7 +471,7 @@ group by
     monitorDetalhadoOps.fillna(0, inplace=True)
     monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdAtendido']
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0].reset_index()
-    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc','codProduto'], axis=1)
+    monitorDetalhadoOps = monitorDetalhadoOps.drop(['index', 'QtdAtendido', 'total_pc'], axis=1)
     # Alternativa para transformar o valor
     monitorDetalhadoOps['codEngenharia'] = (
             monitorDetalhadoOps['codEngenharia']
