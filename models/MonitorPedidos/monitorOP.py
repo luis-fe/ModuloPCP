@@ -465,7 +465,6 @@ group by
                                       ascending=[False]).reset_index()
     monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
-    monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].repl
     monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU',how='left')
     monitorDetalhadoOps.fillna(0, inplace=True)
     monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdAtendido']
