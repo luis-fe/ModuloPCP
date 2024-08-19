@@ -35,7 +35,7 @@ class LeadTimeCalculator:
             rf.codfase,
             rf."seqRoteiro",
             rf."dataBaixa",
-            rf."totPecasOPBaixadas"
+            rf."totPecasOPBaixadas as "Realizado" "
         FROM
             "PCP".pcp.realizado_fase rf 
         WHERE
@@ -46,10 +46,8 @@ class LeadTimeCalculator:
         sql_entrada = """
         SELECT
             rf.numeroop,
-            rf.codfase,
             rf."seqRoteiro",
-            rf."dataBaixa",
-            rf."totPecasOPBaixadas"
+            rf."dataBaixa"        
         FROM
             "PCP".pcp.realizado_fase rf
         WHERE
@@ -66,7 +64,6 @@ class LeadTimeCalculator:
 
             # Processar os dados
             entrada['seqRoteiro'] = entrada['seqRoteiro'] + 1
-            entrada.drop(['codfase', 'totPecasOPBaixadas'], axis=1, inplace=True)
             entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
             saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
 
@@ -74,6 +71,8 @@ class LeadTimeCalculator:
             saida['dataEntrada'] = pd.to_datetime(saida['dataEntrada'], errors='coerce')
             saida['dataBaixa'] = pd.to_datetime(saida['dataBaixa'], errors='coerce')
             saida['LeadTime(diasCorridos)'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.days
+
+            TotalPecas = saida['Realizado'].sum()
 
             return saida
 
