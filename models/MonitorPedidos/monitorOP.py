@@ -479,5 +479,6 @@ group by
             .str.zfill(9)  # Preenche com zeros à esquerda até 9 caracteres
             + '-0'  # Adiciona o sufixo "-0"
     )
+    monitorDetalhadoOps['tamanho'] = monitorDetalhadoOps['tamanho'].apply(lambda x: x.split()[-2])
 
     return monitorDetalhadoOps
