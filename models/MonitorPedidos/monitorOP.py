@@ -435,9 +435,24 @@ def ProdutosSemOP_(dataInico, dataFim):
 
 
     monitorDetalhadoOps2 = monitorDetalhadoOps[(monitorDetalhadoOps['id_op2'] == 'Atendeu')&(monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
-    monitorDetalhadoOps2 = monitorDetalhadoOps.groupby(['nomeSKU']).agg({'QtdSaldo':'sum','codItemPai':'first'}).reset_index()
+    monitorDetalhadoOps2 = monitorDetalhadoOps.groupby(['nomeSKU','codProduto']).agg({'QtdSaldo':'sum'}).reset_index()
 
-    monitorDetalhadoOps2.rename(columns={'QtdAtendido': 'QtdSaldo'}, inplace=True)
+
+    sql = """
+    select
+	o.codreduzido AS "codProduto",
+	sum(o.total_pcs) as total_pc
+from
+	"PCP".pcp.ordemprod o
+where
+	codreduzido::int > 0
+group by
+	codreduzido"""
+    conn = ConexaoPostgreWms.conexaoEngine()
+    sql = pd.read_sql(sql,conn)
+    sql = pd.merge(sql, monitorDetalhadoOps2, on='codProduto',how='left')
+    sql['QtdSaldo'] = sql['total_pc'] -sql['QtdSaldo']
+    sql.rename(columns={'QtdAtendido': 'QtdSaldo'}, inplace=True)
 
 
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo']>0]
@@ -450,6 +465,8 @@ def ProdutosSemOP_(dataInico, dataFim):
                                       ascending=[False]).reset_index()
     monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
     monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
-    #monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].str.replace('.0','')
+
+    monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,sql,on='nomeSKU')
+
 
     return monitorDetalhadoOps
