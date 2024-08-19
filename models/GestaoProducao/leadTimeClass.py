@@ -66,6 +66,7 @@ class LeadTimeCalculator:
             entrada['seqRoteiro'] = entrada['seqRoteiro'] + 1
             entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
             saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
+            saida = saida.drop_duplicates()
 
             # Verifica e converte para datetime se necessário
             saida['dataEntrada'] = pd.to_datetime(saida['dataEntrada'], errors='coerce')
