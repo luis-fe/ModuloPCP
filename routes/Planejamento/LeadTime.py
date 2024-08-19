@@ -69,8 +69,8 @@ def get_LeadTimesFases():
 
 
     #dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim,arrayTipoOP)
-    leadTime1 = leadTimeClass.LeadTime(dataIncio,dataFim)
-    dados = leadTime1.ObterLeadTimeFases()
+    leadTime1 = leadTimeClass.LeadTimeCalculator(dataIncio,dataFim)
+    dados = leadTime1.obter_lead_time_fases()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
