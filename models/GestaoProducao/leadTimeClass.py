@@ -1,7 +1,6 @@
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
-
 class LeadTimeCalculator:
     """
     Classe para calcular o Lead Time das fases de produção.
@@ -74,7 +73,7 @@ class LeadTimeCalculator:
             # Verifica e converte para datetime se necessário
             saida['dataEntrada'] = pd.to_datetime(saida['dataEntrada'], errors='coerce')
             saida['dataBaixa'] = pd.to_datetime(saida['dataBaixa'], errors='coerce')
-            saida['LeadTime(diasCorridos)'] = (saida['dataEntrada'] - saida['dataBaixa']).dt.days
+            saida['LeadTime(diasCorridos)'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.days
 
             return saida
 
