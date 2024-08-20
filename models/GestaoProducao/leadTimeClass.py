@@ -32,7 +32,7 @@ class LeadTimeCalculator:
             pd.DataFrame: DataFrame contendo as informações de Lead Time por fase.
         """
         # Consulta SQL para obter os dados de saída
-        if self.tipoOps != [] or self.tipoOps !=None:
+        if self.tipoOps != [] :
             result = [int(item.split('-')[0]) for item in self.tipoOps]
             result = f"({', '.join(str(x) for x in result)})"
             sql = """
