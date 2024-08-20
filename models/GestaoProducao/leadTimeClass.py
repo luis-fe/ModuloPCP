@@ -132,7 +132,7 @@ class LeadTimeCalculator:
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
 
             '''Inserindo as informacoes no banco para acesso temporario'''
-            TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
+            TotaltipoOp = [str(item.split('-')[0]) for item in self.tipoOps]
             id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
             saida['id'] = id
             self.deletar_backup(id,"leadTimeFases")
