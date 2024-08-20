@@ -57,7 +57,20 @@ class Faccionista():
             WHERE codfaccionista = %s
             	 """
 
-        consulta = pd.read_sql(select, self.conn, params=(self.codfaccionista,))
+        selectAll = """select
+        	        f.codfaccionista ,
+        	        f.nomefaccionista ,
+        	        f.apelidofaccionista 
+                from
+        	        "PCP".pcp.faccionista f
+                    WHERE codfaccionista = %s
+                    	 """
+
+        if self.codfaccionista == None:
+            consulta = pd.read_sql(selectAll, self.conn)
+
+        else:
+            consulta = pd.read_sql(select, self.conn, params=(self.codfaccionista,))
         if consulta.empty:
             consulta['Status'] = False
 
