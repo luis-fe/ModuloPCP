@@ -183,7 +183,7 @@ class LeadTimeCalculator:
                 from
                     backup."leadTimeFases" l
                 where
-                    l.id = %s and l.categora in {result}
+                    l.id = %s and l.categoria in {result}
             """
 
             conn = ConexaoPostgreWms.conexaoEngine()
