@@ -79,6 +79,17 @@ class LeadTimeCalculator:
         sql_entrada = """
                     SELECT
                         o.numeroop as numeroop,
+                        (
+                        select
+                            e.descricao
+                        from
+                            tco.OrdemProd op
+                        join tcp.Engenharia e on
+                            e.codengenharia = op.codproduto
+                            and e.codempresa = 1
+                        WHERE
+                            op.codempresa = 1
+                            and op.numeroop = o.numeroOP) as nome,
                         o.dataBaixa,
                         o.seqRoteiro
                     FROM
@@ -88,8 +99,7 @@ class LeadTimeCalculator:
                         AND O.databaixa >= DATEADD(DAY,
                         -30,
                         GETDATE())
-        """
-
+                            """
         try:
             # Conectar ao banco de dados
             conn = ConexaoPostgreWms.conexaoEngine()
@@ -130,6 +140,7 @@ class LeadTimeCalculator:
 
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(diasCorridos)']*saida['LeadTime(PonderadoPorQtd)']
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
+            saida['categoria'] = saida['nome'].apply(self.mapear_categoria)
 
             '''Inserindo as informacoes no banco para acesso temporario'''
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
@@ -184,3 +195,29 @@ class LeadTimeCalculator:
         saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'] / 100
         saida['LeadTime(diasCorridos)'] = saida['LeadTime(diasCorridos)'].round()
         return saida
+
+    def mapear_categoria(self,nome):
+        categorias_map = {
+            'CAMISA': 'CAMISA',
+            'POLO': 'POLO',
+            'BATA': 'CAMISA',
+            'TRICOT': 'TRICOT',
+            'BONE': 'BONE',
+            'CARTEIRA': 'CARTEIRA',
+            'TSHIRT': 'CAMISETA',
+            'REGATA': 'CAMISETA',
+            'BLUSAO': 'AGASALHOS',
+            'BABY': 'CAMISETA',
+            'JAQUETA': 'JAQUETA',
+            'CINTO': 'CINTO',
+            'PORTA CAR': 'CARTEIRA',
+            'CUECA': 'CUECA',
+            'MEIA': 'MEIA',
+            'SUNGA': 'SUNGA',
+            'SHORT': 'SHORT',
+            'BERMUDA': 'BERMUDA'
+        }
+        for chave, valor in categorias_map.items():
+            if chave in nome.upper():
+                return valor
+        return '-'
