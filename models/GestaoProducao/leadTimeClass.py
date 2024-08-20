@@ -12,7 +12,7 @@ class LeadTimeCalculator:
         data_final (str): Data final do intervalo para análise.
     """
 
-    def __init__(self, data_inicio, data_final):
+    def __init__(self, data_inicio, data_final,tipoOPs = None):
         """
         Inicializa a classe com o intervalo de datas para análise.
 
@@ -22,6 +22,7 @@ class LeadTimeCalculator:
         """
         self.data_inicio = data_inicio
         self.data_final = data_final
+        self.tipoOps = tipoOPs
 
     def obter_lead_time_fases(self):
         """
@@ -31,18 +32,34 @@ class LeadTimeCalculator:
             pd.DataFrame: DataFrame contendo as informações de Lead Time por fase.
         """
         # Consulta SQL para obter os dados de saída
-        sql = """
-        SELECT
-            rf.numeroop,
-            rf.codfase,
-            rf."seqRoteiro",
-            rf."dataBaixa",
-            rf."totPecasOPBaixadas" as "Realizado"
-        FROM
-            "PCP".pcp.realizado_fase rf 
-        WHERE
-            rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
-        """
+        if self.tipoOps != [] or self.tipoOps !=None:
+            result = [int(item.split('-')[0]) for item in self.tipoOps]
+            result = f"({', '.join(str(x) for x in result)})"
+            sql = """
+            SELECT
+                rf.numeroop,
+                rf.codfase,
+                rf."seqRoteiro",
+                rf."dataBaixa",
+                rf."totPecasOPBaixadas" as "Realizado"
+            FROM
+                "PCP".pcp.realizado_fase rf
+            WHERE
+                rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s and codtipoop in """+result
+
+        else:
+            sql = """
+            SELECT
+                rf.numeroop,
+                rf.codfase,
+                rf."seqRoteiro",
+                rf."dataBaixa",
+                rf."totPecasOPBaixadas" as "Realizado"
+            FROM
+                "PCP".pcp.realizado_fase rf 
+            WHERE
+                rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
+            """
 
         # Consulta SQL para obter os dados de entrada NO CSW (maior velocidade de processamento))
         sql_entrada = """
