@@ -1,3 +1,5 @@
+import gc
+
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
@@ -42,16 +44,19 @@ class LeadTimeCalculator:
             rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
         """
 
-        # Consulta SQL para obter os dados de entrada
+        # Consulta SQL para obter os dados de entrada NO CSW (maior velocidade de processamento))
         sql_entrada = """
-        SELECT
-            rf.numeroop,
-            rf."seqRoteiro",
-            rf."dataBaixa"        
-        FROM
-            "PCP".pcp.realizado_fase rf
-        WHERE
-            rf."dataBaixa"::date >= current_date - interval '30 days';
+                SELECT
+                    o.codfase,
+                    o.dataBaixa,
+                    o.seqRoteiro
+                FROM
+                    tco.MovimentacaoOPFase o
+                WHERE
+                    o.codEmpresa = 1
+                    AND O.databaixa >= DATEADD(DAY,
+                    -30,
+                    GETDATE())
         """
 
         try:
@@ -60,7 +65,17 @@ class LeadTimeCalculator:
 
             # Executar as consultas
             saida = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
-            entrada = pd.read_sql(sql_entrada, conn)
+            with ConexaoBanco.Conexao2() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sql_entrada)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    entrada = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+            del rows
+            gc.collect()
+
 
             # Processar os dados
             entrada['seqRoteiro'] = entrada['seqRoteiro'] + 1
