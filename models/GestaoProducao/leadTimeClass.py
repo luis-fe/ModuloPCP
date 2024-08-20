@@ -169,19 +169,24 @@ class LeadTimeCalculator:
 
     def getLeadTimeFases(self):
         if self.categorias != []:
-            result = f'({"", "".join(self.categorias)})'
+            # Transformando o array em string no formato desejado
+            result = f"({', '.join([f'\'{item}\'' for item in self.categorias])})"
 
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
             id = self.data_inicio + '||' + self.data_final + '||' + str(TotaltipoOp)
-            sql = """
-            select
-                *
-            from
-                backup."leadTimeFases" l
-            where
-                l.id = %s and l.categora in """+ result
+
+            # Usando a string formatada na consulta SQL
+            sql = f"""
+                select
+                    *
+                from
+                    backup."leadTimeFases" l
+                where
+                    l.id = %s and l.categora in {result}
+            """
+
             conn = ConexaoPostgreWms.conexaoEngine()
-            saida = pd.read_sql(sql,conn,params=(id,))
+            saida = pd.read_sql(sql, conn, params=(id,))
 
         else:
 
