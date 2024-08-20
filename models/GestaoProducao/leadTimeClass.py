@@ -230,7 +230,7 @@ class LeadTimeCalculator:
         sql = """
         SELECT
         	r.codFase ,
-        	r.codFaccio as codfaccionista ,
+        	r.codFaccio as codFaccionista ,
         	r.codOP ,
         	r.dataEmissao, op.codProduto , e.descricao as nome
         FROM
@@ -241,12 +241,34 @@ class LeadTimeCalculator:
         	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
         WHERE
         	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= '""" + self.data_inicio + """'and r.dataEmissao <=  '""" + self.data_final + """'"""
+
+        sqlRetornoFaccionista = """
+        SELECT
+            r.codFase  ,
+            r.codFaccio as codFaccionista,
+            r.codOP ,
+            r.quantidade as Realizado ,
+            r.dataEntrada
+        FROM
+            tct.RetSimbolicoNFERetorno r
+        inner join 
+            tco.OrdemProd op on op.codEmpresa = 1 and op.numeroOP = r.codOP 
+        inner JOIN 
+            tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+        WHERE
+            r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEntrada >= '"""+self.data_inicio +"""'and r.dataEntrada <=  '"""+self.data_final +"""'"""
+
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 realizado = pd.DataFrame(rows, columns=colunas)
+
+                cursor.execute(sqlRetornoFaccionista)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                sqlRetornoFaccionista = pd.DataFrame(rows, columns=colunas)
 
         # Libera memória manualmente
         del rows
@@ -260,6 +282,8 @@ class LeadTimeCalculator:
         realizado['categoria'] = realizado['nome'].apply(self.mapear_categoria)
 
         realizado = pd.merge(realizado,faccionistas,on='codfaccionista',how='left')
+        realizado = pd.merge(realizado,sqlRetornoFaccionista,on=['codfaccionista','codFase','codOP'],how='left')
+
         realizado.fillna('-',inplace=True)
 
 
