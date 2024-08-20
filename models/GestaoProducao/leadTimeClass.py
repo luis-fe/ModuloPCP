@@ -245,7 +245,7 @@ class LeadTimeCalculator:
         sqlRetornoFaccionista = """
         SELECT
             r.codFase  ,
-            r.codFaccio as codFaccionista,
+            r.codFaccio as codfaccionista,
             r.codOP ,
             r.quantidade as Realizado ,
             r.dataEntrada
