@@ -169,8 +169,7 @@ class LeadTimeCalculator:
 
     def getLeadTimeFases(self):
         if self.categorias != []:
-            result = [str(item.split('-')[0]) for item in self.categorias]
-            result = f"({', '.join(str(x) for x in result)})"
+            result = f'({"", "".join(self.categorias)})'
 
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
             id = self.data_inicio + '||' + self.data_final + '||' + str(TotaltipoOp)
