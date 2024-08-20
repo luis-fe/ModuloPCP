@@ -61,11 +61,24 @@ class LeadTimeCalculator:
                 rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
             """
 
+        sqlFasesCsw = """
+                select
+            f.nome as nomeFase,
+            f.codFase as codfase
+        FROM
+            tcp.FasesProducao f
+        WHERE
+            f.codempresa = 1
+            and f.codFase >400
+            and f.codFase <500
+        """
+
+
+
         # Consulta SQL para obter os dados de entrada NO CSW (maior velocidade de processamento))
         sql_entrada = """
                     SELECT
                         o.numeroop as numeroop,
-                        (select f.nome  FROM tcp.FasesProducao f WHERE f.codempresa = 1 and f.codfase = o.codfase) as nomeFase,
                         o.dataBaixa,
                         o.seqRoteiro
                     FROM
@@ -90,6 +103,11 @@ class LeadTimeCalculator:
                     rows = cursor.fetchall()
                     entrada = pd.DataFrame(rows, columns=colunas)
 
+                    cursor.execute(sql_entrada)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    sqlFasesCsw = pd.DataFrame(rows, columns=colunas)
+
             # Libera memória manualmente
             del rows
             gc.collect()
@@ -100,6 +118,7 @@ class LeadTimeCalculator:
             entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
             saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
             saida = saida.drop_duplicates()
+            saida = pd.merge(saida,sqlFasesCsw,on='codfase')
 
             # Verifica e converte para datetime se necessário
             saida['dataEntrada'] = pd.to_datetime(saida['dataEntrada'], errors='coerce')
