@@ -135,7 +135,7 @@ class LeadTimeCalculator:
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
             id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
             saida['id'] = id
-            self.DeletarBackup(id,"leadTimeFases")
+            self.deletar_backup(id,"leadTimeFases")
             ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
 
             saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
