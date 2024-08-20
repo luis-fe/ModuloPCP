@@ -82,3 +82,28 @@ def get_LeadTimesFases():
 
     # Retorna os dados em formato JSON
     return jsonify(OP_data)
+
+@LeadTime_routes.route('/pcp/api/LeadTimesFaccionistas', methods=['POST'])
+@token_required
+def get_LeadTimesFaccionistas():
+    data = request.get_json()
+
+    # Corrigindo o nome da variável para 'dataInicio'
+    dataInicio = data.get('dataInicio')
+    dataFim = data.get('dataFim')
+    arrayTipoOP = data.get('arrayTipoOP', [])
+    arrayCategorias = data.get('arrayCategorias', [])
+
+    # Instancia a classe e obtém os dados
+    leadTime1 = leadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
+    dados = leadTime1.getLeadTimeFaccionistas()
+
+    # Converte o DataFrame para uma lista de dicionários de forma eficiente
+    OP_data = dados.to_dict('records')
+
+    # Libera a memória ocupada pelo DataFrame, se necessário
+    del dados
+    gc.collect()
+
+    # Retorna os dados em formato JSON
+    return jsonify(OP_data)

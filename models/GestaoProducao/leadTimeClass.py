@@ -1,5 +1,5 @@
 import gc
-
+import numpy as np
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
@@ -190,7 +190,6 @@ class LeadTimeCalculator:
             saida = pd.read_sql(sql, conn, params=(id,))
 
         else:
-
             saida = self.obter_lead_time_fases()
 
 
@@ -225,3 +224,38 @@ class LeadTimeCalculator:
             if chave in nome.upper():
                 return valor
         return '-'
+
+    def getLeadTimeFaccionistas(self):
+
+        sql = """
+        SELECT
+        	r.codFase ,
+        	r.codFaccio as codFaccionista ,
+        	r.codOP ,
+        	r.dataEmissao, op.codProduto , e.descricao as nome
+        FROM
+        	tct.RetSimbolicoNF r
+        inner join 
+        	tco.OrdemProd op on op.codEmpresa = 1 and op.numeroOP = r.codOP 
+        inner JOIN 
+        	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+        WHERE
+        	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= '""" + self.data_inicio + """'and r.dataEmissao <=  '""" + self.data_final + """'"""
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                realizado = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        realizado['categoria'] = '-'
+        realizado['nome'] = realizado['nome'].astype(str)
+        realizado['categoria'] = realizado['nome'].apply(self.mapear_categoria)
+
+
+        return realizado
+
