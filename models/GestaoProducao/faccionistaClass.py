@@ -70,10 +70,12 @@ class Faccionista():
 
         else:
             consulta = pd.read_sql(select, self.conn, params=(self.codfaccionista,))
-        if consulta.empty:
-            consulta['Status'] = False
 
-        consulta['Status'] = True
+
+            if consulta.empty:
+                consulta['Status'] = False
+
+            consulta['Status'] = True
 
         return consulta
 
