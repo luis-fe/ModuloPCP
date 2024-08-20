@@ -149,6 +149,7 @@ class LeadTimeCalculator:
             return None
 
     def deletar_backup(self, id, tabela_temporaria):
+        tabela_temporaria = '"'+tabela_temporaria+'"'
         delete = """
         DELETE FROM backup.%s
         WHERE id = %s
