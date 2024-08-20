@@ -138,10 +138,6 @@ class LeadTimeCalculator:
             self.deletar_backup(id,"leadTimeFases")
             ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
 
-            saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
-                                                             "LeadTime(PonderadoPorQtd)": 'sum','nomeFase':'first'}).reset_index()
-            saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)']/100
-            saida['LeadTime(diasCorridos)'] = saida['LeadTime(diasCorridos)'].round()
             return saida
 
         except Exception as e:
@@ -159,3 +155,32 @@ class LeadTimeCalculator:
             with conn.cursor() as curr:
                 curr.execute(delete, (id,))
                 conn.commit()
+
+    def getLeadTimeFases(self):
+        if self.categorias != []:
+            result = [int(item.split('-')[0]) for item in self.categorias]
+            result = f"({', '.join(str(x) for x in result)})"
+
+            TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
+            id = self.data_inicio + '||' + self.data_final + '||' + str(TotaltipoOp)
+            sql = """
+            select
+                *
+            from
+                backup."leadTimeFases" l
+            where
+                l.id = %s
+            """
+            conn = ConexaoPostgreWms.conexaoEngine()
+            saida = pd.read_sql(sql,conn,params=(id,))
+
+        else:
+
+            saida = self.obter_lead_time_fases()
+
+
+        saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
+                                                    "LeadTime(PonderadoPorQtd)": 'sum', 'nomeFase': 'first'}).reset_index()
+        saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'] / 100
+        saida['LeadTime(diasCorridos)'] = saida['LeadTime(diasCorridos)'].round()
+        return saida
