@@ -63,17 +63,18 @@ class LeadTimeCalculator:
 
         # Consulta SQL para obter os dados de entrada NO CSW (maior velocidade de processamento))
         sql_entrada = """
-                SELECT
-                    o.numeroop as numeroop,
-                    o.dataBaixa,
-                    o.seqRoteiro
-                FROM
-                    tco.MovimentacaoOPFase o
-                WHERE
-                    o.codEmpresa = 1
-                    AND O.databaixa >= DATEADD(DAY,
-                    -30,
-                    GETDATE())
+                    SELECT
+                        o.codfase,
+                        (select f.nome  FROM tcp.FasesProducao f WHERE f.codempresa = 1 and f.codfase = o.codfase) as nomeFase,
+                        o.dataBaixa,
+                        o.seqRoteiro
+                    FROM
+                        tco.MovimentacaoOPFase o
+                    WHERE
+                        o.codEmpresa = 1
+                        AND O.databaixa >= DATEADD(DAY,
+                        -30,
+                        GETDATE())
         """
 
         try:
