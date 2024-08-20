@@ -63,7 +63,6 @@ class Faccionista():
         	        f.apelidofaccionista 
                 from
         	        "PCP".pcp.faccionista f
-                    WHERE codfaccionista = %s
                     	 """
 
         if self.codfaccionista == None:
