@@ -69,7 +69,7 @@ def get_LeadTimesFases():
     arrayTipoOP = data.get('arrayTipoOP', [])
 
     # Instancia a classe e obtém os dados
-    leadTime1 = leadTimeClass.LeadTimeCalculator(dataInicio, dataFim)
+    leadTime1 = leadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP)
     dados = leadTime1.obter_lead_time_fases()
 
     # Converte o DataFrame para uma lista de dicionários de forma eficiente
