@@ -12,17 +12,20 @@ class LeadTimeCalculator:
         data_final (str): Data final do intervalo para análise.
     """
 
-    def __init__(self, data_inicio, data_final,tipoOPs = None):
+    def __init__(self, data_inicio, data_final,tipoOPs = None, categorias = None):
         """
         Inicializa a classe com o intervalo de datas para análise.
 
         Args:
             data_inicio (str): Data de início do intervalo.
             data_final (str): Data final do intervalo.
+            tipoOPs ([str]): tipos de Ops a serem filtradas
+            categorias ([str]): tipos de categorias a serem filtradas
         """
         self.data_inicio = data_inicio
         self.data_final = data_final
         self.tipoOps = tipoOPs
+        self.categorias = categorias
 
     def obter_lead_time_fases(self):
         """
@@ -72,9 +75,6 @@ class LeadTimeCalculator:
             and f.codFase >400
             and f.codFase <500
         """
-
-
-
         # Consulta SQL para obter os dados de entrada NO CSW (maior velocidade de processamento))
         sql_entrada = """
                     SELECT
@@ -130,6 +130,10 @@ class LeadTimeCalculator:
 
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(diasCorridos)']*saida['LeadTime(PonderadoPorQtd)']
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
+
+            '''Inserindo as informacoes no banco para acesso temporario'''
+            saida['id'] = self.data_inicio+'||'+self.data_final
+            ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
 
             saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
                                                              "LeadTime(PonderadoPorQtd)": 'sum','nomeFase':'first'}).reset_index()
