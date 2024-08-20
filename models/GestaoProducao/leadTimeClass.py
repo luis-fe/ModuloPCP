@@ -103,7 +103,7 @@ class LeadTimeCalculator:
                     rows = cursor.fetchall()
                     entrada = pd.DataFrame(rows, columns=colunas)
 
-                    cursor.execute(sql_entrada)
+                    cursor.execute(sqlFasesCsw)
                     colunas = [desc[0] for desc in cursor.description]
                     rows = cursor.fetchall()
                     sqlFasesCsw = pd.DataFrame(rows, columns=colunas)
