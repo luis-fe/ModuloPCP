@@ -96,9 +96,9 @@ def get_LeadTimesFaccionistas():
 
     # Instancia a classe e obtém os dados
     leadTime1 = leadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
-    faccionista = faccionistaClass.Faccionista()
+    faccionistas = faccionistaClass.Faccionista()
 
-    dados = leadTime1.getLeadTimeFaccionistas(faccionista.ConsultarFaccionista())
+    dados = leadTime1.getLeadTimeFaccionistas(faccionistas.ConsultarFaccionista())
 
     # Converte o DataFrame para uma lista de dicionários de forma eficiente
     OP_data = dados.to_dict('records')
