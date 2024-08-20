@@ -255,6 +255,7 @@ class LeadTimeCalculator:
         realizado['categoria'] = '-'
         realizado['nome'] = realizado['nome'].astype(str)
         faccionistas['codfaccionista'] = faccionistas['codfaccionista'].astype(str)
+        realizado['codfaccionista'] = realizado['codfaccionista'].astype(str)
 
         realizado['categoria'] = realizado['nome'].apply(self.mapear_categoria)
 
