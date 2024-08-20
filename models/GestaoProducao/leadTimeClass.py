@@ -133,7 +133,9 @@ class LeadTimeCalculator:
 
             '''Inserindo as informacoes no banco para acesso temporario'''
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
-            saida['id'] = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
+            id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
+            saida['id'] = id
+            self.DeletarBackup(id,"leadTimeFases")
             ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
 
             saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
@@ -146,3 +148,13 @@ class LeadTimeCalculator:
             print(f"Erro ao calcular o Lead Time: {e}")
             return None
 
+    def DeletarBackup(self,id, tabelaTemporaria):
+        delete = """
+        DELETE FROM backup.%s
+        WHERE id = %s
+        """
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.exculte(delete,(tabelaTemporaria,id))
+                conn.commit()
