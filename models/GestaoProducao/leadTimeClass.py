@@ -132,7 +132,8 @@ class LeadTimeCalculator:
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
 
             '''Inserindo as informacoes no banco para acesso temporario'''
-            saida['id'] = self.data_inicio+'||'+self.data_final
+            TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
+            saida['id'] = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
             ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
 
             saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
