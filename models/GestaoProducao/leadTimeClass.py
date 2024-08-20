@@ -225,12 +225,12 @@ class LeadTimeCalculator:
                 return valor
         return '-'
 
-    def getLeadTimeFaccionistas(self):
+    def getLeadTimeFaccionistas(self, faccionistas):
 
         sql = """
         SELECT
         	r.codFase ,
-        	r.codFaccio as codFaccionista ,
+        	r.codFaccio as codfaccionista ,
         	r.codOP ,
         	r.dataEmissao, op.codProduto , e.descricao as nome
         FROM
@@ -255,6 +255,10 @@ class LeadTimeCalculator:
         realizado['categoria'] = '-'
         realizado['nome'] = realizado['nome'].astype(str)
         realizado['categoria'] = realizado['nome'].apply(self.mapear_categoria)
+
+        realizado = pd.merge(realizado,faccionistas,on='codfaccionista',how='left')
+        realizado.fillna('-',inplace=True)
+
 
 
         return realizado
