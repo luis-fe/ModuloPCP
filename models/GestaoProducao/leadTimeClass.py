@@ -148,13 +148,13 @@ class LeadTimeCalculator:
             print(f"Erro ao calcular o Lead Time: {e}")
             return None
 
-    def DeletarBackup(self,id, tabelaTemporaria):
+    def deletar_backup(self, id, tabela_temporaria):
         delete = """
         DELETE FROM backup.%s
         WHERE id = %s
-        """
+        """ % (tabela_temporaria, '%s')  # Substituindo tabela_temporaria corretamente
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
-                curr.exculte(delete,(tabelaTemporaria,id))
+                curr.execute(delete, (id,))
                 conn.commit()
