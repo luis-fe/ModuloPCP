@@ -182,7 +182,7 @@ class LeadTimeCalculator:
             where
                 l.id = %s and l.categora in """+ result
             conn = ConexaoPostgreWms.conexaoEngine()
-            saida = pd.read_sql(sql,conn,params=(id,result))
+            saida = pd.read_sql(sql,conn,params=(id,))
 
         else:
 
