@@ -180,10 +180,9 @@ class LeadTimeCalculator:
             from
                 backup."leadTimeFases" l
             where
-                l.id = %s
-            """
+                l.id = %s and l.categora in """+ result
             conn = ConexaoPostgreWms.conexaoEngine()
-            saida = pd.read_sql(sql,conn,params=(id,))
+            saida = pd.read_sql(sql,conn,params=(id,result))
 
         else:
 
