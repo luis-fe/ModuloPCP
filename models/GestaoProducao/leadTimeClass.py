@@ -113,7 +113,7 @@ class LeadTimeCalculator:
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
 
             saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
-                                                             "LeadTime(PonderadoPorQtd)": 'sum'}).reset_index()
+                                                             "LeadTime(PonderadoPorQtd)": 'sum','nomeFase':'first'}).reset_index()
             saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)']/100
             saida['LeadTime(diasCorridos)'] = saida['LeadTime(diasCorridos)'].round()
             return saida
