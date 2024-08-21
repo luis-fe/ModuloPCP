@@ -296,6 +296,7 @@ class LeadTimeCalculator:
 
         if self.tipoOps != []:
             codtipoops = pd.DataFrame(self.tipoOps, columns=["codtipoop"])
+            print(codtipoops)
             realizado = pd.merge(realizado, codtipoops, on=['codtipoop'])
 
         if self.categorias != []:
