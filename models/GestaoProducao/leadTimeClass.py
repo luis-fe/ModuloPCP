@@ -249,7 +249,7 @@ class LeadTimeCalculator:
             r.codOP ,
             r.quantidade as Realizado ,
             r.dataEntrada as dataBaixa,
-            op.codtipoop
+            op.codtipoop as codtipoop
         FROM
             tct.RetSimbolicoNFERetorno r
         inner join 
