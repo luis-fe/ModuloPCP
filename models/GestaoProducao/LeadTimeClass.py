@@ -381,7 +381,7 @@ class LeadTimeCalculator:
         WHERE
             o.codEmpresa = 1
             and codFase in (236, 449) 
-            where 
+            and 
                 o."dataBaixa" >= '"""+self.data_inicio+"""'
                 and o."dataBaixa" <= '"""+self.data_final+"""' and op.codtipoop in """ + result
 
