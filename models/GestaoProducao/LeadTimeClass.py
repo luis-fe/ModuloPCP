@@ -374,8 +374,8 @@ class LeadTimeCalculator:
 
             MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(self.data_inicio, self.data_final))
 
-            with ConexaoBanco.Conexao2() as conn:
-                with conn.cursor() as cursor:
+            with ConexaoBanco.Conexao2() as connCsw:
+                with connCsw.cursor() as cursor:
                     cursor.execute(sqlMovPCP)
                     colunas = [desc[0] for desc in cursor.description]
                     rows = cursor.fetchall()
@@ -412,8 +412,8 @@ class LeadTimeCalculator:
                 and rf."dataBaixa"::date <= %s and codFase in (236, 449) """
             MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(self.data_inicio, self.data_final))
 
-            with ConexaoBanco.Conexao2() as conn:
-                with conn.cursor() as cursor:
+            with ConexaoBanco.Conexao2() as connCsw:
+                with connCsw.cursor() as cursor:
                     cursor.execute(sqlMovPCP)
                     colunas = [desc[0] for desc in cursor.description]
                     rows = cursor.fetchall()
@@ -428,7 +428,6 @@ class LeadTimeCalculator:
         )
 
         leadTime = pd.merge(MovEntradaEstoque, MovPCP, on='OpPCP', how='left')
-        print(leadTime)
 
         # Verifica e converte para datetime se necessário
         leadTime['dataBaixaPCP'] = pd.to_datetime(leadTime['dataBaixaPCP'], errors='coerce')
