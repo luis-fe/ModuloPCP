@@ -97,7 +97,7 @@ class LeadTimeCalculator:
                             and op.numeroop = o.numeroOP) as nome,
                         o.dataBaixa,
                         o.seqRoteiro,
-                        o.horaMov as horaMovEntrada
+                        o.horaMov as horaMovEntrada, codtipoop as codtipoop
                     FROM
                         tco.MovimentacaoOPFase o
                     WHERE
