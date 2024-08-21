@@ -99,7 +99,7 @@ class LeadTimeCalculator:
                             and op.numeroop = o.numeroOP) as nome,
                         o.dataBaixa,
                         o.seqRoteiro,
-                        o."horaMov" as "horaMovEntrada"
+                        o.horaMov as horaMovEntrada
                     FROM
                         tco.MovimentacaoOPFase o
                     WHERE
@@ -114,8 +114,9 @@ class LeadTimeCalculator:
 
             # Executar as consultas
             saida = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
-            with ConexaoBanco.Conexao2() as conn:
-                with conn.cursor() as cursor:
+
+            with ConexaoBanco.Conexao2() as connCSW:
+                with connCSW.cursor() as cursor:
                     cursor.execute(sql_entrada)
                     colunas = [desc[0] for desc in cursor.description]
                     rows = cursor.fetchall()
