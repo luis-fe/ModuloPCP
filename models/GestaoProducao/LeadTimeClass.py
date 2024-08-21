@@ -1,7 +1,8 @@
 import gc
-import numpy as np
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
+import pytz
+from datetime import datetime
 
 class LeadTimeCalculator:
     """
@@ -145,9 +146,11 @@ class LeadTimeCalculator:
             saida['categoria'] = saida['nome'].apply(self.mapear_categoria)
 
             '''Inserindo as informacoes no banco para acesso temporario'''
+
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
             id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
             saida['id'] = id
+            saida['diaAtual'] = self.obterdiaAtual()
             self.deletar_backup(id,"leadTimeFases")
             ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
 
@@ -194,6 +197,12 @@ class LeadTimeCalculator:
             if self.categorias != []:
                 categorias = pd.DataFrame(self.categorias, columns=["categoria"])
                 saida = pd.merge(saida, categorias, on=['categoria'])
+
+            if self.tipoOps != []:
+                result = [int(item.split('-')[0]) for item in self.tipoOps]
+                codtipoops = pd.DataFrame(result, columns=["codtipoop"])
+                saida = pd.merge(saida, codtipoops, on=['codtipoop'])
+
 
         else:
             saida = self.obter_lead_time_fases()
@@ -303,7 +312,6 @@ class LeadTimeCalculator:
         if self.tipoOps != []:
             result = [int(item.split('-')[0]) for item in self.tipoOps]
             codtipoops = pd.DataFrame(result, columns=["codtipoop"])
-            print(codtipoops)
 
             realizado = pd.merge(realizado, codtipoops, on=['codtipoop'])
 
@@ -395,6 +403,12 @@ class LeadTimeCalculator:
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 MovPCP = pd.DataFrame(rows, columns=colunas)
+
+    def obterdiaAtual(self):
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d')
+        return pd.to_datetime(agora)
 
 
 
