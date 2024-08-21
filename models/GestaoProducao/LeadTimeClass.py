@@ -357,8 +357,7 @@ class LeadTimeCalculator:
                 and op.numeroop = o.numeroOP
             WHERE
                 o.codEmpresa = 1
-                and dataBaixa <= '"""+self.data_final+"""'
-                and codFase in (401) and op.codTipoOP in """ + result
+                and dataBaixa <= '"""+self.data_final+"""' and codFase in (401) and op.codTipoOP in """ + result
 
             sqlMovEntradaEstoque = """
         SELECT
@@ -380,10 +379,8 @@ class LeadTimeCalculator:
             and e.codEngenharia = op.codProduto 
         WHERE
             o.codEmpresa = 1
-            and codFase in (236, 449) 
-            and 
-                o."dataBaixa" >= '"""+self.data_inicio+"""'
-                and o."dataBaixa" <= '"""+self.data_final+"""' and op.codtipoop in """ + result
+            and codFase in (236, 449) and 
+            o."dataBaixa" >= '"""+self.data_inicio+"""' and o."dataBaixa" <= '"""+self.data_final+"""' and op.codtipoop in """ + result
 
             with ConexaoBanco.Conexao2() as conn:
                 with conn.cursor() as cursor:
@@ -413,8 +410,7 @@ class LeadTimeCalculator:
                 and op.numeroop = o.numeroOP
             WHERE
                 o.codEmpresa = 1
-                and dataBaixa <= '"""+self.data_final+"""'
-                and codFase in (401) """
+                and dataBaixa <= '"""+self.data_final+"""' and codFase in (401) """
 
             sqlMovEntradaEstoque = """
             SELECT
@@ -437,9 +433,7 @@ class LeadTimeCalculator:
             WHERE
                 o.codEmpresa = 1
                 and codFase in (236, 449) 
-                and 
-                    o."dataBaixa" >= '""" + self.data_inicio + """'
-                    and o."dataBaixa" <= '""" + self.data_final + """' """
+                and o."dataBaixa" >= '""" + self.data_inicio + """' and o."dataBaixa" <= '""" + self.data_final + """' """
 
             with ConexaoBanco.Conexao2() as conn:
                 with conn.cursor() as cursor:
