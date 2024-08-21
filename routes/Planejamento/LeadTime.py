@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models.GestaoOPAberto import realizadoFases
 from models.GestaoProducao import LeadTimeClass, FaccionistaClass, TipoOPClass
 import gc
 LeadTime_routes = Blueprint('LeadTime_routes', __name__)
@@ -25,8 +24,8 @@ def get_LeadTimesRealizados():
     dataFim = data.get('dataFim')
     arrayTipoOP = data.get('arrayTipoOP',[])
 
-
-    dados = realizadoFases.LeadTimeRealizado(dataIncio, dataFim,arrayTipoOP)
+    leadTime = LeadTimeClass.LeadTimeCalculator(dataIncio,dataFim,arrayTipoOP)
+    dados = leadTime.leadTimeCategoria()
 
     # Obtém os nomes das colunas
     column_names = dados.columns

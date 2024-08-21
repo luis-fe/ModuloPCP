@@ -1,4 +1,6 @@
 import gc
+
+import numpy as np
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 import pytz
@@ -337,7 +339,6 @@ class LeadTimeCalculator:
 
         return realizado
     def leadTimeCategoria(self):
-        conn = ConexaoPostgreWms.conexaoEngine()
         if self.tipoOps != []:
             result = [int(item.split('-')[0]) for item in self.tipoOps]
             result = f"({', '.join(str(x) for x in result)})"
@@ -360,7 +361,7 @@ class LeadTimeCalculator:
                 and codFase in (401) and op.codTipoOP in """ + result
 
             sqlMovEntradaEstoque = """
-                        SELECT
+        SELECT
             e.codEngenharia,
             o.numeroOP,
             CONVERT(varchar(4),codfase) as codFase,
@@ -381,8 +382,20 @@ class LeadTimeCalculator:
             o.codEmpresa = 1
             and codFase in (236, 449) 
             where 
-                rf."dataBaixa" >= '"""+self.data_inicio+"""'
-                and rf."dataBaixa" <= '"""+self.data_final+"""' and codtipoop in """ + result
+                o."dataBaixa" >= '"""+self.data_inicio+"""'
+                and o."dataBaixa" <= '"""+self.data_final+"""' and op.codtipoop in """ + result
+
+            with ConexaoBanco.Conexao2() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sqlMovPCP)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    MovPCP = pd.DataFrame(rows, columns=colunas)
+
+                    cursor.execute(sqlMovEntradaEstoque)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    MovEntradaEstoque = pd.DataFrame(rows, columns=colunas)
 
         else:
 
@@ -403,12 +416,113 @@ class LeadTimeCalculator:
                 and dataBaixa <= '"""+self.data_final+"""'
                 and codFase in (401) """
 
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sqlMovPCP)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                MovPCP = pd.DataFrame(rows, columns=colunas)
+            sqlMovEntradaEstoque = """
+            SELECT
+                e.codEngenharia,
+                o.numeroOP,
+                CONVERT(varchar(4),codfase) as codFase,
+                o.seqRoteiro, 
+                o.dataBaixa,
+                o.horaMov,
+                o.totPecasOPBaixadas as Realizado
+            FROM
+                tco.MovimentacaoOPFase o
+            inner Join 
+                tco.OrdemProd op on
+                op.codempresa = 1
+                and op.numeroop = o.numeroOP
+            inner JOIN 
+                tcp.Engenharia e on e.codEmpresa = 1
+                and e.codEngenharia = op.codProduto 
+            WHERE
+                o.codEmpresa = 1
+                and codFase in (236, 449) 
+                and 
+                    o."dataBaixa" >= '""" + self.data_inicio + """'
+                    and o."dataBaixa" <= '""" + self.data_final + """' """
+
+            with ConexaoBanco.Conexao2() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sqlMovPCP)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    MovPCP = pd.DataFrame(rows, columns=colunas)
+
+                    cursor.execute(sqlMovEntradaEstoque)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    MovEntradaEstoque = pd.DataFrame(rows, columns=colunas)
+
+
+        MovEntradaEstoque['OpPCP'] = np.where(
+            MovEntradaEstoque['numeroop'].str.endswith('-001'),
+            MovEntradaEstoque['numeroop'],
+            MovEntradaEstoque['numeroop'].str.slice(stop=-4) + '-001'
+        )
+
+        leadTime = pd.merge(MovEntradaEstoque, MovPCP, on='OpPCP', how='left')
+
+        # Verifica e converte para datetime se necessário
+        leadTime['dataBaixaPCP'] = pd.to_datetime(leadTime['dataBaixaPCP'], errors='coerce')
+        leadTime['horaMovPCP'] = pd.to_datetime(leadTime['horaMovPCP'], format='%H:%M:%S', errors='coerce').dt.time
+        leadTime['dataBaixa'] = pd.to_datetime(leadTime['dataBaixa'], errors='coerce')
+        leadTime['horaMov'] = pd.to_datetime(leadTime['horaMov'], format='%H:%M:%S', errors='coerce').dt.time
+        leadTime['LeadTime(diasCorridos)'] = (leadTime['dataBaixa'] - leadTime['dataBaixaPCP']).dt.days
+
+        # Converter para string usando o formato desejado
+        leadTime['dataBaixaPCP'] = leadTime['dataBaixaPCP'].dt.strftime('%Y-%m-%d')
+        leadTime['dataBaixa'] = leadTime['dataBaixa'].dt.strftime('%Y-%m-%d')
+        leadTime['horaMovPCP'] = leadTime['horaMovPCP'].apply(
+            lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
+        leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
+
+        sqlNomeEngenharia = """
+        select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') or ("codItemPai" like '2%') group by "codItemPai"
+        """
+        NomeEngenharia = pd.read_sql(sqlNomeEngenharia, conn)
+
+        NomeEngenharia['codEngenharia'] = np.where(
+            NomeEngenharia['codItemPai'].str.startswith(('1', '2')),
+            '0' + NomeEngenharia['codItemPai'] + '-0',
+            NomeEngenharia['codItemPai'] + '-0'
+        )
+        leadTime = pd.merge(leadTime, NomeEngenharia, on='codEngenharia', how='left')
+
+        leadTime['categoria'] = leadTime['nome'].apply(self.mapear_categoria)
+        leadTime = leadTime.drop_duplicates()
+
+        TotalPecas = leadTime['Realizado'].sum()
+        leadTime['LeadTime(PonderadoPorQtd)'] = (leadTime['Realizado'] / TotalPecas) * leadTime[
+            'LeadTime(diasCorridos)']
+        leadTimePonderado = leadTime['LeadTime(PonderadoPorQtd)'].sum()
+
+        leadTime['RealizadoCategoria'] = leadTime.groupby('categoria')['Realizado'].transform('sum')
+        leadTime['LeadTimePonderado(categoria)'] = (leadTime['Realizado'] / leadTime['RealizadoCategoria']) * 100
+
+        leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTime(diasCorridos)'] * leadTime[
+            'LeadTimePonderado(categoria)'].round(2)
+        leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTimePonderado(diasCorridos)'].round()
+
+        leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
+
+        leadTime_ = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
+                                                         "LeadTimePonderado(diasCorridos)": 'sum'}).reset_index()
+        leadTime_ = leadTime_[leadTime_['categoria'] != '-']
+        leadTime_['LeadTime(diasCorridos)'] = leadTime_['LeadTime(diasCorridos)'].round()
+        leadTime_['LeadTimePonderado(diasCorridos)'] = leadTime_['LeadTimePonderado(diasCorridos)'] / 100
+        leadTime_['LeadTimePonderado(diasCorridos)'] = leadTime_['LeadTimePonderado(diasCorridos)'].apply(np.ceil)
+
+        MetaCategoria = self.ObterCategorias()
+        leadTime_ = pd.merge(leadTime_, MetaCategoria, on='categoria', how='left')
+
+        dados = {
+            '01-leadTimeMedioGeral': f'{leadTimeMedioGeral} dias',
+            '02-LeadTimeMediaPonderada': f'{round(leadTimePonderado)} dias',
+            '03-TotalPeças': f'{TotalPecas} pçs',
+            '04-LeadTimeCategorias': leadTime_.to_dict(orient='records')}
+
+        return pd.DataFrame([dados])
+
 
     def obterdiaAtual(self):
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
@@ -429,6 +543,14 @@ class LeadTimeCalculator:
             with conn.cursor() as curr:
                 curr.execute(delete,)
                 conn.commit()
+
+    def ObterCategorias(self):
+        sql = """Select "nomecategoria" as categoria, "leadTime" as meta from pcp.categoria """
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql, conn)
+
+        return consulta
+
 
 
 
