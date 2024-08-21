@@ -48,8 +48,7 @@ class LeadTimeCalculator:
                 rf.numeroop,
                 rf.codfase,
                 rf."seqRoteiro",
-                rf."dataBaixa",
-                rf."horaMov",
+                rf."dataBaixa"||' '||rf."horaMov" as "dataBaixa",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
                 "PCP".pcp.realizado_fase rf
@@ -62,8 +61,7 @@ class LeadTimeCalculator:
                 rf.numeroop,
                 rf.codfase,
                 rf."seqRoteiro",
-                rf."dataBaixa",
-                rf."horaMov",
+                rf."dataBaixa"||' '||rf."horaMov" as "dataBaixa",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
                 "PCP".pcp.realizado_fase rf 
@@ -108,14 +106,14 @@ class LeadTimeCalculator:
                         -30,
                         GETDATE())
                             """
-        try:
-            # Conectar ao banco de dados
-            conn = ConexaoPostgreWms.conexaoEngine()
 
-            # Executar as consultas
-            saida = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
+        # Conectar ao banco de dados
+        conn = ConexaoPostgreWms.conexaoEngine()
 
-            with ConexaoBanco.Conexao2() as connCSW:
+        # Executar as consultas
+        saida = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
+
+        with ConexaoBanco.Conexao2() as connCSW:
                 with connCSW.cursor() as cursor:
                     cursor.execute(sql_entrada)
                     colunas = [desc[0] for desc in cursor.description]
@@ -127,50 +125,45 @@ class LeadTimeCalculator:
                     rows = cursor.fetchall()
                     sqlFasesCsw = pd.DataFrame(rows, columns=colunas)
 
-            # Libera memória manualmente
-            del rows
-            gc.collect()
+        # Libera memória manualmente
+        del rows
+        gc.collect()
 
 
-            # Processar os dados
-            entrada['seqRoteiro'] = entrada['seqRoteiro'] + 1
-            entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
-            saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
-            saida = saida.drop_duplicates()
-            saida = pd.merge(saida,sqlFasesCsw,on='codfase')
+        # Processar os dados
+        entrada['seqRoteiro'] = entrada['seqRoteiro'] + 1
+        entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
+        saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
+        saida = saida.drop_duplicates()
+        saida = pd.merge(saida,sqlFasesCsw,on='codfase')
 
-            # Verifica e converte para datetime se necessário
-
-
+        # Verifica e converte para datetime se necessário
 
 
-            saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
-            saida['dataBaixa'] = pd.to_datetime((saida['dataBaixa'] + ' ' + saida['horaMov']), errors='coerce')
-            saida['DiferencaHoras'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.total_seconds() / 3600
-            print(saida['LeadTime(diasCorridos)'])
-            saida['LeadTime(diasCorridos)'] =  saida['LeadTime(diasCorridos)'] / 24
 
-            saida['RealizadoFase'] = saida.groupby('codfase')['Realizado'].transform('sum')
-            saida['LeadTime(PonderadoPorQtd)'] = (saida['Realizado'] / saida['RealizadoFase']) * 100
 
-            saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(diasCorridos)']*saida['LeadTime(PonderadoPorQtd)']
-            saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
-            saida['categoria'] = saida['nome'].apply(self.mapear_categoria)
+        saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
+        saida['DiferencaHoras'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.total_seconds() / 3600
+        saida['LeadTime(diasCorridos)'] =  saida['LeadTime(diasCorridos)'] / 24
 
-            '''Inserindo as informacoes no banco para acesso temporario'''
+        saida['RealizadoFase'] = saida.groupby('codfase')['Realizado'].transform('sum')
+        saida['LeadTime(PonderadoPorQtd)'] = (saida['Realizado'] / saida['RealizadoFase']) * 100
 
-            TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
-            id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
-            saida['id'] = id
-            saida['diaAtual'] = self.obterdiaAtual()
-            self.deletar_backup(id,"leadTimeFases")
-            ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
+        saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(diasCorridos)']*saida['LeadTime(PonderadoPorQtd)']
+        saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
+        saida['categoria'] = saida['nome'].apply(self.mapear_categoria)
 
-            return saida
+        '''Inserindo as informacoes no banco para acesso temporario'''
 
-        except Exception as e:
-            print(f"Erro ao calcular o Lead Time: {e}")
-            return None
+        TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
+        id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
+        saida['id'] = id
+        saida['diaAtual'] = self.obterdiaAtual()
+        self.deletar_backup(id,"leadTimeFases")
+        ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
+
+        return saida
+
 
     def deletar_backup(self, id, tabela_temporaria):
         tabela_temporaria = '"'+tabela_temporaria+'"'
