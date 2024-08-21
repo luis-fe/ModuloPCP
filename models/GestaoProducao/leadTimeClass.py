@@ -251,7 +251,7 @@ class LeadTimeCalculator:
             tco.MovimentacaoOPFase o
         WHERE
             o.codEmpresa = 1 and codFase in (429, 431, 455, 459) 
-	        and r.dataBaixa >= '"""+self.data_inicio +"""'and r.dataBaixa <=  '"""+self.data_final +"""'"""
+	        and o.dataBaixa >= '"""+self.data_inicio +"""'and o.dataBaixa <=  '"""+self.data_final +"""'"""
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
