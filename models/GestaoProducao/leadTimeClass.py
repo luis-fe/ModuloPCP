@@ -248,7 +248,8 @@ class LeadTimeCalculator:
             r.codFaccio as codfaccionista,
             r.codOP ,
             r.quantidade as Realizado ,
-            r.dataEntrada as dataBaixa
+            r.dataEntrada as dataBaixa,
+            op.codtipoop
         FROM
             tct.RetSimbolicoNFERetorno r
         inner join 
