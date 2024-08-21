@@ -185,11 +185,15 @@ class LeadTimeCalculator:
                 from
                     backup."leadTimeFases" l
                 where
-                    l.id = %s and l.categoria in {result}
+                    l.id = %s
             """
 
             conn = ConexaoPostgreWms.conexaoEngine()
             saida = pd.read_sql(sql, conn, params=(id,))
+
+            if self.categorias != []:
+                categorias = pd.DataFrame(self.categorias, columns=["categoria"])
+                saida = pd.merge(saida, categorias, on=['categoria'])
 
         else:
             saida = self.obter_lead_time_fases()
