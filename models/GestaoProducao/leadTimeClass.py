@@ -305,6 +305,15 @@ class LeadTimeCalculator:
             categorias = pd.DataFrame(self.categorias, columns=["categoria"])
             realizado = pd.merge(realizado, categorias, on=['categoria'])
 
+        realizado['Realizadofac'] = realizado.groupby('codfaccionista')['Realizado'].transform('sum')
+        realizado['LeadTime(PonderadoPorQtd)'] = (realizado['Realizado'] / realizado['Realizadofac']) * 100
+
+        realizado['LeadTime(PonderadoPorQtd)'] = realizado['LeadTime(diasCorridos)'] * realizado['LeadTime(PonderadoPorQtd)']
+        realizado['LeadTime(PonderadoPorQtd)'] = realizado['LeadTime(PonderadoPorQtd)'].round()
+        realizado = realizado.groupby(["codfaccionista"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
+                                                "LeadTime(PonderadoPorQtd)": 'sum', 'apelidofaccionista': 'first'}).reset_index()
+        realizado['LeadTime(PonderadoPorQtd)'] = realizado['LeadTime(PonderadoPorQtd)'] / 100
+        realizado['LeadTime(diasCorridos)'] = realizado['LeadTime(diasCorridos)'].round()
 
         return realizado
 
