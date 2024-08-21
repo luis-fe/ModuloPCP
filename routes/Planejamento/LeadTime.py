@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.GestaoOPAberto import realizadoFases
-from models.GestaoProducao import leadTimeClass, faccionistaClass
+from models.GestaoProducao import LeadTimeClass, FaccionistaClass, TipoOPClass
 import gc
 LeadTime_routes = Blueprint('LeadTime_routes', __name__)
 
@@ -45,7 +45,8 @@ def get_LeadTimesRealizados():
 @token_required
 def get_ObterTipoOP():
 
-    dados = realizadoFases.ObterTipoOPs()
+    tipoOP = TipoOPClass.TipoOP()
+    dados = tipoOP.obiterTodosTipos()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -70,7 +71,7 @@ def get_LeadTimesFases():
     arrayCategorias = data.get('arrayCategorias', [])
 
     # Instancia a classe e obtém os dados
-    leadTime1 = leadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
+    leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
     dados = leadTime1.getLeadTimeFases()
 
     # Converte o DataFrame para uma lista de dicionários de forma eficiente
@@ -95,8 +96,8 @@ def get_LeadTimesFaccionistas():
     arrayCategorias = data.get('arrayCategorias', [])
 
     # Instancia a classe e obtém os dados
-    leadTime1 = leadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
-    faccionistas = faccionistaClass.Faccionista()
+    leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
+    faccionistas = FaccionistaClass.Faccionista()
 
     dados = leadTime1.getLeadTimeFaccionistas(faccionistas.ConsultarFaccionista())
 
