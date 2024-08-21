@@ -139,7 +139,7 @@ class LeadTimeCalculator:
 
         # Verifica e converte para datetime se necessário
 
-
+        print(saida['horaMovEntrada'])
 
 
         saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
