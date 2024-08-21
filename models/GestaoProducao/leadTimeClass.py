@@ -232,7 +232,7 @@ class LeadTimeCalculator:
         	r.codFase ,
         	r.codFaccio as codfaccionista ,
         	r.codOP ,
-        	r.dataEmissao, op.codProduto , e.descricao as nome
+        	r.dataEmissao as dataEntrada, op.codProduto , e.descricao as nome
         FROM
         	tct.RetSimbolicoNF r
         inner join 
@@ -248,7 +248,7 @@ class LeadTimeCalculator:
             r.codFaccio as codfaccionista,
             r.codOP ,
             r.quantidade as Realizado ,
-            r.dataEntrada
+            r.dataEntrada as dataBaixa
         FROM
             tct.RetSimbolicoNFERetorno r
         inner join 
@@ -286,6 +286,10 @@ class LeadTimeCalculator:
         realizado = pd.merge(realizado,sqlRetornoFaccionista,on=['codfaccionista','codFase','codOP'])
 
         realizado.fillna('-',inplace=True)
+        # Verifica e converte para datetime se necessário
+        realizado['dataEntrada'] = pd.to_datetime(realizado['dataEntrada'], errors='coerce')
+        realizado['dataBaixa'] = pd.to_datetime(realizado['dataBaixa'], errors='coerce')
+        realizado['LeadTime(diasCorridos)'] = (realizado['dataBaixa'] - realizado['dataEntrada']).dt.days
 
 
 
