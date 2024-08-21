@@ -146,8 +146,8 @@ class LeadTimeCalculator:
             saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
             saida['dataBaixa'] = pd.to_datetime((saida['dataBaixa'] + ' ' + saida['horaMov']), errors='coerce')
             saida['DiferencaHoras'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.total_seconds() / 3600
-            print(saida['DiferencaHoras'])
-            saida['LeadTime(diasCorridos)'] =  saida['DiferencaHoras'] / 24
+            print(saida['LeadTime(diasCorridos)'])
+            saida['LeadTime(diasCorridos)'] =  saida['LeadTime(diasCorridos)'] / 24
 
             saida['RealizadoFase'] = saida.groupby('codfase')['Realizado'].transform('sum')
             saida['LeadTime(PonderadoPorQtd)'] = (saida['Realizado'] / saida['RealizadoFase']) * 100
