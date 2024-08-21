@@ -225,7 +225,7 @@ class LeadTimeCalculator:
                 codtipoops = pd.DataFrame(result, columns=["codtipoop"])
                 saida = pd.merge(saida, codtipoops, on=['codtipoop'])
 
-
+        print(f'prindando a saida\n{saida}')
         saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
                                                     "LeadTime(PonderadoPorQtd)": 'sum', 'nomeFase': 'first'}).reset_index()
 
