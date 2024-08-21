@@ -142,6 +142,8 @@ class LeadTimeCalculator:
 
 
         saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
+        saida['dataBaixa'] = pd.to_datetime(saida['dataBaixa'] ,errors='coerce')
+
         # Verificar tipos de dados
         print(saida['dataEntrada'].dtype)  # Deve ser datetime64[ns]
         print(saida['dataBaixa'].dtype)  # Deve ser datetime64[ns]
