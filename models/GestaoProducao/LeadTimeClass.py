@@ -142,7 +142,8 @@ class LeadTimeCalculator:
 
 
         saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
-        print(saida['dataEntrada'] )
+        print(saida['dataBaixa'] )
+
         saida['DiferencaHoras'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.total_seconds() / 3600
         saida['LeadTime(diasCorridos)'] =  saida['LeadTime(diasCorridos)'] / 24
 
