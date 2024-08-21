@@ -244,19 +244,14 @@ class LeadTimeCalculator:
 
         sqlRetornoFaccionista = """
         SELECT
-            r.codFase  ,
-            r.codFaccio as codfaccionista,
-            r.codOP ,
-            r.quantidade as Realizado ,
-            r.dataEntrada as dataBaixa
+            o.codFase,
+            o.numeroOP ,
+            o.dataBaixa
         FROM
-            tct.RetSimbolicoNFERetorno r
-        inner join 
-            tco.OrdemProd op on op.codEmpresa = 1 and op.numeroOP = r.codOP 
-        inner JOIN 
-            tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+            tco.MovimentacaoOPFase o
         WHERE
-            r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEntrada >= '"""+self.data_inicio +"""'and r.dataEntrada <=  '"""+self.data_final +"""'"""
+            o.codEmpresa = 1 and codFase in (429, 431, 455, 459) 
+	        and r.dataBaixa >= '"""+self.data_inicio +"""'and r.dataBaixa <=  '"""+self.data_final +"""'"""
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
@@ -283,7 +278,7 @@ class LeadTimeCalculator:
         realizado['categoria'] = realizado['nome'].apply(self.mapear_categoria)
 
         realizado = pd.merge(realizado,faccionistas,on='codfaccionista',how='left')
-        realizado = pd.merge(realizado,sqlRetornoFaccionista,on=['codfaccionista','codFase','codOP'])
+        realizado = pd.merge(realizado,sqlRetornoFaccionista,on=['codFase','codOP'])
 
         realizado.fillna('-',inplace=True)
         # Verifica e converte para datetime se necessário
