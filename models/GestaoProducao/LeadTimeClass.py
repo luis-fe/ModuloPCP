@@ -423,7 +423,7 @@ class LeadTimeCalculator:
                     from
                         backup."leadTimeFases" l
                     where 
-                	    l."diaAtual"::Date  > CURRENT_DATE - INTERVAL """+QuantidadeDiasEmBackup
+                	    l."diaAtual"::Date  < CURRENT_DATE - INTERVAL """+QuantidadeDiasEmBackup
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
