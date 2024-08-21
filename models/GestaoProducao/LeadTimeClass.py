@@ -49,6 +49,7 @@ class LeadTimeCalculator:
                 rf.codfase,
                 rf."seqRoteiro",
                 rf."dataBaixa",
+                rf."horaMov",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
                 "PCP".pcp.realizado_fase rf
@@ -62,6 +63,7 @@ class LeadTimeCalculator:
                 rf.codfase,
                 rf."seqRoteiro",
                 rf."dataBaixa",
+                rf."horaMov",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
                 "PCP".pcp.realizado_fase rf 
@@ -96,7 +98,8 @@ class LeadTimeCalculator:
                             op.codempresa = 1
                             and op.numeroop = o.numeroOP) as nome,
                         o.dataBaixa,
-                        o.seqRoteiro
+                        o.seqRoteiro,
+                        o."horaMov" as "horaMovEntrada"
                     FROM
                         tco.MovimentacaoOPFase o
                     WHERE
@@ -136,9 +139,14 @@ class LeadTimeCalculator:
             saida = pd.merge(saida,sqlFasesCsw,on='codfase')
 
             # Verifica e converte para datetime se necessário
-            saida['dataEntrada'] = pd.to_datetime(saida['dataEntrada'], errors='coerce')
-            saida['dataBaixa'] = pd.to_datetime(saida['dataBaixa'], errors='coerce')
-            saida['LeadTime(diasCorridos)'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.days
+
+
+
+
+            saida['dataEntrada'] = pd.to_datetime((saida['dataEntrada'] + ' ' + saida['horaMovEntrada']),errors='coerce')
+            saida['dataBaixa'] = pd.to_datetime((saida['dataBaixa'] + ' ' + saida['horaMov']), errors='coerce')
+            saida['DiferencaHoras'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.total_seconds() / 3600
+            saida['LeadTime(diasCorridos)'] =  saida['DiferencaHoras'] / 24
 
             saida['RealizadoFase'] = saida.groupby('codfase')['Realizado'].transform('sum')
             saida['LeadTime(PonderadoPorQtd)'] = (saida['Realizado'] / saida['RealizadoFase']) * 100
