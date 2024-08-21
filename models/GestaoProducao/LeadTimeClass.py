@@ -174,9 +174,6 @@ class LeadTimeCalculator:
 
     def getLeadTimeFases(self):
         if self.congelado ==True:
-            chave = "'"
-            # Transformando o array em string no formato desejado
-            result = f"({', '.join([f'{chave}{item}{chave}' for item in self.categorias])})"
 
             TotaltipoOp = [int(item.split('-')[0]) for item in self.tipoOps]
             id = self.data_inicio + '||' + self.data_final + '||' + str(TotaltipoOp)
@@ -206,6 +203,15 @@ class LeadTimeCalculator:
 
         else:
             saida = self.obter_lead_time_fases()
+
+            if self.categorias != []:
+                categorias = pd.DataFrame(self.categorias, columns=["categoria"])
+                saida = pd.merge(saida, categorias, on=['categoria'])
+
+            if self.tipoOps != []:
+                result = [int(item.split('-')[0]) for item in self.tipoOps]
+                codtipoops = pd.DataFrame(result, columns=["codtipoop"])
+                saida = pd.merge(saida, codtipoops, on=['codtipoop'])
 
 
         saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
@@ -409,6 +415,20 @@ class LeadTimeCalculator:
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d')
         return pd.to_datetime(agora)
+
+    def LimpezaBackpCongelamento(self,QuantidadeDiasEmBackup):
+        QuantidadeDiasEmBackup = "'"+str(QuantidadeDiasEmBackup)+" days'"
+        delete = """
+        		delete 
+                    from
+                        backup."leadTimeFases" l
+                    where 
+                	    l."dataBaixa" > CURRENT_DATE - INTERVAL """+QuantidadeDiasEmBackup
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(delete,)
+                conn.commit()
 
 
 

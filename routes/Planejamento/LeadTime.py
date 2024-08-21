@@ -74,6 +74,8 @@ def get_LeadTimesFases():
     # Instancia a classe e obtém os dados
     leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias,congelado)
     dados = leadTime1.getLeadTimeFases()
+    if congelado ==False:
+        leadTime1.LimpezaBackpCongelamento(3)
 
     # Converte o DataFrame para uma lista de dicionários de forma eficiente
     OP_data = dados.to_dict('records')
