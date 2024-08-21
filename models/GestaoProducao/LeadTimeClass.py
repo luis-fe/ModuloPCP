@@ -153,6 +153,7 @@ class LeadTimeCalculator:
 
 
         saida['LeadTime(diasCorridos)'] = (saida['dataBaixa'] - saida['dataEntrada']).dt.total_seconds() / 3600
+        print(saida['LeadTime(diasCorridos)'])
         saida['LeadTime(diasCorridos)'] =  saida['LeadTime(diasCorridos)'] / 24
 
         saida['RealizadoFase'] = saida.groupby('codfase')['Realizado'].transform('sum')
