@@ -292,6 +292,15 @@ class LeadTimeCalculator:
         realizado['dataBaixa'] = pd.to_datetime(realizado['dataBaixa'], errors='coerce')
         realizado['LeadTime(diasCorridos)'] = (realizado['dataBaixa'] - realizado['dataEntrada']).dt.days
 
+        # Convertendo a lista em um DataFrame
+
+        if self.tipoOps != []:
+            codtipoops = pd.DataFrame(self.tipoOps, columns=["codtipoop"])
+            realizado = pd.merge(realizado, codtipoops, on=['codtipoop'])
+
+        if self.categorias != []:
+            categorias = pd.DataFrame(self.categorias, columns=["categoria"])
+            realizado = pd.merge(realizado, categorias, on=['categoria'])
 
 
         return realizado
