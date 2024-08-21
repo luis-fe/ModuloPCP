@@ -358,6 +358,7 @@ class LeadTimeCalculator:
             WHERE
                 o.codEmpresa = 1
                 and dataBaixa <= '"""+self.data_final+"""' and codFase in (401) and op.codTipoOP in """ + result
+            print(sqlMovPCP)
 
             sqlMovEntradaEstoque = """
         SELECT
