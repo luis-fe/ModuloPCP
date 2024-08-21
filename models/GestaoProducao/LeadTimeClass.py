@@ -12,7 +12,7 @@ class LeadTimeCalculator:
         data_final (str): Data final do intervalo para análise.
     """
 
-    def __init__(self, data_inicio, data_final,tipoOPs = None, categorias = None):
+    def __init__(self, data_inicio, data_final,tipoOPs = None, categorias = None, congelado=False):
         """
         Inicializa a classe com o intervalo de datas para análise.
 
@@ -26,6 +26,8 @@ class LeadTimeCalculator:
         self.data_final = data_final
         self.tipoOps = tipoOPs
         self.categorias = categorias
+        self.congelado = congelado
+
 
     def obter_lead_time_fases(self):
         """
@@ -168,7 +170,7 @@ class LeadTimeCalculator:
                 conn.commit()
 
     def getLeadTimeFases(self):
-        if self.categorias != []:
+        if self.congelado ==True:
             chave = "'"
             # Transformando o array em string no formato desejado
             result = f"({', '.join([f'{chave}{item}{chave}' for item in self.categorias])})"
@@ -316,4 +318,80 @@ class LeadTimeCalculator:
         realizado['LeadTime(diasCorridos)'] = realizado['LeadTime(diasCorridos)'].round()
 
         return realizado
+    def leadTimeCategoria(self):
+        conn = ConexaoPostgreWms.conexaoEngine()
+        if self.tipoOps != []:
+            result = [int(item.split('-')[0]) for item in self.tipoOps]
+            result = f"({', '.join(str(x) for x in result)})"
+
+            sqlMovPCP = """
+             SELECT
+                o.numeroOP as OpPCP,
+                o.dataBaixa as dataBaixaPCP,
+                o.horaMov as horaMovPCP,
+                o.totPecasOPBaixadas as RealizadoPCP
+            FROM
+                tco.MovimentacaoOPFase o
+            inner Join 
+                tco.OrdemProd op on
+                op.codempresa = o.codempresa
+                and op.numeroop = o.numeroOP
+            WHERE
+                o.codEmpresa = 1
+                and dataBaixa <= '"""+self.data_final+"""'
+                and codFase in (401) and op.codTipoOP in """ + result
+
+            sqlMovEntradaEstoque = """
+                        SELECT
+            e.codEngenharia,
+            o.numeroOP,
+            CONVERT(varchar(4),codfase) as codFase,
+            o.seqRoteiro, 
+            o.dataBaixa,
+            o.horaMov,
+            o.totPecasOPBaixadas as Realizado
+        FROM
+            tco.MovimentacaoOPFase o
+        inner Join 
+            tco.OrdemProd op on
+            op.codempresa = 1
+            and op.numeroop = o.numeroOP
+        inner JOIN 
+            tcp.Engenharia e on e.codEmpresa = 1
+            and e.codEngenharia = op.codProduto 
+        WHERE
+            o.codEmpresa = 1
+            and codFase in (236, 449) 
+            where 
+                rf."dataBaixa" >= '"""+self.data_inicio+"""'
+                and rf."dataBaixa" <= '"""+self.data_final+"""' and codtipoop in """ + result
+
+        else:
+
+            sqlMovPCP = """
+             SELECT
+                o.numeroOP as OpPCP,
+                o.dataBaixa as dataBaixaPCP,
+                o.horaMov as horaMovPCP,
+                o.totPecasOPBaixadas as RealizadoPCP
+            FROM
+                tco.MovimentacaoOPFase o
+            inner Join 
+                tco.OrdemProd op on
+                op.codempresa = o.codempresa
+                and op.numeroop = o.numeroOP
+            WHERE
+                o.codEmpresa = 1
+                and dataBaixa <= '"""+self.data_final+"""'
+                and codFase in (401) """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sqlMovPCP)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                MovPCP = pd.DataFrame(rows, columns=colunas)
+
+
+
 
