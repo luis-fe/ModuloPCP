@@ -455,6 +455,7 @@ class LeadTimeCalculator:
         )
 
         leadTime = pd.merge(MovEntradaEstoque, MovPCP, on='OpPCP', how='left')
+        print(leadTime)
 
         # Verifica e converte para datetime se necessário
         leadTime['dataBaixaPCP'] = pd.to_datetime(leadTime['dataBaixaPCP'], errors='coerce')
