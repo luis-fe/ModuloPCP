@@ -102,7 +102,8 @@ class FaseProducao():
                 consulta = pd.DataFrame(rows, columns=colunas)
 
         consultaFasesGestao = self.ConsultarFases()
-        consulta = pd.merge(consulta,consultaFasesGestao,on=['codFase'],how='left')
+        consulta['codFase'] = consulta['codFase'].astype(str)
+        consulta = pd.merge(consulta,consultaFasesGestao,on='codFase',how='left')
         consulta.fillna('-',inplace=True)
         return consulta
 
