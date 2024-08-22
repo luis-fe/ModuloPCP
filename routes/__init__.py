@@ -22,7 +22,7 @@ from .Planejamento.SaldoPlanoAnterior import SaldoPlanoAnt_routes
 from .Planejamento.cronograma import cronograma_routes
 from .Faccionista.faccionista import faccionista_routes
 from .Planejamento.Meta_faccionistas import MetasFacicionista_routes
-from .Planejamento.LeadTime import LeadTime_routes
+from .routesModels.LeadTimeRoutes import LeadTime_routes
 from .NecessidadesDeMP.necessidadeMP import NecessidadesMP_routes
 from .routesModels.FasesRoutes import Fase_routes
 

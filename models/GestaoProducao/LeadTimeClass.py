@@ -47,11 +47,14 @@ class LeadTimeCalculator:
             SELECT
                 rf.numeroop,
                 rf.codfase,
+                rf2."metaLeadTime"::varchar,
                 rf."seqRoteiro",
                 rf."dataBaixa"||' '||rf."horaMov" as "dataBaixa",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
-                "PCP".pcp.realizado_fase rf
+                "PCP".pcp.realizado_fase rf 
+            join 
+            "PCP".pcp."responsabilidadeFase" rf2 on rf2."codFase" = rf.codfase::varchar
             WHERE
                 rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s and codtipoop in """+result
 
@@ -60,11 +63,14 @@ class LeadTimeCalculator:
             SELECT
                 rf.numeroop,
                 rf.codfase,
+                rf2."metaLeadTime"::varchar,
                 rf."seqRoteiro",
                 rf."dataBaixa"||' '||rf."horaMov" as "dataBaixa",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
                 "PCP".pcp.realizado_fase rf 
+            join 
+            "PCP".pcp."responsabilidadeFase" rf2 on rf2."codFase" = rf.codfase::varchar
             WHERE
                 rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
             """
@@ -229,10 +235,11 @@ class LeadTimeCalculator:
                 saida = pd.merge(saida, codtipoops, on=['codtipoop'])
 
         saida = saida.groupby(["codfase"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
-                                                    "LeadTime(PonderadoPorQtd)": 'sum', 'nomeFase': 'first'}).reset_index()
+                                                    "LeadTime(PonderadoPorQtd)": 'sum', 'nomeFase': 'first','metaLeadTime':'first'}).reset_index()
 
         saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'] / 100
         saida['LeadTime(diasCorridos)'] = saida['LeadTime(diasCorridos)'].round()
+        saida.fillna('-',inplace=True)
         return saida
 
     def mapear_categoria(self,nome):
