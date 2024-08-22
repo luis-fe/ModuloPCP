@@ -9,7 +9,7 @@ class FaseProducao():
         self.responsavel = responsavel
         self.leadTimeMeta = leadTimeMeta
 
-        if nomeFase == None:
+        if nomeFase == None and codFase != None:
             sqlCsw  = """
             SELECT
 	            f.codFase ,
