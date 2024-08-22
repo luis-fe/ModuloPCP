@@ -36,12 +36,12 @@ class FaseProducao():
 
     def InserirMetaLT_Responsavel(self):
         insert = """
-        insert into pcp."responsabilidadeFase" rf ("codFase" , responsavel, "metaLeadTime") values (%s , %s, %s) 
+        insert into pcp."responsabilidadeFase"  ("codFase" , responsavel, "metaLeadTime") values (%s , %s, %s) 
         """
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
-                curr.execute(insert,(self.codFase, self.responsavel, self.leadTimeMeta))
+                curr.execute(insert,(str(self.codFase), self.responsavel, int(self.leadTimeMeta)))
                 conn.commit()
 
         return pd.DataFrame([{'status':True, 'Mensagem':f'Responsavel e Lead Time inserirdos com sucesso na fase {self.codFase}-{self.nomeFase}'}])

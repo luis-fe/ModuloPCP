@@ -44,7 +44,7 @@ def put_InserirMetaResponsavel():
 
 
     fasesProducao =FaseClass.FaseProducao(codFase, responsavel, leadTimeMeta)
-    dados = fasesProducao.InserirMetaLT_Responsavel()
+    dados = fasesProducao.AlterarMetaLT_Responsave()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -69,7 +69,7 @@ def put_UpdateMetaResponsavell():
 
 
     fasesProducao =FaseClass.FaseProducao(codFase, responsavel, leadTimeMeta)
-    dados = fasesProducao.UpdateMetaLT_Responsavel()
+    dados = fasesProducao.AlterarMetaLT_Responsave()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
