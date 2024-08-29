@@ -67,15 +67,15 @@ def _PedidosBloqueados():
 
 
 def Monitor_nivelSku(dataFim):
-    sql = """SELECT * FROM "PCP".backup.pedidos p """
-    conn = ConexaoPostgreWms.conexaoEngine()
-    df_loaded = pd.read_sql(sql,conn)
+    #sql = """SELECT * FROM "PCP".backup.pedidos p """
+    #conn = ConexaoPostgreWms.conexaoEngine()
+    #df_loaded = pd.read_sql(sql,conn)
 
     # Carregar o arquivo Parquet
-    #parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+    parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
 
     # Converter para DataFrame do Pandas
-    #df_loaded = parquet_file.to_pandas()
+    df_loaded = parquet_file.to_pandas()
 
     # Converter 'dataEmissao' para datetime
     df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
