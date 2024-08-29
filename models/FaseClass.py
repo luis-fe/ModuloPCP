@@ -10,15 +10,15 @@ class FaseProducao():
         self.leadTimeMeta = leadTimeMeta
 
         if nomeFase == None and codFase != None:
-            sqlCsw  = """
-            SELECT
-	            f.codFase ,
-	            f.nome as nomeFase
-            FROM
-	            tcp.FasesProducao f
-            WHERE
-	            f.codEmpresa = 1
-	        and f.codFase = """+str(self.codFase)
+            sqlCsw = """
+                    SELECT
+                        f.codFase ,
+                        f.nome as nomeFase
+                    FROM
+                        tcp.FasesProducao f
+                    WHERE
+                        f.codEmpresa = 1
+                    and f.codFase = """+str(self.codFase)
 
             with ConexaoBanco.Conexao2() as connCsw:
                 with connCsw.cursor() as cursor:
@@ -82,16 +82,16 @@ class FaseProducao():
     def ConsultaFasesProdutivaCSWxGestao(self):
 
         sqlCsw = """
-                    SELECT
-        	            f.codFase ,
-        	            f.nome as nomeFase
-                    FROM
-        	            tcp.FasesProducao f
-                    WHERE
-        	            f.codEmpresa = 1
-        	        and f.codFase > 400 and f.codFase < 599
-        	        order by codFase asc
-        	        """
+                SELECT
+                    f.codFase ,
+                    f.nome as nomeFase
+                FROM
+                    tcp.FasesProducao f
+                WHERE
+                    f.codEmpresa = 1
+                and f.codFase > 400 and f.codFase < 599
+                order by codFase asc
+                """
 
 
         with ConexaoBanco.Conexao2() as connCsw:

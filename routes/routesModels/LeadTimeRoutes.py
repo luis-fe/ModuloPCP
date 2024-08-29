@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models.GestaoProducao import LeadTimeClass, FaccionistaClass, TipoOPClass
+from models.GestaoProducao import TipoOPClass
+from models import FaccionistaClass, LeadTimeClass
 import gc
 LeadTime_routes = Blueprint('LeadTime_routes', __name__)
 
@@ -24,7 +25,7 @@ def get_LeadTimesRealizados():
     dataFim = data.get('dataFim')
     arrayTipoOP = data.get('arrayTipoOP',[])
 
-    leadTime = LeadTimeClass.LeadTimeCalculator(dataIncio,dataFim,arrayTipoOP)
+    leadTime = LeadTimeClass.LeadTimeCalculator(dataIncio, dataFim, arrayTipoOP)
     dados = leadTime.leadTimeCategoria()
 
     # Obtém os nomes das colunas
@@ -71,7 +72,7 @@ def get_LeadTimesFases():
     congelado = data.get('congelado',False)
 
     # Instancia a classe e obtém os dados
-    leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias,congelado)
+    leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim, arrayTipoOP, arrayCategorias, congelado)
     dados = leadTime1.getLeadTimeFases()
     if congelado ==False:
         leadTime1.LimpezaBackpCongelamento(3)
@@ -98,7 +99,7 @@ def get_LeadTimesFaccionistas():
     arrayCategorias = data.get('arrayCategorias', [])
 
     # Instancia a classe e obtém os dados
-    leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim,arrayTipoOP,arrayCategorias)
+    leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim, arrayTipoOP, arrayCategorias)
     faccionistas = FaccionistaClass.Faccionista()
 
     dados = leadTime1.getLeadTimeFaccionistas(faccionistas.ConsultarFaccionista())

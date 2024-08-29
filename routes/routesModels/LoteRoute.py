@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models.Planejamento import plano, loteCsw
+from models import LoteClass
+
 
 loteCsw_routes = Blueprint('loteCsw_routes', __name__)
 
@@ -20,8 +21,8 @@ def token_required(f):
 def get_lotes_csw():
     empresa = request.args.get('empresa','1')
 
-
-    dados = loteCsw.lote(empresa)
+    lote = LoteClass.Lote(None,empresa)
+    dados = lote.loteCsw()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

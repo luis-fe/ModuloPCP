@@ -15,12 +15,12 @@ from .GestaoOPAberto.JustificativaOP import JustificativaOP_routes
 from .MonitorPedidos.FiltrosEspeciaisMonitor import FiltrosEspeciaisMonitor_routes
 from .GestaoOPAberto.FilaFases import FilaDasFases_routes
 from .ControleGolas.controleGolas import controleGolas_routes
-from .Planejamento.loteCsw_route import loteCsw_routes
+from routes.routesModels.LoteRoute import loteCsw_routes
 from .Planejamento.acomp_meta_plano import MetasFases_routes
 from .Planejamento.TipoNotaCSW import TipoNotaCsw_routes
 from .Planejamento.SaldoPlanoAnterior import SaldoPlanoAnt_routes
 from .Planejamento.cronograma import cronograma_routes
-from .Faccionista.faccionista import faccionista_routes
+from routes.routesModels.faccionista import faccionista_routes
 from .Planejamento.Meta_faccionistas import MetasFacicionista_routes
 from .routesModels.LeadTimeRoutes import LeadTime_routes
 from .NecessidadesDeMP.necessidadeMP import NecessidadesMP_routes

@@ -1,8 +1,8 @@
-import pandas as pd
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.Faccionistas import faccionistas
-from models.GestaoProducao import FaccionistaClass
+from models import FaccionistaClass
+
 faccionista_routes = Blueprint('faccionista_routes', __name__)
 
 def token_required(f):
@@ -85,7 +85,7 @@ def post_CadastrarCapacidadeDiariaFac():
     dados =None
     #dados = faccionistas.CadastrarCapacidadeDiariaFac(codFaccionista,apelido,ArrayCategorias, ArrayCapacidade)
     for categoria, capacidade in zip(ArrayCategorias, ArrayCapacidade):
-        Novofaccionista = FaccionistaClass.Faccionista(codFaccionista,apelido,categoria,capacidade)
+        Novofaccionista = FaccionistaClass.Faccionista(codFaccionista, apelido, categoria, capacidade)
         dados = Novofaccionista.InserirFaccionista()
 
     # Obtém os nomes das colunas
