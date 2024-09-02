@@ -93,7 +93,7 @@ where
 
     if ArraytipoOPExluir != None:
         for i in ArraytipoOPExluir:
-            realizado = realizado[realizado['codtipop'] != i]
+            realizado = realizado[realizado['codtipoop'] != i]
 
 
 
