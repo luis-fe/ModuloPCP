@@ -80,7 +80,7 @@ def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim, ArraytipoOPExluir = None)
     select rf."codEngenharia",
 	rf.numeroop ,
 	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" , rf."horaMov"::time,
-	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave ,"codtipop"
+	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave ,"codtipoop"
 from
 	"PCP".pcp.realizado_fase rf 
 where 
