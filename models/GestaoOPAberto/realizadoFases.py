@@ -73,14 +73,14 @@ def CarregarRealizado(utimosDias):
 
 
 
-def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim):
+def RealizadoMediaMovel(dataMovFaseIni,dataMovFaseFim, ArraytipoOPExluir = None):
     CarregarRealizado(60)
 
     sql = """
     select rf."codEngenharia",
 	rf.numeroop ,
 	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" , rf."horaMov"::time,
-	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
+	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave ,"codtipop"
 from
 	"PCP".pcp.realizado_fase rf 
 where 
@@ -90,6 +90,13 @@ where
 
     conn = ConexaoPostgreWms.conexaoEngine()
     realizado = pd.read_sql(sql,conn,params=(dataMovFaseIni,dataMovFaseFim,))
+
+    if ArraytipoOPExluir != None:
+        for i in ArraytipoOPExluir:
+            realizado = realizado[realizado['codtipop'] != i]
+
+
+
     realizado['filtro'] = realizado['codFase'].astype(str) + '|'+realizado['codEngenharia'].str[0]
     realizado = realizado[(realizado['filtro']!='401|6')]
     realizado = realizado[(realizado['filtro']!='401|5')]
