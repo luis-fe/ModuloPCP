@@ -190,7 +190,7 @@ class Faccionista():
             'nomecategoria': lambda x: list(x.dropna().astype(str).unique()),
             'Capacidade/dia': lambda x: list(x.dropna().astype(str).unique())
         }).reset_index()
-
+        sql3_Csw['codfaccionista'] = sql3_Csw['codfaccionista'].astype(str)
         grouped = pd.merge(grouped, sql3_Csw, on='codfaccionista',how='left')
         grouped.rename(
             columns={'codfaccionista': '01- codfaccionista', 'nome': '02- nome',
