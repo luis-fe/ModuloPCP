@@ -55,7 +55,8 @@ def get_ObterCategorias():
 @token_required
 def get_RegistroFaccionistas():
 
-    dados = faccionistas.RegistroFaccionistas()
+    faccionista = FaccionistaClass.Faccionista()
+    dados = faccionista.RegistroFaccionistas()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
