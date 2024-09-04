@@ -178,7 +178,7 @@ class MetasFaccionistas:
         resumo = self.ajustar_colunas(resumo)
         cargaFac = self.obter_carga_faccionista()
         resumo = self.calcular_metas(resumo, cargaFac)
-        print(resumo)
+        print(resumo.dtypes)
         resumo = self.adicionar_realizacao(resumo)
         os.system('clear')
 
