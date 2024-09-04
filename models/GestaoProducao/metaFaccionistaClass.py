@@ -167,7 +167,7 @@ class MetasFaccionistas:
 
         # Converter para int
         merged['Capacidade/dia'] = merged['Capacidade/dia'].astype(int)
-        merged.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
+        merged.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria','nomefaccionista':'nomefaccionistaCsw'}, inplace=True)
 
         return merged
 
