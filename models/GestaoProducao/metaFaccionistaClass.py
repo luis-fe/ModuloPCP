@@ -175,11 +175,7 @@ class MetasFaccionistas:
         backupPLano = self.carregarBackupPlanoFac()
         consulta1_ = self.carregar_capacidades(backupPLano)
         resumo = self.obter_resumo(consulta1_)
-        print(resumo.dtypes)
-
         resumo = self.ajustar_colunas(resumo)
-        print(resumo.dtypes)
-
         cargaFac = self.obter_carga_faccionista()
         resumo = self.calcular_metas(resumo, cargaFac)
         resumo = self.adicionar_realizacao(resumo)
