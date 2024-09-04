@@ -25,30 +25,7 @@ WHERE
     return consulta
 
 
-def RegistroFaccionistas():
-    sql = """SELECT * FROM pcp.faccionista """
-    sql2 = """SELECT * FROM pcp."faccaoCategoria" """
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    sql = pd.read_sql(sql,conn)
-    sql2 = pd.read_sql(sql2,conn)
-    merged = pd.merge(sql, sql2, on='codfaccionista', how='left')
-    merged.fillna('-',inplace=True)
-    merged['nome'] = merged.apply(lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] != '-' else r['nomefaccionista'],axis=1)
-    # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
-    grouped = merged.groupby(['codfaccionista','nome']).agg({
-        'nomecategoria': lambda x: list(x.dropna().astype(str).unique()),
-        'Capacidade/dia': lambda x: list(x.dropna().astype(str).unique())
-    }).reset_index()
-
-    grouped.rename(
-        columns={'codfaccionista': '01- codfaccionista', 'nome': '02- nome',
-                 'nomecategoria': '03- nomecategoria',
-                 'Capacidade/dia': '04- Capacidade/dia'},
-        inplace=True)
-
-
-    return grouped
 
 
 def ObterCategorias():

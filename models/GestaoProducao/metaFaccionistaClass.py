@@ -47,7 +47,7 @@ class MetasFaccionistas:
 
     def ajustar_colunas(self, resumo):
         colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
-                               'Fila','dias']
+                               'Fila','dias','nomefaccionista']
         colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
         resumo = resumo.loc[:, colunas_existentes]
         resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
