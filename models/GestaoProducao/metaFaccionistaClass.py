@@ -153,7 +153,7 @@ class MetasFaccionistas:
         merged.fillna('-', inplace=True)
         merged['nome'] = np.where(merged['apelidofaccionista'] != '-', merged['apelidofaccionista'],
                                   merged['nomefaccionista'])
-        merged = merged[['Capacidade/dia', 'codfaccionista', 'nome', 'nomecategoria']]
+        merged = merged[['Capacidade/dia', 'codfaccionista', 'nome', 'nomecategoria','nomefaccionista']]
 
         # Conversão e renomeação de colunas
         # Substituir valores '-' por NaN
