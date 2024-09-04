@@ -21,7 +21,7 @@ class MetasFaccionistas:
         return backupPLano
 
     def carregar_capacidades(self, DataFrameBackupPlano):
-        sql = """select nomecategoria as categoria, codfaccionista, "Capacidade/dia"::int from "PCP".pcp."faccaoCategoria" fc"""
+        sql = """select nomecategoria as categoria, codfaccionista, "Capacidade/dia"::int, nomefaccionistaCsw as nomefaccionista from "PCP".pcp."faccaoCategoria" fc"""
         consulta2 = pd.read_sql(sql, self.conn)
         capacidadeFaccionista = pd.merge(DataFrameBackupPlano, consulta2, on='categoria', how='left')
         capacidadeFaccionista['Capacidade/dia'].fillna(0, inplace=True)
@@ -47,7 +47,7 @@ class MetasFaccionistas:
 
     def ajustar_colunas(self, resumo):
         colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
-                               'Fila','dias','nomefaccionista']
+                               'Fila','dias','nomefaccionistaCsw']
         colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
         resumo = resumo.loc[:, colunas_existentes]
         resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
