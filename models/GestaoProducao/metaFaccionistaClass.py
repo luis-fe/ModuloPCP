@@ -21,7 +21,7 @@ class MetasFaccionistas:
         return backupPLano
 
     def carregar_capacidades(self, DataFrameBackupPlano):
-        sql = """select nomecategoria as categoria, fc.codfaccionista, "Capacidade/dia"::int, nomefaccionistaCsw as nomefaccionista from "PCP".pcp."faccaoCategoria" fc
+        sql = """select nomecategoria as categoria, fc.codfaccionista, "Capacidade/dia"::int, nomefaccionista as nomefaccionistaCsw from "PCP".pcp."faccaoCategoria" fc
         inner join pcp."faccionista" f on f.codfaccionista = fc.codfaccionista
         """
         consulta2 = pd.read_sql(sql, self.conn)
