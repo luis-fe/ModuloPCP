@@ -107,7 +107,7 @@ class Faccionista():
                 with connInsert.cursor() as curr:
                     curr.execute(update,(self.Capacidade_dia,self.nomecategoria,self.codfaccionista,self.nomecategoria))
                     connInsert.commit()
-                    curr.execute(updateFaccionista,(self.apelidofaccionista,self.codfaccionista))
+                    curr.execute(updateFaccionista,(self.apelidofaccionista,str(self.codfaccionista)))
                     connInsert.commit()
 
 
