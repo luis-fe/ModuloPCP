@@ -69,7 +69,7 @@ class Faccionista():
             consulta = pd.read_sql(selectAll, self.conn)
             consulta['Status'] = True
         else:
-            consulta = pd.read_sql(select, self.conn, params=(self.codfaccionista,))
+            consulta = pd.read_sql(select, self.conn, params=(int(self.codfaccionista),))
             if consulta.empty:
                 consulta['Status'] = False
                 consulta = pd.DataFrame([{'Status':False}])
