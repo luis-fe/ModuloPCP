@@ -44,7 +44,7 @@ class Faccionista():
 	        "PCP".pcp."faccaoCategoria" fc
     	 WHERE codfaccionista = %s
     	 """
-            consulta = pd.read_sql(select, self.conn, params=(self.codfaccionista,))
+            consulta = pd.read_sql(select, self.conn, params=(str(self.codfaccionista),))
 
             return consulta
     def ConsultarFaccionista(self):
@@ -69,7 +69,7 @@ class Faccionista():
             consulta = pd.read_sql(selectAll, self.conn)
             consulta['Status'] = True
         else:
-            consulta = pd.read_sql(select, self.conn, params=(int(self.codfaccionista),))
+            consulta = pd.read_sql(select, self.conn, params=(str(self.codfaccionista),))
             if consulta.empty:
                 consulta['Status'] = False
                 consulta = pd.DataFrame([{'Status':False}])
