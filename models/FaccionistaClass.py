@@ -98,14 +98,14 @@ class Faccionista():
         else:
             update ="""UPDATE "PCP".pcp."faccaoCategoria" 
             SET "Capacidade/dia" = %s , nomecategoria = %s
-            where codfaccionista = %s and nomecategoria = %s
+            where codfaccionista::varchar = %s and nomecategoria = %s
             """
 
-            updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista = %s """
+            updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista::varchar = %s """
 
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
                 with connInsert.cursor() as curr:
-                    curr.execute(update,(self.Capacidade_dia,self.nomecategoria,self.codfaccionista,self.nomecategoria))
+                    curr.execute(update,(self.Capacidade_dia,self.nomecategoria,str(self.codfaccionista),self.nomecategoria))
                     connInsert.commit()
                     curr.execute(updateFaccionista,(self.apelidofaccionista,str(self.codfaccionista)))
                     connInsert.commit()
