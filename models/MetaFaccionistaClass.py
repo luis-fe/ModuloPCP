@@ -96,8 +96,9 @@ class MetaFaccionista():
         resumo = pd.merge(resumo, consultaBackupMeta, on='categoria')
 
         # 7 - Encontrando o % de capacidade para cada categoria
-        resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
-        resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia'] / resumo['04-%Capacidade'] * 100)
+        resumo['metodoDistribuicao'] = (resumo['01- AcordadoDia']*resumo['dias'])-resumo['carga']
+        resumo['04-%Capacidade'] = resumo.groupby('categoria')['metodoDistribuicao'].transform('sum')
+        resumo['04-%Capacidade'] = round(resumo['metodoDistribuicao'] / resumo['04-%Capacidade'] * 100)
         resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
 
         # 8 - Encontrar as colunas necessarias
