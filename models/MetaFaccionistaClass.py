@@ -114,7 +114,7 @@ class MetaFaccionista():
         resumo['Falta Produzir'] = resumo[['carga', 'Fila', 'FaltaProgramar']].sum(axis=1)
         resumo['Meta Dia'] = (resumo['Falta Produzir'] / resumo['dias']).round(0)
 
-        # 10 Conferindo se a meta é maior que a capacidade e devolvendo a diferenca para o exedente
+        # 10 Conferindo se a meta é maior que a capacidade e devolvendo a diferenca para o exedente #################################################
         resumo['Meta Dia Exedente1'] = resumo.apply(lambda r : r['Meta Dia'] - r['01- AcordadoDia'] if  r['Meta Dia'] > r['01- AcordadoDia']
                                                                                                        and r['nome'] != 'EXCEDENTE' else 0 ,axis=1)
         resumoExcedenteCategoria = resumo.groupby('categoria').agg(
@@ -128,6 +128,13 @@ class MetaFaccionista():
         resumo.loc[resumo['nome'] != 'EXCEDENTE', '04-%Capacidade'] = (
                 resumo['Fila'] + resumo['FaltaProgramar'] - (resumo['Meta Dia Exedente1'] * resumo['dias'])
         )
+
+        resumo['metodoDistribuicao'] = resumo.groupby('categoria')['04-%Capacidade'].transform('sum')
+        resumo['04-%Capacidade'] = round(resumo['metodoDistribuicao'] / resumo['04-%Capacidade'] * 100)
+        resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
+        resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade'] / 100)
+        resumo['Falta Produzir'] = resumo[['carga', 'Fila', 'FaltaProgramar']].sum(axis=1)
+        resumo['Meta Dia'] = (resumo['Falta Produzir'] / resumo['dias']).round(0)
 
 
         # 11 Resumindo informacoes
