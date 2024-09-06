@@ -90,15 +90,15 @@ class MetaFaccionista():
         resumo = pd.merge(resumo, cargaFac, on=['categoria', 'codfaccionista'], how='left')
         resumo['carga'].fillna(0, inplace=True)
 
-        # 6 - Encontrando o % de capacidade para cada categoria
-        resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
-        resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia'] / resumo['04-%Capacidade'] * 100)
-        resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
-
-        # 7 - Carregar backup das metadas por categoria para encontrar a meta  do dia
+        # 6 - Carregar backup das metadas por categoria para encontrar a meta  do dia
         consultaBackupMeta = self.backupMetaCategoriaCalculada()
         consultaBackupMeta.rename(columns={'carga1': 'carga'}, inplace=True)
         resumo = pd.merge(resumo, consultaBackupMeta, on='categoria')
+
+        # 7 - Encontrando o % de capacidade para cada categoria
+        resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
+        resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia'] / resumo['04-%Capacidade'] * 100)
+        resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
 
         # 8 - Encontrar as colunas necessarias
         colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
