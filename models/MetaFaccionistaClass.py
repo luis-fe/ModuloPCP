@@ -85,48 +85,27 @@ class MetaFaccionista():
         resumo['nome'].fillna('EXCEDENTE', inplace=True)
         resumo.fillna('-', inplace=True)
 
-        # 5 - Encontrando o % de capacidade para cada categoria
+        # 5 - carregando a partir do CSW a carga atual das faccoes
+        cargaFac = self.cargaFaccionistaCsw()
+        resumo = pd.merge(resumo, cargaFac, on=['categoria', 'codfaccionista'], how='left')
+        resumo['carga'].fillna(0, inplace=True)
+
+        # 6 - Encontrando o % de capacidade para cada categoria
         resumo['04-%Capacidade'] = resumo.groupby('categoria')['01- AcordadoDia'].transform('sum')
         resumo['04-%Capacidade'] = round(resumo['01- AcordadoDia'] / resumo['04-%Capacidade'] * 100)
         resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
 
-        # 6 - Carregar backup das metadas por categoria para encontrar a meta  do dia
+        # 7 - Carregar backup das metadas por categoria para encontrar a meta  do dia
         consultaBackupMeta = self.backupMetaCategoriaCalculada()
         resumo = pd.merge(resumo, consultaBackupMeta, on='categoria')
 
-        # 7 - Encontrar as colunas necessarias
+        # 8 - Encontrar as colunas necessarias
         colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
                                'Fila','dias','nomefaccionistaCsw']
         colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
         resumo = resumo.loc[:, colunas_existentes]
         resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
         resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade'] / 100)
-
-        # 8 - carregando a partir do CSW a carga atual das faccoes
-        sql = """
-            SELECT op.numeroOP, op.codProduto, d.codOP, d.codFac as codfaccionista,l.qtdPecasRem as carga, e.descricao as nome  
-        FROM tco.OrdemProd op 
-        left join tct.RemessaOPsDistribuicao d on d.Empresa = 1 and d.codOP = op.numeroOP and d.situac = 2 and d.codFase = op.codFaseAtual 
-        left join tct.RemessasLoteOP l on l.Empresa = d.Empresa  and l.codRemessa = d.numRem 
-        join tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
-        WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
-            """
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                cargaFac = pd.DataFrame(rows, columns=colunas)
-
-        # Libera memória manualmente
-        del rows
-        gc.collect()
-        cargaFac['categoria'] = '-'
-        cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
-        cargaFac = cargaFac.groupby(['categoria', 'codfaccionista']).agg({'carga': 'sum'}).reset_index()
-        cargaFac['codfaccionista'] = cargaFac['codfaccionista'].astype(str)
-        resumo = pd.merge(resumo, cargaFac, on=['categoria', 'codfaccionista'], how='left')
-        resumo['carga'].fillna(0, inplace=True)
 
 
         # 9 Encontrano o Falta Produzir e as metas
@@ -169,8 +148,31 @@ class MetaFaccionista():
         resumo['Realizado'].fillna(0, inplace=True)
         return resumo
 
+    def cargaFaccionistaCsw(self):
+        '''Metodo que retorna a carga por faccionista e categoria, no banco de dados do CSW'''
 
-
+        sql = """
+            SELECT op.numeroOP, op.codProduto, d.codOP, d.codFac as codfaccionista,l.qtdPecasRem as carga, e.descricao as nome  
+        FROM tco.OrdemProd op 
+        left join tct.RemessaOPsDistribuicao d on d.Empresa = 1 and d.codOP = op.numeroOP and d.situac = 2 and d.codFase = op.codFaseAtual 
+        left join tct.RemessasLoteOP l on l.Empresa = d.Empresa  and l.codRemessa = d.numRem 
+        join tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
+        WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
+            """
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                cargaFac = pd.DataFrame(rows, columns=colunas)
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+        cargaFac['categoria'] = '-'
+        cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
+        cargaFac = cargaFac.groupby(['categoria', 'codfaccionista']).agg({'carga': 'sum'}).reset_index()
+        cargaFac['codfaccionista'] = cargaFac['codfaccionista'].astype(str)
+        return cargaFac
 
     def mapear_categoria(self, nome):
             categorias_map = {
