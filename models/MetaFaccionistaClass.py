@@ -69,20 +69,20 @@ class MetaFaccionista():
 
         #2 - Obtendo os faccionistas cadastrados
         faccionistas = FaccionistaClass.Faccionista()
-        faccionistas = faccionistas.consultarCategoriaMetaFaccionista_S()
+        df_Faccionsta = faccionistas.consultarCategoriaMetaFaccionista_S()
 
 
         #3 - Tratando as informacoes
-        faccionistas.rename(columns={'Capacidade/dia': '01- AcordadoDia'}, inplace=True)
-        faccionistas['nome'] = np.where(faccionistas['apelidofaccionista'] != '-', faccionistas['apelidofaccionista'],
-                                  faccionistas['nomefaccionistaCsw'])
-        faccionistas['Capacidade/dia'] = faccionistas['Capacidade/dia'].fillna(0)
-        faccionistas['Capacidade/dia'] = faccionistas['Capacidade/dia'].astype(int)
-        faccionistas.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
+        df_Faccionsta.rename(columns={'Capacidade/dia': '01- AcordadoDia'}, inplace=True)
+        df_Faccionsta['nome'] = np.where(df_Faccionsta['apelidofaccionista'] != '-', df_Faccionsta['apelidofaccionista'],
+                                  df_Faccionsta['nomefaccionistaCsw'])
+        df_Faccionsta['Capacidade/dia'] = df_Faccionsta['Capacidade/dia'].fillna(0)
+        df_Faccionsta['Capacidade/dia'] = df_Faccionsta['Capacidade/dia'].astype(int)
+        df_Faccionsta.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
 
 
         #4 - Concatenando as informacoes com o exedente no passo #1
-        resumo = pd.concat([faccionistas, excedente], ignore_index=True)
+        resumo = pd.concat([df_Faccionsta, excedente], ignore_index=True)
         resumo['nome'].fillna('EXCEDENTE', inplace=True)
         resumo.fillna('-', inplace=True)
 
