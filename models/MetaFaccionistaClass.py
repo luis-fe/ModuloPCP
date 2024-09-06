@@ -97,11 +97,12 @@ class MetaFaccionista():
 
         # 7 - Carregar backup das metadas por categoria para encontrar a meta  do dia
         consultaBackupMeta = self.backupMetaCategoriaCalculada()
+        consultaBackupMeta.rename(columns={'carga1': 'carga'}, inplace=True)
         resumo = pd.merge(resumo, consultaBackupMeta, on='categoria')
 
         # 8 - Encontrar as colunas necessarias
         colunas_necessarias = ['01- AcordadoDia', '04-%Capacidade', 'categoria', 'codfaccionista', 'nome', 'FaltaProgramar',
-                               'Fila','dias','nomefaccionistaCsw']
+                               'Fila','dias','nomefaccionistaCsw','carga']
         colunas_existentes = [col for col in colunas_necessarias if col in resumo.columns]
         resumo = resumo.loc[:, colunas_existentes]
         resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * (resumo['04-%Capacidade'] / 100)
