@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models.GestaoProducao import TipoOPClass
-from models import FaccionistaClass, LeadTimeClass
+from models import FaccionistaClass, LeadTimeClass, TipoOPClass
 import gc
 LeadTime_routes = Blueprint('LeadTime_routes', __name__)
 
