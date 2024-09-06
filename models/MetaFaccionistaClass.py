@@ -136,7 +136,9 @@ class MetaFaccionista():
         # 10 Conferindo se a meta é maior que a capacidade e devolvendo a diferenca para o exedente
         resumo['Meta Dia Exedente'] = resumo.apply(lambda r : r['Meta Dia'] - r['01- AcordadoDia'] if  r['Meta Dia'] > r['01- AcordadoDia']
                                                                                                        and r['nome'] != 'EXCEDENTE' else 0 ,axis=1)
-        resumoExcedenteCategoria =  resumo.groupby('categoria')['Meta Dia Exedente'].transform('sum')
+        resumoExcedenteCategoria = resumo.groupby('categoria').agg(
+            {'Meta Dia Exedente': 'sum'}).reset_index()
+
         resumo = pd.merge(resumo,resumoExcedenteCategoria,on='categoria', how='left')
 
 
