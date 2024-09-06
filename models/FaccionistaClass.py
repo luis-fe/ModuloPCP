@@ -72,7 +72,7 @@ class Faccionista():
             nomecategoria as categoria, 
             fc.codfaccionista, 
             "Capacidade/dia"::int, 
-            nomefaccionista as nomefaccionistaCsw, 
+            nomefaccionista as "nomefaccionistaCsw", 
             apelidofaccionista
         from 
             pcp."faccaoCategoria" fc
