@@ -122,7 +122,12 @@ class MetaFaccionista():
         resumoExcedenteCategoria.rename(columns={'Meta Dia Exedente1': 'Meta Dia Exedente'}, inplace=True)
 
         resumo = pd.merge(resumo,resumoExcedenteCategoria,on='categoria', how='left')
-
+        resumo.loc[resumo['nome'] == 'EXCEDENTE', '04-%Capacidade'] = (
+                resumo['Fila'] + resumo['FaltaProgramar'] + (resumo['Meta Dia Exedente1'] * resumo['dias'])
+        )
+        resumo.loc[resumo['nome'] != 'EXCEDENTE', '04-%Capacidade'] = (
+                resumo['Fila'] + resumo['FaltaProgramar'] - (resumo['Meta Dia Exedente1'] * resumo['dias'])
+        )
 
 
         # 11 Resumindo informacoes
