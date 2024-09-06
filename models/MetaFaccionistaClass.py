@@ -73,7 +73,6 @@ class MetaFaccionista():
 
 
         #3 - Tratando as informacoes
-        df_Faccionsta.rename(columns={'Capacidade/dia': '01- AcordadoDia'}, inplace=True)
         df_Faccionsta['nome'] = np.where(df_Faccionsta['apelidofaccionista'] != '-', df_Faccionsta['apelidofaccionista'],
                                   df_Faccionsta['nomefaccionistaCsw'])
         df_Faccionsta['Capacidade/dia'] = df_Faccionsta['Capacidade/dia'].fillna(0)
