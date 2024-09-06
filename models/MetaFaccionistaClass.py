@@ -75,10 +75,10 @@ class MetaFaccionista():
         #3 - Tratando as informacoes
         faccionistas.rename(columns={'Capacidade/dia': '01- AcordadoDia'}, inplace=True)
         faccionistas['nome'] = np.where(faccionistas['apelidofaccionista'] != '-', faccionistas['apelidofaccionista'],
-                                  faccionistas['nomefaccionista'])
+                                  faccionistas['nomefaccionistaCsw'])
         faccionistas['Capacidade/dia'] = faccionistas['Capacidade/dia'].fillna(0)
         faccionistas['Capacidade/dia'] = faccionistas['Capacidade/dia'].astype(int)
-        faccionistas.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria','nomefaccionista':'nomefaccionistaCsw'}, inplace=True)
+        faccionistas.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
 
 
         #4 - Concatenando as informacoes com o exedente no passo #1
