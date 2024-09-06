@@ -2,9 +2,10 @@ import gc
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 
-
 class Faccionista():
+    '''Classe Faccionista: definida para instanciar o objeto faccionista ou faccionista(s)'''
     def __init__(self,codfaccionista = None, apelidofaccionista= None, nomecategoria = None, Capacidade_dia = None ):
+        '''Construtor da classe, quando oculto os atributos subentende que trata-se de faccionita(s)'''
         self.codfaccionista = codfaccionista
         self.nomefaccionista = None
         self.apelidofaccionista = apelidofaccionista
@@ -12,7 +13,13 @@ class Faccionista():
         self.Capacidade_dia = Capacidade_dia
         self.conn = ConexaoPostgreWms.conexaoEngine() # Conexao com o banco de dados
 
-    def ObterNomeCSW(self):
+    def obterNomeCSW(self):
+        '''Metodo  para obter nome dos faccionistas no csw
+        return:
+        string: self.nomeFaccionista  - identifica qual o nome o faccionista no csw de acordo com o sef.codFaccionista
+        '''
+
+        # 1 - SQL
         sql = """SELECT
         	f.codFaccionista ,
         	f.nome as nomeFaccionista
@@ -33,10 +40,16 @@ class Faccionista():
 
         consulta = consulta[consulta['codFaccionista']==int(self.codfaccionista)].reset_index()
         self.nomeFaccionista = consulta['nomeFaccionista'][0]
+
         return self.nomeFaccionista
 
-    def ConsultarCategoriaMetaFaccionista(self):
-            select = """select
+    def consultarCategoriaCapacidadeFaccionista(self):
+        '''Metodo para consultar a Capacidade a nivel de categoria do faccionista
+         return:
+         DataFrame : [{codfaccionista, nomecategoria, "Capacidade/dia"}] ** Tamanho: linha unica
+         '''
+
+        select = """select
 	        fc.codfaccionista ,
 	        fc.nomecategoria ,
 	        fc."Capacidade/dia"::int
@@ -44,9 +57,33 @@ class Faccionista():
 	        "PCP".pcp."faccaoCategoria" fc
     	 WHERE codfaccionista = %s
     	 """
-            consulta = pd.read_sql(select, self.conn, params=(str(self.codfaccionista),))
+        DataFrame = pd.read_sql(select, self.conn, params=(str(self.codfaccionista),))
 
-            return consulta
+        return DataFrame
+
+    def consultarCategoriaMetaFaccionista_S(self):
+        '''Metodo para consultar a Capacidade a nivel de categoria doS faccionista(s)
+         return:
+         DataFrame : [{codfaccionista, categoria, "Capacidade/dia", "nomefaccionistaCsw"}] **N Linha(s)
+         '''
+
+        select = """
+        select 
+            nomecategoria as categoria, 
+            fc.codfaccionista, 
+            "Capacidade/dia"::int, 
+            nomefaccionista as nomefaccionistaCsw, 
+            apelidofaccionista
+        from 
+            pcp."faccaoCategoria" fc
+        inner join 
+            pcp."faccionista" f on f.codfaccionista = fc.codfaccionista
+        """
+        consulta = pd.read_sql(select, self.conn)
+
+        return consulta
+
+
     def ConsultarFaccionista(self):
         select = """select
 	        f.codfaccionista ,
@@ -79,10 +116,18 @@ class Faccionista():
         return consulta
 
     def AlterarFaccionista(self):
-        consultarCategoriaMeta = self.ConsultarCategoriaMetaFaccionista()
+        '''Metodo que altera ou inserir faccionista novo
+        return:
+        DataFrame: [{Status da resposta boolean }]
+        '''
+
+        # 1 - Consultar a Categoria e Capacidade do faccionista escolhido
+        consultarCategoriaMeta = self.consultarCategoriaCapacidadeFaccionista()
+
+        # 2 - Verifica a Capacidade da categoria escolhida no construtor self.nomecategoria
         VerificarCategoria = consultarCategoriaMeta[consultarCategoriaMeta['nomecategoria']==self.nomecategoria].reset_index()
 
-
+        # 3  Valida se é para fazer novo insert ou updade , depenendo do verificador no passo ## 2
         if VerificarCategoria.empty:
             inserirCategoria ="""INSERT INTO "PCP".pcp."faccaoCategoria" ("Capacidade/dia" ,nomecategoria, codfaccionista ) values (%s, %s, %s)
             """
@@ -118,7 +163,7 @@ class Faccionista():
         if VerificaFaccionista['Status'][0] == False:
             insert = """insert into "PCP".pcp.faccionista (codfaccionista, nomefaccionista, apelidofaccionista ) values (%s, %s, %s )"""
             insert2 = """insert into "PCP".pcp."faccaoCategoria" (codfaccionista, nomecategoria, "Capacidade/dia" ) values (%s, %s, %s) """
-            self.nomefaccionista = self.ObterNomeCSW()
+            self.nomefaccionista = self.obterNomeCSW()
 
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
                 with connInsert.cursor() as curr:
@@ -145,7 +190,7 @@ class Faccionista():
                 with connInsert.cursor() as curr:
                     curr.execute(deleteCategoria, (self.nomecategoria, self.codfaccionista))
                     connInsert.commit()
-            verificarFacCategoria = self.ConsultarCategoriaMetaFaccionista()
+            verificarFacCategoria = self.consultarCategoriaCapacidadeFaccionista()
             if verificarFacCategoria.empty:
                 deleteFaccionista = """DELETE FROM "PCP".pcp.faccionista WHERE codfaccionista = %s"""
                 with ConexaoPostgreWms.conexaoInsercao() as connInsert:
