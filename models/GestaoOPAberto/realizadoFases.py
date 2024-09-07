@@ -295,6 +295,9 @@ WHERE
     del rows
     gc.collect()
 
+    if realizado.empty:
+        realizado = pd.DataFrame([{'codFaccionista':'-','Remetido':0,'nome':'-'}])
+
 
     realizado['categoria'] = '-'
     realizado['nome'] = realizado['nome'].astype(str)
