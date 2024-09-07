@@ -157,7 +157,7 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase, congelado=Fals
     diasUteis = calcular_dias_sem_domingos(dataMovFaseIni,dataMovFaseFim)
     realizado['Realizado'] = realizado['Realizado'] / diasUteis if diasUteis > 0 else 0
 
-    if realizado.empety:
+    if realizado.empty:
         realizado = pd.DataFrame([{'codFase':'-','categoria':'-','Realizado':0}])
 
     return realizado
