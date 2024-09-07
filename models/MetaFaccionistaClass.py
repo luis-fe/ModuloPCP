@@ -98,7 +98,7 @@ class MetaFaccionista():
         # 7 - Encontrando o % de capacidade para cada categoria
         resumo['metodoDistribuicao'] = (resumo['01- AcordadoDia']*resumo['dias'])-resumo['carga']
         resumo['04-%Capacidade'] = resumo.groupby('categoria')['metodoDistribuicao'].transform('sum')
-        resumo['04-%Capacidade'] = round(resumo['metodoDistribuicao'] / resumo['04-%Capacidade'] * 100)
+        resumo['04-%Capacidade'] = round(resumo['metodoDistribuicao'] / resumo['04-%Capacidade'] * 100,2)
         resumo = resumo.sort_values(by=['categoria', '01- AcordadoDia'], ascending=[True, False])
 
         # 8 - Encontrar as colunas necessarias
