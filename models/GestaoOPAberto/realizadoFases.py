@@ -296,7 +296,7 @@ WHERE
     gc.collect()
 
     if realizado.empty:
-        realizado = pd.DataFrame([{'codFaccionista':'-','Remetido':0,'nome':'-'}])
+        realizado = pd.DataFrame([{'codFaccionista':'-','Realizado':0,'nome':'-'}])
 
 
     realizado['categoria'] = '-'
