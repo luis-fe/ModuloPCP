@@ -123,10 +123,10 @@ class MetaFaccionista():
 
         resumo = pd.merge(resumo,resumoExcedenteCategoria,on='categoria', how='left')
         resumo.loc[resumo['nome'] == 'EXCEDENTE', '04-%Capacidade'] = (
-                resumo['Fila'] + resumo['FaltaProgramar'] + (resumo['Meta Dia Exedente1'] * resumo['dias'])
+                resumo['Fila'] + resumo['FaltaProgramar'] + (resumo['Meta Dia Exedente'] * resumo['dias'])
         )
         resumo.loc[resumo['nome'] != 'EXCEDENTE', '04-%Capacidade'] = (
-                resumo['Fila'] + resumo['FaltaProgramar'] - (resumo['Meta Dia Exedente1'] * resumo['dias'])
+                resumo['Fila'] + resumo['FaltaProgramar'] - (resumo['Meta Dia Exedente'] * resumo['dias'])
         )
 
         resumo['metodoDistribuicao'] = resumo.groupby('categoria')['04-%Capacidade'].transform('sum')
