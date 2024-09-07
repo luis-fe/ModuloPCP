@@ -158,7 +158,7 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase, congelado=Fals
     realizado['Realizado'] = realizado['Realizado'] / diasUteis if diasUteis > 0 else 0
 
     if realizado.empty:
-        realizado = pd.DataFrame([{'codFase':'-','categoria':'-','Realizado':0}])
+        realizado = pd.DataFrame([{'codFase':1,'categoria':'-','Realizado':0}])
 
     return realizado
 
