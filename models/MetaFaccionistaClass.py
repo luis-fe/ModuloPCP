@@ -130,7 +130,7 @@ class MetaFaccionista():
         )
 
         resumo['metodoDistribuicao'] = resumo.groupby('categoria')['04-%Capacidade'].transform('sum')
-        #resumo['04-%Capacidade'] = round(resumo['04-%Capacidade'] / resumo['metodoDistribuicao'])
+        resumo['04-%Capacidade'] = round(resumo['04-%Capacidade'] / resumo['metodoDistribuicao'],3)
         #resumo['FaltaProgramar'] = resumo.groupby('categoria')['FaltaProgramar'].transform('sum')
         #resumo['FaltaProgramar'] = resumo['FaltaProgramar'] * resumo['04-%Capacidade']
         #resumo['Fila'] = resumo['Fila'] * (resumo['04-%Capacidade'] / 100)
