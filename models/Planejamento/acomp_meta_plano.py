@@ -155,7 +155,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         # Ponto de Congelamento do lote:
         Meta.to_csv(f'./dados/analiseLote{novo2}.csv')
 
-        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim,[6])
+        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim,[6, 8])
         realizado['codFase'] = realizado['codFase'].astype(int)
         Meta = pd.merge(Meta, realizado, on='codFase', how='left')
 
