@@ -35,6 +35,9 @@ def calcular_dias_sem_domingos(dataInicio, dataFim):
         # Incrementa a data atual em um dia
         data_atual += pd.Timedelta(days=1)
 
+    if dias == 0:
+        dias = 1
+
     return dias
 def CarregarRealizado(utimosDias):
 
