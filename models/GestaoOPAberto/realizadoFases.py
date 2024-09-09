@@ -94,11 +94,8 @@ where
     conn = ConexaoPostgreWms.conexaoEngine()
     realizado = pd.read_sql(sql,conn,params=(dataMovFaseIni,dataMovFaseFim,))
 
-    if ArraytipoOPExluir != None:
-        for i in ArraytipoOPExluir:
-            realizado = realizado[realizado['codtipoop'] != i]
-
-
+    if ArraytipoOPExluir is not None and isinstance(ArraytipoOPExluir, list):
+        realizado = realizado[~realizado['codtipoop'].isin(ArraytipoOPExluir)]
 
     realizado['filtro'] = realizado['codFase'].astype(str) + '|'+realizado['codEngenharia'].str[0]
     realizado = realizado[(realizado['filtro']!='401|6')]
