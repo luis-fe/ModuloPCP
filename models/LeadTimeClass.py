@@ -327,7 +327,7 @@ class LeadTimeCalculator:
         sqlRetornoFaccionista['codfaccionista'] = sqlRetornoFaccionista['codfaccionista'].astype(str)
 
         realizado['categoria'] = realizado['nome'].apply(self.mapear_categoria)
-        faccionistas = sql.drop(columns=['categoria'])
+        faccionistas = sql.drop(columns='categoria')
 
         realizado = pd.merge(realizado,faccionistas,on='codfaccionista',how='left')
         realizado = pd.merge(realizado,sqlRetornoFaccionista,on=['codfaccionista','codFase','codOP'])
