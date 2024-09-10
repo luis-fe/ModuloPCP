@@ -40,6 +40,8 @@ class Faturamento():
         # Converter 'dataEmissao' para datetime
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         # Convertendo a string para datetime
+
+        print(self.dataFinal)
         dataFatIni = pd.to_datetime(self.dataInicial)
         dataFatFinal = pd.to_datetime(self.dataFinal)
 
