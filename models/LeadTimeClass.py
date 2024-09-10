@@ -347,7 +347,7 @@ class LeadTimeCalculator:
 
         if self.categorias != []:
             categoriasData = pd.DataFrame(self.categorias, columns=["categoria"])
-            print(realizado)
+            print(realizado.dtype)
             realizado = pd.merge(realizado, categoriasData, on='categoria')
 
         realizado['Realizadofac'] = realizado.groupby('codfaccionista')['Realizado'].transform('sum')
