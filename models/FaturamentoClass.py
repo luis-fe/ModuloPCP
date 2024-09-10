@@ -1,5 +1,5 @@
 import pandas as pd
-import PlanoClass
+from models import PlanoClass
 import fastparquet as fp
 from connection import ConexaoBanco
 
