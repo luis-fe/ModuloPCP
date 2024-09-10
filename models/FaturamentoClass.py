@@ -1,7 +1,8 @@
 import pandas as pd
 from models import PlanoClass
 import fastparquet as fp
-from connection import ConexaoBanco
+from connection import ConexaoBanco, ConexaoPostgreWms
+from datetime import datetime, timedelta
 
 
 class Faturamento():
@@ -26,10 +27,30 @@ class Faturamento():
             plano = PlanoClass.Plano(self.codigoPlano)
             self.dataInicial = plano.obterDataInicioPlano()
             self.dataFinal = plano.obterDataFinalPlano()
-            date = self.consultaArquivoFastVendas()
-            date['status'] = True
-            return date
+            pedidos = self.consultaArquivoFastVendas()
+            pedidos['status'] = True
 
+            # 3 - Filtrando os pedidos aprovados
+            pedidosBloqueados = self._PedidosBloqueados()
+            pedidos = pd.merge(pedidos, pedidosBloqueados, on='codPedido', how='left')
+            pedidos['situacaobloq'].fillna('Liberado', inplace=True)
+            pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
+
+            # 4 Filtrando somente os tipo de notas desejados
+
+            sqlNotas = """
+                    select tnp."tipo nota" as "codTipoNota"  from "PCP".pcp."tipoNotaporPlano" tnp 
+                    where plano = %s
+                    """
+
+            conn = ConexaoPostgreWms.conexaoEngine()
+            tipoNotas = pd.read_sql(sqlNotas, conn, params=(self.codigoPlano,))
+
+            pedidos = pd.merge(pedidos, tipoNotas, on='codTipoNota')
+            pedidos = pedidos.groupby("codItem").agg({"qtdeFaturada": "sum"}).reset_index()
+            pedidos = pedidos.sort_values(by=['qtdeFaturada'], ascending=False)
+            pedidos = pedidos[pedidos['qtdeFaturada'] > 0].reset_index()
+            return pedidos
 
     def consultaArquivoFastVendas(self):
         # Carregar o arquivo Parquet
@@ -38,10 +59,9 @@ class Faturamento():
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
         # Converter 'dataEmissao' para datetime
-        df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
+        df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
         # Convertendo a string para datetime
 
-        print(self.dataFinal)
         dataFatIni = pd.to_datetime(self.dataInicial)
         dataFatFinal = pd.to_datetime(self.dataFinal)
 
@@ -77,6 +97,26 @@ class Faturamento():
         return df_filtered
 
     def Monitor_PedidosBloqueados(self):
+        consultacsw = """SELECT * FROM (
+        SELECT top 300000 bc.codPedido, 'analise comercial' as situacaobloq  from ped.PedidoBloqComl  bc WHERE codEmpresa = 1  
+        and bc.situacaoBloq = 1
+        order by codPedido desc
+        UNION 
+        SELECT top 300000 codPedido, 'analise credito'as situacaobloq  FROM Cre.PedidoCreditoBloq WHERE Empresa  = 1  
+        and situacao = 1
+        order BY codPedido DESC) as D"""
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(consultacsw)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            del rows
+            return consulta
+
+    def _PedidosBloqueados(self):
         consultacsw = """SELECT * FROM (
         SELECT top 300000 bc.codPedido, 'analise comercial' as situacaobloq  from ped.PedidoBloqComl  bc WHERE codEmpresa = 1  
         and bc.situacaoBloq = 1
