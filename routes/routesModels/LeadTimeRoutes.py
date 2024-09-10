@@ -101,7 +101,7 @@ def get_LeadTimesFaccionistas():
     leadTime1 = LeadTimeClass.LeadTimeCalculator(dataInicio, dataFim, arrayTipoOP, arrayCategorias)
     faccionistas = FaccionistaClass.Faccionista()
 
-    dados = leadTime1.getLeadTimeFaccionistas(faccionistas.ConsultarFaccionista())
+    dados = leadTime1.getLeadTimeFaccionistas(faccionistas.consultarCategoriaMetaFaccionista_S())
 
     # Converte o DataFrame para uma lista de dicionários de forma eficiente
     OP_data = dados.to_dict('records')
