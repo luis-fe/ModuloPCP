@@ -82,14 +82,14 @@ class Plano():
         '''
 
     def obterDataInicioPlano(self):
-        sql = """SELECT p."inicoFat" FROM pcp."Plano" where codigo = %s"""
+        sql = """SELECT p."inicoFat" FROM pcp."Plano" p where codigo = %s"""
         conn = ConexaoPostgreWms.conexaoEngine()
         dataInicial =  pd.read_sql(sql,conn, params=(str(self.codPlano),))
 
         return dataInicial['inicoFat'][0]
 
     def obterDataFinalPlano(self):
-        sql = """SELECT p."finalFat" FROM pcp."Plano" where codigo = %s"""
+        sql = """SELECT p."finalFat" FROM pcp."Plano" p where codigo = %s"""
         conn = ConexaoPostgreWms.conexaoEngine()
         dataInicial = pd.read_sql(sql, conn, params=(str(self.codPlano),))
 
