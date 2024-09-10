@@ -1,14 +1,25 @@
 from connection import ConexaoPostgreWms,ConexaoBanco
 import pandas as pd
 
-'''Clase para a Gestao de Producao com as informacoes de Fase de Producao'''
 
 class FaseProducao():
+    '''Clase para  as informacoes de Fase de Producao'''
+
     def __init__(self, codFase = None, responsavel = None, leadTimeMeta = None, nomeFase = None):
+        '''Construtor da clase
+        params:
+        codFase - opcional,
+        responsavel -opcional,
+        lead time -opcional,
+        nomeFase - opcional
+
+        caso nao passe parametros assume-se que as informacoes sao para faccionistas (s);
+        '''
         self.codFase = codFase
         self.responsavel = responsavel
         self.leadTimeMeta = leadTimeMeta
 
+        # Encontrando o nome da fase no ERP CSW
         if nomeFase == None and codFase != None:
             sqlCsw = """
                     SELECT

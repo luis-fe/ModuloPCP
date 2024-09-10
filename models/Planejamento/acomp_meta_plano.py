@@ -6,6 +6,7 @@ import numpy as np
 import re
 import pytz
 from datetime import datetime
+from models import FaturamentoClass
 
 def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
@@ -52,8 +53,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         saldo = SaldoPlanoAnterior.SaldosAnterior(Codplano)
         sqlMetas = pd.merge(sqlMetas,saldo,on='codItem',how='left')
 
-        faturado = SaldoPlanoAnterior.FaturamentoPlano(Codplano)
-        sqlMetas = pd.merge(sqlMetas,faturado,on='codItem',how='left')
+        faturado = FaturamentoClass.Faturamento(None,None,None,Codplano)
+        faturadoPeriodo = faturado.faturamentoPeriodo_Plano()
+        sqlMetas = pd.merge(sqlMetas,faturadoPeriodo,on='codItem',how='left')
 
         estoque, cargas = itemsPA_Csw.EstoquePartes()
         sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')

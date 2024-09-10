@@ -8,7 +8,7 @@ class Plano():
     '''
     Classe criada para o "Plano" do PCP que é um conjunto de parametrizacoes para se fazer um planejamento.
     '''
-    def __init__(self, codPlano ,descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador):
+    def __init__(self, codPlano= None ,descricaoPlano = None, iniVendas= None, fimVendas= None, iniFat= None, fimFat= None, usuarioGerador= None):
         '''
         Definicao do construtor: atributos do plano
         '''
@@ -80,3 +80,17 @@ class Plano():
         metodo criado para vincular lotes de producao ao Plano
         :return:
         '''
+
+    def obterDataInicioPlano(self):
+        sql = """SELECT p."inicoFat" FROM pcp."Plano" where codigo = %s"""
+        conn = ConexaoPostgreWms.conexaoEngine()
+        dataInicial =  pd.read_sql(sql,conn, params=(self.codPlano))
+
+        return dataInicial['inicoFat'][0]
+
+    def obterDataFinalPlano(self):
+        sql = """SELECT p."finalFat" FROM pcp."Plano" where codigo = %s"""
+        conn = ConexaoPostgreWms.conexaoEngine()
+        dataInicial = pd.read_sql(sql, conn, params=(self.codPlano))
+
+        return dataInicial['finalFat'][0]
