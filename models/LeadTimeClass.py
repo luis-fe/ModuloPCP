@@ -356,7 +356,8 @@ class LeadTimeCalculator:
                                                 "LeadTime(PonderadoPorQtd)": 'sum', 'apelidofaccionista': 'first'}).reset_index()
         realizado['LeadTime(PonderadoPorQtd)'] = realizado['LeadTime(PonderadoPorQtd)'] / 100
         realizado['LeadTime(diasCorridos)'] = realizado['LeadTime(diasCorridos)'].round()
-
+        print('realizado faccionistas:')
+        print(realizado)
         return realizado
     def leadTimeCategoria(self):
         conn = ConexaoPostgreWms.conexaoEngine()
