@@ -231,7 +231,7 @@ def Monitor_nivelSkuFaturamento(dataFatIni, dataFatFinal):
     dataFatFinal = pd.to_datetime(dataFatFinal)
 
     # Filtrar as datas
-    df_loaded['filtro'] = (df_loaded['dataPrevFat'] <= dataFatIni) & (df_loaded['dataPrevFat'] >= dataFatFinal)
+    df_loaded['filtro'] = (df_loaded['dataPrevFat'] >= dataFatIni) & (df_loaded['dataPrevFat'] <= dataFatFinal)
 
     # 2 - Filtrar Apenas Pedidos Não Bloqueados
     pedidosBloqueados = Monitor_PedidosBloqueados()
