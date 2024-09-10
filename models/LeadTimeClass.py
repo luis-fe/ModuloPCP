@@ -283,7 +283,9 @@ class LeadTimeCalculator:
         inner JOIN 
         	tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
         WHERE
-        	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= '""" + self.data_inicio + """'and r.dataEmissao <=  '""" + self.data_final + """'"""
+        	r.Empresa = 1 and r.codFase in (429, 431, 455, 459) and r.dataEmissao >= DATEADD(DAY,
+                        -80,
+                        GETDATE()) and r.dataEmissao <=  '""" + self.data_final + """'"""
 
         sqlRetornoFaccionista = """
         SELECT
