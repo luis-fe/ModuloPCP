@@ -1,6 +1,6 @@
 from connection import ConexaoPostgreWms,ConexaoBanco
 import pandas as pd
-
+from models import ProdutosClass
 
 class FaseProducao():
     '''Clase para  as informacoes de Fase de Producao'''
@@ -117,4 +117,50 @@ class FaseProducao():
         consulta = pd.merge(consulta,consultaFasesGestao,on='codFase',how='left')
         consulta.fillna('-',inplace=True)
         return consulta
+
+    def cargaPartes(self):
+        '''Metodo para obter a carga de producao convertida em Partes - Semiacabado'''
+
+        # 1 Consulta sql para obter as OPs em aberto no sistema do ´PCP
+        sqlCarga = """
+            select 
+                codreduzido as "codItem", 
+                sum(total_pcs) as carga  
+            from 
+                pcp.ordemprod o 
+            where 
+                codreduzido is not null
+                and 
+                "codProduto" like '0%'
+            group by 
+                codreduzido
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        cargaPai = pd.read_sql(sqlCarga,conn)
+
+    # 2 - Obtendo o DE-PARA DAS PARTES:
+        partes = ProdutosClass.Produto()
+        partesPecas = partes.conversaoSKUparaSKUPartes()
+        partesPecas.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
+
+
+    #3 - Realizando o merge
+        cargas = cargaPai.copy()  # Criar uma cópia do DataFrame original
+
+        cargaPartes = pd.merge(cargaPai,partesPecas , on='codItem')
+
+    # Drop do codProduto
+        cargaPartes.drop('codItem', axis=1, inplace=True)
+
+    # Rename do redParte para codProduto
+        cargaPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
+
+    #concatenando
+        cargas = pd.concat([cargas, cargaPartes], ignore_index=True)
+
+        return cargas
+
+
+
 
