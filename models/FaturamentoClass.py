@@ -141,19 +141,18 @@ class Faturamento():
         partes = ProdutosClass.Produto()
         consultaPartes = partes.conversaoSKUparaSKUPartes()
         consultaPartes.drop('codProduto', axis=1, inplace=True)
-        consultaPartes.rename(columns={'codItem': 'codProduto'}, inplace=True)
 
 
 
 
         faturamento = self.faturamentoPeriodo_Plano()
 
-        faturamentoPartes = pd.merge(faturamento,consultaPartes,on='codProduto')
+        faturamentoPartes = pd.merge(faturamento,consultaPartes,on='codItem')
         # Drop do codProduto
-        faturamentoPartes.drop('codProduto', axis=1, inplace=True)
+        faturamentoPartes.drop('codItem', axis=1, inplace=True)
 
         # Rename do redParte para codProduto
-        faturamentoPartes.rename(columns={'redParte': 'codProduto'}, inplace=True)
+        faturamentoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
 
         return faturamentoPartes
 
