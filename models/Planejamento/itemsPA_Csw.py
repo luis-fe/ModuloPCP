@@ -182,7 +182,7 @@ def EstoquePartes():
     relacaoPartes = relacaoPartes.groupby('codItem').agg({'quantidade':'first','estoqueAtual':'first'}).reset_index()
 
 
-    return relacaoPartes, cargaFasePartes
+    return relacaoPartes
 
 def Categoria(contem, valorReferencia, valorNovo, categoria):
     if contem in valorReferencia:
