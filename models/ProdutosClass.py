@@ -10,7 +10,7 @@ class Produto():
             return:
             DataFrame [{
             redParte, # o codigo sku da Parte Semiacabada
-            codProduto #o codigo sku do produto pai
+            codItem #o codigo sku do produto pai
             }]
         '''
 

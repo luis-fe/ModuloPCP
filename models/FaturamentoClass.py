@@ -140,6 +140,12 @@ class Faturamento():
         '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
         partes = ProdutosClass.Produto()
         consultaPartes = partes.conversaoSKUparaSKUPartes()
+        consultaPartes.drop('codProduto', axis=1, inplace=True)
+        consultaPartes.rename(columns={'codItem': 'codProduto'}, inplace=True)
+
+
+
+
         faturamento = self.faturamentoPeriodo_Plano()
 
         faturamentoPartes = pd.merge(faturamento,consultaPartes,on='codProduto')
