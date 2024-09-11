@@ -140,7 +140,7 @@ class Faturamento():
         '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
         partes = ProdutosClass.Produto()
         consultaPartes = partes.conversaoSKUparaSKUPartes()
-        consultaPartes.drop('codProduto', axis=1, inplace=True)
+        consultaPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
 
 
 
