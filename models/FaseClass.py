@@ -132,6 +132,8 @@ class FaseProducao():
                 codreduzido is not null
                 and 
                 "codProduto" like '0%'
+                and 
+                "codFaseAtual" <> '401'
             group by 
                 codreduzido
         """
