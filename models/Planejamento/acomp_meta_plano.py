@@ -131,7 +131,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta = Meta[~(filtro_comb | filtro_comb2 | filtro_comb3 | filtro_comb4)]
 
 
-        #Meta.to_csv('./dados/analiseFaltaProgrFases.csv')
+        Meta.to_csv('./dados/analiseFaltaProgrFases.csv')
 
 
         Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
