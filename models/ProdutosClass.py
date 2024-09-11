@@ -33,7 +33,7 @@ class Produto():
 
 
         sl2Itens2 = """
-            select codigo as "codProduto", "codSortimento"::varchar, "codSeqTamanho"::varchar, '0'||"codItemPai"||'-0' as "codProduto"  from "PCP".pcp.itens_csw ic 
+            select codigo as "codItem", "codSortimento"::varchar, "codSeqTamanho"::varchar, '0'||"codItemPai"||'-0' as "codProduto"  from "PCP".pcp.itens_csw ic 
             where ic."codItemPai" like '1%'
             """
 
