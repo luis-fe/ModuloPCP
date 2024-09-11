@@ -55,8 +55,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
         faturado = FaturamentoClass.Faturamento(None,None,None,Codplano)
         faturadoPeriodo = faturado.faturamentoPeriodo_Plano()
-       # faturadoPeriodoPartes = faturado.faturamentoPeriodo_Plano_PartesPeca()
-       # faturadoPeriodo = pd.concat([faturadoPeriodo, faturadoPeriodoPartes], ignore_index=True)
+        faturadoPeriodoPartes = faturado.faturamentoPeriodo_Plano_PartesPeca()
+        faturadoPeriodo = pd.concat([faturadoPeriodo, faturadoPeriodoPartes], ignore_index=True)
 
         sqlMetas = pd.merge(sqlMetas,faturadoPeriodo,on='codItem',how='left')
 
