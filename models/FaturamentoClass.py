@@ -1,5 +1,5 @@
 import pandas as pd
-from models import PlanoClass
+from models import PlanoClass, ProdutosClass
 import fastparquet as fp
 from connection import ConexaoBanco, ConexaoPostgreWms
 from datetime import datetime, timedelta
@@ -135,4 +135,19 @@ class Faturamento():
 
             del rows
             return consulta
+
+    def faturamentoPeriodo_Plano_PartesPeca(self):
+        '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
+        partes = ProdutosClass.Produto()
+        consultaPartes = partes.conversaoSKUparaSKUPartes()
+        faturamento = self.faturamentoPeriodo_Plano()
+
+        faturamentoPartes = pd.merge(faturamento,consultaPartes,on='codProduto')
+        # Drop do codProduto
+        faturamentoPartes.drop('codProduto', axis=1, inplace=True)
+
+        # Rename do redParte para codProduto
+        faturamentoPartes.rename(columns={'redParte': 'codProduto'}, inplace=True)
+
+        return faturamentoPartes
 
