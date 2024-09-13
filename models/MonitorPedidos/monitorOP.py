@@ -484,3 +484,9 @@ group by
 
 
     return monitorDetalhadoOps
+
+
+
+
+
+

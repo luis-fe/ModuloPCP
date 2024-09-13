@@ -1,7 +1,7 @@
 import connection.ConexaoBanco as ConexaoBanco
 import pandas as pd
 import gc
-
+from models import ProdutosClass
 from connection import ConexaoPostgreWms
 from models.Planejamento import itemsPA_Csw
 
@@ -50,7 +50,7 @@ def ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw):
 
     #Implantando no banco de dados do Pcp
     ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
-    itemsPA_Csw.RecarregarItens()
+    ProdutosClass.Produto().RecarregarItens()
     CarregarRoteiroEngLote(empresa,arrayCodLoteCsw)
 
     return lotes

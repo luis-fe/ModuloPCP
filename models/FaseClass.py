@@ -164,5 +164,28 @@ class FaseProducao():
         return cargas
 
 
+    def pesquisandoRoteiroDuplicados(self):
+        sql = '''
+                select
+            *
+        from
+            "PCP".pcp."Eng_Roteiro" er
+        where
+            substring("codEngenharia",5,5) 
+                in (
+                    select
+                        substring("codEngenharia",5,5)
+                    from
+                        "PCP".pcp."Eng_Roteiro" er
+                    where
+                        er."codFase" = '415'
+                    group by
+                        substring("codEngenharia",5,5)
+                    having
+                        count(substring("codEngenharia", 5, 5))>1
+                    )
+            and er."codFase" = '415'
+        '''
+
 
 
