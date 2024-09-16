@@ -299,8 +299,13 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         estoque = itemsPA_Csw.EstoquePartes()
         sqlMetas = pd.merge(sqlMetas, estoque, on='codItem', how='left')
 
+        cargaFases = FaseClass.FaseProducao()
+        cargas = cargaFases.cargaPartes()
+
         # cargas = itemsPA_Csw.CargaFases()
         sqlMetas = pd.merge(sqlMetas, cargas, on='codItem', how='left')
+
+
 
         sqlMetas.fillna({
             'saldo': 0,
