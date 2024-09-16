@@ -296,7 +296,7 @@ def MetasCostura(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, cong
         faturado = SaldoPlanoAnterior.FaturamentoPlano(Codplano)
         sqlMetas = pd.merge(sqlMetas, faturado, on='codItem', how='left')
 
-        estoque, cargas = itemsPA_Csw.EstoquePartes()
+        estoque = itemsPA_Csw.EstoquePartes()
         sqlMetas = pd.merge(sqlMetas, estoque, on='codItem', how='left')
 
         # cargas = itemsPA_Csw.CargaFases()

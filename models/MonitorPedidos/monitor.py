@@ -389,7 +389,7 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
     pedidos['MARCA'] = numpy.where((pedidos['codItemPai'].str[:3] == '102') | (pedidos['codItemPai'].str[:3] == '202'), 'M.POLLO', 'PACO')
     #etapa14 = controle.salvarStatus_Etapa14(rotina, ip, etapa13, ' Encontrando a Marca desejada')#Registrar etapa no controlador
 
-# função para verificar a presença de "casa" no valor da coluna "produto"
+    # função para verificar a presença de "casa" no valor da coluna "produto"
     def categorizar_produto(produto):
         if 'JAQUETA' in produto:
             return 'AGASALHOS'
