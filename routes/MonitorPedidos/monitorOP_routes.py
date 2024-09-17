@@ -22,7 +22,6 @@ def get_monitorOPs():
     dataFim = request.args.get('dataFim')
 
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados2 = AutomacaoOPs.IncrementadoDadosPostgre('1')
     dados = monitorOP.ReservaOPMonitor(dataInico , dataFim)
 
 
