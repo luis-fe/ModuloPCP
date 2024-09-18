@@ -27,8 +27,8 @@ def get_MonitorPedidos():
     arrayRepres_excluir = request.args.get('arrayRepres_excluir','')
     arrayRepre_Incluir = request.args.get('arrayRepre_Incluir','')
     nomeCliente = request.args.get('nomeCliente','')
-    filtroDataEmissaoIni = request.args.get('FiltrodataEmissaoInicial','')
-    filtroDataEmissaoFim = request.args.get('FiltrodataEmissaoFinal','')
+    filtroDataEmissaoIni = request.args.get('emissaoinicial','')
+    filtroDataEmissaoFim = request.args.get('emissaofinal','')
     #controle.InserindoStatus(rotina, ip, datainicio)
     print(filtroDataEmissaoIni)
     dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)\
