@@ -352,7 +352,7 @@ class MonitorPedidosOps():
                                         Ped.Pedido p
                                     where 
                                         codEmpresa = """ + empresa + """
-                                        and  dataPrevFat >= '""" + self.dataInicioVendas + """ 
+                                        and  dataPrevFat >= '""" + self.dataInicioVendas + """' 
                                         and dataPrevFat <= '""" + self.dataFinalFat + """' 
                                         and codTipoNota in (""" + tiponota + """)  """
         with ConexaoBanco.Conexao2() as conn:

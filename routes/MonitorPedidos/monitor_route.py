@@ -31,6 +31,7 @@ def get_MonitorPedidos():
     filtroDataEmissaoFim = request.args.get('FiltrodataEmissaoFinal','')
 
     #controle.InserindoStatus(rotina, ip, datainicio)
+    print(request)
     dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)\
         .resumoMonitor()
     #dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente,FiltrodataEmissaoInicial ,FiltrodataEmissaoFinal)
