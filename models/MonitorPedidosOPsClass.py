@@ -314,26 +314,26 @@ class MonitorPedidosOps():
 
         if self.filtroDataEmissaoFim != '' and self.filtroDataEmissaoIni != '':
             sqlCswCapaPedidosDataPrev = """
-                                                SELECT   
-                                                    dataEmissao, 
-                                                    convert(varchar(9), codPedido) as codPedido,
-                                                    (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli,
-                                                    codTipoNota, 
-                                                    dataPrevFat, 
-                                                    convert(varchar(9),codCliente) as codCliente, 
-                                                    codRepresentante, 
-                                                    descricaoCondVenda, 
-                                                    vlrPedido as vlrSaldo, 
-                                                    qtdPecasFaturadas
-                                                FROM 
-                                                    Ped.Pedido p
-                                                where 
-                                                    codEmpresa = """ + empresa + """
-                                                    and  dataPrevFat >= '""" + self.dataInicioVendas + """' 
-                                                    and dataPrevFat <= '""" + self.dataFinalFat + """'
-                                                    and dataEmissao >= '"""+self.filtroDataEmissaoIni+"""'
-                                                    and dataEmissao <= '"""+self.filtroDataEmissaoFim+"""'  
-                                                    and codTipoNota in (""" + tiponota + """)  """
+                                            SELECT   
+                                                dataEmissao, 
+                                                convert(varchar(9), codPedido) as codPedido,
+                                                (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli,
+                                                codTipoNota, 
+                                                dataPrevFat, 
+                                                convert(varchar(9),codCliente) as codCliente, 
+                                                codRepresentante, 
+                                                descricaoCondVenda, 
+                                                vlrPedido as vlrSaldo, 
+                                                qtdPecasFaturadas
+                                            FROM 
+                                                Ped.Pedido p
+                                            where 
+                                                codEmpresa = """ + empresa + """
+                                                and  dataPrevFat >= '""" + self.dataInicioVendas + """' 
+                                                and dataPrevFat <= '""" + self.dataFinalFat + """'
+                                                and dataEmissao >= '"""+self.filtroDataEmissaoIni+"""'
+                                                and dataEmissao <= '"""+self.filtroDataEmissaoFim+"""'  
+                                                and codTipoNota in (""" + tiponota + """)  """
         else:
             sqlCswCapaPedidosDataPrev = """
                                     SELECT   
