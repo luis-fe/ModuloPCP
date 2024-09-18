@@ -532,7 +532,7 @@ class MonitorPedidosOps():
                 "codigo" as "codProduto", 
                 "codItemPai", 
                 "codCor", 
-                "nome" as "nome",
+                "nome" as "nomeSKU",
                 categoria as "CATEGORIA"
             from 
                 pcp."itens_csw"  
