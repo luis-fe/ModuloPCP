@@ -9,7 +9,7 @@ class MonitorPedidosOps():
     '''Classe criada para o Sistema de PCP gerenciar a FILA DE PEDIDOS emitidos para o grupo MPL'''
 
     def __init__(self, empresa, dataInicioVendas , dataFinalVendas, tipoDataEscolhida, dataInicioFat, dataFinalFat ,arrayRepresentantesExcluir = '',
-                 arrayEscolherRepresentante = '', arrayescolhernomeCliente = '', parametroClassificacao = None):
+                 arrayEscolherRepresentante = '', arrayescolhernomeCliente = '', parametroClassificacao = None , filtroDataEmissaoIni = '' , filtroDataEmissaoFim = ''):
         self.empresa = empresa
         self.dataInicioVendas = dataInicioVendas
         self.dataFinalVendas = dataFinalVendas
@@ -20,6 +20,8 @@ class MonitorPedidosOps():
         self.arrayEscolherRepresentante = arrayEscolherRepresentante
         self.arrayescolhernomeCliente = arrayescolhernomeCliente
         self.parametroClassificacao = parametroClassificacao
+        self.filtroDataEmissaoIni = filtroDataEmissaoIni
+        self.filtroDataEmissaoFim = filtroDataEmissaoFim
     def gerarMonitorPedidos(self):
         '''Metodo utilizado para gerar o monitor de pedidos
         return:
@@ -259,25 +261,47 @@ class MonitorPedidosOps():
         tiponota = '1,2,3,4,5,6,7,8,10,24,92,201,1012,77,27,28,172,9998,66,67,233,237'  # Arrumar o Tipo de Nota 40
         empresa = "'" + str(self.empresa) + "'"
 
-        sqlCswCapaPedidos = """
-                                SELECT   
-                                    dataEmissao, 
-                                    convert(varchar(9), codPedido) as codPedido,
-                                    (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
-                                    codTipoNota, 
-                                    dataPrevFat, 
-                                    convert(varchar(9),codCliente) as codCliente, 
-                                    codRepresentante, 
-                                    descricaoCondVenda, 
-                                    vlrPedido as vlrSaldo, 
-                                    qtdPecasFaturadas
-                                FROM 
-                                    Ped.Pedido p
-                                where 
-                                    codEmpresa = """ + empresa + """
-                                    and  dataEmissao >= '""" + self.dataInicioFat + """ 
-                                    and dataEmissao <= '""" + self.dataFinalVendas + """' 
-                                    and codTipoNota in (""" + tiponota + """)  """
+        if self.filtroDataEmissaoFim != '' and self.filtroDataEmissaoIni != '':
+            sqlCswCapaPedidos = """
+                                    SELECT   
+                                        dataEmissao, 
+                                        convert(varchar(9), codPedido) as codPedido,
+                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
+                                        codTipoNota, 
+                                        dataPrevFat, 
+                                        convert(varchar(9),codCliente) as codCliente, 
+                                        codRepresentante, 
+                                        descricaoCondVenda, 
+                                        vlrPedido as vlrSaldo, 
+                                        qtdPecasFaturadas
+                                    FROM 
+                                        Ped.Pedido p
+                                    where 
+                                        codEmpresa = """ + empresa + """
+                                        and  dataEmissao >= '""" + self.dataInicioFat + """ 
+                                        and dataEmissao <= '""" + self.dataFinalVendas + """' 
+                                        and codTipoNota in (""" + tiponota + """)  """
+
+        else:
+            sqlCswCapaPedidos = """
+                                    SELECT   
+                                        dataEmissao, 
+                                        convert(varchar(9), codPedido) as codPedido,
+                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
+                                        codTipoNota, 
+                                        dataPrevFat, 
+                                        convert(varchar(9),codCliente) as codCliente, 
+                                        codRepresentante, 
+                                        descricaoCondVenda, 
+                                        vlrPedido as vlrSaldo, 
+                                        qtdPecasFaturadas
+                                    FROM 
+                                        Ped.Pedido p
+                                    where 
+                                        codEmpresa = """ + empresa + """
+                                        and  dataEmissao >= '""" + self.dataInicioFat + """ 
+                                        and dataEmissao <= '""" + self.dataFinalVendas + """' 
+                                        and codTipoNota in (""" + tiponota + """)  """
 
         with ConexaoBanco.Conexao2() as conn:
             consulta = pd.read_sql(sqlCswCapaPedidos, conn)
@@ -288,26 +312,48 @@ class MonitorPedidosOps():
         tiponota = '1,2,3,4,5,6,7,8,10,24,92,201,1012,77,27,28,172,9998,66,67,233,237'  # Arrumar o Tipo de Nota 40
         empresa = "'" + str(self.empresa) + "'"
 
-
-        sqlCswCapaPedidosDataPrev = """
-                                SELECT   
-                                    dataEmissao, 
-                                    convert(varchar(9), codPedido) as codPedido,
-                                    (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
-                                    codTipoNota, 
-                                    dataPrevFat, 
-                                    convert(varchar(9),codCliente) as codCliente, 
-                                    codRepresentante, 
-                                    descricaoCondVenda, 
-                                    vlrPedido as vlrSaldo, 
-                                    qtdPecasFaturadas
-                                FROM 
-                                    Ped.Pedido p
-                                where 
-                                    codEmpresa = """ + empresa + """
-                                    and  dataPrevFat >= '""" + self.dataInicioVendas + """ 
-                                    and dataPrevFat <= '""" + self.dataFinalFat + """' 
-                                    and codTipoNota in (""" + tiponota + """)  """
+        if self.filtroDataEmissaoFim != '' and self.filtroDataEmissaoIni != '':
+            sqlCswCapaPedidosDataPrev = """
+                                                SELECT   
+                                                    dataEmissao, 
+                                                    convert(varchar(9), codPedido) as codPedido,
+                                                    (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
+                                                    codTipoNota, 
+                                                    dataPrevFat, 
+                                                    convert(varchar(9),codCliente) as codCliente, 
+                                                    codRepresentante, 
+                                                    descricaoCondVenda, 
+                                                    vlrPedido as vlrSaldo, 
+                                                    qtdPecasFaturadas
+                                                FROM 
+                                                    Ped.Pedido p
+                                                where 
+                                                    codEmpresa = """ + empresa + """
+                                                    and  dataPrevFat >= '""" + self.dataInicioVendas + """ 
+                                                    and dataPrevFat <= '""" + self.dataFinalFat + """'
+                                                    and dataEmissao >= '"""+self.filtroDataEmissaoIni+"""'
+                                                    and dataEmissao <= '"""+self.filtroDataEmissaoFim+"""'  
+                                                    and codTipoNota in (""" + tiponota + """)  """
+        else:
+            sqlCswCapaPedidosDataPrev = """
+                                    SELECT   
+                                        dataEmissao, 
+                                        convert(varchar(9), codPedido) as codPedido,
+                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
+                                        codTipoNota, 
+                                        dataPrevFat, 
+                                        convert(varchar(9),codCliente) as codCliente, 
+                                        codRepresentante, 
+                                        descricaoCondVenda, 
+                                        vlrPedido as vlrSaldo, 
+                                        qtdPecasFaturadas
+                                    FROM 
+                                        Ped.Pedido p
+                                    where 
+                                        codEmpresa = """ + empresa + """
+                                        and  dataPrevFat >= '""" + self.dataInicioVendas + """ 
+                                        and dataPrevFat <= '""" + self.dataFinalFat + """' 
+                                        and codTipoNota in (""" + tiponota + """)  """
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sqlCswCapaPedidosDataPrev)
@@ -636,3 +682,104 @@ class MonitorPedidosOps():
 
     def monitorCsv(self):
         lerMonitor = ''
+
+    def resumoMonitor(self):
+        calcularMonitor = self.gerarMonitorPedidos()
+        calcularMonitor['codPedido'] = calcularMonitor['codPedido'].astype(str)
+        calcularMonitor['codCliente'] = calcularMonitor['codCliente'].astype(str)
+        calcularMonitor["StatusSugestao"].fillna('-', inplace=True)
+        calcularMonitor = calcularMonitor.groupby('codPedido').agg({
+            "MARCA": 'first',
+            "codTipoNota": 'first',
+            "dataEmissao": 'first',
+            "dataPrevFat": 'first',
+            "dataPrevAtualizada": 'first',
+            "codCliente": 'first',
+            # "razao": 'first',
+            "vlrSaldo": 'first',
+            # "descricaoCondVenda": 'first',
+            "entregas_Solicitadas": 'first',
+            "entregas_enviadas": 'first',
+            "qtdPecasFaturadas": 'first',
+            'Saldo +Sugerido': 'sum',
+            "ultimo_fat": "first",
+            "Qtd Atende": 'sum',
+            'QtdSaldo': 'sum',
+            'Qtd Atende por Cor': 'sum',
+            'Valor Atende por Cor': 'sum',
+            # 'Valor Atende': 'sum',
+            'StatusSugestao': 'first',
+            'Valor Atende por Cor(Distrib.)': 'sum',
+            'Qnt. Cor(Distrib.)': 'sum',
+            'SituacaoDistrib': 'first'
+            # 'observacao': 'first'
+        }).reset_index()
+
+        calcularMonitor['%'] = calcularMonitor['Qnt. Cor(Distrib.)'] / (calcularMonitor['Saldo +Sugerido'])
+        calcularMonitor['%'] = calcularMonitor['%'] * 100
+        calcularMonitor['%'] = calcularMonitor['%'].round(0)
+
+        calcularMonitor.rename(columns={'MARCA': '01-MARCA', "codPedido": "02-Pedido",
+                                "codTipoNota": "03-tipoNota", "dataPrevFat": "04-Prev.Original",
+                                "dataPrevAtualizada": "05-Prev.Atualiz", "codCliente": "06-codCliente",
+                                "vlrSaldo": "08-vlrSaldo", "entregas_Solicitadas": "09-Entregas Solic",
+                                "entregas_enviadas": "10-Entregas Fat",
+                                "ultimo_fat": "11-ultimo fat", "qtdPecasFaturadas": "12-qtdPecas Fat",
+                                "Qtd Atende": "13-Qtd Atende", "QtdSaldo": "14- Qtd Saldo",
+                                "Qnt. Cor(Distrib.)": "21-Qnt Cor(Distrib.)", "%": "23-% qtd cor",
+                                "StatusSugestao": "18-Sugestao(Pedido)", "Qtd Atende por Cor": "15-Qtd Atende p/Cor",
+                                "Valor Atende por Cor": "16-Valor Atende por Cor",
+                                "Valor Atende por Cor(Distrib.)": "22-Valor Atende por Cor(Distrib.)"}, inplace=True)
+
+        calcularMonitor = calcularMonitor.sort_values(by=['23-% qtd cor', '08-vlrSaldo'],
+                                      ascending=False)  # escolher como deseja classificar
+        calcularMonitor["10-Entregas Fat"].fillna(0, inplace=True)
+        calcularMonitor["09-Entregas Solic"].fillna(0, inplace=True)
+
+        calcularMonitor["11-ultimo fat"].fillna('-', inplace=True)
+        calcularMonitor["05-Prev.Atualiz"].fillna('-', inplace=True)
+        calcularMonitor.fillna(0, inplace=True)
+
+        calcularMonitor["16-Valor Atende por Cor"] = calcularMonitor["16-Valor Atende por Cor"].round(2)
+        calcularMonitor["22-Valor Atende por Cor(Distrib.)"] = calcularMonitor["22-Valor Atende por Cor(Distrib.)"].round(2)
+
+        saldo = calcularMonitor['08-vlrSaldo'].sum()
+        TotalQtdCor = calcularMonitor['15-Qtd Atende p/Cor'].sum()
+        TotalValorCor = calcularMonitor['16-Valor Atende por Cor'].sum()
+        TotalValorCor = TotalValorCor.round(2)
+
+        totalPedidos = calcularMonitor['02-Pedido'].count()
+        PedidosDistribui = calcularMonitor[calcularMonitor['23-% qtd cor'] > 0]
+        PedidosDistribui = PedidosDistribui['02-Pedido'].count()
+
+        pedidosRedistribuido = calcularMonitor[calcularMonitor['SituacaoDistrib'] == 'Distribuido2']
+        pedidosRedistribuido = pedidosRedistribuido['SituacaoDistrib'].count()
+
+        TotalQtdCordist = calcularMonitor['21-Qnt Cor(Distrib.)'].sum()
+        TotalValorCordist = calcularMonitor['22-Valor Atende por Cor(Distrib.)'].sum()
+        TotalValorCordist = TotalValorCordist.round(2)
+
+        # Agrupando os clientes
+        # Função para concatenar os valores agrupados
+        def concat_values(group):
+            return '/'.join(str(x) for x in group)
+
+        # Agrupar e aplicar a função de concatenação
+        result = calcularMonitor.groupby('06-codCliente')['02-Pedido'].apply(concat_values).reset_index()
+        # Renomear as colunas
+        result.columns = ['06-codCliente', 'Agrupamento']
+        pedidos = pd.merge(calcularMonitor, result, on='06-codCliente', how='left')
+
+        dados = {
+            '0-Status': True,
+            '1-Total Qtd Atende por Cor': f'{TotalQtdCor} Pçs',
+            '2-Total Valor Valor Atende por Cor': f'{TotalValorCor}',
+            '3-Total Qtd Cor(Distrib.)': f'{TotalQtdCordist} Pçs',
+            '4-Total Valor Atende por Cor(Distrib.)': f'{TotalValorCordist}',
+            '5-Valor Saldo Restante': f'{saldo}',
+            '5.1-Total Pedidos': f'{totalPedidos}',
+            '5.2-Total Pedidos distribui': f'{PedidosDistribui},({pedidosRedistribuido} pedidos redistribuido)',
+            '6 -Detalhamento': pedidos.to_dict(orient='records')
+
+        }
+        return pd.DataFrame([dados])

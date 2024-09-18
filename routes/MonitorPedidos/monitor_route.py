@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request,  send_from_directory
 from functools import wraps
 from models.MonitorPedidos import monitor, MonitorSimulacaoEncerrOP
-
+from models import MonitorPedidosOPsClass
 MonitorPedidos_routes = Blueprint('MonitorPedidos_routes', __name__)
 
 def token_required(f):
@@ -27,12 +27,13 @@ def get_MonitorPedidos():
     arrayRepres_excluir = request.args.get('arrayRepres_excluir','')
     arrayRepre_Incluir = request.args.get('arrayRepre_Incluir','')
     nomeCliente = request.args.get('nomeCliente','')
-    FiltrodataEmissaoInicial = request.args.get('FiltrodataEmissaoInicial','')
-    FiltrodataEmissaoFinal = request.args.get('FiltrodataEmissaoFinal','')
+    filtroDataEmissaoIni = request.args.get('FiltrodataEmissaoInicial','')
+    filtroDataEmissaoFim = request.args.get('FiltrodataEmissaoFinal','')
 
-    print('teste:'+FiltrodataEmissaoInicial)
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente,FiltrodataEmissaoInicial ,FiltrodataEmissaoFinal)
+    dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)\
+        .resumoMonitor()
+    #dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente,FiltrodataEmissaoInicial ,FiltrodataEmissaoFinal)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
