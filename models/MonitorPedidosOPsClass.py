@@ -1057,7 +1057,7 @@ class MonitorPedidosOps():
         monitor['id_op2'] = '-'
         monitor['Op Reservada2'] = '-'
 
-        consulta2 = self.consultaSQLOrdemProd()
+        consulta2 = self.consultaSQLOrdemProd('qtdAcumulada2')
 
         for i in range(1, 8):
             consultai = consulta2[consulta2['ocorrencia_sku'] == i]
@@ -1216,11 +1216,16 @@ class MonitorPedidosOps():
                 curr.execute(sqlExclusao)
                 conn.commit()
 
-    def consultaSQLOrdemProd(self):
+    def consultaSQLOrdemProd(self, apelodoColqtdAcumulado='qtdAcumulada' ):
 
-        consultaSql = """
-        select o.codreduzido as "codProduto", id, "qtdAcumulada", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
-        """
+        if apelodoColqtdAcumulado == "apelodoColqtdAcumulado":
+            consultaSql = """
+                select o.codreduzido as "codProduto", id, "qtdAcumulada" as "qtdAcumulada2", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
+            """
+        else:
+            consultaSql = """
+            select o.codreduzido as "codProduto", id, "qtdAcumulada", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
+            """
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(consultaSql, conn)
 
