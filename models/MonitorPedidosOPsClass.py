@@ -1234,7 +1234,7 @@ class MonitorPedidosOps():
 
 
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
-        agora = datetime.datetime.now(fuso_horario)
+        agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d')
         return pd.to_datetime(agora)
 
