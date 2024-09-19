@@ -1185,12 +1185,13 @@ class MonitorPedidosOps():
         dataAnterior3 = dataHoje_dt - timedelta(days=3)
         # Converter de volta para string no formato desejado
         dataAnterior3_str = dataAnterior3.strftime("%Y-%m-%d")
+        print(dataAnterior3_str)
 
         sqlExclusao = """
         DO $$ 
         DECLARE
             r RECORD;
-            data_limite DATE := """+dataAnterior3_str+""" ;
+            data_limite DATE := '"""+dataAnterior3_str+"""' ;
         BEGIN
             FOR r IN 
                 SELECT tablename 
