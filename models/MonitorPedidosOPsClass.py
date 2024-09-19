@@ -1218,7 +1218,7 @@ class MonitorPedidosOps():
 
     def consultaSQLOrdemProd(self, apelodoColqtdAcumulado='qtdAcumulada' ):
 
-        if apelodoColqtdAcumulado == "apelodoColqtdAcumulado":
+        if apelodoColqtdAcumulado == "qtdAcumulada2":
             consultaSql = """
                 select o.codreduzido as "codProduto", id, "qtdAcumulada" as "qtdAcumulada2", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
             """
