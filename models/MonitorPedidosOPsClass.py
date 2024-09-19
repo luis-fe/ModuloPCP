@@ -1166,7 +1166,8 @@ class MonitorPedidosOps():
     def congelamentoOrdemProd(self):
         '''Metodo utilizado para congelar uma tabela no banco para a analise de acordo com o monitor escolhido'''
 
-        nome = self.descricaoArquivo+'_'+ self.obterDiaAtual()
+        diaAtual = self.obterDiaAtual()
+        nome = self.descricaoArquivo+'_'+ diaAtual
 
         dropIf = """DROP TABLE IF EXISTS "PCP".pcp."ordemprod_monitor_"""+nome+""" ";"""
 
@@ -1233,7 +1234,7 @@ class MonitorPedidosOps():
 
 
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
-        agora = datetime.now(fuso_horario)
+        agora = datetime.datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d')
         return pd.to_datetime(agora)
 
