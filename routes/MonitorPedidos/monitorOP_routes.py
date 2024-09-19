@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.MonitorPedidos import monitorOP, AutomacaoOPs
-
+from models import MonitorPedidosOPsClass
 MonitorOp_routes = Blueprint('MonitorOp_routes', __name__)
 
 def token_required(f):
@@ -21,8 +21,11 @@ def get_monitorOPs():
     dataInico = request.args.get('dataInico','-')
     dataFim = request.args.get('dataFim')
 
+    empresa = 1
+
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = monitorOP.ReservaOPMonitor(dataInico , dataFim)
+    dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None)\
+        .gerarMonitorOps()
 
 
     # Obtém os nomes das colunas
