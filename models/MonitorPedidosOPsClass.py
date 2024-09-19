@@ -1190,7 +1190,7 @@ class MonitorPedidosOps():
         DO $$ 
         DECLARE
             r RECORD;
-            data_limite DATE := %s ;
+            data_limite DATE := """+dataAnterior3_str+""" ;
         BEGIN
             FOR r IN 
                 SELECT tablename 
@@ -1202,7 +1202,7 @@ class MonitorPedidosOps():
                 EXECUTE 'DROP TABLE IF EXISTS pcp.' || quote_ident(r.tablename);
             END LOOP;
         END $$;
-        """% dataAnterior3_str  # Aqui é onde ocorre a substituição da data
+        """
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
