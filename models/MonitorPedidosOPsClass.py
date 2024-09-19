@@ -1202,7 +1202,7 @@ class MonitorPedidosOps():
                 EXECUTE 'DROP TABLE IF EXISTS pcp.' || quote_ident(r.tablename);
             END LOOP;
         END $$;
-        """
+        """% dataAnterior3_str  # Aqui é onde ocorre a substituição da data
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
@@ -1212,7 +1212,7 @@ class MonitorPedidosOps():
                 curr.execute(sql)
                 conn.commit()
 
-                curr.execute(sqlExclusao,(dataAnterior3_str,))
+                curr.execute(sqlExclusao)
                 conn.commit()
 
     def consultaSQLOrdemProd(self):
