@@ -147,7 +147,7 @@ class MonitorPedidosOps():
 
         # 14 - Encontrando a Marca desejada
         pedidos['codItemPai'] = pedidos['codItemPai'].astype(str)
-        pedidos['MARCA'] = pedidos['codItemPai'].apply(lambda x: x[:3])
+        pedidos['MARCA'] = pedidos['codItemPai'].str[:3]
         pedidos['MARCA'] = numpy.where(
             (pedidos['codItemPai'].str[:3] == '102') | (pedidos['codItemPai'].str[:3] == '202'), 'M.POLLO', 'PACO')
 
@@ -1074,6 +1074,8 @@ class MonitorPedidosOps():
         consulta3 = self.consultaIdOPReservada()
         monitor = pd.merge(monitor, consulta3, on='Op Reservada2', how='left')
         monitor.to_csv(f'./dados/monitorOps{self.descricaoArquivo}.csv')
+
+
         data = monitor[(monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
         unique_counts = data.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')['codPedido'].count()
@@ -1102,6 +1104,9 @@ class MonitorPedidosOps():
         monitor1 = monitor1.groupby('numeroop').agg(
             {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
              "QtdSaldo": "sum"}).reset_index()
+
+
+
         monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
 
         monitorDetalhadoOps.to_csv(f'./dados/detalhadoops{self.descricaoArquivo}.csv')
@@ -1223,10 +1228,6 @@ class MonitorPedidosOps():
         consulta = pd.read_sql(consultaSql, conn)
 
         return  consulta
-
-
-
-
 
 
     def obterDiaAtual(self):
