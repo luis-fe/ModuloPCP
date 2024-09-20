@@ -5,7 +5,6 @@ import fastparquet as fp
 from models import EstoqueSkuClass
 import pytz
 from datetime import datetime, timedelta
-import dask.dataframe as dd
 
 
 class MonitorPedidosOps():
