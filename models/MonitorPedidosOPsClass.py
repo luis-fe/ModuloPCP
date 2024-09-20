@@ -826,37 +826,30 @@ class MonitorPedidosOps():
         monitor['id_op'] = '-'
         monitor['Op Reservada'] = '-'
 
-        for i in range(7):
-
-            # Utilizado para obter a iteracao
-            i = i + 1
-
+        for i in range(1,8):
             # filtra o dataframe consulta de acordo com a iteracao
-            consultai = consulta[
-                consulta['ocorrencia_sku'] == i]
-
+            consultai = consulta[consulta['ocorrencia_sku'] == i]
             # Apresenta o numero de linhas do dataframe filtrado
             x = consultai['codProduto'].count()
             print(f'iteracao de classificacao {i}: {x}')
-
             # Realiza um merge com outro dataFrame Chamado Monitor
             monitor = pd.merge(monitor, consultai, on='codProduto', how='left')
-
             # Condição para o cálculo da coluna 'id_op'
-            condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada']) | (
-                    monitor['id_op'] == 'Atendeu')
+            condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada']) | (monitor['id_op'] == 'Atendeu')
             monitor['id_op'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
-            monitor['Op Reservada'] = monitor.apply(
-                lambda r: r['id'] if (r['id_op'] == 'Atendeu') & (r['NecessodadeOP'] > 0) & (
-                            r['Op Reservada'] == '-') else
-                r['Op Reservada'], axis=1)
-
+            monitor['Op Reservada'] = numpy.where(
+                (monitor['id_op'] == 'Atendeu') &
+                (monitor['NecessodadeOP'] > 0) &
+                (monitor['Op Reservada'] == '-'),
+                monitor['id'],  # Valor que será atribuído se a condição for verdadeira
+                monitor['Op Reservada']  # Valor original se a condição for falsa
+            )
             # Define NecessodadeOP para 0 onde id_op é 'Atendeu'
             monitor.loc[monitor['id_op'] == 'Atendeu', 'NecessodadeOP'] = 0
             monitor['NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
-
             # Remove as colunas para depois fazer novo merge
             monitor = monitor.drop(['id', 'qtdAcumulada', 'ocorrencia_sku'], axis=1)
+
 
         # Estabelece no id_op o que AtendeuDistribuido pelo monitor original
         monitor.loc[monitor['Valor Atende por Cor(Distrib.)'] > 0, 'id_op'] = 'AtendeuDistribuido'
