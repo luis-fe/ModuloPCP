@@ -5,6 +5,7 @@ import fastparquet as fp
 from models import EstoqueSkuClass
 import pytz
 from datetime import datetime, timedelta
+import dask.dataframe as dd
 
 
 class MonitorPedidosOps():
@@ -686,10 +687,8 @@ class MonitorPedidosOps():
         pedidosNovo = pd.concat([pedidos1, pedidos2])
 
         return pedidosNovo
-
     def monitorCsv(self):
         lerMonitor = ''
-
     def resumoMonitor(self):
         calcularMonitor = self.gerarMonitorPedidos()
         calcularMonitor['codPedido'] = calcularMonitor['codPedido'].astype(str)
@@ -787,11 +786,8 @@ class MonitorPedidosOps():
             '5.1-Total Pedidos': f'{totalPedidos}',
             '5.2-Total Pedidos distribui': f'{PedidosDistribui},({pedidosRedistribuido} pedidos redistribuido)',
             '6 -Detalhamento': pedidos.to_dict(orient='records')
-
         }
         return pd.DataFrame([dados])
-
-
     def gerarMonitorOps(self):
         '''Metodo utilizado para processar as prioridades a nivel de OP nos Pedidos
         return:
@@ -1118,7 +1114,7 @@ class MonitorPedidosOps():
         sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
         sqlCswPrioridade = """
             SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao, (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
-        INNER JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
+        left JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
         join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
         WHERE op.situacao = 3 and op.codEmpresa = 1
             """
@@ -1150,8 +1146,6 @@ class MonitorPedidosOps():
 
         }
         return pd.DataFrame([dados])
-
-
     def consultaIdOPReservada(self):
 
         conn = ConexaoPostgreWms.conexaoEngine()
@@ -1159,8 +1153,6 @@ class MonitorPedidosOps():
                                 conn)
 
         return consulta3
-
-
     def congelamentoOrdemProd(self):
         '''Metodo utilizado para congelar uma tabela no banco para a analise de acordo com o monitor escolhido'''
 
@@ -1213,7 +1205,6 @@ class MonitorPedidosOps():
 
                 curr.execute(sqlExclusao)
                 conn.commit()
-
     def consultaSQLOrdemProd(self, apelodoColqtdAcumulado='qtdAcumulada' ):
 
         if apelodoColqtdAcumulado == "qtdAcumulada2":
@@ -1228,8 +1219,6 @@ class MonitorPedidosOps():
         consulta = pd.read_sql(consultaSql, conn)
 
         return  consulta
-
-
     def obterDiaAtual(self):
 
 
@@ -1237,9 +1226,3 @@ class MonitorPedidosOps():
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d')
         return agora
-
-
-
-
-
-
