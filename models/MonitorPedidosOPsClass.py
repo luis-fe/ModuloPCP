@@ -1230,7 +1230,7 @@ class MonitorPedidosOps():
         agora = agora.strftime('%Y-%m-%d')
         return agora
 
-    def ProdutosSemOP_(self,dataInico, dataFim):
+    def produtosSemOP_(self):
 
         # Ler o estoque atual a nivel de sku, retornando o merge com o monitor
         sql = """
@@ -1247,7 +1247,7 @@ class MonitorPedidosOps():
         sql = pd.read_sql(sql, conn)
 
         # 1 - ler o arquivo csv do monitor de ops
-        descricaoArquivo = dataInico + '_' + dataFim
+        descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
         monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
 
         #monitorDetalhadoOps2 = monitorDetalhadoOps[
