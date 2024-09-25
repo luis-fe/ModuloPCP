@@ -242,7 +242,7 @@ class MonitorPedidosOps():
         pedidos.fillna(0, inplace=True)
 
         pedidos1 = pedidos[pedidos['totalPçDis'] == 0]
-        pedidos1['SituacaoDistrib'] = 'Redistribui'
+        pedidos1.loc[:, 'SituacaoDistrib'] = 'Redistribui'
         pedidos1 = self.Ciclo2(pedidos1, avaliar_grupo)
         pedidos2 = pedidos[pedidos['totalPçDis'] > 0]
         pedidos2['SituacaoDistrib'] = 'Distribuido1'
