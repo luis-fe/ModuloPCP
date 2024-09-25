@@ -82,6 +82,7 @@ class MonitorPedidosOps():
             sku = self.Monitor_nivelSkuPrev()
 
         estruturasku = self.EstruturaSku()
+        estruturasku['CATEGORIA'] = '-'
         # 5.1 - Considerando somente a qtdePedida maior que 0
         pedidos = pd.merge(pedidos, sku, on='codPedido', how='left')
         pedidos = pd.merge(pedidos, estruturasku, on='codProduto', how='left')
