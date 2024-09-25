@@ -82,10 +82,10 @@ class MonitorPedidosOps():
             sku = self.Monitor_nivelSkuPrev()
 
         estruturasku = self.EstruturaSku()
-        estruturasku['CATEGORIA'] = 'canc'
         # 5.1 - Considerando somente a qtdePedida maior que 0
         pedidos = pd.merge(pedidos, sku, on='codPedido', how='left')
         pedidos = pd.merge(pedidos, estruturasku, on='codProduto', how='left')
+        pedidos['CATEGORIA'].fillna('-',inplace=True)
         pedidos['QtdSaldo'] = pedidos['qtdePedida'] - pedidos['qtdeFaturada'] - pedidos['qtdeSugerida']
         pedidos['QtdSaldo'].fillna(0, inplace=True)
         pedidos['QtdSaldo'] = pedidos['QtdSaldo'].astype(int)
