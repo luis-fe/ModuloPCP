@@ -830,8 +830,8 @@ class MonitorPedidosOps():
             monitor = pd.merge(monitor, consultai, on='codProduto', how='left')
             # Condição para o cálculo da coluna 'id_op'
             condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada']) | (monitor['id_op'] == 'Atendeu')
-            monitor['id_op'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
-            monitor['Op Reservada'] = numpy.where(
+            monitor.loc[:, 'id_op'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
+            monitor.loc[:, 'Op Reservada']  = numpy.where(
                 (monitor['id_op'] == 'Atendeu') &
                 (monitor['NecessodadeOP'] > 0) &
                 (monitor['Op Reservada'] == '-'),
@@ -840,7 +840,7 @@ class MonitorPedidosOps():
             )
             # Define NecessodadeOP para 0 onde id_op é 'Atendeu'
             monitor.loc[monitor['id_op'] == 'Atendeu', 'NecessodadeOP'] = 0
-            monitor['NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
+            monitor.loc[:,'NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
             # Remove as colunas para depois fazer novo merge
             monitor = monitor.drop(['id', 'qtdAcumulada', 'ocorrencia_sku'], axis=1)
 
