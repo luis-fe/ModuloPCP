@@ -538,7 +538,7 @@ class MonitorPedidosOps():
                 "codItemPai", 
                 "codCor", 
                 "nome" as "nomeSKU",
-                categoria as "CATEGORIA"
+                categoria::varchar as "CATEGORIA"
             from 
                 pcp."itens_csw"  
             where  
@@ -1298,3 +1298,25 @@ class MonitorPedidosOps():
         monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido'}, inplace=True)
 
         return monitorDetalhadoOps
+
+
+    def mP_PrincipalSemOP(self):
+        sql = """
+        SELECT
+            c.CodComponente,
+            c.codProduto,
+            c.codAplicacao,
+            c2.codSortimento ,
+            c2.seqTamanho,
+            c2.quantidade
+        FROM
+            tcp.ComponentesVariaveis c
+        inner join tcp.CompVarSorGraTam c2 on
+            c2.codEmpresa = 1
+            and c2.codProduto = c.codProduto
+            and c2.sequencia = c.codSequencia
+        WHERE
+            c.codEmpresa = 1
+            and c.codAplicacao like '%PRINCI%'
+            and c.codProduto like '%-0'
+        """
