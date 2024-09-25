@@ -588,7 +588,6 @@ class MonitorPedidosOps():
         # etapa 1: recarregando estoque
 
         estoque = EstoqueSkuClass.EstoqueSKU().consultaEstoqueConsolidadoPorReduzido_nat5()  # é feito uma nova releitura do estoque
-        print('verificar se foi pra redistribuicao')
 
         pedidos1 = pedidos[pedidos['StatusSugestao'] == 'Nao Sugerido']
         pedidos2 = pedidos[pedidos['StatusSugestao'] != 'Nao Sugerido']
