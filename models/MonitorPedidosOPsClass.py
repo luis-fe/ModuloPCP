@@ -363,7 +363,6 @@ class MonitorPedidosOps():
                                         and codTipoNota in (""" + tiponota + """)  """
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
-                print(sqlCswCapaPedidosDataPrev)
                 cursor.execute(sqlCswCapaPedidosDataPrev)
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
