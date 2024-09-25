@@ -1089,7 +1089,7 @@ class MonitorPedidosOps():
         mascara = (monitor1['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor1['dataPrevAtualizada2'] <= self.dataFinalFat)
         monitor1.loc[:,'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
-        monitor1['numeroop'].fillna('-', inplace=True)
+        monitor1.loc[:,'numeroop'] = monitor1['numeroop'].fillna('-', inplace=True)
         monitor1 = monitor1.loc[mascara]
 
         monitor1 = monitor1[monitor1['numeroop'] != '-']
@@ -1127,7 +1127,7 @@ class MonitorPedidosOps():
                 colunas = [desc[0] for desc in cursor_csw.description]
                 rows = cursor_csw.fetchall()
                 get = pd.DataFrame(rows, columns=colunas)
-                get['codFaseAtual'] = get['codFaseAtual'].astype(str)
+                get.loc['codFaseAtual'] = get['codFaseAtual'].astype(str)
                 del rows
 
                 cursor_csw.execute(sqlCswPrioridade)
