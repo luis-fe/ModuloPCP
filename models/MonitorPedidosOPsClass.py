@@ -810,15 +810,15 @@ class MonitorPedidosOps():
 
 
         # Condição para o cálculo da coluna 'NecessodadeOP'
-        monitor['Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
+        monitor.loc[:,'Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
         condicao = (monitor['Qtd Atende'] > 0)
         # Cálculo da coluna 'NecessodadeOP' de forma vetorizada
-        monitor['NecessodadeOP'] = numpy.where(condicao, 0, monitor['QtdSaldo'])
-        monitor['NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
+        monitor.loc[:,'NecessodadeOP'] = numpy.where(condicao, 0, monitor['QtdSaldo'])
+        monitor.loc[:,'NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
 
         # Atribuindo valores padrao para identificar id_op e OP Reservada
-        monitor['id_op'] = '-'
-        monitor['Op Reservada'] = '-'
+        monitor.loc[:,'id_op'] = '-'
+        monitor.loc[:,'Op Reservada'] = '-'
 
         for i in range(1,8):
             # filtra o dataframe consulta de acordo com a iteracao
@@ -830,8 +830,8 @@ class MonitorPedidosOps():
             monitor = pd.merge(monitor, consultai, on='codProduto', how='left')
             # Condição para o cálculo da coluna 'id_op'
             condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada']) | (monitor['id_op'] == 'Atendeu')
-            monitor['id_op'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
-            monitor['Op Reservada'] = numpy.where(
+            monitor.loc[:, 'id_op'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
+            monitor.loc[:, 'Op Reservada']  = numpy.where(
                 (monitor['id_op'] == 'Atendeu') &
                 (monitor['NecessodadeOP'] > 0) &
                 (monitor['Op Reservada'] == '-'),
@@ -840,7 +840,7 @@ class MonitorPedidosOps():
             )
             # Define NecessodadeOP para 0 onde id_op é 'Atendeu'
             monitor.loc[monitor['id_op'] == 'Atendeu', 'NecessodadeOP'] = 0
-            monitor['NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
+            monitor.loc[:,'NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
             # Remove as colunas para depois fazer novo merge
             monitor = monitor.drop(['id', 'qtdAcumulada', 'ocorrencia_sku'], axis=1)
 
@@ -902,14 +902,14 @@ class MonitorPedidosOps():
         monitor = monitor.sort_values(by=['codSitSituacao', 'dataPrevAtualizada', 'Op Reservada', 'Pedido||Prod.||Cor'],
                                       ascending=[True, True, False, True]).reset_index()
 
-        monitor['recalculoData'] = monitor.groupby('codPedido')['Saldo Grade'].cumsum()
-        monitor['recalculoData2'] = monitor.groupby('codPedido')['Saldo Grade'].transform('sum')
-        monitor['recalculoData'] = (monitor['recalculoData'] / monitor['recalculoData2']).round(2)
-        monitor['recalculoData'] = monitor['recalculoData'].astype(str)
-        monitor['recalculoData'] = monitor['recalculoData'].str.slice(0, 4)
-        monitor['recalculoData'] = monitor['recalculoData'].astype(float)
+        monitor.loc[:,'recalculoData'] = monitor.groupby('codPedido')['Saldo Grade'].cumsum()
+        monitor.loc[:,'recalculoData2'] = monitor.groupby('codPedido')['Saldo Grade'].transform('sum')
+        monitor.loc[:,'recalculoData'] = (monitor['recalculoData'] / monitor['recalculoData2']).round(2)
+        monitor.loc[:,'recalculoData'] = monitor['recalculoData'].astype(str)
+        monitor.loc[:,'recalculoData'] = monitor['recalculoData'].str.slice(0, 4)
+        monitor.loc[:,'recalculoData'] = monitor['recalculoData'].astype(float)
         # Certifique-se de que 'Entregas Restantes' é do tipo int
-        monitor['Entregas Restantes'] = monitor['Entregas Restantes'].astype(int)
+        monitor.loc[:,'Entregas Restantes'] = monitor['Entregas Restantes'].astype(int)
 
         # Condições para a coluna 'entregaAtualizada'
         cond_1 = (monitor['Entregas Restantes'] == 1)
@@ -1015,7 +1015,7 @@ class MonitorPedidosOps():
         monitor.loc[cond_8_7, 'entregaAtualizada'] = 7
         monitor.loc[cond_8_8, 'entregaAtualizada'] = 8
 
-        monitor['dataPrevAtualizada2'] = (
+        monitor.loc[:,'dataPrevAtualizada2'] = (
                 monitor['dataPrevAtualizada']
                 .str.slice(6, 10) + '-' +
                 monitor['dataPrevAtualizada'].str.slice(3, 5) + '-' +
@@ -1023,13 +1023,13 @@ class MonitorPedidosOps():
         )
 
         # 7 Calculando a nova data de Previsao do pedido
-        monitor['dias_a_adicionar2'] = pd.to_timedelta(((monitor['entregaAtualizada'] - 1) * 15),
+        monitor.loc[:,'dias_a_adicionar2'] = pd.to_timedelta(((monitor['entregaAtualizada'] - 1) * 15),
                                                        unit='d')  # Converte a coluna de inteiros para timedelta
-        monitor['dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
+        monitor.loc[:,'dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
                                                         infer_datetime_format=True)
-        monitor['dataPrevAtualizada2'].fillna(self.dataInicioFat, inplace=True)
+        monitor.loc[:,'dataPrevAtualizada2'].fillna(self.dataInicioFat, inplace=True)
 
-        monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
+        monitor.loc[:,'dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
 
         monitor = monitor.sort_values(by=['dataPrevAtualizada2'], ascending=True)
 
@@ -1038,11 +1038,11 @@ class MonitorPedidosOps():
         # Condição para o cálculo da coluna 'NecessodadeOP'
         condicao = (monitor['Qtd Atende'] > 0)
         # Cálculo da coluna 'NecessodadeOP' de forma vetorizada
-        monitor['NecessodadeOP'] = numpy.where(condicao, 0, monitor['QtdSaldo'])
-        monitor['NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
+        monitor.loc[:,'NecessodadeOP'] = numpy.where(condicao, 0, monitor['QtdSaldo'])
+        monitor.loc[:,'NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
 
-        monitor['id_op2'] = '-'
-        monitor['Op Reservada2'] = '-'
+        monitor.loc[:,'id_op2'] = '-'
+        monitor.loc[:,'Op Reservada2'] = '-'
 
         consulta2 = self.consultaSQLOrdemProd('qtdAcumulada2')
 
@@ -1055,14 +1055,14 @@ class MonitorPedidosOps():
 
             condicao = (monitor['NecessodadeOP'] == 0) | (monitor['NecessodadeOPAcum'] <= monitor['qtdAcumulada2']) | (
                     monitor['id_op2'] == 'Atendeu')
-            monitor['id_op2'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
+            monitor.loc[:,'id_op2'] = numpy.where(condicao, 'Atendeu', 'nao atendeu')
 
-            monitor['Op Reservada2'] = numpy.where(
+            monitor.loc[:,'Op Reservada2'] = numpy.where(
                 (monitor['id_op2'] == 'Atendeu') & (monitor['NecessodadeOP'] > 0) & (monitor['Op Reservada2'] == '-'),
                 monitor['id'].fillna(monitor['Op Reservada2']), monitor['Op Reservada2'])
 
             monitor.loc[monitor['id_op2'] == 'Atendeu', 'NecessodadeOP'] = 0
-            monitor['NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
+            monitor.loc[:,'NecessodadeOPAcum'] = monitor.groupby('codProduto')['NecessodadeOP'].cumsum()
             monitor = monitor.drop(['id', 'qtdAcumulada2', 'ocorrencia_sku'], axis=1)
 
         consulta3 = self.consultaIdOPReservada()
@@ -1075,12 +1075,11 @@ class MonitorPedidosOps():
         unique_counts = data.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')['codPedido'].count()
 
         # Adicionar essa contagem ao DataFrame original
-        monitor['Ocorrencia Pedidos'] = monitor['numeroop'].map(unique_counts)
+        monitor.loc[:,'Ocorrencia Pedidos'] = monitor['numeroop'].map(unique_counts)
 
         monitor1 = monitor[
             ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos"]]
         monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
-
         # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
         monitor1.loc[:,'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
