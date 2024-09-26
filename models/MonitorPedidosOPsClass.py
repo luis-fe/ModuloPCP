@@ -262,7 +262,6 @@ class MonitorPedidosOps():
         pedidos['nomeSKU'] = pedidos['nomeSKU'].astype(str)
         pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
 
-        self.descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
         fp.write(f'./dados/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
