@@ -1,4 +1,5 @@
 import sys
+import time
 
 import numpy
 import pandas as pd
@@ -1350,8 +1351,9 @@ class MonitorPedidosOps():
         print(f'Gerado o processo: {new_process}')
 
         # Iniciar o novo processo após 5 segundos
-        os.system(f"sleep 2&& {new_process} &")
+        os.system(f"sleep 5&& {new_process} &")
 
         # Encerrando o PID atual
         p = psutil.Process(PID)
+        time.sleep(3)
         p.terminate()
