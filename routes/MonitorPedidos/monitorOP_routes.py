@@ -46,6 +46,8 @@ def get_monitorOPs():
     porta_atual = 8000  # Substitua pela porta correta que você está utilizando
     thread = threading.Thread(target=monitor.reiniciandoAPP(), args=(porta_atual,))
     thread.start()
+    return response
+
 
 
 @MonitorOp_routes.route('/pcp/api/DelhalamentoMonitorOP', methods=['GET'])
