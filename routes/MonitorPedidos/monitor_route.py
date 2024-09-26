@@ -31,8 +31,9 @@ def get_MonitorPedidos():
     filtroDataEmissaoFim = request.args.get('emissaofinal','')
     #controle.InserindoStatus(rotina, ip, datainicio)
     print('filtro'+filtroDataEmissaoIni)
-    dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)\
-        .resumoMonitor()
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)
+    monitor.trasferenciaDeArquivo2()
+    dados =monitor.resumoMonitor()
 
 
 
@@ -41,7 +42,6 @@ def get_MonitorPedidos():
 
     # Obtém os nomes das colunas
     column_names = dados.columns
-    dados.trasferenciaDeArquivo2()
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
     for index, row in dados.iterrows():
