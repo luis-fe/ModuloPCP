@@ -43,9 +43,9 @@ def get_monitorOPs():
     response = jsonify(OP_data)
 
     # Após retornar a resposta, reiniciar o app em uma nova thread
-    porta_atual = 8000  # Substitua pela porta correta que você está utilizando
-    thread = threading.Thread(target=monitor.reiniciandoAPP(), args=(porta_atual,))
-    thread.start()
+    #porta_atual = 8000  # Substitua pela porta correta que você está utilizando
+    #thread = threading.Thread(target=monitor.reiniciandoAPP(), args=(porta_atual,))
+    #thread.start()
     return response
 
 
