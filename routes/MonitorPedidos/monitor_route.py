@@ -32,7 +32,7 @@ def get_MonitorPedidos():
     #controle.InserindoStatus(rotina, ip, datainicio)
     print('filtro'+filtroDataEmissaoIni)
     dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)\
-        .trasferenciaDeArquivo2().resumoMonitor()
+        .resumoMonitor()
 
 
 
@@ -41,6 +41,7 @@ def get_MonitorPedidos():
 
     # Obtém os nomes das colunas
     column_names = dados.columns
+    dados.trasferenciaDeArquivo2()
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
     for index, row in dados.iterrows():
