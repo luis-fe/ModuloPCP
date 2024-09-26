@@ -1343,17 +1343,16 @@ class MonitorPedidosOps():
             and c.codProduto like '%-0'
         """
 
-    def reiniciandoAPP(self):
+    def reiniciandoAPP(porta):
         PID = os.getpid()
 
         # Iniciar nova instância do script após N segundos na mesma porta
-        new_process = f"{sys.executable} {sys.argv[0]} --port {8000}"
+        new_process = f"{sys.executable} {sys.argv[0]} --port {porta}"
         print(f'Gerado o processo: {new_process}')
 
         # Iniciar o novo processo após 5 segundos
-        os.system(f"sleep 5&& {new_process} &")
+        os.system(f"sleep 5 && {new_process} &")
 
-        # Encerrando o PID atual
+        # Encerrar o processo atual após o novo processo ser iniciado
         p = psutil.Process(PID)
-        time.sleep(3)
         p.terminate()

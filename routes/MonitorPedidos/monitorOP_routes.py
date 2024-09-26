@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.MonitorPedidos import monitorOP, AutomacaoOPs
 from models import MonitorPedidosOPsClass
+import threading  # Para rodar o terminate em uma thread separada
+
 MonitorOp_routes = Blueprint('MonitorOp_routes', __name__)
 
 def token_required(f):
@@ -15,20 +17,18 @@ def token_required(f):
     return decorated_function
 
 
-@MonitorOp_routes.route('/pcp/api/monitorOPs', methods=['GET'])
-@token_required
 def get_monitorOPs():
-    dataInico = request.args.get('dataInico','-')
+    dataInico = request.args.get('dataInico', '-')
     dataFim = request.args.get('dataFim')
 
     empresa = 1
-
-    #controle.InserindoStatus(rotina, ip, datainicio)
-    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None)
-    dados =  monitor.gerarMonitorOps()
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
+                                                       None, None, None, None, None)
+    dados = monitor.gerarMonitorOps()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
+
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
     for index, row in dados.iterrows():
@@ -37,9 +37,13 @@ def get_monitorOPs():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
 
-    monitor.reiniciandoAPP()
-    return jsonify(OP_data)
+    # Retorna os dados JSON para o cliente
+    response = jsonify(OP_data)
 
+    # Após retornar a resposta, reiniciar o app em uma nova thread
+    porta_atual = 8000  # Substitua pela porta correta que você está utilizando
+    thread = threading.Thread(target=monitor.reiniciandoAPP(), args=(porta_atual,))
+    thread.start()
 
 
 @MonitorOp_routes.route('/pcp/api/DelhalamentoMonitorOP', methods=['GET'])
