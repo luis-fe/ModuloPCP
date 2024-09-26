@@ -32,7 +32,10 @@ def get_MonitorPedidos():
     #controle.InserindoStatus(rotina, ip, datainicio)
     print('filtro'+filtroDataEmissaoIni)
     dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)\
-        .resumoMonitor()
+        .trasferenciaDeArquivo2().resumoMonitor()
+
+
+
     #dados = monitor.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir, nomeCliente,FiltrodataEmissaoInicial ,FiltrodataEmissaoFinal)
     #controle.salvarStatus(rotina, ip, datainicio)
 

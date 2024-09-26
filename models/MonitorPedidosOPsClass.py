@@ -5,6 +5,7 @@ import fastparquet as fp
 from models import EstoqueSkuClass
 import pytz
 from datetime import datetime, timedelta
+import paramiko
 
 
 class MonitorPedidosOps():
@@ -256,11 +257,28 @@ class MonitorPedidosOps():
         pedidos['nomeSKU'] = pedidos['nomeSKU'].astype(str)
         pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
 
-        descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
-        fp.write(f'./dados/monitor{descricaoArquivo}.parquet', pedidos)
+        self.descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
+        fp.write(f'./dados/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
         return pedidos
+
+
+    def trasferenciaDeArquivo2(self):
+        '''Metodo que transferi o arquivo .fast entre servidores concectados '''
+
+        # Conectar ao servidor
+        transport = paramiko.Transport(('10.162.0.190', 22))
+        transport.connect(username='mplti', password='*yvnMP')
+
+        sftp = paramiko.SFTPClient.from_transport(transport)
+
+        # Enviar o arquivo
+        with open(f'./dados/monitor{self.descricaoArquivo}.parquet', 'rb') as fp:
+            sftp.putfo(fp, f'/home/mplti/ModuloPCP/dados/monitor{self.descricaoArquivo}.parquet')
+
+        sftp.close()
+        transport.close()
 
     def capaPedidos(self):
         '''Metodo que busca a capa dos pedidos no periodo de vendas'''
