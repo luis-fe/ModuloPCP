@@ -24,9 +24,8 @@ def get_monitorOPs():
     empresa = 1
 
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = MonitorPedidosOPsClass.MonitorPedidosOps(empresa , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None)\
-        .gerarMonitorOps()
-
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None)
+    dados =  monitor.gerarMonitorOps()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -37,6 +36,8 @@ def get_monitorOPs():
         for column_name in column_names:
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
+
+    monitor.reiniciandoAPP()
     return jsonify(OP_data)
 
 

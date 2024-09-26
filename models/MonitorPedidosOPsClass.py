@@ -1,3 +1,5 @@
+import sys
+
 import numpy
 import pandas as pd
 from connection import ConexaoBanco, ConexaoPostgreWms
@@ -6,6 +8,8 @@ from models import EstoqueSkuClass
 import pytz
 from datetime import datetime, timedelta
 import paramiko
+import os
+import psutil
 
 
 class MonitorPedidosOps():
@@ -1337,3 +1341,14 @@ class MonitorPedidosOps():
             and c.codAplicacao like '%PRINCI%'
             and c.codProduto like '%-0'
         """
+
+    def reiniciandoAPP(self):
+        PID = os.getpid()
+
+        # Iniciar nova instância do script após N segundos
+        new_process = f"{sys.executable} {sys.argv[0]}"
+        print(f'gerado o process {new_process}')
+        os.system(f"sleep 5 && {new_process} &")
+        # Encerrando o  PID atual
+        p = psutil.Process(PID)
+        p.terminate()
