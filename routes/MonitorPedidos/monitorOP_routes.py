@@ -17,6 +17,8 @@ def token_required(f):
     return decorated_function
 
 
+@MonitorOp_routes.route('/pcp/api/monitorOPs', methods=['GET'])
+@token_required
 def get_monitorOPs():
     dataInico = request.args.get('dataInico', '-')
     dataFim = request.args.get('dataFim')
