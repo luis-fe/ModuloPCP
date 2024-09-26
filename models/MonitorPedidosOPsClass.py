@@ -1347,7 +1347,7 @@ class MonitorPedidosOps():
         PID = os.getpid()
 
         # Iniciar nova instância do script após N segundos na mesma porta
-        new_process = f"{sys.executable} {sys.argv[0]} --port {porta}"
+        new_process = f"{sys.executable} {sys.argv[0]}"
         print(f'Gerado o processo: {new_process}')
 
         # Iniciar o novo processo após 5 segundos
