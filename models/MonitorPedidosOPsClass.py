@@ -808,7 +808,7 @@ class MonitorPedidosOps():
             '6 -Detalhamento': pedidos.to_dict(orient='records')
         }
         return pd.DataFrame([dados])
-    def gerarMonitorOps(self):
+    def gerarMonitorOps(self, dataInicioFat, dataFimFat):
         '''Metodo utilizado para processar as prioridades a nivel de OP nos Pedidos
         return:
         DataFrame:
@@ -832,7 +832,7 @@ class MonitorPedidosOps():
 
 
         # Condição para o cálculo da coluna 'NecessodadeOP'
-        monitor['Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
+        monitor.loc[:,'Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
         condicao = (monitor['Qtd Atende'] > 0)
         # Cálculo da coluna 'NecessodadeOP' de forma vetorizada
         monitor['NecessodadeOP'] = numpy.where(condicao, 0, monitor['QtdSaldo'])
@@ -1049,7 +1049,7 @@ class MonitorPedidosOps():
                                                        unit='d')  # Converte a coluna de inteiros para timedelta
         monitor['dataPrevAtualizada2'] = pd.to_datetime(monitor['dataPrevAtualizada2'], errors='coerce',
                                                         infer_datetime_format=True)
-        monitor['dataPrevAtualizada2'].fillna(self.dataInicioFat, inplace=True)
+        monitor['dataPrevAtualizada2'].fillna(dataInicioFat, inplace=True)
 
         monitor['dataPrevAtualizada2'] = monitor['dataPrevAtualizada2'] + monitor['dias_a_adicionar2']
 
@@ -1092,7 +1092,7 @@ class MonitorPedidosOps():
         monitor.to_csv(f'./dados/monitorOps{self.descricaoArquivo}.csv')
 
 
-        data = monitor[(monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
+        data = monitor[(monitor['dataPrevAtualizada2'] >= dataInicioFat) & (monitor['dataPrevAtualizada2'] <= dataFimFat)]
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
         unique_counts = data.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')['codPedido'].count()
 
@@ -1109,7 +1109,7 @@ class MonitorPedidosOps():
         monitor1.loc[:,'dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce',
                                                          infer_datetime_format=True)
 
-        mascara = (monitor1['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor1['dataPrevAtualizada2'] <= self.dataFinalFat)
+        mascara = (monitor1['dataPrevAtualizada2'] >= dataInicioFat) & (monitor1['dataPrevAtualizada2'] <= dataFimFat)
         monitor1.loc[:,'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
         monitor1['numeroop'].fillna('-', inplace=True)
