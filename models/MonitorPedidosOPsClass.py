@@ -1124,7 +1124,7 @@ class MonitorPedidosOps():
 
         monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
 
-        monitorDetalhadoOps.to_csv(f'./dados/detalhadoops{self.descricaoArquivo}.csv')
+        monitorDetalhadoOps.to_csv(f'/home/mplti/ModuloPCP/dados/detalhadoops{self.descricaoArquivo}.csv')
 
         monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
                                         ascending=[False]).reset_index()
