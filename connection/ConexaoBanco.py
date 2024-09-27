@@ -15,7 +15,6 @@ def Conexao2():
     finally:
         if conn:
             conn.close()
-
 @contextmanager
 def ConexaoInternoMPL():
     conn = None
