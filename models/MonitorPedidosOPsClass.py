@@ -830,7 +830,6 @@ class MonitorPedidosOps():
          #   parquet_file = fp.ParquetFile(f'./dados/monitor_filtro.parquet')
           #  monitor = parquet_file.to_pandas()
 
-
         # Condição para o cálculo da coluna 'NecessodadeOP'
         monitor.loc[:,'Qtd Atende'] = monitor['QtdSaldo'].where(monitor['Necessidade'] <= monitor['EstoqueLivre'], 0)
         condicao = (monitor['Qtd Atende'] > 0)
