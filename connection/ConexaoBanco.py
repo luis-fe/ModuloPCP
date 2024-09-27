@@ -15,8 +15,8 @@ def Conexao2():
         yield conn
     finally:
         if conn:
-@contextmanager
             conn.close()
+@contextmanager
 def ConexaoInternoMPL():
     conn = None
     try:
