@@ -1,6 +1,7 @@
 import jaydebeapi
 from contextlib import contextmanager
 
+
 @contextmanager
 def Conexao2():
     conn = None
@@ -14,8 +15,8 @@ def Conexao2():
         yield conn
     finally:
         if conn:
-            conn.close()
 @contextmanager
+            conn.close()
 def ConexaoInternoMPL():
     conn = None
     try:
