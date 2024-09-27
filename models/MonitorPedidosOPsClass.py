@@ -1088,7 +1088,7 @@ class MonitorPedidosOps():
 
         consulta3 = self.consultaIdOPReservada()
         monitor = pd.merge(monitor, consulta3, on='Op Reservada2', how='left')
-        monitor.to_csv(f'./dados/monitorOps{self.descricaoArquivo}.csv')
+        monitor.to_csv(f'home/mplti/ModuloPCP/dados/monitorOps{self.descricaoArquivo}.csv')
 
 
         data = monitor[(monitor['dataPrevAtualizada2'] >= dataInicioFat) & (monitor['dataPrevAtualizada2'] <= dataFimFat)]
