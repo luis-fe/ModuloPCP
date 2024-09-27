@@ -820,15 +820,15 @@ class MonitorPedidosOps():
         consulta = self.consultaSQLOrdemProd()
 
         # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
-        try:
-            parquet_file = fp.ParquetFile(f'./dados/monitor{self.descricaoArquivo}.parquet')
-            # Converter para DataFrame do Pandas
-            monitor = parquet_file.to_pandas()
-            # disponibiliza um novo arquivo para ser utilizado com filtragem
-            fp.write(f'./dados/monitor_filtro.parquet', monitor)
-        except:
-            parquet_file = fp.ParquetFile(f'./dados/monitor_filtro.parquet')
-            monitor = parquet_file.to_pandas()
+        #try:
+        parquet_file = fp.ParquetFile(f'./dados/monitor{self.descricaoArquivo}.parquet')
+        # Converter para DataFrame do Pandas
+        monitor = parquet_file.to_pandas()
+        # disponibiliza um novo arquivo para ser utilizado com filtragem
+        fp.write(f'./dados/monitor_filtro.parquet', monitor)
+        #except:
+         #   parquet_file = fp.ParquetFile(f'./dados/monitor_filtro.parquet')
+          #  monitor = parquet_file.to_pandas()
 
 
         # Condição para o cálculo da coluna 'NecessodadeOP'
