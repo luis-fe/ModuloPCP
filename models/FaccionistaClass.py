@@ -82,6 +82,22 @@ class Faccionista():
         consulta = pd.read_sql(select, self.conn)
 
         return consulta
+    
+    def consultarFaccionistasCategoria(self):
+        sql = """
+            select 
+                apelidofaccionista
+            from
+                 pcp."faccaoCategoria" fc
+            inner join 
+                pcp."faccionista" f on 
+                f.codfaccionista = fc.codfaccionista
+            where
+                nomecategoria = %s;
+        """
+        consulta = pd.read_sql(sql, self.conn,params=(self.nomecategoria))
+
+        return consulta
 
 
     def ConsultarFaccionista(self):
@@ -149,7 +165,7 @@ class Faccionista():
             updateFaccionista = """UPDATE "PCP".pcp.faccionista SET apelidofaccionista = %s WHERE codfaccionista::varchar = %s """
 
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
-                with connInsert.cursor() as curr:
+                with self.cursor() as curr:
                     curr.execute(update,(self.Capacidade_dia,self.nomecategoria,str(self.codfaccionista),self.nomecategoria))
                     connInsert.commit()
                     curr.execute(updateFaccionista,(self.apelidofaccionista,str(self.codfaccionista)))
