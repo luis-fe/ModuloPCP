@@ -99,7 +99,7 @@ class Faccionista():
         """
         consulta = pd.read_sql(sql, self.conn,params=(categoria,))
 
-        carga = MetaFaccionistaClass.MetaFaccionista().cargaFaccionistaCsw()
+        carga = MetaFaccionistaClass.MetaFaccionista(None,None,None,None,None).cargaFaccionistaCsw()
         consulta = pd.merge(consulta, carga , on='codfaccionista', how='left')
         consulta['OP/Mostruario'] = '-'
         consulta['OP/Urgente'] = '-'
