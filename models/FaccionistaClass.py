@@ -103,7 +103,7 @@ class Faccionista():
         consulta = pd.merge(consulta, carga , on='codfaccionista', how='left')
         consulta['OP/Mostruario'] = '-'
         consulta['OP/Urgente'] = '-'
-
+        consulta.fillna("-",inplace=True)
 
 
         return consulta
