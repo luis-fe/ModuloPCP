@@ -12,7 +12,8 @@ class MetaFaccionista():
     def __init__(self, codigoPlano, codLote,dataMovFaseIni , dataMovFaseFim, congelado):
 
         self.codigoPlano = codigoPlano
-        self.codLote = codLote[0]
+        if codLote != None:
+            self.codLote = codLote[0]
         self.dataMovFaseIni = dataMovFaseIni
         self.dataMovFaseFim = dataMovFaseFim
         self.congelado = congelado
