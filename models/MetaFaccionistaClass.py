@@ -168,12 +168,32 @@ class MetaFaccionista():
         '''Metodo que retorna a carga por faccionista e categoria, no banco de dados do CSW'''
 
         sql = """
-            SELECT op.numeroOP, op.codProduto, d.codOP, d.codFac as codfaccionista,l.qtdPecasRem as carga, e.descricao as nome  
-        FROM tco.OrdemProd op 
-        left join tct.RemessaOPsDistribuicao d on d.Empresa = 1 and d.codOP = op.numeroOP and d.situac = 2 and d.codFase = op.codFaseAtual 
-        left join tct.RemessasLoteOP l on l.Empresa = d.Empresa  and l.codRemessa = d.numRem 
-        join tcp.Engenharia e on e.codEmpresa = 1 and e.codEngenharia = op.codProduto 
-        WHERE op.codEmpresa =1 and op.situacao =3 and op.codFaseAtual in (455, 459, 429)
+        SELECT 
+            op.numeroOP, 
+            op.codProduto, 
+            d.codOP, 
+            d.codFac as codfaccionista,
+            l.qtdPecasRem as carga, 
+            e.descricao as nome  
+        FROM 
+            tco.OrdemProd op 
+        left join 
+            tct.RemessaOPsDistribuicao d 
+            on d.Empresa = 1 and 
+            d.codOP = op.numeroOP and 
+            d.situac = 2 and d.codFase = op.codFaseAtual 
+        left join 
+            tct.RemessasLoteOP l 
+            on l.Empresa = d.Empresa  
+            and l.codRemessa = d.numRem 
+        join 
+            tcp.Engenharia e on 
+            e.codEmpresa = 1 and 
+            e.codEngenharia = op.codProduto 
+        WHERE 
+            op.codEmpresa =1 and 
+            op.situacao =3 and 
+            op.codFaseAtual in (455, 459, 429)
             """
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
@@ -184,10 +204,12 @@ class MetaFaccionista():
         # Libera memória manualmente
         del rows
         gc.collect()
+        
         cargaFac['categoria'] = '-'
         cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
         cargaFac = cargaFac.groupby(['categoria', 'codfaccionista']).agg({'carga': 'sum'}).reset_index()
         cargaFac['codfaccionista'] = cargaFac['codfaccionista'].astype(str)
+        
         return cargaFac
 
     def mapear_categoria(self, nome):

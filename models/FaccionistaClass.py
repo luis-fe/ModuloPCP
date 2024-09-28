@@ -1,6 +1,7 @@
 import gc
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
+from models import MetaFaccionistaClass
 
 class Faccionista():
     '''Classe Faccionista: definida para instanciar o objeto faccionista ou faccionista(s)'''
@@ -83,10 +84,11 @@ class Faccionista():
 
         return consulta
     
-    def consultarFaccionistasCategoria(self):
+    def consultarFaccionistasCategoria(self, categoria):
         sql = """
             select 
-                apelidofaccionista
+                apelidofaccionista,
+                fc.codfaccionista as codfaccionista
             from
                  pcp."faccaoCategoria" fc
             inner join 
@@ -95,7 +97,14 @@ class Faccionista():
             where
                 nomecategoria = %s;
         """
-        consulta = pd.read_sql(sql, self.conn,params=(self.nomecategoria))
+        consulta = pd.read_sql(sql, self.conn,params=(categoria,))
+
+        carga = MetaFaccionistaClass.MetaFaccionista().cargaFaccionistaCsw()
+        consulta = pd.merge(consulta, carga , on='codfaccionista', how='left')
+        consulta['OP/Mostruario'] = '-'
+        consulta['OP/Urgente'] = '-'
+
+
 
         return consulta
 
