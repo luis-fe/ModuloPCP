@@ -10,7 +10,7 @@ def Conexao2():
             'com.intersys.jdbc.CacheDriver',
             'jdbc:Cache://192.168.0.25:1972/CONSISTEM',
             {'user': 'root', 'password': 'ccscache'},
-            '/home/mplti/ModuloPCP/connection/CacheDB.jar'
+            './connection/CacheDB.jar'
         )
         yield conn
     finally:
@@ -24,7 +24,7 @@ def ConexaoInternoMPL():
             'com.intersys.jdbc.CacheDriver',
             'jdbc:Cache://192.168.0.25:1972/CONSISTEM',
             {'user': '_system', 'password': 'ccscache'},
-            '/home/mplti/ModuloPCP/connection/CacheDB.jar'
+            './connection/CacheDB.jar'
         )
         yield conn
     finally:
