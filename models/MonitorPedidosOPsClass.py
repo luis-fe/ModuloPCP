@@ -1268,7 +1268,7 @@ class MonitorPedidosOps():
 
         # 1 - ler o arquivo csv do monitor de ops
         descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
-        monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
+        monitorDetalhadoOps = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
 
         #monitorDetalhadoOps2 = monitorDetalhadoOps[
             #(monitorDetalhadoOps['id_op2'] == 'Atendeu') & (monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
