@@ -107,8 +107,9 @@ def post_FaccionistaCategoria():
     
     data = request.get_json()
     categoria = data.get('categoria')
+    faccionista = data.get('faccionista','')
     
-    dados = FaccionistaClass.Faccionista().consultarFaccionistasCategoria(categoria)
+    dados = FaccionistaClass.Faccionista().consultarFaccionistasCategoria(categoria,faccionista)
 
 
     # Obtém os nomes das colunas

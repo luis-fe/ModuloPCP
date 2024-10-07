@@ -174,8 +174,12 @@ class MetaFaccionista():
             op.codProduto, 
             d.codOP, 
             d.codFac as codfaccionista,
-            l.qtdPecasRem as carga, 
-            e.descricao as nome  
+            l.qtdPecasRem as carga,
+            op.codPrioridadeOP, 
+            op.codTipoOP,  
+            d.datLib as dataEnvio,
+            e.descricao as nome,
+            (SELECT p.descricao from tcp.PrioridadeOP p WHERE p.empresa = 1 and p.codPrioridadeOP =op.codPrioridadeOP) as prioridade  
         FROM 
             tco.OrdemProd op 
         left join 
@@ -208,9 +212,20 @@ class MetaFaccionista():
         
         cargaFac['categoria'] = '-'
         cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
-        cargaFac = cargaFac.groupby(['categoria', 'codfaccionista']).agg({'carga': 'sum'}).reset_index()
-        cargaFac['codfaccionista'] = cargaFac['codfaccionista'].astype(str)
-        
+
+        # Aplicar a contagem somente nas linhas onde codPrioridadeOP == 6
+
+        cargaFac['Mostruario'] = cargaFac.groupby('codfaccionista')['codTipoOP'].apply(
+            lambda x: (x == 6).sum()).reindex(cargaFac['codfaccionista']).values
+        cargaFac['Urgente'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(lambda x: (x == 'URGENTE').sum()).reindex(cargaFac['codfaccionista']).values
+        cargaFac['FAT Atrasado'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(lambda x: (x == 'FAT ATRASADO').sum()).reindex(cargaFac['codfaccionista']).values
+        cargaFac['P_Faturamento'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(lambda x: (x == 'P\ FATURAMENTO').sum()).reindex(cargaFac['codfaccionista']).values
+
+        cargaFac['OP'] = cargaFac.groupby('codfaccionista')['codOP'].transform('count')
+
+
+
+
         return cargaFac
 
     def mapear_categoria(self, nome):

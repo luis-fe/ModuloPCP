@@ -84,33 +84,61 @@ class Faccionista():
 
         return consulta
     
-    def consultarFaccionistasCategoria(self, categoria):
+    def consultarFaccionistasCategoria(self, categoria,faccionista):
         sql = """
             select 
                 apelidofaccionista,
-                fc.codfaccionista as codfaccionista
+                nomecategoria as categoria,
+                fc.codfaccionista as codfaccionista,
+                lc.leadtime
             from
                  pcp."faccaoCategoria" fc
             inner join 
                 pcp."faccionista" f on 
                 f.codfaccionista = fc.codfaccionista
+            left join
+                pcp.leadtime_categorias lc on 
+                lc.categoria = fc.nomecategoria and lc.codFase = '429'
             where
                 nomecategoria = %s;
         """
         consulta = pd.read_sql(sql, self.conn,params=(categoria,))
-
         carga = MetaFaccionistaClass.MetaFaccionista(None,None,None,None,None).cargaFaccionistaCsw()
-        consulta = pd.merge(consulta, carga , on='codfaccionista', how='left')
-        consulta['OP/Mostruario'] = '-'
-        consulta['OP/Urgente'] = '-'
-        consulta['OP/FatAtrassado'] = '-'
-        consulta['OP/P_FAT.'] = '-'
 
+        carga2 = carga.groupby(['categoria', 'codfaccionista']).agg(
+            {'carga': 'sum', 'OP': 'first', 'Mostruario': 'first', 'Urgente': 'first',
+             'FAT Atrasado': 'first', 'P_Faturamento': 'first'}).reset_index()
+        carga2['codfaccionista'] = carga2['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
+        consulta = pd.merge(consulta, carga2, on=['codfaccionista', 'categoria'], how='right')
+        consulta['carga'].fillna(0, inplace=True)
+        consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-",inplace=True)
+        consulta = consulta[consulta['categoria']==categoria]
 
 
-        return consulta
+        consulta['dataPrevista'] = pd.to_datetime(consulta['dataEnvio'])
+
+        # Tratando apenas os valores válidos de leadtime (não-negativos)
+        consulta['dataPrevista'] = consulta.apply(lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D')
+        if row['leadtime'] >= 0 else pd.NaT, axis=1)
+
+
+        if faccionista == '':
+            data = {
+                '1- Resumo:': consulta.to_dict(orient='records')
+            }
+        else:
+            carga = carga[carga['codfaccionista'] == faccionista]
+            carga.drop(['FAT Atrasado', 'Mostruario', 'OP','P_Faturamento','Urgente'], axis=1, inplace=True)
+
+            data = {
+                '1- Resumo:': consulta.to_dict(orient='records'),
+                '2- Detalhamento:': carga.to_dict(orient='records')
+            }
+        return pd.DataFrame([data])
+
+
 
 
     def ConsultarFaccionista(self):
@@ -275,3 +303,14 @@ class Faccionista():
 
 
         return grouped
+
+
+    def obterCodigoFaccionistas(self):
+        consulta = """
+        
+        """
+
+
+
+
+
