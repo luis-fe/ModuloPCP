@@ -16,4 +16,5 @@ if __name__ == '__main__':
     api_key = os.getenv('caminho')  # Troque por 'API_KEY' ou outro nome se necessário
 
     print(api_key)  # Exibe o valor da API Key
+    print(f"API Key: {api_key}")  # Deve exibir o valor de API_KEY do db.env
     app.run(host='0.0.0.0', port=port)
