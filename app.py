@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     print(api_key)  # Exibe o valor da API Key
     print(f"API Key: {api_key}")  # Deve exibir o valor de API_KEY do db.env
-    config = dotenv_values(os.path.abspath('db.env'))
+    config = dotenv_values('db.env')
     print(config)  # Isso deve imprimir o conteúdo do .env como um dicionário
 
     app.run(host='0.0.0.0', port=port)
