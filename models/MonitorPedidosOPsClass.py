@@ -261,8 +261,9 @@ class MonitorPedidosOps():
         pedidos['codCor'] = pedidos['codCor'].astype(str)
         pedidos['nomeSKU'] = pedidos['nomeSKU'].astype(str)
         pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
-
-        fp.write(f'{ca}/dados/monitor{self.descricaoArquivo}.parquet', pedidos)
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        fp.write(f'{caminhoAbsoluto}/dados/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
         return pedidos
@@ -280,6 +281,7 @@ class MonitorPedidosOps():
         # Enviar o arquivo
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
+
         with open(f'{caminhoAbsoluto}/dados/monitor{self.descricaoArquivo}.parquet', 'rb') as fp:
             sftp.putfo(fp, f'/home/mplti/ModuloPCP/dados/monitor{self.descricaoArquivo}.parquet')
 
