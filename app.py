@@ -5,7 +5,7 @@ from routes import routes_blueprint
 
 app = Flask(__name__)
 port = int(os.environ.get('PORT',8000))
-load_dotenv('config/.env')
+load_dotenv('config/db.env')
 
 app.register_blueprint(routes_blueprint)
 
