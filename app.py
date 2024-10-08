@@ -4,13 +4,16 @@ from dotenv import load_dotenv
 from routes import routes_blueprint
 
 app = Flask(__name__)
-port = int(os.environ.get('PORT',8000))
+port = int(os.environ.get('PORT', 8000))
+
+# Carregar o arquivo de variáveis de ambiente no caminho correto
 load_dotenv('config/db.env')
 
 app.register_blueprint(routes_blueprint)
 
 if __name__ == '__main__':
-    api_key = os.getenv('caminho')
+    # Certifique-se de usar o nome correto da variável
+    api_key = os.getenv('caminho')  # Troque por 'API_KEY' ou outro nome se necessário
 
-    print(api_key)
+    print(api_key)  # Exibe o valor da API Key
     app.run(host='0.0.0.0', port=port)
