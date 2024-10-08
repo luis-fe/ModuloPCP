@@ -7,7 +7,7 @@ app = Flask(__name__)
 port = int(os.environ.get('PORT', 8000))
 
 # Carregar o arquivo de variáveis de ambiente no caminho correto
-load_dotenv('config/db.env')
+load_dotenv('./config/db.env')
 
 app.register_blueprint(routes_blueprint)
 
