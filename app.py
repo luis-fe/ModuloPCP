@@ -13,7 +13,7 @@ app.register_blueprint(routes_blueprint)
 
 if __name__ == '__main__':
     # Certifique-se de usar o nome correto da variável
-    api_key = os.getenv('caminho')  # Troque por 'API_KEY' ou outro nome se necessário
+    api_key = os.getenv('CAMINHO')  # Troque por 'API_KEY' ou outro nome se necessário
 
     print(api_key)  # Exibe o valor da API Key
     print(f"API Key: {api_key}")  # Deve exibir o valor de API_KEY do db.env
