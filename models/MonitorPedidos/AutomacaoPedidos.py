@@ -5,6 +5,8 @@ import gc
 import pandas as pd
 from connection import ConexaoBanco
 import fastparquet as fp
+from dotenv import load_dotenv, dotenv_values
+import os
 
 def IncrementarPedidos():
 
@@ -79,7 +81,9 @@ order by p.codPedido desc
             #etapa3 = controle.salvarStatus_Etapa3(rotina,'automacao', etapa2,'filtrando tipo de notas')
 
             # Escolha o diretório onde deseja salvar o arquivo Parquet
-            fp.write('./dados/pedidos.parquet', pedidos)
+            load_dotenv('db.env')
+            caminhoAbsoluto = os.getenv('CAMINHO')
+            fp.write(f'{caminhoAbsoluto}/dados/pedidos.parquet', pedidos)
             #etapa4 = controle.salvarStatus_Etapa4(rotina,'automacao', etapa3,'Salvando o DataFrame em formato fast')
 
             del pedidos,conn , cursor_csw

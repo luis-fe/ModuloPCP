@@ -2,6 +2,10 @@ from flask import Blueprint, jsonify, request,  send_from_directory
 from functools import wraps
 from models.MonitorPedidos import monitor, MonitorSimulacaoEncerrOP
 from models import MonitorPedidosOPsClass
+from dotenv import load_dotenv, dotenv_values
+import os
+
+
 MonitorPedidos_routes = Blueprint('MonitorPedidos_routes', __name__)
 
 def token_required(f):
@@ -118,8 +122,9 @@ def get_GerarMonitorCsv():
 
     monitor.ConversaoMonitor(iniVenda, finalVenda)
     descricaoArquivo = iniVenda+'_'+finalVenda
-
-    return send_from_directory('./dados/', f'monitor{descricaoArquivo}.csv')
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    return send_from_directory(f'{caminhoAbsoluto}/dados/', f'monitor{descricaoArquivo}.csv')
 
 
 @MonitorPedidos_routes.route('/pcp/api/monitorPreFaturamentoSimulaOP', methods=['GET'])

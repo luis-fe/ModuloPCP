@@ -6,9 +6,13 @@ import fastparquet as fp
 import numpy
 from connection import ConexaoPostgreWms, ConexaoBanco
 import pandas as pd
+from dotenv import load_dotenv, dotenv_values
+import os
 
 # Funcao para organizar o Monitor em datas de embarque (entrega) e atribuir a OP pré reservado para cada sku a nivel de pedido
 def ReservaOPMonitor(dataInico, dataFim):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     # Passo 1 : Carregar os dados da OP
     consultaSql = """
     select o.codreduzido as "codProduto", id, "qtdAcumulada", "ocorrencia_sku" from "pcp".ordemprod o where "qtdAcumulada" > 0
@@ -16,13 +20,13 @@ def ReservaOPMonitor(dataInico, dataFim):
     descricaoArquivo = dataInico+'_'+dataFim
     # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
     try:
-        parquet_file = fp.ParquetFile(f'./dados/monitor{descricaoArquivo}.parquet')
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/monitor{descricaoArquivo}.parquet')
         # Converter para DataFrame do Pandas
         monitor = parquet_file.to_pandas()
         # disponibiliza um novo arquivo para ser utilizado com filtragem
-        fp.write(f'./dados/monitor_filtro.parquet', monitor)
+        fp.write(f'{caminhoAbsoluto}/dados/monitor_filtro.parquet', monitor)
     except:
-        parquet_file = fp.ParquetFile(f'./dados/monitor_filtro.parquet')
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/monitor_filtro.parquet')
         # Converter para DataFrame do Pandas
         monitor = parquet_file.to_pandas()
 
@@ -291,7 +295,7 @@ def ReservaOPMonitor(dataInico, dataFim):
 
     descricaoArquivo = dataInico + '_' + dataFim
 
-    monitor.to_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
+    monitor.to_csv(f'{caminhoAbsoluto}/dados/monitorOps{descricaoArquivo}.csv')
     data = monitor[(monitor['dataPrevAtualizada2'] >= dataInico) & (monitor['dataPrevAtualizada2'] <= dataFim)]
     # Contar a quantidade de pedidos distintos para cada 'numeroop'
     unique_counts = data.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')['codPedido'].count()
@@ -320,7 +324,7 @@ def ReservaOPMonitor(dataInico, dataFim):
     monitor1 = monitor1.groupby('numeroop').agg({'codFaseAtual':'first','Ocorrencia Pedidos': 'first',"codItemPai":"first","QtdSaldo":"sum"}).reset_index()
     monitorDetalhadoOps = monitor2.groupby(['numeroop','codProduto']).agg({"QtdSaldo":"sum"}).reset_index()
 
-    monitorDetalhadoOps.to_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
+    monitorDetalhadoOps.to_csv(f'{caminhoAbsoluto}/dados/detalhadoops{descricaoArquivo}.csv')
 
 
     monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
@@ -366,6 +370,9 @@ WHERE op.situacao = 3 and op.codEmpresa = 1
 
 def DetalhaOPMonitor(numeroop,dataInico, dataFim):
 
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+
     sqlCSW = """
     SELECT DISTINCT t.codProduto as itemPai ,t.coditem as codProduto, op.numeroOP as numeroop, op.codTipoOP||'-'||fa.nome as tipoNota, e.descricao ,s.corBase ||'-'|| s.nomeCorBase as cor , ta.descricao, t.qtdePecas1Qualidade as pcsOP  FROM tco.OrdemProd op
 inner join tco.OrdemProdTamanhos t on t.codEmpresa = op.codEmpresa and t.numeroOP = op.numeroOP 
@@ -384,7 +391,7 @@ Where op.numeroOP = '""" +numeroop+"""'"""
             sqlCSW = pd.DataFrame(rows, columns=colunas)
             del rows
     descricaoArquivo = dataInico + '_' + dataFim
-    monitorDetalhadoOps = pd.read_csv(f'./dados/detalhadoops{descricaoArquivo}.csv')
+    monitorDetalhadoOps = pd.read_csv(f'{caminhoAbsoluto}/dados/detalhadoops{descricaoArquivo}.csv')
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['numeroop']==numeroop]
     monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
 
@@ -398,7 +405,9 @@ Where op.numeroOP = '""" +numeroop+"""'"""
     return monitorDetalhadoOps
 
 def ProdutosSemOP():
-    monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps.csv')
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    monitorDetalhadoOps = pd.read_csv(f'{caminhoAbsoluto}/dados/monitorOps.csv')
     monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu'].reset_index(drop=True)
     # Filtrando pedidos com 'QtdSaldo' maior que 0
     pedido = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index(drop=True)
@@ -425,13 +434,15 @@ def ProdutosSemOP():
 
     df_selecionado = df_selecionado.sort_values(by=['01-codProduto', '04-codCor'], ascending=True)
 
-    df_selecionado.to_csv('./dados/necessidadeMonitorMP.csv')
+    df_selecionado.to_csv(f'{caminhoAbsoluto}/dados/necessidadeMonitorMP.csv')
 
     return df_selecionado
 
 def ProdutosSemOP_(dataInico, dataFim):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     descricaoArquivo = dataInico + '_' + dataFim
-    monitorDetalhadoOps = pd.read_csv(f'./dados/monitorOps{descricaoArquivo}.csv')
+    monitorDetalhadoOps = pd.read_csv(f'{caminhoAbsoluto}/dados/monitorOps{descricaoArquivo}.csv')
 
 
     monitorDetalhadoOps2 = monitorDetalhadoOps[(monitorDetalhadoOps['id_op2'] == 'Atendeu')&(monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()

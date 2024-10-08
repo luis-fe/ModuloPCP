@@ -3,6 +3,8 @@ from connection import ConexaoPostgreWms,ConexaoBanco
 from models.Planejamento import plano
 import fastparquet as fp
 from datetime import datetime, timedelta
+from dotenv import load_dotenv, dotenv_values
+import os
 
 def SaldosAnterior(codigoPlano):
     planoAtual = plano.ConsultaPlano()
@@ -72,7 +74,9 @@ def Monitor_nivelSku(dataFim):
     #df_loaded = pd.read_sql(sql,conn)
 
     # Carregar o arquivo Parquet
-    parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
     # Converter para DataFrame do Pandas
     df_loaded = parquet_file.to_pandas()
@@ -218,7 +222,9 @@ def Monitor_PedidosBloqueados():
 
 def Monitor_nivelSkuFaturamento(dataFatIni, dataFatFinal):
     # Carregar o arquivo Parquet
-    parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
     # Converter para DataFrame do Pandas
     df_loaded = parquet_file.to_pandas()

@@ -7,6 +7,8 @@ import datetime
 import pytz
 from connection import ConexaoBanco, ConexaoPostgreWms
 import fastparquet as fp
+from dotenv import load_dotenv, dotenv_values
+import os
 
 def obterHoraAtual():
     fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
@@ -94,8 +96,10 @@ def Monitor_PedidosBloqueados():
 
 #Carregando os Pedidos a nivel Sku
 def Monitor_nivelSku(datainicio):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     # Carregar o arquivo Parquet
-    parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+    parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
     # Converter para DataFrame do Pandas
     df_loaded = parquet_file.to_pandas()
@@ -117,8 +121,10 @@ def Monitor_nivelSku(datainicio):
     return df_loaded
 
 def Monitor_nivelSkuPrev(datainicio):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     # Carregar o arquivo Parquet
-    parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+    parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
     # Converter para DataFrame do Pandas
     df_loaded = parquet_file.to_pandas()
@@ -563,7 +569,9 @@ def MonitorDePreFaturamento(empresa, iniVenda, finalVenda, tiponota,rotina, ip, 
     pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
 
     descricaoArquivo = iniVenda+'_'+finalVenda
-    fp.write(f'./dados/monitor{descricaoArquivo}.parquet', pedidos)
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    fp.write(f'{caminhoAbsoluto}/dados/monitor{descricaoArquivo}.parquet', pedidos)
 
     #etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
     return pedidos
@@ -778,8 +786,10 @@ def Ciclo2(pedidos,avaliar_grupo):
 
 
 def DetalhaPedido(codPedido):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     try:
-        carregar = pd.read_csv('./dados/monitorOps.csv', sep=',')
+        carregar = pd.read_csv(f'{caminhoAbsoluto}/dados/monitorOps.csv', sep=',')
         print(carregar)
 
         # Verifica se 'codPedido' está presente nas colunas do DataFrame
@@ -836,10 +846,12 @@ def DetalhaPedido(codPedido):
 
 
 def ConversaoMonitor(dataInicio, dataFim):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     descricaoArquivo = dataInicio+'_'+dataFim
-    parquet_file = fp.ParquetFile(f'./dados/monitor{descricaoArquivo}.parquet')
+    parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/monitor{descricaoArquivo}.parquet')
     # Converter para DataFrame do Pandas
     monitor = parquet_file.to_pandas()
-    monitor.to_csv(f'./dados/monitor{descricaoArquivo}.csv')
+    monitor.to_csv(f'{caminhoAbsoluto}/dados/monitor{descricaoArquivo}.csv')
 
     return pd.DataFrame([{'Mensagem':'Monitor convertido para csv'}])

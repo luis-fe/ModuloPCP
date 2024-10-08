@@ -9,9 +9,9 @@ from models import EstoqueSkuClass
 import pytz
 from datetime import datetime, timedelta
 import paramiko
-import os
 import psutil
-
+from dotenv import load_dotenv, dotenv_values
+import os
 
 class MonitorPedidosOps():
     '''Classe criada para o Sistema de PCP gerenciar a FILA DE PEDIDOS emitidos para o grupo MPL'''
@@ -262,7 +262,7 @@ class MonitorPedidosOps():
         pedidos['nomeSKU'] = pedidos['nomeSKU'].astype(str)
         pedidos['Pedido||Prod.||Cor'] = pedidos['Pedido||Prod.||Cor'].astype(str)
 
-        fp.write(f'./dados/monitor{self.descricaoArquivo}.parquet', pedidos)
+        fp.write(f'{ca}/dados/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
         return pedidos
@@ -278,7 +278,9 @@ class MonitorPedidosOps():
         sftp = paramiko.SFTPClient.from_transport(transport)
 
         # Enviar o arquivo
-        with open(f'./dados/monitor{self.descricaoArquivo}.parquet', 'rb') as fp:
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        with open(f'{caminhoAbsoluto}/dados/monitor{self.descricaoArquivo}.parquet', 'rb') as fp:
             sftp.putfo(fp, f'/home/mplti/ModuloPCP/dados/monitor{self.descricaoArquivo}.parquet')
 
         sftp.close()
@@ -504,8 +506,10 @@ class MonitorPedidosOps():
             return consulta
 
     def Monitor_nivelSku(self):
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
         # Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
@@ -528,8 +532,10 @@ class MonitorPedidosOps():
         return df_loaded
 
     def Monitor_nivelSkuPrev(self):
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
         # Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()

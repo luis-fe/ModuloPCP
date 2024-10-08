@@ -3,7 +3,8 @@ from models import PlanoClass, ProdutosClass
 import fastparquet as fp
 from connection import ConexaoBanco, ConexaoPostgreWms
 from datetime import datetime, timedelta
-
+from dotenv import load_dotenv, dotenv_values
+import os
 
 class Faturamento():
     def __init__(self, dataInicial = None, dataFinal = None, tipoNotas = None, codigoPlano = None):
@@ -53,8 +54,10 @@ class Faturamento():
             return pedidos
 
     def consultaArquivoFastVendas(self):
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
         # Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile('./dados/pedidos.parquet')
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()

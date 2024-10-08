@@ -7,7 +7,8 @@ import re
 import pytz
 from datetime import datetime
 from models import FaturamentoClass, FaseClass
-
+from dotenv import load_dotenv, dotenv_values
+import os
 
 def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
@@ -97,7 +98,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             sqlMetas['FaltaProgramar'] = sqlMetas.apply(lambda l: l['FaltaProgramar1']if l['FaltaProgramar1'] >0 else 0 ,axis=1 )
         except:
             print('verificar')
-        sqlMetas.to_csv('./dados/analise.csv')
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        sqlMetas.to_csv(f'{caminhoAbsoluto}/dados/analise.csv')
 
         Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
         filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
@@ -105,7 +108,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         totalFaltaProgramar = filtro['FaltaProgramar'].sum()
         novo2 = novo.replace('"',"-")
         Totais = pd.DataFrame([{'0-Previcao Pçs':f'{totalPc} pcs','01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
-        Totais.to_csv(f'./dados/Totais{novo2}.csv')
+        Totais.to_csv(f'{caminhoAbsoluto}/dados/Totais{novo2}.csv')
 
 
 
@@ -135,7 +138,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta = Meta[~(filtro_comb | filtro_comb2 | filtro_comb3 | filtro_comb4)]
 
 
-        Meta.to_csv('./dados/analiseFaltaProgrFases.csv')
+        Meta.to_csv(f'{caminhoAbsoluto}/dados/analiseFaltaProgrFases.csv')
 
 
         Meta = Meta.groupby(["codFase" , "nomeFase"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
@@ -162,7 +165,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta['Meta Dia'] = Meta['Meta Dia'] .round(0)
 
         # Ponto de Congelamento do lote:
-        Meta.to_csv(f'./dados/analiseLote{novo2}.csv')
+        Meta.to_csv(f'{caminhoAbsoluto}/dados/analiseLote{novo2}.csv')
 
         realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim,[6, 8])
         realizado['codFase'] = realizado['codFase'].astype(int)
@@ -180,9 +183,11 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         return pd.DataFrame([dados])
 
     else:
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
         novo2 = novo.replace('"',"-")
-        Meta = pd.read_csv(f'./dados/analiseLote{novo2}.csv')
-        Totais = pd.read_csv(f'./dados/Totais{novo2}.csv')
+        Meta = pd.read_csv(f'{caminhoAbsoluto}/dados/analiseLote{novo2}.csv')
+        Totais = pd.read_csv(f'{caminhoAbsoluto}/dados/Totais{novo2}.csv')
         totalPc = Totais['0-Previcao Pçs'][0]
         totalFaltaProgramar = Totais['01-Falta Programar'][0]
 

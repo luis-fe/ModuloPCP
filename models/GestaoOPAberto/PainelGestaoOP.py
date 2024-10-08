@@ -7,6 +7,8 @@ from connection import ConexaoBanco, ConexaoPostgreWms
 from datetime import datetime
 import datetime
 import pytz
+from dotenv import load_dotenv, dotenv_values
+import os
 
 # Passo 1: Buscando as OP's em aberto no CSW
 def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999, limite = 60, classificar = '-', colecaoF = ''):
@@ -519,7 +521,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
                               (consulta['status_requisicoes'] == '-') &
                               (consulta['codFase'] == '145'))].reset_index(drop=True)
 
-        consulta.to_csv('./dados/cargaOP.csv',index=True)
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        consulta.to_csv(f'{caminhoAbsoluto}/dados/cargaOP.csv',index=True)
         # Retirar o "-" da prioridade :
         consulta['prioridade'] = consulta['prioridade'].str.split('-').str[1]
 
@@ -562,8 +566,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
         return pd.DataFrame([dados])
 
     elif filtro == '-' or filtro == '':
-
-        consulta = pd.read_csv('./dados/cargaOP.csv')
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        consulta = pd.read_csv(f'{caminhoAbsoluto}/dados/cargaOP.csv')
         consulta.fillna('-', inplace=True)
 
         if isinstance(colecao, pd.DataFrame):
@@ -628,7 +633,9 @@ def OPemProcesso(empresa, AREA, filtro = '-', filtroDiferente = '', tempo = 9999
 
     #essa etapa busca do que ta salvo
     else:
-        filtros = pd.read_csv('./dados/cargaOP.csv')
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        filtros = pd.read_csv(f'{caminhoAbsoluto}/dados/cargaOP.csv')
         filtros = filtros[filtros['Area'] == AREA]
         if isinstance(colecao, pd.DataFrame):
             filtros = pd.merge(filtros, colecao, on='COLECAO')

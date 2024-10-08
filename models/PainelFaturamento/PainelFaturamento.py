@@ -5,6 +5,8 @@ import datetime
 import pytz
 import locale
 import pandas as pd
+from dotenv import load_dotenv, dotenv_values
+import os
 
 def obterHoraAtual():
     fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
@@ -214,8 +216,9 @@ def Faturamento_ano(ano, empresa):
     ValorRetornaMplus = "{:,.2f}".format(ValorRetornaMplus)
     ValorRetornaMplus = str(ValorRetornaMplus)
     ValorRetornaMplus = 'R$ ' + ValorRetornaMplus.replace(',', ';').replace('.', ',').replace(';', '.')
-
-    nome = './dados/' + ano + 'Vendas' + empresa + '.csv'
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    nome = f'{caminhoAbsoluto}/dados/' + ano + 'Vendas' + empresa + '.csv'
 
     if mesAtual != '01':
         dataframe2 = pd.read_csv(nome)
@@ -412,8 +415,9 @@ def OutrosFat(ano, empresa):
             rows = cursor_csw.fetchall()
             dataframe = pd.DataFrame(rows, columns=colunas)
             del rows
-
-    nome = './dados/' + ano + 'Vendas' + empresa + '.csv'
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    nome = f'{caminhoAbsoluto}/dados/' + ano + 'Vendas' + empresa + '.csv'
 
     dataframe2 = pd.read_csv(nome)
 
@@ -681,8 +685,9 @@ def Backup(ano, empresa):
                 rows = cursor_csw.fetchall()
                 dataframe = pd.DataFrame(rows, columns=colunas)
                 del rows
-
-        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        nome = f'{caminhoAbsoluto}/dados/'+ ano + 'Vendas'+empresa+'.csv'
         dataframe.to_csv(nome)
 
     elif empresa =='Varejo':
@@ -704,8 +709,9 @@ def Backup(ano, empresa):
                 rows = cursor_csw.fetchall()
                 dataframe = pd.DataFrame(rows, columns=colunas)
                 del rows
-
-        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        nome = f'{caminhoAbsoluto}/dados/'+ ano + 'Vendas'+empresa+'.csv'
         dataframe.to_csv(nome)
     elif empresa == 'Outras':
         query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido ' \
@@ -722,8 +728,9 @@ def Backup(ano, empresa):
                 dataframe = pd.DataFrame(rows, columns=colunas)
                 del rows
 
-
-        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        nome = f'{caminhoAbsoluto}/dados/'+ ano + 'Vendas'+empresa+'.csv'
         dataframe.to_csv(nome)
 
     else:
@@ -750,6 +757,7 @@ def Backup(ano, empresa):
                     del rows
         else:
             dataframe = pd.DataFrame([{'Mensagem':'Sem meses para guardar backup'}])
-
-        nome = './dados/'+ ano + 'Vendas'+empresa+'.csv'
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        nome = f'{caminhoAbsoluto}/dados/'+ ano + 'Vendas'+empresa+'.csv'
         dataframe.to_csv(nome)

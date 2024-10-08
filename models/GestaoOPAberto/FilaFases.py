@@ -3,6 +3,8 @@ from connection import ConexaoBanco, ConexaoPostgreWms
 import numpy as np
 import re
 from models.GestaoOPAberto import PainelGestaoOP
+from dotenv import load_dotenv, dotenv_values
+import os
 
 def RoteiroOPsAberto():
     sqlCsw = """
@@ -132,6 +134,8 @@ def FilaFases():
 
 
 def ApresentacaoFila(COLECAO):
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
     fila = FilaFases()
 
 
@@ -145,7 +149,7 @@ def ApresentacaoFila(COLECAO):
              "pcs": 0, 'COLECAO': ['', '',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
         fila = pd.concat([fila,start])
 
-    fila.to_csv('./dados/filaroteiroOP.csv')
+    fila.to_csv(f'{caminhoAbsoluto}/dados/filaroteiroOP.csv')
 
     fila_carga_atual = fila[fila['Situacao'] == 'em processo'].reset_index()
     fila_fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
@@ -181,7 +185,9 @@ def ApresentacaoFila(COLECAO):
     return fila
 
 def FiltrosFila(NomeFase):
-    fila = pd.read_csv('./dados/filaroteiroOP.csv')
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
+    fila = pd.read_csv(f'{caminhoAbsoluto}/dados/filaroteiroOP.csv')
 
     fila = fila[(fila['codFase'] < 599)]
     fila = fila[fila['fase'] == NomeFase].reset_index()
