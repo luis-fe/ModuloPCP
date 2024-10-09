@@ -116,7 +116,7 @@ class StatusOpsEmProcesso():
             carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
 
             # Tratando apenas os valores válidos de leadtime (não-negativos)
-            carga['dataPrevista'] = consulta.apply(
+            carga['dataPrevista'] = carga.apply(
                 lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D')
                 if row['leadtime'] >= 0 else pd.NaT, axis=1)
 
