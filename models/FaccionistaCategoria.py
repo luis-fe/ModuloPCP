@@ -65,7 +65,7 @@ class FaccionistaCategoria():
                 apelidofaccionista,
                 nomecategoria as categoria,
                 fc.codfaccionista as codfaccionista,
-                case when fc."leadTime" is null then lc.leadtime::int else fc."leadTime" end "leadTime" 
+                case when fc."leadTime" is null then lc.leadtime::int else fc."leadTime" end "leadtime" 
             from
                  pcp."faccaoCategoria" fc
             inner join 
