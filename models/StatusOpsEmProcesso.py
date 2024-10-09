@@ -104,20 +104,21 @@ class StatusOpsEmProcesso():
         consulta.fillna("-", inplace=True)
         consulta = consulta[consulta['categoria'] == self.nomecategoria]
 
-        consultarOPCsw['dataPrevista'] = pd.to_datetime(consultarOPCsw['dataEnvio'])
 
-        # Tratando apenas os valores válidos de leadtime (não-negativos)
-        consultarOPCsw['dataPrevista'] = consulta.apply(
-            lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D')
-            if row['leadtime'] >= 0 else pd.NaT, axis=1)
 
         if self.nomeFaccionista == '':
             data = {
                 '1- Resumo:': consulta.to_dict(orient='records')
             }
         else:
-            codigosFaccionista = fac.Faccionista(None,self.nomeFaccionista)
+            codigosFaccionista = fac.Faccionista(None,self.nomeFaccionista).obterCodigosFaccionista()
             carga = pd.merge(consultarOPCsw,codigosFaccionista,on='codfaccionista')
+            carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
+
+            # Tratando apenas os valores válidos de leadtime (não-negativos)
+            carga['dataPrevista'] = consulta.apply(
+                lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D')
+                if row['leadtime'] >= 0 else pd.NaT, axis=1)
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
 
