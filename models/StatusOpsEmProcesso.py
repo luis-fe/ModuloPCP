@@ -93,10 +93,12 @@ class StatusOpsEmProcesso():
         consultaCategoriaFacc = self.obterFaccionistasCategoria()
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
 
+        consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+
+
         consultarOPCsw1 = consultarOPCsw.groupby(['categoria', 'codfaccionista']).agg(
             {'carga': 'sum', 'OP': 'first', 'Mostruario': 'first', 'Urgente': 'first',
              'FAT Atrasado': 'first', 'P_Faturamento': 'first'}).reset_index()
-        consultarOPCsw1['codfaccionista'] = consultarOPCsw1['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
         consulta = pd.merge(consultaCategoriaFacc, consultarOPCsw1, on=['codfaccionista', 'categoria'], how='right')
         consulta['carga'].fillna(0, inplace=True)
