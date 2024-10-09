@@ -94,7 +94,7 @@ class StatusOpsEmProcesso():
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
         consultarOPCsw = consultarOPCsw[consultarOPCsw['categoria'] == self.nomecategoria]
         consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
-
+        print(consultaCategoriaFacc)
 
         consultarOPCsw1 = consultarOPCsw.groupby(['categoria', 'codfaccionista']).agg(
             {'carga': 'sum', 'OP': 'first', 'Mostruario': 'first', 'Urgente': 'first',
