@@ -127,7 +127,7 @@ class StatusOpsEmProcesso():
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
             carga['status'] = '-'
-            carga.fillna(carga,inplace=True)
+            carga.fillna('-',inplace=True)
 
             data = {
                 '1- Resumo:': consulta.to_dict(orient='records'),
