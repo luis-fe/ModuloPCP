@@ -143,7 +143,7 @@ class StatusOpsEmProcesso():
             print(carga)
             carga = pd.merge(consultaCategoriaFacc, carga, on=['codfaccionista', 'categoria'], how='right')
             carga['leadtime'].fillna(0,inplace=True)
-
+            consulta = consulta[consulta['apelidofaccionista'] == self.nomeFaccionista]
 
             carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
             # Tratando apenas os valores válidos de leadtime (não-negativos)
