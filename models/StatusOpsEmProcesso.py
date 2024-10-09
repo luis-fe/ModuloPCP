@@ -115,6 +115,7 @@ class StatusOpsEmProcesso():
             # Tratando apenas os valores válidos de leadtime (não-negativos)
             carga['dataPrevista'] = carga.apply(
                 lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D'), axis=1)
+            carga['dataPrevista'] = carga['dataPrevista'].dt.strftime('%Y-%m-%d')
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
             carga.fillna(carga,inplace=True)
