@@ -58,3 +58,5 @@ def get_RegistroFaccionistas():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
