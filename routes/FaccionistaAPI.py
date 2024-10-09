@@ -60,3 +60,6 @@ def get_RegistroFaccionistas():
     return jsonify(OP_data)
 
 
+
+
+

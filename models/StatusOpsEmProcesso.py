@@ -9,7 +9,7 @@ import pandas as pd
 class StatusOpsEmProcesso():
     '''Classe utilizada para Gerenciamento do Status das OPs em processo em faccionistas'''
 
-    def __init__(self, nomeFaccionista, statusTerceirizado= None, numeroOP= None, usuario= None,
+    def __init__(self, nomeFaccionista = None, statusTerceirizado= None, numeroOP= None, usuario= None,
                  justificativa= None, dataMarcacao= None, statusAtualizacao = None, nomecategoria = None):
         self.numeroOP = numeroOP
         self.nomecategoria = nomecategoria
