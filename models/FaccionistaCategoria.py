@@ -80,7 +80,7 @@ class FaccionistaCategoria():
 
 
         conn = ConexaoPostgreWms.conexaoEngine()
-        consulta = pd.read_sql(select, conn,params=(self.nomeCategoria))
+        consulta = pd.read_sql(select, conn,params=(self.nomeCategoria,))
 
         return consulta
 
