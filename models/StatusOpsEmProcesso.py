@@ -142,13 +142,14 @@ class StatusOpsEmProcesso():
             carga = pd.merge(consultaCategoriaFacc, carga, on=['codfaccionista', 'categoria'], how='right')
             carga['leadtime'].fillna(0,inplace=True)
 
+            # Converte 'dataPrevista' para datetime, se ainda não estiver no formato correto
+            carga['dataPrevista'] = pd.to_datetime(carga['dataPrevista'], errors='coerce')
 
-
-            carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
-
-            # Tratando apenas os valores válidos de leadtime (não-negativos)
+            # Soma o leadtime à dataPrevista
             carga['dataPrevista'] = carga.apply(
                 lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D'), axis=1)
+
+            # Formata a data no formato 'Y-m-d'
             carga['dataPrevista'] = carga['dataPrevista'].dt.strftime('%Y-%m-%d')
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
