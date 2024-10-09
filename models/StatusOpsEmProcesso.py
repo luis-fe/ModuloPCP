@@ -147,6 +147,8 @@ class StatusOpsEmProcesso():
                 if row['leadtime'] >= 0 else pd.NaT, axis=1)
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
+            carga['status'] = '-'
+            carga.fillna('-', inplace=True)
 
             data = {
                 '1- Resumo:': consulta.to_dict(orient='records'),

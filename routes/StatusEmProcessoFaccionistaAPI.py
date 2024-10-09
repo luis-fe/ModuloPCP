@@ -28,7 +28,7 @@ def post_FaccionistaCategoria():
     categoria = data.get('categoria',None)
     faccionista = data.get('faccionista', None)
 
-    dados = sta.StatusOpsEmProcesso(None,None,None,None,None,None,None,categoria).getOPsEmProcessoCategoria()
+    dados = sta.StatusOpsEmProcesso(faccionista,None,None,None,None,None,None,categoria).getOPsEmProcessoCategoria()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
