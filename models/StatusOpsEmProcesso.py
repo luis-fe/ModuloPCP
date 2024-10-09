@@ -118,6 +118,7 @@ class StatusOpsEmProcesso():
             carga['dataPrevista'] = carga['dataPrevista'].dt.strftime('%Y-%m-%d')
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
+            carga['status'] = '-'
             carga.fillna(carga,inplace=True)
 
             data = {
