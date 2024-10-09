@@ -139,6 +139,10 @@ class StatusOpsEmProcesso():
         else:
             codigosFaccionista = fac.Faccionista(None,self.nomeFaccionista).obterCodigosFaccionista()
             carga = pd.merge(consultarOPCsw,codigosFaccionista,on='codfaccionista')
+            carga = pd.merge(consultaCategoriaFacc, carga, on=['codfaccionista', 'categoria'], how='right')
+
+
+
             carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
 
             # Tratando apenas os valores válidos de leadtime (não-negativos)
