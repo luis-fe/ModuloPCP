@@ -25,6 +25,7 @@ from routes.routesModels.Meta_faccionistas import MetasFacicionista_routes
 from .routesModels.LeadTimeRoutes import LeadTime_routes
 from .NecessidadesDeMP.necessidadeMP import NecessidadesMP_routes
 from .routesModels.FasesRoutes import Fase_routes
+from .FaccionistaAPI import FaccionostaAPI_routes
 
 
 routes_blueprint.register_blueprint(planoPCP_routes)
@@ -49,3 +50,4 @@ routes_blueprint.register_blueprint(MetasFacicionista_routes)
 routes_blueprint.register_blueprint(LeadTime_routes)
 routes_blueprint.register_blueprint(NecessidadesMP_routes)
 routes_blueprint.register_blueprint(Fase_routes)
+routes_blueprint.register_blueprint(FaccionostaAPI_routes)
