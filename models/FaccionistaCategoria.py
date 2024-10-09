@@ -24,7 +24,8 @@ class FaccionistaCategoria():
                     """
 
             conn = ConexaoPostgreWms.conexaoEngine()
-            leadTimeCategoria = pd.read_sql(select, conn, params=(self.nomeCategoria))
+            print(self.nomeCategoria)
+            leadTimeCategoria = pd.read_sql(select, conn, params=(self.nomeCategoria,))
 
             if leadTimeCategoria.empty:
                 self.leadTime = 0
