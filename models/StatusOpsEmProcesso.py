@@ -88,13 +88,19 @@ class StatusOpsEmProcesso():
     def obterFaccionistasCategoria(self):
         consultaCategoriaFacc = FC.FaccionistaCategoria(None, self.nomecategoria).obterFaccionistasCategoria()
         return consultaCategoriaFacc
+    def obterFaccionistaGeral(self):
+        consulta =  FC.FaccionistaCategoria(None, self.nomecategoria).obterFaccionistasCategoriaPorFac()
+        return consulta
 
     def getOPsEmProcessoCategoria(self):
-        consultaCategoriaFacc = self.obterFaccionistasCategoria()
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
 
+        # Nessa etapa verificamos se a Categoria esta vazia ou foi informada para poder informar o que o usuario deseja
         if self.nomecategoria != None:
+            consultaCategoriaFacc = self.obterFaccionistasCategoria()
             consultarOPCsw = consultarOPCsw[consultarOPCsw['categoria'] == self.nomecategoria]
+        else:
+            consultaCategoriaFacc = self.obterFaccionistaGeral()
 
         consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
