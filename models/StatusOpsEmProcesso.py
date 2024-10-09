@@ -92,7 +92,7 @@ class StatusOpsEmProcesso():
     def getOPsEmProcessoCategoria(self):
         consultaCategoriaFacc = self.obterFaccionistasCategoria()
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
-
+        consultarOPCsw = consultarOPCsw[consultarOPCsw['categoria'] == self.nomecategoria]
         consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
 
@@ -114,7 +114,7 @@ class StatusOpsEmProcesso():
             carga['leadtime'] =carga['leadtime'].fillna(0,inplace=True)
 
             carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
-            print(carga['leadtime'])
+            print(carga)
             # Tratando apenas os valores válidos de leadtime (não-negativos)
             carga['dataPrevista'] = carga.apply(
                 lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D'), axis=1)
