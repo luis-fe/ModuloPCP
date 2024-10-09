@@ -123,6 +123,20 @@ class Faccionista():
 
         return consulta
 
+    def obterCodigosFaccionistaGeral(self):
+            consulta = '''
+            select
+    	        f.codfaccionista 
+            from
+    	        "PCP".pcp.faccionista  f 
+            '''
+
+            conn = ConexaoPostgreWms.conexaoEngine()
+            consulta = pd.read_sql(consulta, conn)
+
+            return consulta
+
+
     def ListaFaccionistasCsw(self):
         sql = """SELECT
             f.codFaccionista ,

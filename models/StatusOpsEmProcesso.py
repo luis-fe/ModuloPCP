@@ -107,9 +107,26 @@ class StatusOpsEmProcesso():
 
 
         if self.nomeFaccionista == None:
+
+            carga = pd.merge(consultaCategoriaFacc, consultarOPCsw, on=['codfaccionista', 'categoria'], how='right')
+
+            carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
+
+            # Tratando apenas os valores válidos de leadtime (não-negativos)
+            carga['dataPrevista'] = consulta.apply(
+                lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D')
+                if row['leadtime'] >= 0 else pd.NaT, axis=1)
+
+            carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
+            carga.fillna(carga,inplace=True)
+
             data = {
-                '1- Resumo:': consulta.to_dict(orient='records')
+                '1- Resumo:': consulta.to_dict(orient='records'),
+                '2- Detalhamento:': carga.to_dict(orient='records')
             }
+
+            return pd.DataFrame([data])
+
         else:
             codigosFaccionista = fac.Faccionista(None,self.nomeFaccionista).obterCodigosFaccionista()
             carga = pd.merge(consultarOPCsw,codigosFaccionista,on='codfaccionista')
@@ -126,7 +143,8 @@ class StatusOpsEmProcesso():
                 '1- Resumo:': consulta.to_dict(orient='records'),
                 '2- Detalhamento:': carga.to_dict(orient='records')
             }
-        return pd.DataFrame([data])
+
+            return pd.DataFrame([data])
     def mapear_categoria(self,nome):
         categorias_map = {
             'CAMISA': 'CAMISA',
