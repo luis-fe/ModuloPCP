@@ -92,7 +92,10 @@ class StatusOpsEmProcesso():
     def getOPsEmProcessoCategoria(self):
         consultaCategoriaFacc = self.obterFaccionistasCategoria()
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
-        consultarOPCsw = consultarOPCsw[consultarOPCsw['categoria'] == self.nomecategoria]
+
+        if self.nomecategoria != None:
+            consultarOPCsw = consultarOPCsw[consultarOPCsw['categoria'] == self.nomecategoria]
+
         consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
         consultarOPCsw1 = consultarOPCsw.groupby(['categoria', 'codfaccionista']).agg(
@@ -103,7 +106,6 @@ class StatusOpsEmProcesso():
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-", inplace=True)
-        consulta = consulta[consulta['categoria'] == self.nomecategoria]
 
 
 

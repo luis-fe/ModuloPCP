@@ -25,7 +25,7 @@ def token_required(f):
 @token_required
 def post_FaccionistaCategoria():
     data = request.get_json()
-    categoria = data.get('categoria')
+    categoria = data.get('categoria',None)
     faccionista = data.get('faccionista', None)
 
     dados = sta.StatusOpsEmProcesso(None,None,None,None,None,None,None,categoria).getOPsEmProcessoCategoria()
