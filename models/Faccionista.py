@@ -143,7 +143,55 @@ class Faccionista():
         gc.collect()
 
         return consulta
+    def RegistroFaccionistas(self):
+        '''Metodo que retorna todas as informacoes de registro de faccionista, cadastrado no portal'''
 
+
+        sql = """SELECT * FROM pcp.faccionista """
+        sql2 = """SELECT * FROM pcp."faccaoCategoria" """
+        sql3_Csw ="""
+        SELECT
+        	f.codFaccionista as codfaccionista ,
+        	f.nome as nomeFaccionistaCsw
+        FROM
+        	tcg.Faccionista f
+        WHERE
+        	f.Empresa = 1 order by nome """
+
+        with ConexaoBanco.Conexao2() as connCsw:
+                with connCsw.cursor() as cursor:
+                    cursor.execute(sql3_Csw)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    sql3_Csw = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        sql = pd.read_sql(sql, conn)
+        sql2 = pd.read_sql(sql2, conn)
+        merged = pd.merge(sql, sql2, on='codfaccionista', how='left')
+        merged.fillna('-', inplace=True)
+        merged['nome'] = merged.apply(
+            lambda r: r['apelidofaccionista'] if r['apelidofaccionista'] != '-' else r['nomefaccionista'], axis=1)
+        # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
+        grouped = merged.groupby(['codfaccionista', 'nome']).agg({
+            'nomecategoria': lambda x: list(x.dropna().astype(str).unique()),
+            'Capacidade/dia': lambda x: list(x.dropna().astype(str).unique())
+        }).reset_index()
+        sql3_Csw['codfaccionista'] = sql3_Csw['codfaccionista'].astype(str)
+        grouped = pd.merge(grouped, sql3_Csw, on='codfaccionista',how='left')
+        grouped.rename(
+            columns={'codfaccionista': '01- codfaccionista', 'nome': '02- nome',
+                     'nomecategoria': '03- nomecategoria',
+                     'Capacidade/dia': '04- Capacidade/dia'},
+            inplace=True)
+
+
+
+        return grouped
 
 
 
