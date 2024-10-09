@@ -106,7 +106,7 @@ class StatusOpsEmProcesso():
 
 
 
-        if self.nomeFaccionista == '':
+        if self.nomeFaccionista == None:
             data = {
                 '1- Resumo:': consulta.to_dict(orient='records')
             }

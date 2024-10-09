@@ -119,7 +119,7 @@ class Faccionista():
         '''
 
         conn = ConexaoPostgreWms.conexaoEngine()
-        consulta = pd.read_sql(consulta,conn, params=(self.nomeFaccionsita))
+        consulta = pd.read_sql(consulta,conn, params=(self.nomeFaccionsita,))
 
         return consulta
 
