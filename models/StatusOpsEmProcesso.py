@@ -94,7 +94,6 @@ class StatusOpsEmProcesso():
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
         consultarOPCsw = consultarOPCsw[consultarOPCsw['categoria'] == self.nomecategoria]
         consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
-        print(consultaCategoriaFacc)
 
         consultarOPCsw1 = consultarOPCsw.groupby(['categoria', 'codfaccionista']).agg(
             {'carga': 'sum', 'OP': 'first', 'Mostruario': 'first', 'Urgente': 'first',
@@ -111,9 +110,8 @@ class StatusOpsEmProcesso():
         if self.nomeFaccionista == None:
 
             carga = pd.merge(consultaCategoriaFacc, consultarOPCsw, on=['codfaccionista', 'categoria'], how='right')
-
+            carga['leadtime'].fillna(0,inplace=True)
             carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
-            print(carga)
             # Tratando apenas os valores válidos de leadtime (não-negativos)
             carga['dataPrevista'] = carga.apply(
                 lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D'), axis=1)
