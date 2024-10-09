@@ -111,6 +111,7 @@ class StatusOpsEmProcesso():
         if self.nomeFaccionista == None:
 
             carga = pd.merge(consultaCategoriaFacc, consultarOPCsw, on=['codfaccionista', 'categoria'], how='right')
+            carga['leadtime'] =carga['leadtime'].fillna(0,inplace=True)
 
             carga['dataPrevista'] = pd.to_datetime(carga['dataEnvio'])
 
