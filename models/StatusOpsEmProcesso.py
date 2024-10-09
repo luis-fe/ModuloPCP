@@ -140,6 +140,7 @@ class StatusOpsEmProcesso():
             codigosFaccionista = fac.Faccionista(None,self.nomeFaccionista).obterCodigosFaccionista()
             carga = pd.merge(consultarOPCsw,codigosFaccionista,on='codfaccionista')
             carga = pd.merge(consultaCategoriaFacc, carga, on=['codfaccionista', 'categoria'], how='right')
+            carga['leadtime'].fillna(0,inplace=True)
 
 
 
