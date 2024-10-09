@@ -126,4 +126,28 @@ class StatusOpsEmProcesso():
                 '2- Detalhamento:': carga.to_dict(orient='records')
             }
         return pd.DataFrame([data])
-
+    def mapear_categoria(self,nome):
+        categorias_map = {
+            'CAMISA': 'CAMISA',
+            'POLO': 'POLO',
+            'BATA': 'CAMISA',
+            'TRICOT': 'TRICOT',
+            'BONE': 'BONE',
+            'CARTEIRA': 'CARTEIRA',
+            'TSHIRT': 'CAMISETA',
+            'REGATA': 'CAMISETA',
+            'BLUSAO': 'AGASALHOS',
+            'BABY': 'CAMISETA',
+            'JAQUETA': 'JAQUETA',
+            'CINTO': 'CINTO',
+            'PORTA CAR': 'CARTEIRA',
+            'CUECA': 'CUECA',
+            'MEIA': 'MEIA',
+            'SUNGA': 'SUNGA',
+            'SHORT': 'SHORT',
+            'BERMUDA': 'BERMUDA'
+        }
+        for chave, valor in categorias_map.items():
+            if chave in nome.upper():
+                return valor
+        return '-'
