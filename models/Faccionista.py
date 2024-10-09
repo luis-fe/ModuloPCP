@@ -115,7 +115,7 @@ class Faccionista():
         from
 	        "PCP".pcp.faccionista  f 
 	    where
-	        f.nomefaccionista = %s
+	        f.apelidofaccionista = %s
         '''
 
         conn = ConexaoPostgreWms.conexaoEngine()
