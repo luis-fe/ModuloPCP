@@ -93,21 +93,21 @@ class StatusOpsEmProcesso():
         consultaCategoriaFacc = self.obterFaccionistasCategoria()
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
 
-        consultarOPCsw = consultarOPCsw.groupby(['categoria', 'codfaccionista']).agg(
+        consultarOPCsw1 = consultarOPCsw.groupby(['categoria', 'codfaccionista']).agg(
             {'carga': 'sum', 'OP': 'first', 'Mostruario': 'first', 'Urgente': 'first',
              'FAT Atrasado': 'first', 'P_Faturamento': 'first'}).reset_index()
-        consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+        consultarOPCsw1['codfaccionista'] = consultarOPCsw1['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
-        consulta = pd.merge(consultaCategoriaFacc, consultarOPCsw, on=['codfaccionista', 'categoria'], how='right')
+        consulta = pd.merge(consultaCategoriaFacc, consultarOPCsw1, on=['codfaccionista', 'categoria'], how='right')
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-", inplace=True)
         consulta = consulta[consulta['categoria'] == self.nomecategoria]
 
-        consulta['dataPrevista'] = pd.to_datetime(consulta['dataEnvio'])
+        consultarOPCsw['dataPrevista'] = pd.to_datetime(consultarOPCsw['dataEnvio'])
 
         # Tratando apenas os valores válidos de leadtime (não-negativos)
-        consulta['dataPrevista'] = consulta.apply(
+        consultarOPCsw['dataPrevista'] = consulta.apply(
             lambda row: row['dataPrevista'] + pd.to_timedelta(row['leadtime'], unit='D')
             if row['leadtime'] >= 0 else pd.NaT, axis=1)
 
