@@ -35,7 +35,7 @@ class StatusFac():
         consulta = pd.read_sql(consulta, conn, params=(self.statusTerceirizado))
 
         if consulta.empty:
-            return pd.DataFrame([{'statusterceirizado':'False'}]), False
+            return False, False
 
         else:
             return consulta['statusterceirizado'][0],consulta['situacaostatus'][0]
@@ -46,14 +46,14 @@ class StatusFac():
         # Verifica se o status :
         status , situacao = self.verificarExistenciaStatus()
 
-        if status != 'False' and situacao ==False:
+        if status != False and situacao ==False:
 
             self.reativarStatus()
 
             return pd.DataFrame(
                 [{'Status': True, 'Mensagem': f'statusTerceirizado {self.statusTerceirizado} Incluido com sucesso !'}])
 
-        elif status == 'False' :
+        elif status == False :
 
             inserir = """INSERT INTO "PCP".pcp.statusFac (statusterceirizado, situacaostatus) VALUES ( %s , %s )"""
 
