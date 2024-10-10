@@ -47,8 +47,7 @@ def post_FaccionistaCategoria():
 @StatusFaccionostaEmProcesso_routes.route('/pcp/api/PesquisaOPFac', methods=['GET'])
 @token_required
 def get_PesquisaOPFac():
-    data = request.get_json()
-    numeroOP = data.get('numeroOP',None)
+    numeroOP = request.args.get('numeroOP','-')
 
     dados = sta.StatusOpsEmProcesso(None,None,numeroOP).filtrandoOPEspecifica()
 
