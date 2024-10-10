@@ -104,7 +104,7 @@ class StatusFac():
 
         with ConexaoPostgreWms.conexaoInsercao() as connInsert:
             with connInsert.cursor() as curr:
-                curr.execute(update, (self.statusTerceirizado, False))
+                curr.execute(update, (self.statusTerceirizado,))
                 connInsert.commit()
 
         return pd.DataFrame(
