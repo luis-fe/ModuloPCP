@@ -32,7 +32,7 @@ class StatusFac():
                 """
 
         conn = ConexaoPostgreWms.conexaoEngine()
-        consulta = pd.read_sql(consulta, conn, params=(self.statusTerceirizado))
+        consulta = pd.read_sql(consulta, conn, params=(self.statusTerceirizado,))
 
         if consulta.empty:
             return False, False
