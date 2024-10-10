@@ -132,10 +132,6 @@ class StatusOpsEmProcesso():
         del rows
         gc.collect()
 
-        cargaFac['categoria'] = '-'
-        cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
-
-
 
         return cargaFac
 
@@ -267,6 +263,8 @@ class StatusOpsEmProcesso():
     def filtrandoOPEspecifica(self):
         consultarOPCsw = self.obterRemessasDistribuicaoCSWOPEspecifica()
         consultaCategoriaFacc = self.obterFaccionistaGeral()
+        consultarOPCsw['codfaccionista'] = consultarOPCsw['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+
 
         filtro = pd.merge(consultarOPCsw,consultaCategoriaFacc,on='codfaccionista',how='left')
         getStatus = self.getstatusOp()
