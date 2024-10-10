@@ -14,6 +14,10 @@ class StatusOpsEmProcesso():
         self.numeroOP = numeroOP
         self.nomecategoria = nomecategoria
         self.nomeFaccionista = nomeFaccionista
+        self.statusTerceirizado = statusTerceirizado
+        self.usuario = usuario
+        self.justificativa = justificativa
+        self.dataMarcacao = self.obterDataHoraAtual()
 
 
     def obterDataHoraAtual(self):
@@ -271,6 +275,120 @@ class StatusOpsEmProcesso():
         filtro = pd.merge(filtro, getStatus, on='numeroOP', how='left')
         filtro.fillna('-',inplace=True)
         return filtro
+
+    def post_apontarStatusOP(self):
+
+        #Verifica se esta vazio o apontamento da OP em especifico
+
+        consulta = """
+                        select
+                    numeroop as "numeroOP",
+                    justificativa,
+                    status,
+                    "dataPrevAtualizada"
+				from
+					"PCP".pcp."StatusTerceirizadoOP"
+				where 
+					and numeroop = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn,params=(self.numeroOP,))
+
+        if consulta.empty:
+            insert = """INSERT INTO "PCP".pcp."StatusTerceirizadoOP" (usuario,"dataMarcacao" , numeroop, justificativa, status, "statusAtualizacao" )
+            values ( %s, %s, %s, %s, %s, %s)
+            """
+
+            with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                with connInsert.cursor() as curr:
+                    curr.execute(insert, (self.usuario, self.dataMarcacao,self.numeroOP, self.justificativa, self.statusTerceirizado,'atual'))
+                    connInsert.commit()
+
+            return pd.DataFrame([{'Status':True,'Mensagem':'Apontado com sucesso'}])
+
+
+
+        else:
+            consulta = """
+                            select
+                                numeroop as "numeroOP",
+                                justificativa,
+                                status,
+                                "dataPrevAtualizada"
+            				from
+            					"PCP".pcp."StatusTerceirizadoOP"
+            				where 
+            					"statusAtualizacao" = 'atual'
+            					and numeroop = %s and status = %s
+                    """
+            conn = ConexaoPostgreWms.conexaoEngine()
+            consulta = pd.read_sql(consulta, conn, params=(self.numeroOP,self.statusTerceirizado))
+
+
+
+            if consulta.empty:
+                updateHistorico = """
+                 update 
+                    "PCP".pcp."StatusTerceirizadoOP"
+                 set 
+                    "statusAtualizacao" = 'Historico'
+                 where 
+                    numeroop = %s
+                """
+
+                insert = """INSERT INTO "PCP".pcp."StatusTerceirizadoOP" (usuario,"dataMarcacao" , numeroop, justificativa, status, "statusAtualizacao" )
+                values ( %s, %s, %s, %s, %s, %s)
+                """
+
+                with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                    with connInsert.cursor() as curr:
+
+                        curr.execute(updateHistorico,(self.numeroOP,))
+                        connInsert.commit()
+
+
+                        curr.execute(insert, (
+                        self.usuario, self.dataMarcacao, self.numeroOP, self.justificativa, self.statusTerceirizado,
+                        'atual'))
+                        connInsert.commit()
+
+                return pd.DataFrame([{'Status': True, 'Mensagem': 'Apontado com sucesso'}])
+
+
+
+            else:
+
+                updateHistorico = """
+                 update 
+                    "PCP".pcp."StatusTerceirizadoOP"
+                 set 
+                    "statusAtualizacao" = 'Historico'
+                 where 
+                    numeroop = %s
+                """
+
+                insert = """INSERT INTO "PCP".pcp."StatusTerceirizadoOP" (usuario,"dataMarcacao" , numeroop, justificativa, status, "statusAtualizacao" )
+                values ( %s, %s, %s, %s, %s, %s)
+                """
+
+                with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                    with connInsert.cursor() as curr:
+                        curr.execute(updateHistorico, (self.numeroOP,))
+                        connInsert.commit()
+
+                        curr.execute(insert, (
+                            self.usuario, self.dataMarcacao, self.numeroOP, self.justificativa, self.statusTerceirizado,
+                            'atual'))
+                        connInsert.commit()
+
+                return pd.DataFrame([{'Status': True, 'Mensagem': 'Apontado com sucesso'}])
+
+
+
+
+
+
 
 
 
