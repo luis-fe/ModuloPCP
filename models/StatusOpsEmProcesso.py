@@ -126,7 +126,10 @@ class StatusOpsEmProcesso():
             carga['dataPrevista'] = carga['dataPrevista'].dt.strftime('%Y-%m-%d')
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
-            carga['status'] = '-'
+
+            getStatus = self.getstatusOp()
+            carga = pd.merge(carga,getStatus,on='numeroOP',how='left')
+
             carga.fillna('-',inplace=True)
 
             data = {
@@ -152,7 +155,8 @@ class StatusOpsEmProcesso():
             carga['dataPrevista'] = carga['dataPrevista'].dt.strftime('%Y-%m-%d')
 
             carga.drop(['FAT Atrasado', 'Mostruario', 'OP', 'P_Faturamento', 'Urgente'], axis=1, inplace=True)
-            carga['status'] = '-'
+            getStatus = self.getstatusOp()
+            carga = pd.merge(carga, getStatus, on='numeroOP', how='left')
             carga.fillna('-', inplace=True)
 
             data = {
@@ -186,3 +190,21 @@ class StatusOpsEmProcesso():
             if chave in nome.upper():
                 return valor
         return '-'
+
+    def getstatusOp(self):
+
+        select = """
+                select
+                    numeroop as "numeroOP",
+                    justificativa,
+                    status,
+                    "dataPrevAtualizada"
+				from
+					"PCP".pcp."StatusTerceirizadoOP"
+				where 
+					"statusAtualizacao" = 'atual'
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(select,conn)
+        return consulta
