@@ -135,18 +135,7 @@ class StatusOpsEmProcesso():
         cargaFac['categoria'] = '-'
         cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
 
-        # Aplicar a contagem somente nas linhas onde codPrioridadeOP == 6
 
-        cargaFac['Mostruario'] = cargaFac.groupby('codfaccionista')['codTipoOP'].apply(
-            lambda x: (x == 6).sum()).reindex(cargaFac['codfaccionista']).values
-        cargaFac['Urgente'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(
-            lambda x: (x == 'URGENTE').sum()).reindex(cargaFac['codfaccionista']).values
-        cargaFac['FAT Atrasado'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(
-            lambda x: (x == 'FAT ATRASADO').sum()).reindex(cargaFac['codfaccionista']).values
-        cargaFac['P_Faturamento'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(
-            lambda x: (x == 'P\ FATURAMENTO').sum()).reindex(cargaFac['codfaccionista']).values
-
-        cargaFac['OP'] = cargaFac.groupby('codfaccionista')['codOP'].transform('count')
 
         return cargaFac
 
