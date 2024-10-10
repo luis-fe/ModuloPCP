@@ -117,14 +117,14 @@ class StatusFac():
         UPDATE 
             "PCP".pcp.statusFac
         SET 
-            situacaoStatus = False
+            situacaoStatus = True
         where 
             statusterceirizado = %s
         """
 
         with ConexaoPostgreWms.conexaoInsercao() as connInsert:
             with connInsert.cursor() as curr:
-                curr.execute(update, (self.statusTerceirizado, True))
+                curr.execute(update, (self.statusTerceirizado,))
                 connInsert.commit()
 
         return pd.DataFrame(
