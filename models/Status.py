@@ -76,11 +76,11 @@ class StatusFac():
 
         update = """
         UPDATE 
-            "PCP".pcp.statusFac
+            "PCP".pcp."statusFac"
         SET 
             statusterceirizado = %s
         where 
-            statusterceirizado = %s
+            situacaostatus = %s
         """
 
         with ConexaoPostgreWms.conexaoInsercao() as connInsert:
