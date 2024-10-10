@@ -269,6 +269,7 @@ class StatusOpsEmProcesso():
         filtro = pd.merge(consultarOPCsw,consultaCategoriaFacc,on='codfaccionista',how='left')
         getStatus = self.getstatusOp()
         filtro = pd.merge(filtro, getStatus, on='numeroOP', how='left')
+        filtro.fillna('-')
         return filtro
 
 
