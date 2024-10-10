@@ -80,12 +80,12 @@ class StatusFac():
         SET 
             statusterceirizado = %s
         where 
-            situacaostatus = %s
+            situacaostatus = %s and statusterceirizado = %s
         """
 
         with ConexaoPostgreWms.conexaoInsercao() as connInsert:
             with connInsert.cursor() as curr:
-                curr.execute(update, (novos_tatusterceirizado, self.situacaoStatus))
+                curr.execute(update, (novos_tatusterceirizado, self.situacaoStatus, self.statusTerceirizado))
                 connInsert.commit()
 
         return pd.DataFrame(
