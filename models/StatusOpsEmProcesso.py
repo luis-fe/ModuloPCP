@@ -85,12 +85,78 @@ class StatusOpsEmProcesso():
 
         return cargaFac
 
+
+
+    def obterRemessasDistribuicaoCSWOPEspecifica(self):
+        '''Metodo que retorna a carga por faccionista e categoria, no banco de dados do CSW'''
+
+        sql = """
+         SELECT 
+             op.numeroOP, 
+             op.codProduto, 
+             d.codFac as codfaccionista,
+             l.qtdPecasRem as carga,
+             op.codPrioridadeOP, 
+             op.codTipoOP,  
+             d.datLib as dataEnvio,
+             e.descricao as nome,
+             (SELECT p.descricao from tcp.PrioridadeOP p WHERE p.empresa = 1 and p.codPrioridadeOP =op.codPrioridadeOP) as prioridade  
+         FROM 
+             tco.OrdemProd op 
+         left join 
+             tct.RemessaOPsDistribuicao d 
+             on d.Empresa = 1 and 
+             d.codOP = op.numeroOP and 
+             d.situac = 2 and d.codFase = op.codFaseAtual 
+         left join 
+             tct.RemessasLoteOP l 
+             on l.Empresa = d.Empresa  
+             and l.codRemessa = d.numRem 
+         join 
+             tcp.Engenharia e on 
+             e.codEmpresa = 1 and 
+             e.codEngenharia = op.codProduto 
+         WHERE 
+             op.codEmpresa =1 and 
+             op.situacao =3 and 
+             op.codFaseAtual in (455, 459, 429)
+             and op.numeroOP like %"""+self.numeroOP+"""%"""
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                cargaFac = pd.DataFrame(rows, columns=colunas)
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        cargaFac['categoria'] = '-'
+        cargaFac['categoria'] = cargaFac['nome'].apply(self.mapear_categoria)
+
+        # Aplicar a contagem somente nas linhas onde codPrioridadeOP == 6
+
+        cargaFac['Mostruario'] = cargaFac.groupby('codfaccionista')['codTipoOP'].apply(
+            lambda x: (x == 6).sum()).reindex(cargaFac['codfaccionista']).values
+        cargaFac['Urgente'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(
+            lambda x: (x == 'URGENTE').sum()).reindex(cargaFac['codfaccionista']).values
+        cargaFac['FAT Atrasado'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(
+            lambda x: (x == 'FAT ATRASADO').sum()).reindex(cargaFac['codfaccionista']).values
+        cargaFac['P_Faturamento'] = cargaFac.groupby('codfaccionista')['prioridade'].apply(
+            lambda x: (x == 'P\ FATURAMENTO').sum()).reindex(cargaFac['codfaccionista']).values
+
+        cargaFac['OP'] = cargaFac.groupby('codfaccionista')['codOP'].transform('count')
+
+        return cargaFac
+
     def obterFaccionistasCategoria(self):
         consultaCategoriaFacc = FC.FaccionistaCategoria(None, self.nomecategoria).obterFaccionistasCategoria()
         return consultaCategoriaFacc
     def obterFaccionistaGeral(self):
         consulta =  FC.FaccionistaCategoria(None, self.nomecategoria).obterFaccionistasCategoriaPorFac()
         return consulta
+
 
     def getOPsEmProcessoCategoria(self):
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
@@ -208,3 +274,17 @@ class StatusOpsEmProcesso():
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(select,conn)
         return consulta
+
+    def filtrandoOPEspecifica(self):
+        consultarOPCsw = self.obterRemessasDistribuicaoCSWOPEspecifica()
+        consultaCategoriaFacc = self.obterFaccionistaGeral()
+
+        filtro = pd.merge(consultarOPCsw,consultaCategoriaFacc,on='codfaccionista',how='left')
+        getStatus = self.getstatusOp()
+        filtro = pd.merge(filtro, getStatus, on='numeroOP', how='left')
+        return filtro
+
+
+
+
+

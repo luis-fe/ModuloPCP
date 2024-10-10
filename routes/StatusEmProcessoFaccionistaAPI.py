@@ -41,3 +41,25 @@ def post_FaccionistaCategoria():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+
+@StatusFaccionostaEmProcesso_routes.route('/pcp/api/PesquisaOPFac', methods=['GET'])
+@token_required
+def get_PesquisaOPFac():
+    data = request.get_json()
+    numeroOP = data.get('numeroOP',None)
+
+    dados = sta.StatusOpsEmProcesso(None,None,numeroOP).filtrandoOPEspecifica()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
