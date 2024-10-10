@@ -5,7 +5,8 @@ StatusOPsEmProcesso , PRESENTE NO DIRETORIO MODELS
 
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models import StatusOpsEmProcesso as sta
+from models import StatusOpsEmProcesso as staOP
+from models import Status as sta
 
 StatusFaccionostaEmProcesso_routes = Blueprint('StatusFaccionostaEmProcesso_routes', __name__)
 
@@ -28,7 +29,7 @@ def post_FaccionistaCategoria():
     categoria = data.get('categoria',None)
     faccionista = data.get('faccionista', None)
 
-    dados = sta.StatusOpsEmProcesso(faccionista,None,None,None,None,None,None,categoria).getOPsEmProcessoCategoria()
+    dados = staOP.StatusOpsEmProcesso(faccionista, None, None, None, None, None, None, categoria).getOPsEmProcessoCategoria()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -49,7 +50,26 @@ def post_FaccionistaCategoria():
 def get_PesquisaOPFac():
     numeroOP = request.args.get('numeroOP','-')
 
-    dados = sta.StatusOpsEmProcesso(None,None,numeroOP).filtrandoOPEspecifica()
+    dados = staOP.StatusOpsEmProcesso(None, None, numeroOP).filtrandoOPEspecifica()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+@StatusFaccionostaEmProcesso_routes.route('/pcp/api/consultarStatusDisponiveis', methods=['GET'])
+@token_required
+def get_consultarStatusDisponiveis():
+
+    dados = sta.StatusFac().consultarStatusDisponiveis()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
