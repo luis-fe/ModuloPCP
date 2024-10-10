@@ -120,7 +120,7 @@ class StatusOpsEmProcesso():
              op.codEmpresa =1 and 
              op.situacao =3 and 
              op.codFaseAtual in (455, 459, 429)
-             and op.numeroOP like %"""+self.numeroOP+"""%"""
+             and op.numeroOP like '%"""+self.numeroOP+"""%'"""
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
