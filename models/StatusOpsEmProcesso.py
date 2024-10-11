@@ -289,7 +289,7 @@ class StatusOpsEmProcesso():
 				from
 					"PCP".pcp."StatusTerceirizadoOP"
 				where 
-					and numeroop = %s
+					 numeroop = %s
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()

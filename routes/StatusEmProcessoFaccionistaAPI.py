@@ -134,7 +134,7 @@ def postApontarStatusOP():
     statusTerceirizado = data.get('statusTerceirizado',None)
     numeroOP = data.get('numeroOP',None)
     usuario = data.get('usuario',None)
-    justificativa = data.get('justificativa',None)
+    justificativa = data.get('justificativa','')
 
 
 
