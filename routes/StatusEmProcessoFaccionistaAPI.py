@@ -131,10 +131,15 @@ def post_ExcluirStatus():
 @token_required
 def postApontarStatusOP():
     data = request.get_json()
-    status = data.get('status',None)
+    statusTerceirizado = data.get('statusTerceirizado',None)
+    numeroOP = data.get('numeroOP',None)
+    usuario = data.get('usuario',None)
+    justificativa = data.get('justificativa',None)
 
 
-    dados = sta.StatusFac(status).excluirStatus()
+
+    dados = staOP.StatusOpsEmProcesso(None, statusTerceirizado, numeroOP, usuario,
+                 justificativa).post_apontarStatusOP()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
