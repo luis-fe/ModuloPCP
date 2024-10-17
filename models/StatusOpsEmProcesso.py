@@ -387,6 +387,8 @@ class StatusOpsEmProcesso():
     def dashboardPecasFaccionista(self):
 
         obterResumo = self.obterRemessasDistribuicaoCSW()
+        totalOps = obterResumo['numeroOP'].count()
+
         obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
 
@@ -401,7 +403,6 @@ class StatusOpsEmProcesso():
         consulta.fillna("-", inplace=True)
 
         totalPecas = consulta['carga'].sum()
-        totalOps = consulta['carga'].sum()
 
         consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
 
