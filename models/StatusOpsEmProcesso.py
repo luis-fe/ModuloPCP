@@ -400,7 +400,7 @@ class StatusOpsEmProcesso():
         consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-", inplace=True)
 
-        totalPecas = consulta.sum()
+        totalPecas = consulta['carga'].sum()
 
         data = {
             '1- Resumo:': totalPecas,
