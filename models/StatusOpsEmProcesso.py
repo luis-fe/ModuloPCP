@@ -387,6 +387,8 @@ class StatusOpsEmProcesso():
     def dashboardPecasFaccionista(self):
 
         obterResumo = self.obterRemessasDistribuicaoCSW()
+        obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+
 
         obterResumo =  obterResumo.groupby(['codfaccionista']).agg(
             {'carga': 'sum'}).reset_index()
