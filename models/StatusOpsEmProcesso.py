@@ -384,6 +384,32 @@ class StatusOpsEmProcesso():
 
                 return pd.DataFrame([{'Status': True, 'Mensagem': 'Apontado com sucesso'}])
 
+    def dashboardPecasFaccionista(self):
+
+        obterResumo = self.obterRemessasDistribuicaoCSW()
+
+        obterResumo =  obterResumo.groupby(['codfaccionista']).agg(
+            {'carga': 'sum'}).reset_index()
+
+        consultaCategoriaFacc = self.obterFaccionistaGeral()
+
+        consulta = pd.merge(consultaCategoriaFacc, obterResumo, on=['codfaccionista'], how='right')
+        consulta['carga'].fillna(0, inplace=True)
+        consulta = consulta[consulta['carga'] > 0]
+        consulta.fillna("-", inplace=True)
+
+        totalPecas = consulta.sum()
+
+        data = {
+            '1- Resumo:': totalPecas,
+            '2- Distribuicao:': consulta.to_dict(orient='records')
+        }
+
+        return pd.DataFrame([data])
+
+
+
+
 
 
 
