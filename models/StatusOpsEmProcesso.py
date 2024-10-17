@@ -401,9 +401,11 @@ class StatusOpsEmProcesso():
         consulta.fillna("-", inplace=True)
 
         totalPecas = consulta['carga'].sum()
+        consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
+
 
         data = {
-            '1- Resumo:': totalPecas,
+            '1- Resumo:': f'{totalPecas} pçs',
             '2- Distribuicao:': consulta.to_dict(orient='records')
         }
 
