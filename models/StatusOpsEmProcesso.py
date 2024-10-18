@@ -387,7 +387,11 @@ class StatusOpsEmProcesso():
     def dashboardPecasFaccionista(self):
 
         obterResumo = self.obterRemessasDistribuicaoCSW()
-        totalOps = obterResumo['numeroOP'].count()
+        if self.nomecategoria != None or self.nomecategoria != '':
+            obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
+            totalOps = obterResumo['numeroOP'].count()
+        else:
+            totalOps = obterResumo['numeroOP'].count()
 
         obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
@@ -401,8 +405,7 @@ class StatusOpsEmProcesso():
 
         if self.nomecategoria != None or self.nomecategoria != '':
             consulta = consulta[consulta['categoria']==self.nomecategoria]
-            obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
-            totalOps = obterResumo['numeroOP'].count()
+
 
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0]
