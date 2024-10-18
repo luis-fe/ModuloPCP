@@ -400,7 +400,7 @@ class StatusOpsEmProcesso():
         consulta = pd.merge(consultaCategoriaFacc, obterResumo, on=['codfaccionista'], how='right')
 
         if self.nomecategoria == None or self.nomecategoria == '':
-            consulta = obterResumo[obterResumo['categoria']==self.nomecategoria]
+            consulta = consulta[consulta['categoria']==self.nomecategoria]
             totalOps = obterResumo['numeroOP'].count()
 
         consulta['carga'].fillna(0, inplace=True)
