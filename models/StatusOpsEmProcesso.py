@@ -387,6 +387,10 @@ class StatusOpsEmProcesso():
     def dashboardPecasFaccionista(self):
 
         obterResumo = self.obterRemessasDistribuicaoCSW()
+        if self.nomecategoria == None or self.nomecategoria == '':
+            obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
+
+
         totalOps = obterResumo['numeroOP'].count()
 
         obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
@@ -406,26 +410,14 @@ class StatusOpsEmProcesso():
 
 
 
-        if self.nomecategoria == None or self.nomecategoria == '':
 
-            consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
-
-            data = {
+        data = {
                 '1- TotalPeças:': f'{totalPecas} pçs',
                 '2- TotalOPs':f'{totalOps}',
                 '3- Distribuicao:': consulta.to_dict(orient='records')
             }
 
-        else:
-            consulta = consulta[consulta['categoria'] == self.nomecategoria]
 
-            consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
-
-            data = {
-                '1- TotalPeças:': f'{totalPecas} pçs',
-                '2- TotalOPs':f'{totalOps}',
-                '3- Distribuicao:': consulta.to_dict(orient='records')
-            }
 
 
         return pd.DataFrame([data])
