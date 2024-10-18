@@ -433,7 +433,7 @@ class StatusOpsEmProcesso():
         if self.nomecategoria == None or self.nomecategoria == '':
 
 
-            ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['apelidofaccionista'].size,"backupDashFac","replace")
+            ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
         else:
             print(' filtro categoria')
 
