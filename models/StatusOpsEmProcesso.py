@@ -408,7 +408,7 @@ class StatusOpsEmProcesso():
 
 
         consulta['carga'].fillna(0, inplace=True)
-        consulta = consulta[consulta['carga'] > 0]
+        consulta = consulta[consulta['carga'] > 0].reset_index()
         consulta.fillna("-", inplace=True)
         consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
 
@@ -431,7 +431,6 @@ class StatusOpsEmProcesso():
         '''Metodo utilizado para deixar a api de renderizacao mais rapido dos dashboards '''
 
         if self.nomecategoria == None or self.nomecategoria == '':
-
 
             ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
         else:
