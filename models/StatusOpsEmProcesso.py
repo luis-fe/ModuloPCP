@@ -387,10 +387,6 @@ class StatusOpsEmProcesso():
     def dashboardPecasFaccionista(self):
 
         obterResumo = self.obterRemessasDistribuicaoCSW()
-        if self.nomecategoria == None or self.nomecategoria == '':
-            obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
-
-
         totalOps = obterResumo['numeroOP'].count()
 
         obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
@@ -402,6 +398,11 @@ class StatusOpsEmProcesso():
         consultaCategoriaFacc = self.obterFaccionistaGeral()
 
         consulta = pd.merge(consultaCategoriaFacc, obterResumo, on=['codfaccionista'], how='right')
+
+        if self.nomecategoria == None or self.nomecategoria == '':
+            consulta = obterResumo[obterResumo['categoria']==self.nomecategoria]
+            totalOps = obterResumo['numeroOP'].count()
+
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-", inplace=True)
