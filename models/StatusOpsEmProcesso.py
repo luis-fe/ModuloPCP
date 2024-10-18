@@ -387,6 +387,7 @@ class StatusOpsEmProcesso():
     def dashboardPecasFaccionista(self):
 
         obterResumo = self.obterRemessasDistribuicaoCSW()
+
         if self.nomecategoria != None or self.nomecategoria != '':
             obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
             totalOps = obterResumo['numeroOP'].count()
