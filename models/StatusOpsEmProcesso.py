@@ -404,14 +404,29 @@ class StatusOpsEmProcesso():
 
         totalPecas = consulta['carga'].sum()
 
-        consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
 
 
-        data = {
-            '1- TotalPeças:': f'{totalPecas} pçs',
-            '2- TotalOPs':f'{totalOps}',
-            '3- Distribuicao:': consulta.to_dict(orient='records')
-        }
+        if self.nomecategoria == None or self.nomecategoria == '':
+
+            consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
+
+            data = {
+                '1- TotalPeças:': f'{totalPecas} pçs',
+                '2- TotalOPs':f'{totalOps}',
+                '3- Distribuicao:': consulta.to_dict(orient='records')
+            }
+
+        else:
+            consulta = consulta[consulta['categoria'] == self.nomecategoria]
+
+            consulta = consulta.drop(['categoria', 'leadtime'], axis=1)
+
+            data = {
+                '1- TotalPeças:': f'{totalPecas} pçs',
+                '2- TotalOPs':f'{totalOps}',
+                '3- Distribuicao:': consulta.to_dict(orient='records')
+            }
+
 
         return pd.DataFrame([data])
 

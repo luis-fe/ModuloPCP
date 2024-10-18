@@ -158,9 +158,9 @@ def postApontarStatusOP():
 @token_required
 def postDashboardFaccTotal():
     data = request.get_json()
+    categoria = data.get('categoria','')
 
-
-    dados = staOP.StatusOpsEmProcesso().dashboardPecasFaccionista()
+    dados = staOP.StatusOpsEmProcesso('','','','','','','',categoria).dashboardPecasFaccionista()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
