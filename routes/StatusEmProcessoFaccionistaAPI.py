@@ -162,7 +162,6 @@ def postDashboardFaccTotal():
 
     dash = staOP.StatusOpsEmProcesso('','','','','','','',categoria)
     dados = dash.dashboardPecasFaccionista()
-    dash.backupDadosDashbord()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
