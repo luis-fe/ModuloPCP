@@ -410,8 +410,11 @@ class StatusOpsEmProcesso():
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-", inplace=True)
+        consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
 
         totalPecas = consulta['carga'].sum()
+
+
 
         data = {
                 '1- TotalPeças:': f'{totalPecas} pçs',
@@ -423,6 +426,18 @@ class StatusOpsEmProcesso():
 
 
         return pd.DataFrame([data])
+
+    def backupDadosDashbord(self):
+        '''Metodo utilizado para deixar a api de renderizacao mais rapido dos dashboards '''
+
+        backup = self.dashboardPecasFaccionista()
+        if self.nomecategoria == None or self.nomecategoria == '':
+
+
+            ConexaoPostgreWms.Funcao_InserirBackup(backup,backup['apelidofaccionista'].size,"backupDashFac","replace")
+        else:
+            print(' filtro categoria')
+
 
 
 
