@@ -158,7 +158,7 @@ def postApontarStatusOP():
 @token_required
 def postDashboardFaccTotal():
     data = request.get_json()
-    categoria = data.get('categoria','')
+    categoria = data.get('categoria',None)
     print(f'categoria {categoria}')
     dash = staOP.StatusOpsEmProcesso('','','','','','','',categoria)
     dados = dash.dashboardPecasFaccionista()
