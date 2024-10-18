@@ -406,15 +406,16 @@ class StatusOpsEmProcesso():
         if self.nomecategoria != None or self.nomecategoria != '':
             consulta = consulta[consulta['categoria']==self.nomecategoria]
 
+        else:
+            print(consulta)
+            self.backupDadosDashbord(consulta)
 
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0].reset_index()
-        print(consulta)
         consulta.fillna("-", inplace=True)
         consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
 
         totalPecas = consulta['carga'].sum()
-        self.backupDadosDashbord(consulta)
 
 
         data = {
@@ -430,12 +431,8 @@ class StatusOpsEmProcesso():
 
     def backupDadosDashbord(self, dataFrame):
         '''Metodo utilizado para deixar a api de renderizacao mais rapido dos dashboards '''
+        ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
 
-        if self.nomecategoria == None or self.nomecategoria == '':
-
-            ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
-        else:
-            print(' filtro categoria')
 
 
 
