@@ -401,6 +401,7 @@ class StatusOpsEmProcesso():
 
         if self.nomecategoria == None or self.nomecategoria == '':
             consulta = consulta[consulta['categoria']==self.nomecategoria]
+            obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
             totalOps = obterResumo['numeroOP'].count()
 
         consulta['carga'].fillna(0, inplace=True)
@@ -408,9 +409,6 @@ class StatusOpsEmProcesso():
         consulta.fillna("-", inplace=True)
 
         totalPecas = consulta['carga'].sum()
-
-
-
 
         data = {
                 '1- TotalPeças:': f'{totalPecas} pçs',
