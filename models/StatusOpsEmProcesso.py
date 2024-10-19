@@ -421,9 +421,9 @@ class StatusOpsEmProcesso():
                     {'carga': 'sum'}).reset_index()
 
             else:
+                self.backupDadosDashbord(consulta,resumoStatus)
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
-                self.backupDadosDashbord(consulta,resumoStatus)
 
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
