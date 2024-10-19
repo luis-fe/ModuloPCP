@@ -394,6 +394,8 @@ class StatusOpsEmProcesso():
             obterStatus = self.getstatusOp()
             obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
             obterResumo['status'].fillna('NaoInformado', inplace =True)
+            resumoStatus = obterResumo.groupby(['status']).agg(
+                {'carga': 'sum'}).reset_index()
 
 
             if self.nomecategoria != None and self.nomecategoria != '':
@@ -424,8 +426,7 @@ class StatusOpsEmProcesso():
 
             resumoCategoria = consulta.groupby(['categoria']).agg(
                 {'carga': 'sum'}).reset_index()
-            resumoStatus = obterResumo.groupby(['status']).agg(
-                {'carga': 'sum'}).reset_index()
+
 
 
             consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
