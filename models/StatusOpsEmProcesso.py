@@ -10,7 +10,7 @@ class StatusOpsEmProcesso():
     '''Classe utilizada para Gerenciamento do Status das OPs em processo em faccionistas'''
 
     def __init__(self, nomeFaccionista = None, statusTerceirizado= None, numeroOP= None, usuario= None,
-                 justificativa= None, dataMarcacao= None, statusAtualizacao = None, nomecategoria = None):
+                 justificativa= None, dataMarcacao= None, statusAtualizacao = None, nomecategoria = None, congelarDashboard = False):
         self.numeroOP = numeroOP
         self.nomecategoria = nomecategoria
         self.nomeFaccionista = nomeFaccionista
@@ -18,6 +18,7 @@ class StatusOpsEmProcesso():
         self.usuario = usuario
         self.justificativa = justificativa
         self.dataMarcacao = self.obterDataHoraAtual()
+        self.congelarDashboard = congelarDashboard
 
 
     def obterDataHoraAtual(self):
@@ -385,49 +386,76 @@ class StatusOpsEmProcesso():
                 return pd.DataFrame([{'Status': True, 'Mensagem': 'Apontado com sucesso'}])
 
     def dashboardPecasFaccionista(self):
+        '''Metodo da Classe que retorna um dashboard com a informacao da carga por faccionista em aberto '''
 
-        obterResumo = self.obterRemessasDistribuicaoCSW()
+        # Caso o usuario passe o congelamento como falso, é feito uma consulta dianmica com o banco do ERP , demorando mais tempo:
+        if self.congelarDashboard == False:
+            obterResumo = self.obterRemessasDistribuicaoCSW()
 
-        if self.nomecategoria != None and self.nomecategoria != '':
-            obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
-            totalOps = obterResumo['numeroOP'].count()
+            if self.nomecategoria != None and self.nomecategoria != '':
+                obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
+                totalOps = obterResumo['numeroOP'].count()
+            else:
+                totalOps = obterResumo['numeroOP'].count()
+
+            obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+
+
+            obterResumo =  obterResumo.groupby(['codfaccionista']).agg(
+                {'carga': 'sum'}).reset_index()
+
+            consultaCategoriaFacc = self.obterFaccionistaGeral()
+
+            consulta = pd.merge(consultaCategoriaFacc, obterResumo, on=['codfaccionista'], how='right')
+
+            if self.nomecategoria != None and self.nomecategoria != '':
+                consulta = consulta[consulta['categoria']==self.nomecategoria]
+
+            else:
+                self.backupDadosDashbord(consulta)
+
+            consulta['carga'].fillna(0, inplace=True)
+            consulta = consulta[consulta['carga'] > 0].reset_index()
+            consulta.fillna("-", inplace=True)
+            consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
+
+            totalPecas = consulta['carga'].sum()
+
+
+            data = {
+                    '1- TotalPeças:': f'{totalPecas} pçs',
+                    '2- TotalOPs':f'{totalOps}',
+                    '3- Distribuicao:': consulta.to_dict(orient='records')
+                }
+
+
+
+
+            return pd.DataFrame([data])
+
+        # caso o congelamento esteja marcado como falso, retorna o congelamento do calculo
         else:
-            totalOps = obterResumo['numeroOP'].count()
 
-        obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+            consulta =  self.carregarBackup()
 
-
-        obterResumo =  obterResumo.groupby(['codfaccionista']).agg(
-            {'carga': 'sum'}).reset_index()
-
-        consultaCategoriaFacc = self.obterFaccionistaGeral()
-
-        consulta = pd.merge(consultaCategoriaFacc, obterResumo, on=['codfaccionista'], how='right')
-
-        if self.nomecategoria != None and self.nomecategoria != '':
-            consulta = consulta[consulta['categoria']==self.nomecategoria]
-
-        else:
-            self.backupDadosDashbord(consulta)
-
-        consulta['carga'].fillna(0, inplace=True)
-        consulta = consulta[consulta['carga'] > 0].reset_index()
-        consulta.fillna("-", inplace=True)
-        consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
-
-        totalPecas = consulta['carga'].sum()
+            if self.nomecategoria != None and self.nomecategoria != '':
+                consulta = consulta[consulta['categoria'] == self.nomecategoria]
 
 
-        data = {
+            consulta['carga'].fillna(0, inplace=True)
+            consulta = consulta[consulta['carga'] > 0].reset_index()
+            consulta.fillna("-", inplace=True)
+            consulta.drop(['categoria', 'leadtime'], axis=1, inplace=True)
+
+            totalPecas = consulta['carga'].sum()
+
+            data = {
                 '1- TotalPeças:': f'{totalPecas} pçs',
-                '2- TotalOPs':f'{totalOps}',
+                '2- TotalOPs': f'-',
                 '3- Distribuicao:': consulta.to_dict(orient='records')
             }
 
-
-
-
-        return pd.DataFrame([data])
+            return pd.DataFrame([data])
 
     def backupDadosDashbord(self, dataFrame):
         '''Metodo utilizado para deixar a api de renderizacao mais rapido dos dashboards '''
@@ -435,7 +463,21 @@ class StatusOpsEmProcesso():
         ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
 
 
+    def carregarBackup(self):
 
+        consulta = """
+        select
+	        apelidofaccionista ,
+	        categoria ,
+	        codfaccionista ,
+	        carga
+        from
+	        backup."backupDashFac" bdf
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn)
+        return consulta
 
 
 

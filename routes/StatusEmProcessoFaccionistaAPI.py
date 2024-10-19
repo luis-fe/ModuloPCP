@@ -159,8 +159,10 @@ def postApontarStatusOP():
 def postDashboardFaccTotal():
     data = request.get_json()
     categoria = data.get('categoria',None)
+    congelamento = data.get('congelamento',False)
+
     print(f'categoria {categoria}')
-    dash = staOP.StatusOpsEmProcesso('','','','','','','',categoria)
+    dash = staOP.StatusOpsEmProcesso('','','','','','','',categoria, congelamento)
     dados = dash.dashboardPecasFaccionista()
 
     # Obtém os nomes das colunas
