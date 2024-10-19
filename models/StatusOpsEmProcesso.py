@@ -417,8 +417,13 @@ class StatusOpsEmProcesso():
             if self.nomecategoria != None and self.nomecategoria != '':
                 consulta = consulta[consulta['categoria']==self.nomecategoria]
 
+                resumoStatus = resumoStatus.groupby(['status']).agg(
+                    {'carga': 'sum'}).reset_index()
+
             else:
-                self.backupDadosDashbord(consulta)
+                resumoStatus = resumoStatus.groupby(['status']).agg(
+                    {'carga': 'sum'}).reset_index()
+                self.backupDadosDashbord(consulta,resumoStatus)
 
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
@@ -427,8 +432,7 @@ class StatusOpsEmProcesso():
             resumoCategoria = consulta.groupby(['categoria']).agg(
                 {'carga': 'sum'}).reset_index()
 
-            resumoStatus = resumoStatus.groupby(['status']).agg(
-                {'carga': 'sum'}).reset_index()
+
 
 
 
@@ -479,11 +483,13 @@ class StatusOpsEmProcesso():
 
             return pd.DataFrame([data])
 
-    def backupDadosDashbord(self, dataFrame):
+    def backupDadosDashbord(self, dataFrame, dataframe2):
         '''Metodo utilizado para deixar a api de renderizacao mais rapido dos dashboards '''
         dataFrame['dataHora'] = self.obterDataHoraAtual()
+        dataframe2['dataHora'] = self.obterDataHoraAtual()
+
         ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
-        ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['categoria'].size,"backupDashFacStatus","replace")
+        ConexaoPostgreWms.Funcao_InserirBackup(dataframe2,dataframe2['categoria'].size,"backupDashFacStatus","replace")
 
 
 
