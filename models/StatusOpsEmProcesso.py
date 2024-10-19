@@ -427,7 +427,7 @@ class StatusOpsEmProcesso():
             resumoCategoria = consulta.groupby(['categoria']).agg(
                 {'carga': 'sum'}).reset_index()
 
-            resumoStatus = obterResumo.groupby(['status']).agg(
+            resumoStatus = resumoStatus.groupby(['status']).agg(
                 {'carga': 'sum'}).reset_index()
 
 
