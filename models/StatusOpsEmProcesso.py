@@ -417,6 +417,11 @@ class StatusOpsEmProcesso():
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
             consulta.fillna("-", inplace=True)
+
+            resumoCategoria = consulta.groupby(['categoria']).agg(
+                {'carga': 'sum'}).reset_index()
+
+
             consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
 
             totalPecas = consulta['carga'].sum()
@@ -425,7 +430,8 @@ class StatusOpsEmProcesso():
             data = {
                     '1- TotalPeças:': f'{totalPecas} pçs',
                     '2- TotalOPs':f'{totalOps}',
-                    '3- Distribuicao:': consulta.to_dict(orient='records')
+                    '3- Distribuicao:': consulta.to_dict(orient='records'),
+                    '3.1- ResumoCategoria': resumoCategoria.to_dict(orient='records')
                 }
 
 
@@ -445,6 +451,10 @@ class StatusOpsEmProcesso():
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
             consulta.fillna("-", inplace=True)
+
+            resumoCategoria = consulta.groupby(['categoria']).agg(
+                {'carga': 'sum'}).reset_index()
+
             consulta.drop(['categoria'], axis=1, inplace=True)
 
             totalPecas = consulta['carga'].sum()
@@ -452,7 +462,8 @@ class StatusOpsEmProcesso():
             data = {
                 '1- TotalPeças:': f'{totalPecas} pçs',
                 '2- TotalOPs': f'-',
-                '3- Distribuicao:': consulta.to_dict(orient='records')
+                '3- Distribuicao:': consulta.to_dict(orient='records'),
+                '3.1- ResumoCategoria': resumoCategoria.to_dict(orient='records')
             }
 
             return pd.DataFrame([data])
