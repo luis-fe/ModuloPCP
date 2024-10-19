@@ -391,6 +391,10 @@ class StatusOpsEmProcesso():
         # Caso o usuario passe o congelamento como falso, é feito uma consulta dianmica com o banco do ERP , demorando mais tempo:
         if self.congelarDashboard == False:
             obterResumo = self.obterRemessasDistribuicaoCSW()
+            obterStatus = self.getstatusOp()
+            obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
+            obterResumo['status'] = obterResumo['status'].fiilna('NaoInformado', inplace =True)
+
 
             if self.nomecategoria != None and self.nomecategoria != '':
                 obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
@@ -420,6 +424,8 @@ class StatusOpsEmProcesso():
 
             resumoCategoria = consulta.groupby(['categoria']).agg(
                 {'carga': 'sum'}).reset_index()
+            resumoStatus = obterResumo.groupby(['status']).agg(
+                {'carga': 'sum'}).reset_index()
 
 
             consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
@@ -431,8 +437,9 @@ class StatusOpsEmProcesso():
                     '1- TotalPeças:': f'{totalPecas} pçs',
                     '2- TotalOPs':f'{totalOps}',
                     '3- Distribuicao:': consulta.to_dict(orient='records'),
-                    '3.1- ResumoCategoria': resumoCategoria.to_dict(orient='records')
-                }
+                    '3.1- ResumoCategoria': resumoCategoria.to_dict(orient='records'),
+                    '3.2- ResumoStatus': resumoStatus.to_dict(orient='records')
+            }
 
 
 
