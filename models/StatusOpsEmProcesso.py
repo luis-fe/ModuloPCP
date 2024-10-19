@@ -458,9 +458,11 @@ class StatusOpsEmProcesso():
         else:
 
             consulta =  self.carregarBackup()
+            resumoStatus = self.carregarBackupStatus()
 
             if self.nomecategoria != None and self.nomecategoria != '':
                 consulta = consulta[consulta['categoria'] == self.nomecategoria]
+                resumoStatus = resumoStatus[resumoStatus['categoria'] == self.nomecategoria]
 
 
             consulta['carga'].fillna(0, inplace=True)
@@ -468,6 +470,9 @@ class StatusOpsEmProcesso():
             consulta.fillna("-", inplace=True)
 
             resumoCategoria = consulta.groupby(['categoria']).agg(
+                {'carga': 'sum'}).reset_index()
+
+            resumoStatus = resumoStatus.groupby(['status']).agg(
                 {'carga': 'sum'}).reset_index()
 
             consulta.drop(['categoria'], axis=1, inplace=True)
@@ -478,7 +483,8 @@ class StatusOpsEmProcesso():
                 '1- TotalPeças:': f'{totalPecas} pçs',
                 '2- TotalOPs': f'-',
                 '3- Distribuicao:': consulta.to_dict(orient='records'),
-                '3.1- ResumoCategoria': resumoCategoria.to_dict(orient='records')
+                '3.1- ResumoCategoria': resumoCategoria.to_dict(orient='records'),
+                '3.2- ResumoStatus': resumoStatus.to_dict(orient='records')
             }
 
             return pd.DataFrame([data])
@@ -509,6 +515,21 @@ class StatusOpsEmProcesso():
         consulta = pd.read_sql(consulta,conn)
         return consulta
 
+
+    def carregarBackupStatus(self):
+
+        consulta = """
+        select
+            status,
+            categoria,
+            carga
+        from
+            backup."backupDashFacStatus" bdf
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn)
+        return consulta
 
 
 
