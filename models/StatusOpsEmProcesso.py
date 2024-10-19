@@ -393,7 +393,7 @@ class StatusOpsEmProcesso():
             obterResumo = self.obterRemessasDistribuicaoCSW()
             obterStatus = self.getstatusOp()
             obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
-            obterResumo['status'] = obterResumo['status'].fiilna('NaoInformado', inplace =True)
+            obterResumo['status'].fiilna('NaoInformado', inplace =True)
 
 
             if self.nomecategoria != None and self.nomecategoria != '':
