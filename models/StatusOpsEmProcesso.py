@@ -394,7 +394,7 @@ class StatusOpsEmProcesso():
             obterStatus = self.getstatusOp()
             obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
             obterResumo['status'].fillna('NaoInformado', inplace =True)
-            resumoStatus = obterResumo.groupby(['status']).agg(
+            resumoStatus = obterResumo.groupby(['status','categoria']).agg(
                 {'carga': 'sum'}).reset_index()
 
 
@@ -425,6 +425,9 @@ class StatusOpsEmProcesso():
             consulta.fillna("-", inplace=True)
 
             resumoCategoria = consulta.groupby(['categoria']).agg(
+                {'carga': 'sum'}).reset_index()
+
+            resumoStatus = obterResumo.groupby(['status']).agg(
                 {'carga': 'sum'}).reset_index()
 
 
@@ -480,6 +483,8 @@ class StatusOpsEmProcesso():
         '''Metodo utilizado para deixar a api de renderizacao mais rapido dos dashboards '''
         dataFrame['dataHora'] = self.obterDataHoraAtual()
         ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['carga'].size,"backupDashFac","replace")
+        ConexaoPostgreWms.Funcao_InserirBackup(dataFrame,dataFrame['categoria'].size,"backupDashFacStatus","replace")
+
 
 
     def carregarBackup(self):
