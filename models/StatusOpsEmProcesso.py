@@ -390,19 +390,29 @@ class StatusOpsEmProcesso():
 
         # Caso o usuario passe o congelamento como falso, é feito uma consulta dianmica com o banco do ERP , demorando mais tempo:
         if self.congelarDashboard == False:
+            #1 Obtem a carga dos faccionista no CSW
             obterResumo = self.obterRemessasDistribuicaoCSW()
+
+            #2 Obtem no banco da Plataforma o status das OPs
             obterStatus = self.getstatusOp()
+
+            #3 realiza um merge para concatenar as informacoes a nivel de OP
             obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
+
+            #4 realiza o tratamento do status nao informado
             obterResumo['status'].fillna('NaoInformado', inplace =True)
-            resumoStatus = obterResumo.groupby(['status','categoria']).agg(
+
+            #5 resume o status a nivel de categoira e codfaccionsita
+            resumoStatus = obterResumo.groupby(['status','categoria','codfaccionista']).agg(
                 {'carga': 'sum'}).reset_index()
 
-
+            #6 verifica se tem filtro no nivel de categoria
             if self.nomecategoria != None and self.nomecategoria != '':
                 obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
                 totalOps = obterResumo['numeroOP'].count()
             else:
                 totalOps = obterResumo['numeroOP'].count()
+
 
             obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
