@@ -440,6 +440,13 @@ class StatusOpsEmProcesso():
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
 
+            elif self.nomeFaccionista != None and self.nomeFaccionista != '':
+                codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
+                resumoStatus = pd.merge(resumoStatus,codigosFaccionista,on='codfaccionista')
+
+                resumoStatus = resumoStatus.groupby(['status']).agg(
+                    {'carga': 'sum'}).reset_index()
+
             else:
                 self.backupDadosDashbord(consulta,resumoStatus)
                 resumoStatus = resumoStatus.groupby(['status']).agg(
@@ -544,7 +551,9 @@ class StatusOpsEmProcesso():
             categoria,
             carga
         from
-            backup."backupDashFacStatus" bdf
+            backup."backupDas
+            
+            hFacStatus" bdf
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
