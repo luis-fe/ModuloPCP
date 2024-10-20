@@ -409,9 +409,7 @@ class StatusOpsEmProcesso():
             #6 verifica se tem filtro no nivel de categoria
             if self.nomecategoria != None and self.nomecategoria != '':
                 obterResumo = obterResumo[obterResumo['categoria']==self.nomecategoria]
-                totalOps = obterResumo['numeroOP'].count()
-            else:
-                totalOps = obterResumo['numeroOP'].count()
+
 
             #7 verifica se tem filtro nivel apelido faccionista
             if self.nomeFaccionista != None and self.nomeFaccionista != '':
