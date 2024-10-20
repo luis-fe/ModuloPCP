@@ -420,6 +420,8 @@ class StatusOpsEmProcesso():
                 codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
 
                 obterResumo = pd.merge(obterResumo,codigosFaccionista,on='codfaccionista')
+                resumoStatus = pd.merge(resumoStatus,codigosFaccionista,on='codfaccionista')
+
                 totalOps = obterResumo['numeroOP'].count()
             else:
                 totalOps = obterResumo['numeroOP'].count()
@@ -441,8 +443,6 @@ class StatusOpsEmProcesso():
                     {'carga': 'sum'}).reset_index()
 
             elif self.nomeFaccionista != None and self.nomeFaccionista != '':
-                codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
-                resumoStatus = pd.merge(resumoStatus,codigosFaccionista,on='codfaccionista')
 
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
