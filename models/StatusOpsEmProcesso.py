@@ -60,7 +60,7 @@ class StatusOpsEmProcesso():
          WHERE 
              op.codEmpresa =1 and 
              op.situacao =3 and 
-             op.codFaseAtual in (455, 459, 429)
+             op.codFaseAtual in (455, 459, 429, 453)
              """
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
@@ -392,22 +392,17 @@ class StatusOpsEmProcesso():
         if self.congelarDashboard == False:
             #1 Obtem a carga dos faccionista no CSW
             obterResumo = self.obterRemessasDistribuicaoCSW()
-
             #2 Obtem no banco da Plataforma o status das OPs
             obterStatus = self.getstatusOp()
-
             #3 realiza um merge para concatenar as informacoes a nivel de OP
             obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
-
             #4 realiza o tratamento do status nao informado e trata o codfaccionsta no dataframe obterResumo
             obterResumo['status'].fillna('NaoInformado', inplace =True)
             obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
-
             #5 resume o status a nivel de categoira e codfaccionsita
             resumoStatus = obterResumo.groupby(['status','categoria','codfaccionista']).agg(
                 {'carga': 'sum'}).reset_index()
-
 
 
             #6 verifica se tem filtro no nivel de categoria
