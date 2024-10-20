@@ -429,12 +429,12 @@ class StatusOpsEmProcesso():
 
 
 
-            obterResumo =  obterResumo.groupby(['codfaccionista']).agg(
+            obterResumo =  obterResumo.groupby(['codfaccionista','categoria']).agg(
                 {'carga': 'sum'}).reset_index()
 
             consultaCategoriaFacc = self.obterFaccionistaGeral()
 
-            consulta = pd.merge(consultaCategoriaFacc, obterResumo, on=['codfaccionista'], how='right')
+            consulta = pd.merge(obterResumo, consultaCategoriaFacc, on=['codfaccionista','categoria'], how='left')
 
             if self.nomecategoria != None and self.nomecategoria != '':
                 consulta = consulta[consulta['categoria']==self.nomecategoria]
@@ -443,6 +443,8 @@ class StatusOpsEmProcesso():
                     {'carga': 'sum'}).reset_index()
 
             elif self.nomeFaccionista != None and self.nomeFaccionista != '':
+                consulta = consulta.groupby(['codfaccionista', 'apelidofaccionista']).agg(
+                    {'carga': 'sum'}).reset_index()
 
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
