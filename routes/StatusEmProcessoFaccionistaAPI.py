@@ -160,9 +160,10 @@ def postDashboardFaccTotal():
     data = request.get_json()
     categoria = data.get('categoria',None)
     congelamento = data.get('congelamento',False)
+    apelidoFaccionista = data.get('apelidoFaccionista',None)
 
     print(f'categoria {categoria}')
-    dash = staOP.StatusOpsEmProcesso('','','','','','','',categoria, congelamento)
+    dash = staOP.StatusOpsEmProcesso(apelidoFaccionista,'','','','','','',categoria, congelamento)
     dados = dash.dashboardPecasFaccionista()
 
     # Obtém os nomes das colunas

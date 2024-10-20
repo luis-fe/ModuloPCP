@@ -413,6 +413,15 @@ class StatusOpsEmProcesso():
             else:
                 totalOps = obterResumo['numeroOP'].count()
 
+            #7 verifica se tem filtro nivel apelido faccionista
+            if self.nomeFaccionista != None and self.nomeFaccionista != '':
+                codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
+
+                obterResumo = pd.merge(obterResumo,codigosFaccionista,on='codfaccionista')
+                totalOps = obterResumo['numeroOP'].count()
+            else:
+                totalOps = obterResumo['numeroOP'].count()
+
 
             obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
