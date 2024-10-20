@@ -399,12 +399,16 @@ class StatusOpsEmProcesso():
             #3 realiza um merge para concatenar as informacoes a nivel de OP
             obterResumo = pd.merge(obterResumo, obterStatus , on='numeroOP',how = 'left')
 
-            #4 realiza o tratamento do status nao informado
+            #4 realiza o tratamento do status nao informado e trata o codfaccionsta no dataframe obterResumo
             obterResumo['status'].fillna('NaoInformado', inplace =True)
+            obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+
 
             #5 resume o status a nivel de categoira e codfaccionsita
             resumoStatus = obterResumo.groupby(['status','categoria','codfaccionista']).agg(
                 {'carga': 'sum'}).reset_index()
+
+
 
             #6 verifica se tem filtro no nivel de categoria
             if self.nomecategoria != None and self.nomecategoria != '':
@@ -421,7 +425,6 @@ class StatusOpsEmProcesso():
                 totalOps = obterResumo['numeroOP'].count()
 
 
-            obterResumo['codfaccionista'] = obterResumo['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
 
 
             obterResumo =  obterResumo.groupby(['codfaccionista']).agg(
