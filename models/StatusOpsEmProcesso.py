@@ -491,6 +491,10 @@ class StatusOpsEmProcesso():
                 consulta = consulta[consulta['categoria'] == self.nomecategoria]
                 resumoStatus = resumoStatus[resumoStatus['categoria'] == self.nomecategoria]
 
+            if self.nomeFaccionista != None and self.nomeFaccionista != '':
+                codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
+                consulta = pd.merge(consulta, codigosFaccionista, on='codfaccionista')
+
 
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
