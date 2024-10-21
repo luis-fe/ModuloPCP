@@ -551,9 +551,7 @@ class StatusOpsEmProcesso():
             categoria,
             carga
         from
-            backup."backupDas
-            
-            hFacStatus" bdf
+            backup."backupDashFacStatus" bdf
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
