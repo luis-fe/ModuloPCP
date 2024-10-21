@@ -149,6 +149,9 @@ class StatusOpsEmProcesso():
 
 
     def getOPsEmProcessoCategoria(self):
+        '''Metodo que retorna detalhadamente todas as Ops em fase de terceiros '''
+
+        # 1 obtendo do csw as Ops aberto por faccinoista
         consultarOPCsw = self.obterRemessasDistribuicaoCSW()
 
         # Nessa etapa verificamos se a Categoria esta vazia ou foi informada para poder informar o que o usuario deseja
@@ -164,7 +167,7 @@ class StatusOpsEmProcesso():
             {'carga': 'sum', 'OP': 'first', 'Mostruario': 'first', 'Urgente': 'first',
              'FAT Atrasado': 'first', 'P_Faturamento': 'first'}).reset_index()
 
-        consulta = pd.merge(consultaCategoriaFacc, consultarOPCsw1, on=['codfaccionista', 'categoria'], how='right')
+        consulta = pd.merge( consultarOPCsw1,consultaCategoriaFacc, on=['codfaccionista', 'categoria'], how='left')
         consulta['carga'].fillna(0, inplace=True)
         consulta = consulta[consulta['carga'] > 0]
         consulta.fillna("-", inplace=True)
@@ -199,7 +202,6 @@ class StatusOpsEmProcesso():
             codigosFaccionista = fac.Faccionista(None,self.nomeFaccionista).obterCodigosFaccionista()
 
             carga = pd.merge(consultarOPCsw,codigosFaccionista,on='codfaccionista')
-            print(carga)
             carga = pd.merge(consultaCategoriaFacc, carga, on=['codfaccionista', 'categoria'], how='right')
             carga['leadtime'].fillna(0,inplace=True)
             consulta = consulta[consulta['apelidofaccionista'] == self.nomeFaccionista]
@@ -448,6 +450,7 @@ class StatusOpsEmProcesso():
                 self.backupDadosDashbord(consulta,resumoStatus)
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
+                consulta.drop(['dataHora'], axis=1, inplace=True)
 
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
