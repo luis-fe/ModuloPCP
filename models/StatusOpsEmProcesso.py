@@ -494,6 +494,7 @@ class StatusOpsEmProcesso():
             if self.nomeFaccionista != None and self.nomeFaccionista != '':
                 codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
                 consulta = pd.merge(consulta, codigosFaccionista, on='codfaccionista')
+                resumoStatus = pd.merge(resumoStatus, codigosFaccionista, on='codfaccionista')
 
 
             consulta['carga'].fillna(0, inplace=True)
@@ -553,7 +554,8 @@ class StatusOpsEmProcesso():
         select
             status,
             categoria,
-            carga
+            carga,
+            codfaccionista
         from
             backup."backupDashFacStatus" bdf
         """
