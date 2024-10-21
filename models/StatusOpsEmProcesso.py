@@ -463,7 +463,7 @@ class StatusOpsEmProcesso():
 
 
 
-            consulta.drop(['categoria','leadtime'], axis=1, inplace=True)
+            consulta.drop(['categoria'], axis=1, inplace=True)
 
             totalPecas = consulta['carga'].sum()
 
