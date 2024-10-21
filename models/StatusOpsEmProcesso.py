@@ -446,7 +446,7 @@ class StatusOpsEmProcesso():
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
 
-            else:
+            if (self.nomeFaccionista == None or self.nomeFaccionista == '') and (self.nomecategoria == None or self.nomecategoria == ''):
                 self.backupDadosDashbord(consulta,resumoStatus)
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
