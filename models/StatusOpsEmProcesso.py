@@ -10,7 +10,7 @@ class StatusOpsEmProcesso():
     '''Classe utilizada para Gerenciamento do Status das OPs em processo em faccionistas'''
 
     def __init__(self, nomeFaccionista = None, statusTerceirizado= None, numeroOP= None, usuario= None,
-                 justificativa= None, dataMarcacao= None, statusAtualizacao = None, nomecategoria = None, congelarDashboard = False):
+                 justificativa= None, dataMarcacao= None, statusAtualizacao = None, nomecategoria = None, congelarDashboard = False, dataPrevAtualizada = None ):
         self.numeroOP = numeroOP
         self.nomecategoria = nomecategoria
         self.nomeFaccionista = nomeFaccionista
@@ -19,6 +19,7 @@ class StatusOpsEmProcesso():
         self.justificativa = justificativa
         self.dataMarcacao = self.obterDataHoraAtual()
         self.congelarDashboard = congelarDashboard
+        self.dataPrevAtualizada = dataPrevAtualizada
 
 
     def obterDataHoraAtual(self):
@@ -280,6 +281,7 @@ class StatusOpsEmProcesso():
         return filtro
 
     def post_apontarStatusOP(self):
+        '''Metodo utilizado para apontar o status'''
 
         #Verifica se esta vazio o apontamento da OP em especifico
 
@@ -386,6 +388,57 @@ class StatusOpsEmProcesso():
                         connInsert.commit()
 
                 return pd.DataFrame([{'Status': True, 'Mensagem': 'Apontado com sucesso'}])
+
+    def post_apontarDataPrev(self):
+        '''Metodo utilizado para apontar o status a novel Gerencial'''
+
+        # Verifica se esta vazio o apontamento da OP em especifico
+
+        consulta = """
+                        select
+                    numeroop as "numeroOP",
+                    justificativa,
+                    status,
+                    "dataPrevAtualizada"
+                from
+                    "PCP".pcp."StatusTerceirizadoOP"
+                where 
+                     numeroop = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn, params=(self.numeroOP,))
+
+        if consulta.empty:
+            insert = """INSERT INTO "PCP".pcp."StatusTerceirizadoOP" (usuario,"dataMarcacao" , numeroop, justificativa, status, "statusAtualizacao","dataPrevAtualizada" )
+            values ( %s, %s, %s, %s, %s, %s, %s)
+            """
+
+            with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                with connInsert.cursor() as curr:
+                    curr.execute(insert, (
+                    self.usuario, self.dataMarcacao, self.numeroOP, self.justificativa, self.statusTerceirizado,
+                    'atual',self.dataPrevAtualizada))
+                    connInsert.commit()
+
+            return pd.DataFrame([{'Status': True, 'Mensagem': 'Nova Data Prev  atualizada com sucesso'}])
+
+        else:
+                update = """
+                 update 
+                    "PCP".pcp."StatusTerceirizadoOP"
+                 set 
+                    "dataPrevAtualizada" = %s
+                 where 
+                    numeroop = %s
+                """
+
+                with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+                    with connInsert.cursor() as curr:
+                        curr.execute(update, (self.dataPrevAtualizada, self.numeroOP,))
+                        connInsert.commit()
+
+                return pd.DataFrame([{'Status': True, 'Mensagem': 'Nova Data Prev  atualizada com sucesso'}])
 
     def dashboardPecasFaccionista(self):
         '''Metodo da Classe que retorna um dashboard com a informacao da carga por faccionista em aberto '''
