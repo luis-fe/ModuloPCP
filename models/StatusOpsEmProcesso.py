@@ -439,9 +439,8 @@ class StatusOpsEmProcesso():
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
 
-
             if self.nomeFaccionista != None and self.nomeFaccionista != '':
-                consulta = consulta.groupby(['codfaccionista', 'apelidofaccionista']).agg(
+                consulta = consulta.groupby(['codfaccionista', 'apelidofaccionista','categoria']).agg(
                     {'carga': 'sum'}).reset_index()
 
                 resumoStatus = resumoStatus.groupby(['status']).agg(
