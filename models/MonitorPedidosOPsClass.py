@@ -1362,3 +1362,83 @@ class MonitorPedidosOps():
         # Encerrar o processo atual após o novo processo ser iniciado
         p = psutil.Process(PID)
         p.terminate()
+
+
+    def filtrandoPedido(self, arrayPedidos,dataInicioFat, dataFimFat):
+        '''Metodo para filtrar pedios no monitor de OP'''
+        arrayPedidos = pd.DataFrame(arrayPedidos, columns=['codPedido'])
+        descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
+        monitorDetalhadoOps = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
+
+        monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,arrayPedidos,on='codPedido')
+
+        monitor1 = monitorDetalhadoOps[
+            ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos"]]
+
+        # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
+        monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce',
+                                                                infer_datetime_format=True)
+
+        mascara = (monitor1['dataPrevAtualizada2'] >= dataInicioFat) & (monitor1['dataPrevAtualizada2'] <= dataFimFat)
+        monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+        monitor1['numeroop'].fillna('-', inplace=True)
+        monitor1 = monitor1.loc[mascara]
+
+        monitor1 = monitor1[monitor1['numeroop'] != '-']
+
+        monitor1 = monitor1.groupby('numeroop').agg(
+            {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
+             "QtdSaldo": "sum"}).reset_index()
+
+        monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
+                                        ascending=[False]).reset_index()
+        monitor1.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
+
+        sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
+        sqlCswPrioridade = """
+                    SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao,t.qtdOP, (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
+                left JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
+                join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
+                left join (
+                SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
+                where codempresa = 1 group by numeroop
+                ) t on t.numeroop =op.numeroop
+                WHERE op.situacao = 3 and op.codEmpresa = 1
+                    """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(sqlCsw)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                get = pd.DataFrame(rows, columns=colunas)
+                get['codFaseAtual'] = get['codFaseAtual'].astype(str)
+                del rows
+
+                cursor_csw.execute(sqlCswPrioridade)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                get2 = pd.DataFrame(rows, columns=colunas)
+                del rows
+
+        monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
+        monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
+        monitor1.fillna('-', inplace=True)
+
+        dados = {
+            '0-Status': True,
+            '1-Mensagem': f'Atencao!! Calculado segundo o ultimo monitor emitido',
+            '6 -Detalhamento': monitor1.to_dict(orient='records')
+
+        }
+        return pd.DataFrame([dados])
+
+
+
+
+
+
