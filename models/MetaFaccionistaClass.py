@@ -94,7 +94,7 @@ class MetaFaccionista():
 
         # 6 - Carregar backup das metadas por categoria para encontrar a meta  do dia
         consultaBackupMeta = self.backupMetaCategoriaCalculada()
-        consultaBackupMeta.rename(columns={'Carga Atual': 'carga'}, inplace=True)
+        consultaBackupMeta.rename(columns={'carga1': 'Carga Atual'}, inplace=True)
         resumo = pd.merge(resumo, consultaBackupMeta, on='categoria')
 
         # 7 - Encontrando o % de capacidade para cada categoria
