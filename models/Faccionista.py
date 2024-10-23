@@ -156,6 +156,10 @@ class Faccionista():
         del rows
         gc.collect()
 
+
+
+        consulta.fillna('-',inplace=True)
+
         return consulta
     def RegistroFaccionistas(self):
         '''Metodo que retorna todas as informacoes de registro de faccionista, cadastrado no portal'''

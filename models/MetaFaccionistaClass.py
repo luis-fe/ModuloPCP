@@ -88,6 +88,8 @@ class MetaFaccionista():
 
         # 5 - carregando a partir do CSW a carga atual das faccoes
         cargaFac = self.cargaFaccionistaCsw()
+        cargaFac['codfaccionista'] = cargaFac['codfaccionista'].astype(str).str.replace(r'\.0$', '', regex=True)
+
         resumo = pd.merge(resumo, cargaFac, on=['categoria', 'codfaccionista'], how='left')
         resumo['carga'].fillna(0, inplace=True)
 
