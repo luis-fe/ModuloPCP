@@ -79,7 +79,6 @@ class MetaFaccionista():
         df_Faccionsta['Capacidade/dia'] = df_Faccionsta['Capacidade/dia'].fillna(0)
         df_Faccionsta['Capacidade/dia'] = df_Faccionsta['Capacidade/dia'].astype(int)
         df_Faccionsta.rename(columns={'Capacidade/dia': '01- AcordadoDia', 'nomecategoria': 'categoria'}, inplace=True)
-        df_Faccionsta['01-nomeFac'] = df_Faccionsta['apelidofaccionista']
 
         #4 - Concatenando as informacoes com o exedente no passo #1
         resumo = pd.concat([df_Faccionsta, excedente], ignore_index=True)
@@ -95,7 +94,7 @@ class MetaFaccionista():
 
         # 6 - Carregar backup das metadas por categoria para encontrar a meta  do dia
         consultaBackupMeta = self.backupMetaCategoriaCalculada()
-        consultaBackupMeta.rename(columns={'carga1': 'carga'}, inplace=True)
+        consultaBackupMeta.rename(columns={'Carga Atual': 'carga'}, inplace=True)
         resumo = pd.merge(resumo, consultaBackupMeta, on='categoria')
 
         # 7 - Encontrando o % de capacidade para cada categoria
