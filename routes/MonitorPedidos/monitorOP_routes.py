@@ -55,11 +55,12 @@ def post_monitorOPsFiltroPedidos():
     data = request.get_json()
     dataInico = data.get('dataInico', '-')
     dataFim = data.get('dataFim')
+    arrayPedidos = data.get('arrayPedidos')
 
     empresa = 1
     monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
                                                        None, None, None, None, None)
-    dados = monitor.gerarMonitorOps(dataInico, dataFim)
+    dados = monitor.filtrandoPedido(arrayPedidos, dataInico, dataFim)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
