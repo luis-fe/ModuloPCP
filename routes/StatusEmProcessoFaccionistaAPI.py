@@ -138,8 +138,10 @@ def postApontarStatusOP():
 
 
 
-    dados = staOP.StatusOpsEmProcesso(None, statusTerceirizado, numeroOP, usuario,
-                 justificativa).post_apontarStatusOP()
+    statusOPTerc = staOP.StatusOpsEmProcesso(None, statusTerceirizado, numeroOP, usuario,
+                 justificativa)
+    dados =  statusOPTerc.post_apontarStatusOP()
+    statusOPTerc.atualizaJustificativaNoGestaoOP()
 
     # Obtém os nomes das colunas
     column_names = dados.columns

@@ -305,10 +305,17 @@ class StatusOpsEmProcesso():
             values ( %s, %s, %s, %s, %s, %s)
             """
 
+
+
+
+
+
             with ConexaoPostgreWms.conexaoInsercao() as connInsert:
                 with connInsert.cursor() as curr:
                     curr.execute(insert, (self.usuario, self.dataMarcacao,self.numeroOP, self.justificativa, self.statusTerceirizado,'atual'))
                     connInsert.commit()
+
+
 
             return pd.DataFrame([{'Status':True,'Mensagem':'Apontado com sucesso'}])
 
@@ -616,6 +623,40 @@ class StatusOpsEmProcesso():
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(consulta,conn)
         return consulta
+
+
+
+    def atualizaJustificativaNoGestaoOP(self):
+
+        justificativa = str(self.statusTerceirizado)+':'+str(self.justificativa)
+
+        # atualizacao tambem no painel de Gestao das OPs
+        SelectmoduloJustificativaPainelOP = """
+                   select 
+                       * 
+                   from 
+                       "PCP".pcp.justificativa j 
+                       where fase in ('429') and ordemprod = %s
+                   """
+        conn = ConexaoPostgreWms.conexaoEngine()
+        SelectmoduloJustificativaPainelOP = pd.read_sql(SelectmoduloJustificativaPainelOP, conn,
+                                                        params=(self.numeroOP,))
+        if SelectmoduloJustificativaPainelOP.empty:
+
+            insert2 = """
+                       insert into "PCP".pcp.justificativa (justificativa, fase, ordemprod) values ( %s, '429', %s )
+                       """
+        else:
+            insert2 = """
+                       update "PCP".pcp.justificativa 
+                       set justificativa = %s
+                       where ordemprod = %s and fase = '429'
+                       """
+
+        with ConexaoPostgreWms.conexaoInsercao() as connInsert:
+            with connInsert.cursor() as curr:
+                curr.execute(insert2, (justificativa, self.numeroOP,))
+                connInsert.commit()
 
 
 
