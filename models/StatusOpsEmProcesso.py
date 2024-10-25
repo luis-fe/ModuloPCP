@@ -545,16 +545,28 @@ class StatusOpsEmProcesso():
         else:
 
             consulta =  self.carregarBackup()
-            resumoStatus = self.carregarBackupStatus()
+            resumoStatus1 = self.carregarBackupStatus()
 
             if self.nomecategoria != None and self.nomecategoria != '':
                 consulta = consulta[consulta['categoria'] == self.nomecategoria]
-                resumoStatus = resumoStatus[resumoStatus['categoria'] == self.nomecategoria]
+                resumoStatus1 = resumoStatus1[resumoStatus1['categoria'] == self.nomecategoria]
+
+                consulta = consulta.groupby(['categoria', 'faccionista']).agg(
+                    carga_total=('carga', 'sum'),
+                    status_resumo=('status', lambda x: {'NaoInformado': (x == 'NaoInformado').sum(), 'Nao Iniciada': (x == 'Nao Iniciada').sum()})
+                ).reset_index()
+
+                resumoStatus = resumoStatus1.groupby(['status']).agg(
+                    {'carga': 'sum'}).reset_index()
+
 
             if self.nomeFaccionista != None and self.nomeFaccionista != '':
                 codigosFaccionista = fac.Faccionista(None, self.nomeFaccionista).obterCodigosFaccionista()
                 consulta = pd.merge(consulta, codigosFaccionista, on='codfaccionista')
-                resumoStatus = pd.merge(resumoStatus, codigosFaccionista, on='codfaccionista')
+                resumoStatus = pd.merge(resumoStatus1, codigosFaccionista, on='codfaccionista')
+                resumoStatus = resumoStatus.groupby(['status']).agg(
+                    {'carga': 'sum'}).reset_index()
+
 
 
             consulta['carga'].fillna(0, inplace=True)
@@ -564,8 +576,7 @@ class StatusOpsEmProcesso():
             resumoCategoria = consulta.groupby(['categoria']).agg(
                 {'carga': 'sum'}).reset_index()
 
-            resumoStatus = resumoStatus.groupby(['status']).agg(
-                {'carga': 'sum'}).reset_index()
+
 
             consulta.drop(['categoria'], axis=1, inplace=True)
 
@@ -615,9 +626,13 @@ class StatusOpsEmProcesso():
             status,
             categoria,
             carga,
-            codfaccionista
+            codfaccionista,
+            f.apelidofaccionista
         from
             backup."backupDashFacStatus" bdf
+        inner join 
+            pcp.faccionista f 
+            on f.codfaccionista = bdf.codfaccionista 
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
