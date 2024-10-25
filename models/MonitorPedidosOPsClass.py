@@ -310,7 +310,7 @@ class MonitorPedidosOps():
                                         Ped.Pedido p
                                     where 
                                         codEmpresa = """ + empresa + """
-                                        and  dataEmissao >= '""" + self.dataInicioFat + """ 
+                                        and  dataEmissao >= '""" + self.dataInicioFat + """'
                                         and dataEmissao <= '""" + self.dataFinalVendas + """' 
                                         and codTipoNota in (""" + tiponota + """)  """
 
@@ -331,7 +331,7 @@ class MonitorPedidosOps():
                                         Ped.Pedido p
                                     where 
                                         codEmpresa = """ + empresa + """
-                                        and  dataEmissao >= '""" + self.dataInicioFat + """ 
+                                        and  dataEmissao >= '""" + self.dataInicioFat + """' 
                                         and dataEmissao <= '""" + self.dataFinalVendas + """' 
                                         and codTipoNota in (""" + tiponota + """)  """
 
