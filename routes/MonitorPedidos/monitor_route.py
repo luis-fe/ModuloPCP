@@ -21,7 +21,7 @@ def token_required(f):
 @token_required
 def get_ListaPedidos():
 
-    empresa = request.args.get('empresa')
+    empresa = request.args.get('empresa','1')
     iniVenda = request.args.get('iniVenda','-')
     finalVenda = request.args.get('finalVenda')
     filtroDataEmissaoIni = request.args.get('emissaoinicial','')
