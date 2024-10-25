@@ -548,7 +548,6 @@ class StatusOpsEmProcesso():
             resumoStatus1 = self.carregarBackupStatus()
 
             if self.nomecategoria != None and self.nomecategoria != '':
-                consulta = consulta[consulta['categoria'] == self.nomecategoria]
                 resumoStatus1 = resumoStatus1[resumoStatus1['categoria'] == self.nomecategoria]
 
                 consulta = resumoStatus1.groupby(['categoria', 'codfaccionista', 'apelidofaccionista']).apply(
@@ -556,7 +555,15 @@ class StatusOpsEmProcesso():
                         'carga': x['carga'].sum(),
                         'status_resumo': {
                             'NaoInformado': x.loc[x['status'] == 'NaoInformado', 'carga'].sum(),
-                            'Nao Iniciada': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum()
+                            'Nao Iniciada': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Preparacao': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Costurando': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Acabamento': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Aguardando Reposicao': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Finalizado': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Recolhido': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
+                            'Consertando': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum()
+
                         }
                     })
                 ).reset_index()
