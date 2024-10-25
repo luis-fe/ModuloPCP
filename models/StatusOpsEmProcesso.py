@@ -551,11 +551,13 @@ class StatusOpsEmProcesso():
                 consulta = consulta[consulta['categoria'] == self.nomecategoria]
                 resumoStatus1 = resumoStatus1[resumoStatus1['categoria'] == self.nomecategoria]
 
-                consulta = resumoStatus1.groupby(['categoria', 'codfaccionista', 'apelidofaccionista']).agg(
-                    carga=('carga', 'sum'),
-                    status_resumo=('status', lambda x: {
-                        'NaoInformado': int((x == 'NaoInformado').sum()),
-                        'Nao Iniciada': int((x == 'Nao Iniciada').sum())
+                consulta = resumoStatus1.groupby(['categoria', 'codfaccionista', 'apelidofaccionista']).apply(
+                    lambda x: pd.Series({
+                        'carga': x['carga'].sum(),
+                        'status_resumo': {
+                            'NaoInformado': x.loc[x['status'] == 'NaoInformado', 'carga'].sum(),
+                            'Nao Iniciada': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum()
+                        }
                     })
                 ).reset_index()
 
