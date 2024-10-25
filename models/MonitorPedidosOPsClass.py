@@ -1451,7 +1451,7 @@ class MonitorPedidosOps():
         pedidos = pd.merge(pedidos, pedidosBloqueados, on='codPedido', how='left')
         pedidos['situacaobloq'].fillna('Liberado', inplace=True)
         pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
-       # monitor = monitor.drop(['id', 'qtdAcumulada', 'ocorrencia_sku'], axis=1)
+        pedidos = pedidos.drop(['vlrSaldo', 'situacaobloq', 'qtdPecasFaturadas','descricaoCondVenda','dataPrevFat','codRepresentante'], axis=1)
 
         return pedidos
 
