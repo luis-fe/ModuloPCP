@@ -556,13 +556,13 @@ class StatusOpsEmProcesso():
                         'status_resumo': {
                             'NaoInformado': x.loc[x['status'] == 'NaoInformado', 'carga'].sum(),
                             'Nao Iniciada': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Preparacao': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Costurando': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Acabamento': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Aguardando Reposicao': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Finalizado': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Recolhido': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum(),
-                            'Consertando': x.loc[x['status'] == 'Nao Iniciada', 'carga'].sum()
+                            'Preparacao': x.loc[x['status'] == 'Preparacao', 'carga'].sum(),
+                            'Costurando': x.loc[x['status'] == 'Costurando', 'carga'].sum(),
+                            'Acabamento': x.loc[x['status'] == 'Acabamento', 'carga'].sum(),
+                            'Aguardando Reposicao': x.loc[x['status'] == 'Aguardando Reposicao', 'carga'].sum(),
+                            'Finalizado': x.loc[x['status'] == 'Finalizado', 'carga'].sum(),
+                            'Recolhido': x.loc[x['status'] == 'Recolhido', 'carga'].sum(),
+                            'Consertando': x.loc[x['status'] == 'Consertando', 'carga'].sum()
 
                         }
                     })
