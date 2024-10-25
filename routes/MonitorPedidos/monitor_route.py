@@ -27,7 +27,7 @@ def get_ListaPedidos():
     filtroDataEmissaoIni = request.args.get('emissaoinicial','')
     filtroDataEmissaoFim = request.args.get('emissaofinal','')
     monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,None, iniVenda, finalVenda,None,None,None,None,filtroDataEmissaoIni, filtroDataEmissaoFim)
-    dados =monitor.resumoMonitor()
+    dados =monitor.listaDePedidos()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
