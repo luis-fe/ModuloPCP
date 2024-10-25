@@ -1438,6 +1438,24 @@ class MonitorPedidosOps():
         return pd.DataFrame([dados])
 
 
+    def listaDePedidos(self):
+
+        pedidos = self.capaPedidos()
+
+        #
+
+        # 2 - Filtrar Apenas Pedidos Não Bloqueados
+        pedidosBloqueados = self.Monitor_PedidosBloqueados()
+        pedidos = pd.merge(pedidos, pedidosBloqueados, on='codPedido', how='left')
+        pedidos['situacaobloq'].fillna('Liberado', inplace=True)
+        pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
+
+        return pedidos['codPedido']
+
+
+
+
+
 
 
 

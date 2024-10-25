@@ -17,7 +17,30 @@ def token_required(f):
         return jsonify({'message': 'Acesso negado'}), 401
 
     return decorated_function
+@MonitorPedidos_routes.route('/pcp/api/ListaPedidos', methods=['GET'])
+@token_required
+def get_ListaPedidos():
 
+    empresa = request.args.get('empresa')
+    iniVenda = request.args.get('iniVenda','-')
+    finalVenda = request.args.get('finalVenda')
+    filtroDataEmissaoIni = request.args.get('emissaoinicial','')
+    filtroDataEmissaoFim = request.args.get('emissaofinal','')
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,None, iniVenda, finalVenda,None,None,None,None,filtroDataEmissaoIni, filtroDataEmissaoFim)
+    dados =monitor.resumoMonitor()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    monitor.trasferenciaDeArquivo2()
+
+    return jsonify(OP_data)
 
 @MonitorPedidos_routes.route('/pcp/api/monitorPreFaturamento', methods=['GET'])
 @token_required
