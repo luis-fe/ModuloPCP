@@ -551,7 +551,7 @@ class StatusOpsEmProcesso():
                 consulta = consulta[consulta['categoria'] == self.nomecategoria]
                 resumoStatus1 = resumoStatus1[resumoStatus1['categoria'] == self.nomecategoria]
 
-                consulta = consulta.groupby(['categoria', 'faccionista']).agg(
+                consulta = consulta.groupby(['categoria', 'codfaccionista','apelidofaccionista']).agg(
                     carga_total=('carga', 'sum'),
                     status_resumo=('status', lambda x: {'NaoInformado': (x == 'NaoInformado').sum(), 'Nao Iniciada': (x == 'Nao Iniciada').sum()})
                 ).reset_index()
