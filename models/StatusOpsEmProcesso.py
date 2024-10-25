@@ -626,7 +626,7 @@ class StatusOpsEmProcesso():
             status,
             categoria,
             carga,
-            codfaccionista,
+            f.codfaccionista,
             f.apelidofaccionista
         from
             backup."backupDashFacStatus" bdf
