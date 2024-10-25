@@ -40,7 +40,6 @@ def get_ListaPedidos():
         for column_name in column_names:
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
-    monitor.trasferenciaDeArquivo2()
 
     return jsonify(OP_data)
 
