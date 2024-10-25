@@ -298,7 +298,7 @@ class MonitorPedidosOps():
                                     SELECT   
                                         dataEmissao, 
                                         convert(varchar(9), codPedido) as codPedido,
-                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
+                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli,
                                         codTipoNota, 
                                         dataPrevFat, 
                                         convert(varchar(9),codCliente) as codCliente, 
@@ -329,7 +329,7 @@ class MonitorPedidosOps():
                                         qtdPecasFaturadas
                                     FROM 
                                         Ped.Pedido p
-                                    where 
+                                       where 
                                         codEmpresa = """ + empresa + """
                                         and  dataEmissao >= '""" + self.dataInicioFat + """' 
                                         and dataEmissao <= '""" + self.dataFinalVendas + """' 
@@ -1440,9 +1440,11 @@ class MonitorPedidosOps():
 
     def listaDePedidos(self):
 
-        pedidos = self.capaPedidos()
-
-        #
+        # 1 - Carregar Os pedidos (etapa 1)
+        if self.tipoDataEscolhida == 'DataEmissao':
+            pedidos = self.capaPedidos()
+        else:
+            pedidos = self.capaPedidosDataFaturamento()
 
         # 2 - Filtrar Apenas Pedidos Não Bloqueados
         pedidosBloqueados = self.Monitor_PedidosBloqueados()
