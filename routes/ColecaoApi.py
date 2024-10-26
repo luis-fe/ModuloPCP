@@ -47,9 +47,10 @@ def post_VincularColecoesPlano():
     data = request.get_json()
 
     arrayColecao = data.get('arrayColecao')
+    codPlano = data.get('codPlano')
 
 
-    dados = colec.Colecao().vincularArrayColecaoPlano(arrayColecao)
+    dados = colec.Colecao(None,codPlano).vincularArrayColecaoPlano(arrayColecao)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
