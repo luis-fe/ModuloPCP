@@ -38,3 +38,28 @@ def get_colecao_csw():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@ColecaoAPI_routes.route('/pcp/api/VincularColecoesPlano', methods=['POST'])
+@token_required
+def post_VincularColecoesPlano():
+
+    data = request.get_json()
+
+    arrayColecao = data.get('arrayColecao')
+
+
+    dados = colec.Colecao().vincularArrayColecaoPlano(arrayColecao)
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)

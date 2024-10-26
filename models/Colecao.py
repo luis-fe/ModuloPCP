@@ -103,5 +103,20 @@ class Colecao():
                 [{'Status': True, 'Mensagem': f'Colecao {self.codColecao}-{self.nomeColecao} incluida no plano {self.codPlano} !'}])
 
 
+    def vincularArrayColecaoPlano(self, array):
+
+        '''Metodo utilizado para vincular um array de colecao ao plano'''
+
+        for i in array():
+            self.codColecao = i
+            self.vincularColecaoNoPlano()
+
+        return pd.DataFrame(
+            [{'Status': True,
+              'Mensagem': f'Colecoes incluida no plano {self.codPlano}  com sucesso!'}])
+
+
+
+
 
 
