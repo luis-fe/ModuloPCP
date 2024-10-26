@@ -70,7 +70,7 @@ class Colecao():
         from
             "PCP".pcp."colecoesPlano" cp
         where 
-            plano = %s
+            plano = %s 
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
@@ -82,7 +82,19 @@ class Colecao():
         '''Metodo utilizado para vincular uma colecao ao plano'''
 
         # Consultar se a colecao ja foi vinculada:
-        verificar = self.obterColecoesporPlano()
+        verificar ="""
+        select
+            plano as "codPlano",
+            colecao as "codColecao",
+            nomecolecao as "nomeColecao"
+        from
+            "PCP".pcp."colecoesPlano" cp
+        where 
+            plano = %s and colecao = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        verificar = pd.read_sql(verificar,conn,params=(self.codPlano,self.codColecao,))
 
         if verificar.empty:
 
@@ -116,7 +128,7 @@ class Colecao():
 
         return pd.DataFrame(
             [{'Status': True,
-              'Mensagem': f'Colecoes incluida no plano {self.codPlano} {tam}  com sucesso!'}])
+              'Mensagem': f'Colecoes incluida no plano {self.codPlano}  com sucesso!'}])
 
 
 
