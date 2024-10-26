@@ -1371,10 +1371,19 @@ class MonitorPedidosOps():
         descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
         monitorDetalhadoOps = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
         monitorDetalhadoOps['codPedido'] = monitorDetalhadoOps['codPedido'].astype(str)
-        monitorDetalhadoOps = pd.merge(monitorDetalhadoOps,arrayPedidos,on='codPedido')
+        monitor = pd.merge(monitorDetalhadoOps,arrayPedidos,on='codPedido')
 
-        monitor1 = monitorDetalhadoOps[
+        data = monitor[
+            (monitor['dataPrevAtualizada2'] >= dataInicioFat) & (monitor['dataPrevAtualizada2'] <= dataFimFat)]
+        # Contar a quantidade de pedidos distintos para cada 'numeroop'
+        unique_counts = data.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')['codPedido'].count()
+
+        # Adicionar essa contagem ao DataFrame original
+        monitor['Ocorrencia Pedidos'] = monitor['numeroop'].map(unique_counts)
+
+        monitor1 = monitor[
             ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos"]]
+        monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
 
         # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
         monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
@@ -1393,6 +1402,10 @@ class MonitorPedidosOps():
         monitor1 = monitor1.groupby('numeroop').agg(
             {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
              "QtdSaldo": "sum"}).reset_index()
+
+        monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
+
+        monitorDetalhadoOps.to_csv(f'/home/mplti/ModuloPCP/dados/detalhadoops{self.descricaoArquivo}.csv')
 
         monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
                                         ascending=[False]).reset_index()
@@ -1437,7 +1450,6 @@ class MonitorPedidosOps():
 
         }
         return pd.DataFrame([dados])
-
 
     def listaDePedidos(self):
 
