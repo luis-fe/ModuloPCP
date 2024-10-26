@@ -1371,6 +1371,8 @@ class MonitorPedidosOps():
         descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
         monitorDetalhadoOps = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
         monitorDetalhadoOps['codPedido'] = monitorDetalhadoOps['codPedido'].astype(str)
+        arrayPedidos['codPedido'] = arrayPedidos['codPedido'].astype(str)
+
         monitor = pd.merge(monitorDetalhadoOps,arrayPedidos,on='codPedido')
 
         data = monitor[
