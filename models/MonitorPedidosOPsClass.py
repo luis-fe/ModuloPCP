@@ -344,6 +344,7 @@ class MonitorPedidosOps():
         tiponota = '1,2,3,4,5,6,7,8,10,24,92,201,1012,77,27,28,172,9998,66,67,233,237'  # Arrumar o Tipo de Nota 40
         empresa = "'" + str(self.empresa) + "'"
 
+
         if self.filtroDataEmissaoFim != '' and self.filtroDataEmissaoIni != '':
             sqlCswCapaPedidosDataPrev = """
                                             SELECT   
@@ -1441,17 +1442,15 @@ class MonitorPedidosOps():
     def listaDePedidos(self):
 
         # 1 - Carregar Os pedidos (etapa 1)
-        if self.tipoDataEscolhida == 'DataEmissao':
-            pedidos = self.capaPedidos()
-        else:
-            pedidos = self.capaPedidosDataFaturamento()
+        descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
+        monitorDetalhadoOps = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
 
-        # 2 - Filtrar Apenas Pedidos Não Bloqueados
-        pedidosBloqueados = self.Monitor_PedidosBloqueados()
-        pedidos = pd.merge(pedidos, pedidosBloqueados, on='codPedido', how='left')
-        pedidos['situacaobloq'].fillna('Liberado', inplace=True)
-        pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
-        pedidos = pedidos.drop(['vlrSaldo', 'situacaobloq', 'qtdPecasFaturadas','descricaoCondVenda','dataPrevFat','codRepresentante'], axis=1)
+
+        # Lista das colunas que você deseja preservar
+        colunas_desejadas = ["codCliente", "codPedido", "codTipoNota","dataEmissao","nome_cli"]
+
+        # Seleciona apenas as colunas desejadas
+        pedidos = monitorDetalhadoOps[colunas_desejadas]
 
         return pedidos
 

@@ -24,11 +24,9 @@ def get_ListaPedidos():
     empresa = request.args.get('empresa','1')
     iniVenda = request.args.get('iniVenda','-')
     finalVenda = request.args.get('finalVenda')
-    filtroDataEmissaoIni = request.args.get('emissaoinicial','')
-    filtroDataEmissaoFim = request.args.get('emissaofinal','')
-    parametroClassificacao = request.args.get('parametroClassificacao', 'DataPrevisao')  # Faturamento ou DataPrevisao
 
-    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,None, iniVenda, finalVenda,None,None,None,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)
+
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,None, iniVenda, finalVenda)
     dados =monitor.listaDePedidos()
 
     # Obtém os nomes das colunas
