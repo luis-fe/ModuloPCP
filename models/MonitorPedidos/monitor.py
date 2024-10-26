@@ -785,64 +785,6 @@ def Ciclo2(pedidos,avaliar_grupo):
     return pedidosNovo
 
 
-def DetalhaPedido(codPedido):
-    load_dotenv('db.env')
-    caminhoAbsoluto = os.getenv('CAMINHO')
-    try:
-        carregar = pd.read_csv(f'{caminhoAbsoluto}/dados/monitorOps.csv', sep=',')
-        print(carregar)
-
-        # Verifica se 'codPedido' está presente nas colunas do DataFrame
-        if 'codPedido' not in carregar.columns:
-            raise KeyError(
-                f"A coluna 'codPedido' não foi encontrada no arquivo CSV. Colunas disponíveis: {carregar.columns.tolist()}")
-
-        # Convertendo a coluna 'codPedido' para string
-        carregar['codPedido'] = carregar['codPedido'].astype(str)
-
-        # Filtrando o pedido específico
-        pedido = carregar[carregar['codPedido'] == str(codPedido)].reset_index(drop=True)
-
-        # Convertendo a coluna 'QtdSaldo' para inteiro
-        pedido['QtdSaldo'] = pedido['QtdSaldo'].astype(int)
-
-        # Filtrando pedidos com 'QtdSaldo' maior que 0
-        pedido = pedido[pedido['QtdSaldo'] > 0].reset_index(drop=True)
-
-        # Selecionando colunas específicas
-        colunas_desejadas = ['codPedido', 'nome_cli', 'entregaAtualizada', 'nomeSKU', 'QtdSaldo','codItemPai','numeroop','Qtd Atende','codProduto','codCor']
-
-        # Verifica se todas as colunas desejadas estão presentes no DataFrame 'pedido'
-        for coluna in colunas_desejadas:
-            if coluna not in pedido.columns:
-                raise KeyError(
-                    f"A coluna '{coluna}' não foi encontrada no DataFrame filtrado. Colunas disponíveis: {pedido.columns.tolist()}")
-
-        df_selecionado = pedido[colunas_desejadas]
-
-        df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].astype(str)
-        df_selecionado['codItemPai'] = df_selecionado['codItemPai'].astype(str)
-
-        df_selecionado['entregaAtualizada'] = df_selecionado['entregaAtualizada'].str.replace('.0','º')
-
-        df_selecionado.rename(columns={'nome_cli':'03-nome_cli','entregaAtualizada': '02-Embarque','codPedido':'01-codPedido','codItemPai':'04-codProduto',
-                                       'nomeSKU':'07-nomeSKU','QtdSaldo':'08-QtdSaldoPedido','Qtd Atende':'09-QtdAtendeEstoque','codProduto':'05-codReduzido','numeroop':'11-numeroop','codCor':'06-codCor'}, inplace=True)
-
-        df_selecionado['10-situacao'] = df_selecionado.apply(lambda r : 'Atendeu' if r['09-QtdAtendeEstoque'] > 0 else 'Nao Atendeu', axis=1  )
-        df_selecionado = df_selecionado.sort_values(by=['02-Embarque', '04-codProduto','06-codCor'], ascending=True)
-        df_selecionado.fillna('-',inplace=True)
-
-
-
-
-        return df_selecionado
-
-    except KeyError as e:
-        print(f"Erro: {e}")
-        return None
-    except Exception as e:
-        print(f"Erro inesperado: {e}")
-        return None
 
 
 def ConversaoMonitor(dataInicio, dataFim):
