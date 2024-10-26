@@ -109,6 +109,7 @@ class Colecao():
 
         for i in array:
             self.codColecao = i
+            self.nomeColecao = self.obterNomeColecaoCSW()
             self.vincularColecaoNoPlano()
 
         return pd.DataFrame(
