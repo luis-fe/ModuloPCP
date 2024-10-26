@@ -1386,6 +1386,8 @@ class MonitorPedidosOps():
         monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
 
         # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
+        monitor1['dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce')
+
         monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
 
         monitor1.loc[:, 'dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce',
