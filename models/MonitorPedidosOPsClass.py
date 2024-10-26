@@ -1440,7 +1440,7 @@ class MonitorPedidosOps():
                 rows = cursor_csw.fetchall()
                 get2 = pd.DataFrame(rows, columns=colunas)
                 del rows
-        get['codFaseAtual'] =get['codFaseAtual'].astype(str)
+        monitor1['codFaseAtual'] =monitor1['codFaseAtual'].astype(str)
         monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
         monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
         monitor1.fillna('-', inplace=True)
