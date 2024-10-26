@@ -579,8 +579,8 @@ class StatusOpsEmProcesso():
                 resumoStatus = resumoStatus.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
 
-
-
+            resumoStatus = resumoStatus.groupby(['status']).agg(
+                {'carga': 'sum'}).reset_index()
             consulta['carga'].fillna(0, inplace=True)
             consulta = consulta[consulta['carga'] > 0].reset_index()
             consulta.fillna("-", inplace=True)
