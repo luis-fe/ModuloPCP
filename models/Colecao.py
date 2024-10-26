@@ -107,7 +107,7 @@ class Colecao():
 
         '''Metodo utilizado para vincular um array de colecao ao plano'''
 
-        for i in array():
+        for i in array:
             self.codColecao = i
             self.vincularColecaoNoPlano()
 
