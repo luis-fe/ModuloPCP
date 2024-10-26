@@ -1451,6 +1451,7 @@ class MonitorPedidosOps():
 
         # Seleciona apenas as colunas desejadas
         pedidos = monitorDetalhadoOps[colunas_desejadas]
+        pedidos = pedidos.drop_duplicates()
 
         return pedidos
 
