@@ -67,9 +67,9 @@ def post_VincularColecoesPlano():
 
 
 
-@ColecaoAPI_routes.route('/pcp/api/ConsultaLotesVinculados', methods=['GET'])
+@ColecaoAPI_routes.route('/pcp/api/ConsultaColecaoVinculados', methods=['GET'])
 @token_required
-def get_ConsultaLotesVinculados():
+def get_ConsultaColecaoVinculados():
     codPlano = request.args.get('codPlano')
 
     dados = colec.Colecao(None,codPlano).obterColecoesporPlano()
