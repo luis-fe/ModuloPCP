@@ -580,7 +580,7 @@ class StatusOpsEmProcesso():
                     {'carga': 'sum'}).reset_index()
 
 
-            if (self.nomeFaccionista == None or self.nomeFaccionista == '') and (self.nomecategoria == None and self.nomecategoria == ''):
+            if (self.nomeFaccionista == None or self.nomeFaccionista == '') and (self.nomecategoria == None or self.nomecategoria == ''):
 
                 resumoStatus = resumoStatus1.groupby(['status']).agg(
                     {'carga': 'sum'}).reset_index()
