@@ -107,14 +107,16 @@ class Colecao():
 
         '''Metodo utilizado para vincular um array de colecao ao plano'''
 
+        tam = 0
         for i in array:
             self.codColecao = i
             self.nomeColecao = self.obterNomeColecaoCSW()
             self.vincularColecaoNoPlano()
+            tam = tam + 1
 
         return pd.DataFrame(
             [{'Status': True,
-              'Mensagem': f'Colecoes incluida no plano {self.codPlano}  com sucesso!'}])
+              'Mensagem': f'Colecoes incluida no plano {self.codPlano} {tam}  com sucesso!'}])
 
 
 
