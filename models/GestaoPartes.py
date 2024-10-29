@@ -43,7 +43,7 @@ class GestaoPartes():
         df_filtrado['possueFaseAgPartes'].fillna('Nao',inplace = True)
 
         # Selecionar apenas as colunas 'OP' e 'fase atual'
-        resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual']]
+        resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual','possueFaseAgPartes']]
 
 
         return resultado
