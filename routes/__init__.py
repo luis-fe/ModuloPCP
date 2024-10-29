@@ -28,6 +28,7 @@ from .routesModels.FasesRoutes import Fase_routes
 from .FaccionistaAPI import FaccionostaAPI_routes
 from .StatusEmProcessoFaccionistaAPI import StatusFaccionostaEmProcesso_routes
 from .ColecaoApi import  ColecaoAPI_routes
+from .GestaoPartesAPI import GestaoPartes_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -54,3 +55,4 @@ routes_blueprint.register_blueprint(Fase_routes)
 routes_blueprint.register_blueprint(FaccionostaAPI_routes)
 routes_blueprint.register_blueprint(StatusFaccionostaEmProcesso_routes)
 routes_blueprint.register_blueprint(ColecaoAPI_routes)
+routes_blueprint.register_blueprint(GestaoPartes_routes)
