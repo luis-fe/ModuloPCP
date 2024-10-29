@@ -26,8 +26,14 @@ class GestaoPartes():
         #1.4 Carregar as Ops que possuem a fase de montagem
         opsProgramadaFaseMontagem = self.ordemProducaoProgramadaAntesMontagem()
 
+
         #1.5 Filtrar as Ops que estao antes da fase Montagem
         df_merged = pd.merge(opProgramada, opsProgramadaFaseMontagem, on='numeroOP')
+
+        #1.6 converendo os campos em inteiro para fazer a comparacao
+        df_merged['codSeqRoteiroAtual'] = df_merged['codSeqRoteiroAtual'].astype(int)
+        df_merged['rotMax'] = df_merged['rotMax'].astype(int)
+
         df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] < df_merged['rotMax']]
 
         # Selecionar apenas as colunas 'OP' e 'fase atual'
