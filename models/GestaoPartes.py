@@ -1,6 +1,6 @@
 import gc
 import pandas as pd
-from connection import ConexaoBanco
+from connection import ConexaoBanco, ConexaoPostgreWms
 
 
 class GestaoPartes():
@@ -178,4 +178,108 @@ class GestaoPartes():
         gc.collect()
 
         return consulta
+
+    def listandoPartesRelacionadas(self):
+        '''Metodo utilizado para verificar as partes que estao relacionadas'''
+
+        sql = """
+        SELECT 
+            codOPConjunto as numeroOP , 
+            codOPParte  
+        FROM 
+            tco.RelacaoOPsConjuntoPartes r
+        WHERE 
+            r.Empresa = 1 
+            and r.codOPConjunto  in (
+                        SELECT 
+                            o.numeroOP 
+                        from
+                            tco.OrdemProd o
+                        WHERE 
+                            o.codempresa = 1
+                            AND o.situacao = 3
+                            and o.numeroOP like '%-001' 
+                ) 
+        """
+
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+    def obtendoEstoquePartesNat20(self):
+        '''Metodo que obttem o estoque das partes (excluir as cuecas mantendo somente as partes da malharia)'''
+
+
+        sql = """
+            SELECT
+                e.codItem ,
+                e.estoqueAtual,
+                i.nome,
+                i2.codCor,
+                t.descricao as tam 
+            FROM
+                est.DadosEstoque e
+            join 
+                cgi.Item i on i.codigo = e.codItem 
+            JOIN 
+                cgi.Item2 i2 on i2.empresa = 2 and i2.coditem = i.codigo 
+            JOIN 
+                tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = i2.codSeqTamanho 
+            WHERE
+                e.codEmpresa = 1
+                and e.codNatureza = '20'
+                and e.estoqueAtual > 0
+                and i2.codItemPai like '6%'
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+    def detalharOPMaeGrade(self):
+        '''Metodo utilizado para detalhar a OP mae a nivel de grade tamanho e cor'''
+
+        sqlPortal = """
+        select
+            numeroop as "numeroOP",
+            "codProduto",
+            total_pcs,
+            "seqTamanho" ,
+            "codSortimento" 
+        from
+	        "PCP".pcp.ordemprod o
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sqlPortal,conn)
+
+        validarAguardandoPartesOPMae = self.validarAguardandoPartesOPMae
+
+        consulta = pd.merge(validarAguardandoPartesOPMae,consulta,on='numeroOP',how='left')
+
+
+        return consulta
+
+
 

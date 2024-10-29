@@ -40,6 +40,42 @@ def get_OpsMaesAntesMontagem():
     return jsonify(OP_data)
 
 
+@GestaoPartes_routes.route('/pcp/api/EstoquePartes', methods=['GET'])
+@token_required
+def get_EstoquePartes():
+
+    dados = GP.GestaoPartes('','426','425').obtendoEstoquePartesNat20()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+@GestaoPartes_routes.route('/pcp/api/DetalhaGradeOPMae', methods=['GET'])
+@token_required
+def get_DetalhaGradeOPMae():
+
+    dados = GP.GestaoPartes('','426','425').detalharOPMaeGrade()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
 
 
 
