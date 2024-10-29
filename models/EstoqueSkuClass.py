@@ -36,7 +36,7 @@ class EstoqueSKU():
         from
             "pcp".ordemprod o
         where
-            "qtdAcumulada" > 0 and "codFaseAtual" = '441'
+            "qtdAcumulada" > 0 and "codFaseAtual" in ('441' ,'466','437')
         group by codreduzido
         """
 
