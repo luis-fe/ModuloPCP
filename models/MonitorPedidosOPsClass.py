@@ -17,7 +17,8 @@ class MonitorPedidosOps():
     '''Classe criada para o Sistema de PCP gerenciar a FILA DE PEDIDOS emitidos para o grupo MPL'''
 
     def __init__(self, empresa, dataInicioVendas , dataFinalVendas, tipoDataEscolhida, dataInicioFat, dataFinalFat ,arrayRepresentantesExcluir = '',
-                 arrayEscolherRepresentante = '', arrayescolhernomeCliente = '', parametroClassificacao = None , filtroDataEmissaoIni = '' , filtroDataEmissaoFim = ''):
+                 arrayEscolherRepresentante = '', arrayescolhernomeCliente = '', parametroClassificacao = None , filtroDataEmissaoIni = '' , filtroDataEmissaoFim = '',
+                 analiseOPGarantia = None):
         self.empresa = empresa
         self.dataInicioVendas = dataInicioVendas
         self.dataFinalVendas = dataFinalVendas
@@ -30,6 +31,7 @@ class MonitorPedidosOps():
         self.parametroClassificacao = parametroClassificacao
         self.filtroDataEmissaoIni = filtroDataEmissaoIni
         self.filtroDataEmissaoFim = filtroDataEmissaoFim
+        self.analiseOPGarantia = analiseOPGarantia
 
         self.descricaoArquivo = self.dataInicioFat + '_'+self.dataFinalFat
 
@@ -97,7 +99,11 @@ class MonitorPedidosOps():
         pedidos['QtdSaldo'] = pedidos['QtdSaldo'].astype(int)
 
         # 6 Consultando n banco de dados do ERP o saldo de estoque
-        estoque = EstoqueSkuClass.EstoqueSKU().consultaEstoqueConsolidadoPorReduzido_nat5()
+
+        if self.analiseOPGarantia != None:
+            estoque = EstoqueSkuClass.EstoqueSKU().simulandoEstoqueGarantia()
+        else:
+            estoque = EstoqueSkuClass.EstoqueSKU().consultaEstoqueConsolidadoPorReduzido_nat5()
         pedidos = pd.merge(pedidos, estoque, on='codProduto', how='left')
 
         # 7 Calculando a nova data de Previsao do pedido

@@ -55,9 +55,10 @@ def get_MonitorPedidos():
     nomeCliente = request.args.get('nomeCliente','')
     filtroDataEmissaoIni = request.args.get('emissaoinicial','')
     filtroDataEmissaoFim = request.args.get('emissaofinal','')
+    analiseGarantia = request.args.get('analiseGarantia',None)
     #controle.InserindoStatus(rotina, ip, datainicio)
     print('filtro'+filtroDataEmissaoIni)
-    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim)
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, iniVenda, finalVenda,tipoData, iniVenda, finalVenda,arrayRepres_excluir,arrayRepre_Incluir,nomeCliente,parametroClassificacao,filtroDataEmissaoIni, filtroDataEmissaoFim,analiseGarantia)
     dados =monitor.resumoMonitor()
 
 

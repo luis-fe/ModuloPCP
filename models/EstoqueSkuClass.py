@@ -1,5 +1,5 @@
 import pandas as pd
-from connection import ConexaoBanco
+from connection import ConexaoBanco, ConexaoPostgreWms
 
 
 class EstoqueSKU():
@@ -26,3 +26,28 @@ class EstoqueSKU():
                 consulta = pd.DataFrame(rows, columns=colunas)
             del rows
             return consulta
+
+    def simulandoEstoqueGarantia(self):
+
+        sql = """
+                select
+            o.codreduzido as "codProduto",
+        sum("total_pcs") as "estoqueAtual",0 as "estReservPedido"
+        from
+            "pcp".ordemprod o
+        where
+            "qtdAcumulada" > 0 and "codFaseAtual" = '441'
+        group by codreduzido
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        estoqueCsw = self.consultaEstoqueConsolidadoPorReduzido_nat5()
+
+        concatenar = pd.concat([estoqueCsw, consulta], ignore_index=True)
+
+        group = concatenar.groupby(["codProduto"]).agg({"estoqueAtual":"sum","estReservPedido":"sum"}).reset_index()
+
+        return group
+
