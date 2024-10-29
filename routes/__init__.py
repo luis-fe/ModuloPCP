@@ -15,7 +15,7 @@ from .GestaoOPAberto.JustificativaOP import JustificativaOP_routes
 from .MonitorPedidos.FiltrosEspeciaisMonitor import FiltrosEspeciaisMonitor_routes
 from .GestaoOPAberto.FilaFases import FilaDasFases_routes
 from .ControleGolas.controleGolas import controleGolas_routes
-from routes.routesModels.LoteRoute import loteCsw_routes
+from routes.LoteAPI import loteCsw_routes
 from .Planejamento.acomp_meta_plano import MetasFases_routes
 from .Planejamento.TipoNotaCSW import TipoNotaCsw_routes
 from .Planejamento.SaldoPlanoAnterior import SaldoPlanoAnt_routes
