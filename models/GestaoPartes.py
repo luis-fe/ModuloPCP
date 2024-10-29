@@ -36,8 +36,15 @@ class GestaoPartes():
 
         df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] < df_merged['rotMax']]
 
+
+        #1.7 verificando se a OP possue a fase aguardando Partes
+        agPartes = self.ordemProducaoComRoterioAguardandoPartes()
+        df_filtrado = pd.merge(df_filtrado, agPartes , on='numeroOP', how='left')
+        df_filtrado['possueFaseAgPartes'].fillna('Nao',inplace = True)
+
         # Selecionar apenas as colunas 'OP' e 'fase atual'
         resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual']]
+
 
         return resultado
 
@@ -136,3 +143,39 @@ class GestaoPartes():
         gc.collect()
 
         return consulta
+
+    def ordemProducaoComRoterioAguardandoPartes(self):
+        '''Metodo que retorna as OPs programadas que possuem a fase aguardando partes'''
+
+        sql = """
+        SELECT 
+            r.numeroOP, codfase as possueFaseAgPartes  
+        FROM 
+            tco.RoteiroOP r
+        WHERE 
+            r.codEmpresa = 1 and r.numeroOP in (
+                SELECT 
+                    o.numeroOP 
+                from
+                    tco.OrdemProd o
+                WHERE 
+                    o.codempresa = 1
+                    AND o.situacao = 3
+                    and o.numeroOP like '%-001' 
+        ) 
+        and r.codfase ="""+ str(self.codFaseAguardandoPartes)+""""""
+
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
