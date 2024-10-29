@@ -25,7 +25,7 @@ def token_required(f):
 @token_required
 def get_OpsMaesAntesMontagem():
 
-    dados = GP.GestaoPartes('','','425').validarAguardandoPartesOPMae()
+    dados = GP.GestaoPartes('','426','425').validarAguardandoPartesOPMae()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
