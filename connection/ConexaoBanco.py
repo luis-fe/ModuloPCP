@@ -5,7 +5,7 @@ import os
 
 @contextmanager
 def Conexao2():
-    load_dotenv('/home/mplti/ModuloPCP/db.env')
+    load_dotenv('/home/grupompl/ModuloPCP/db.env')
     caminhoAbsoluto = os.getenv('CAMINHO')  # Troque por 'API_KEY' ou outro nome se necessário
     print(f'caminho: {caminhoAbsoluto}')
     conn = None
