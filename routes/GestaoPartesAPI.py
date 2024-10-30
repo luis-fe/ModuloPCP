@@ -22,7 +22,6 @@ def token_required(f):
 
 
 @GestaoPartes_routes.route('/pcp/api/OpsMaesAntesMontagem', methods=['GET'])
-@token_required
 def get_OpsMaesAntesMontagem():
 
     dados = GP.GestaoPartes('','426','425').validarAguardandoPartesOPMae()
@@ -41,7 +40,6 @@ def get_OpsMaesAntesMontagem():
 
 
 @GestaoPartes_routes.route('/pcp/api/EstoquePartes', methods=['GET'])
-@token_required
 def get_EstoquePartes():
     filtrarConciliacao = request.args.get('filtrarConciliacao',False)
 
@@ -61,7 +59,6 @@ def get_EstoquePartes():
 
 
 @GestaoPartes_routes.route('/pcp/api/DetalhaGradeOPMae', methods=['GET'])
-@token_required
 def get_DetalhaGradeOPMae():
 
     dados = GP.GestaoPartes('','426','425').detalharOPMaeGrade()
@@ -79,7 +76,6 @@ def get_DetalhaGradeOPMae():
     return jsonify(OP_data)
 
 @GestaoPartes_routes.route('/pcp/api/OPposMotagem', methods=['GET'])
-@token_required
 def get_OPposMotagem():
 
     dados = GP.GestaoPartes('','426','425').ordemProdAbertoPosMontagem()
