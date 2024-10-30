@@ -396,50 +396,30 @@ in (
     def EstoqueProgramadonatureza20(self):
         '''Metodo que retorna o estoque projetado FUTURO para a natureza 20'''
         sql = """
-        SELECT
-                ot.numeroOP,
-                ot.codProduto ,
-                ot.codSortimento ,
-                ot.seqTamanho,
-                case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end qtdOPMae,
-                t.descricao as tam
-        FROM 
-            tco.OrdemProdTamanhos ot
-        JOIN 
-            tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = ot.seqTamanho 
-        WHERE 
-            ot.codEmpresa = 1 
-            and ot.codProduto LIKE '6%'
-            and ot.numeroOP 
-        in (
-                    SELECT
-                        op.numeroop
-                    from
-                        tco.OrdemProd op
-                    WHERE
-                        op.codempresa = 1
-                        and op.situacao = 3
-        )       
+            select
+                o.codreduzido as "codItem" ,
+                o."codProduto",
+                o."codSortimento" ,
+                o."seqTamanho",
+                o.numeroop,
+                o.total_pcs 
+            from
+                "PCP".pcp.ordemprod o
+            where
+                o."codProduto" like '6%'
         """
 
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                consulta = pd.DataFrame(rows, columns=colunas)
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql, conn)
 
         # Libera memória manualmente
-        del rows
         gc.collect()
         # Substituir os dois primeiros dígitos por "01"
-        consulta['codProduto'] = consulta['codProduto'].astype(str).str.replace(r'^\d{2}', '01', regex=True)
-        # Convertendo Sortimento em CodCor
         conversaoCOr = self.convertendoSortimentoCor()
         conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
 
         consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
-        consulta = consulta.groupby(["codProduto","seqTamanho","codCor","tam"]).agg({"qtdOPMae":"sum"}).reset_index()
+        consulta = consulta.groupby(["codProduto","seqTamanho","codCor","codItem"]).agg({"qtdOPMae":"sum"}).reset_index()
 
         return consulta
