@@ -434,6 +434,8 @@ in (
         # Convertendo Sortimento em CodCor
         conversaoCOr = self.convertendoSortimentoCor()
         conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
+        consulta['codSortimento'] = consulta['codSortimento'].astype(str)
+
         consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
         consulta = consulta.groupby(["codProduto","seqTamanho","codCor"]).agg({"qtdOPMae":"sum"}).reset_index()
 
