@@ -279,7 +279,7 @@ class GestaoPartes():
 
         validarAguardandoPartesOPMae = self.validarAguardandoPartesOPMae()
 
-        consulta = pd.merge(validarAguardandoPartesOPMae,consulta,on='numeroOP',how='left')
+        consulta = pd.merge(validarAguardandoPartesOPMae,consulta,on=['numeroOP','codProduto'],how='left')
 
 
         return consulta
