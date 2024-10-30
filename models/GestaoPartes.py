@@ -299,6 +299,7 @@ class GestaoPartes():
 
         #Convertendo Sortimento em CodCor
         conversaoCOr = self.convertendoSortimentoCor()
+        conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
         consulta = pd.merge(consulta,conversaoCOr,on=['codSortimento','codProduto'],how='left')
 
 
