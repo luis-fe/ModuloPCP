@@ -227,7 +227,10 @@ class GestaoPartes():
                 e.estoqueAtual,
                 i.nome,
                 i2.codCor,
-                t.descricao as tam 
+                t.descricao as tam,
+                i2.codSortimento ,
+	            i2.codSeqTamanho,
+	            i2.codItemPai||'-0' as codProduto  
             FROM
                 est.DadosEstoque e
             join 
