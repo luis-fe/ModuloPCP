@@ -259,7 +259,7 @@ class GestaoPartes():
 
         # Substituir os dois primeiros dígitos por "01"
         consulta['codProduto'] = consulta['codProduto'].astype(str).str.replace(r'^\d{2}', '01', regex=True)
-
+        consulta['codSortimento'] = consulta['codSortimento'].astype(str)
         return consulta
 
 
