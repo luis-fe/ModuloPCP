@@ -262,6 +262,10 @@ class GestaoPartes():
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
         consulta['seqTamanho'] = consulta['seqTamanho'].astype(str)
 
+        detalhamentoOPMae = self.detalharOPMaeGrade()
+        detalhamentoOPMae = detalhamentoOPMae.groupby(["codProduto","seqTamanho","codSortimento"]).agg({"qtdOPMae":"sum"}).reset_index()
+        consulta = pd.merge(consulta,detalhamentoOPMae, on=["codProduto","seqTamanho","codSortimento"],how='left')
+
         return consulta
 
 
@@ -272,7 +276,7 @@ class GestaoPartes():
         select
             numeroop as "numeroOP",
             "codProduto",
-            total_pcs,
+            total_pcs as qtdOPMae,
             "seqTamanho" ,
             "codSortimento" 
         from
