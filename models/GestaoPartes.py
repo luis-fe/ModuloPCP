@@ -257,6 +257,9 @@ class GestaoPartes():
         del rows
         gc.collect()
 
+        # Substituir os dois primeiros dígitos por "01"
+        consulta['codProduto'] = consulta['codProduto'].astype(str).str.replace(r'^\d{2}', '01', regex=True)
+
         return consulta
 
 
