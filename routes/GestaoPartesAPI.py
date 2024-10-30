@@ -45,7 +45,7 @@ def get_OpsMaesAntesMontagem():
 def get_EstoquePartes():
     filtrarConciliacao = request.args.get('filtrarConciliacao',False)
 
-    dados = GP.GestaoPartes('','426','425').obtendoEstoquePartesNat20(filtrarConciliacao)
+    dados = GP.GestaoPartes('','426','425').obtendoEstoquePartesNat20(bool(filtrarConciliacao))
 
     # Obtém os nomes das colunas
     column_names = dados.columns
