@@ -402,7 +402,7 @@ in (
                 o."codSortimento" ,
                 o."seqTamanho",
                 o.numeroop,
-                o.total_pcs 
+                o.total_pcs as "qtdOPMae"
             from
                 "PCP".pcp.ordemprod o
             where
