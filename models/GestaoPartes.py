@@ -230,7 +230,8 @@ class GestaoPartes():
                 t.descricao as tam,
                 i2.codSortimento ,
 	            i2.codSeqTamanho as seqTamanho,
-	            i2.codItemPai||'-0' as codProduto  
+	            i2.codItemPai||'-0' as codProduto,
+	            e.precoMedio  
             FROM
                 est.DadosEstoque e
             join 
