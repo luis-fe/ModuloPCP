@@ -226,7 +226,7 @@ class GestaoPartes():
                 e.codItem ,
                 e.estoqueAtual,
                 i.nome,
-                i2.codCor,
+                i2.codCor as codCor,
                 t.descricao as tam,
                 i2.codSortimento ,
 	            i2.codSeqTamanho as seqTamanho,
@@ -261,6 +261,8 @@ class GestaoPartes():
         consulta['codProduto'] = consulta['codProduto'].astype(str).str.replace(r'^\d{2}', '01', regex=True)
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
         consulta['seqTamanho'] = consulta['seqTamanho'].astype(str)
+        consulta['codCor'] = consulta['codCor'].astype(str)
+
 
         detalhamentoOPMae = self.detalharOPMaeGrade()
         detalhamentoOPMae = detalhamentoOPMae.groupby(["codProduto","seqTamanho","codSortimento"]).agg({"qtdOPMae":"sum"}).reset_index()
