@@ -433,7 +433,7 @@ in (
         ic.nome,
         ic."codSortimento" ,
         ic."codSeqTamanho",
-        ic.codItemPai as "codProduto"
+        ic."codItemPai" as "codProduto"
     from
         pcp.itens_csw ic
     where
