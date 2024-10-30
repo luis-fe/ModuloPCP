@@ -217,7 +217,7 @@ class GestaoPartes():
         return consulta
 
 
-    def obtendoEstoquePartesNat20(self):
+    def obtendoEstoquePartesNat20(self, filtrarConciliacao = False):
         '''Metodo que obttem o estoque das partes (excluir as cuecas mantendo somente as partes da malharia)'''
 
 
@@ -265,6 +265,12 @@ class GestaoPartes():
         detalhamentoOPMae = self.detalharOPMaeGrade()
         detalhamentoOPMae = detalhamentoOPMae.groupby(["codProduto","seqTamanho","codSortimento"]).agg({"qtdOPMae":"sum"}).reset_index()
         consulta = pd.merge(consulta,detalhamentoOPMae, on=["codProduto","seqTamanho","codSortimento"],how='left')
+        consulta['qtdOPMae'].fillna(0,inplace=True)
+        consulta['conciliacao'] = consulta['estoqueAtual'] - consulta['qtdOPMae']
+
+        if filtrarConciliacao ==True:
+            consulta = consulta[consulta['conciliacao']!=0].reset_index()
+
 
         return consulta
 

@@ -43,8 +43,9 @@ def get_OpsMaesAntesMontagem():
 @GestaoPartes_routes.route('/pcp/api/EstoquePartes', methods=['GET'])
 @token_required
 def get_EstoquePartes():
+    filtrarConciliacao = request.args.get('filtrarConciliacao',False)
 
-    dados = GP.GestaoPartes('','426','425').obtendoEstoquePartesNat20()
+    dados = GP.GestaoPartes('','426','425').obtendoEstoquePartesNat20(filtrarConciliacao)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
