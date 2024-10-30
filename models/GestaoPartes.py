@@ -401,9 +401,12 @@ in (
                 ot.codProduto ,
                 ot.codSortimento ,
                 ot.seqTamanho,
-                case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end qtdOPMae 
+                case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end qtdOPMae,
+                t.descricao as tam
         FROM 
             tco.OrdemProdTamanhos ot
+        JOIN 
+            tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = ot.seqTamanho 
         WHERE 
             ot.codEmpresa = 1 
             and ot.codProduto LIKE '6%'
@@ -437,6 +440,6 @@ in (
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
 
         consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
-        consulta = consulta.groupby(["codProduto","seqTamanho","codCor"]).agg({"qtdOPMae":"sum"}).reset_index()
+        consulta = consulta.groupby(["codProduto","seqTamanho","codCor","tam"]).agg({"qtdOPMae":"sum"}).reset_index()
 
         return consulta
