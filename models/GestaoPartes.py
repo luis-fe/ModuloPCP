@@ -277,7 +277,7 @@ class GestaoPartes():
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sqlPortal,conn)
 
-        validarAguardandoPartesOPMae = self.validarAguardandoPartesOPMae
+        validarAguardandoPartesOPMae = self.validarAguardandoPartesOPMae()
 
         consulta = pd.merge(validarAguardandoPartesOPMae,consulta,on='numeroOP',how='left')
 
