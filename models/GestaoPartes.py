@@ -343,3 +343,51 @@ in (
         return consulta
 
 
+    def ordemProdAbertoPosMontagem(self):
+        '''Metodo que retorna as OP apos da Montagem'''
+        # 1.1 Carregar as OPs Programadas
+        opProgramada = self.opsProgramadas()
+
+        # 1.2 Carregar Produtos que possuem partes cadastradas em componentes
+        cadastro = self.carregarProdutosComPartesCadastradas()
+
+        # 1.3 Filtrar as OPs que tem partes cadastradas
+        opProgramada = pd.merge(opProgramada, cadastro, on='codProduto')
+
+        # 1.4 Carregar as Ops que possuem a fase de montagem
+        opsProgramadaFaseMontagem = self.ordemProducaoProgramadaAntesMontagem()
+
+        # 1.5 Filtrar as Ops que estao antes da fase Montagem
+        df_merged = pd.merge(opProgramada, opsProgramadaFaseMontagem, on='numeroOP')
+
+        # 1.6 converendo os campos em inteiro para fazer a comparacao
+        df_merged['codSeqRoteiroAtual'] = df_merged['codSeqRoteiroAtual'].astype(int)
+        df_merged['rotMax'] = df_merged['rotMax'].astype(int)
+
+        df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] >= df_merged['rotMax']]
+
+        # Selecionar apenas as colunas 'OP' e 'fase atual'
+        resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual','possueFaseAgPartes']]
+
+        sqlPortal = """
+                select
+                    numeroop as "numeroOP",
+                    "codProduto",
+                    total_pcs as "qtdOPMae",
+                    "seqTamanho" ,
+                    "codSortimento" 
+                from
+        	        "PCP".pcp.ordemprod o
+                """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sqlPortal, conn)
+
+        consulta = pd.merge(resultado, consulta, on=['numeroOP', 'codProduto'], how='left')
+
+        # Convertendo Sortimento em CodCor
+        conversaoCOr = self.convertendoSortimentoCor()
+        conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
+        consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
+
+        return consulta
