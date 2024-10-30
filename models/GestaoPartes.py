@@ -367,7 +367,7 @@ in (
         df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] >= df_merged['rotMax']]
 
         # Selecionar apenas as colunas 'OP' e 'fase atual'
-        resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual','possueFaseAgPartes']]
+        resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual']]
 
         sqlPortal = """
                 select
