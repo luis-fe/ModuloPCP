@@ -276,7 +276,7 @@ class GestaoPartes():
         select
             numeroop as "numeroOP",
             "codProduto",
-            total_pcs as qtdOPMae,
+            total_pcs as "qtdOPMae",
             "seqTamanho" ,
             "codSortimento" 
         from
