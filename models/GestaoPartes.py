@@ -265,7 +265,7 @@ class GestaoPartes():
 
 
         detalhamentoOPMae = self.detalharOPMaeGrade()
-        detalhamentoOPMae = detalhamentoOPMae.groupby(["codProduto","seqTamanho","codSortimento"]).agg({"qtdOPMae":"sum"}).reset_index()
+        detalhamentoOPMae = detalhamentoOPMae.groupby(["codProduto","seqTamanho","codCor"]).agg({"qtdOPMae":"sum"}).reset_index()
         consulta = pd.merge(consulta,detalhamentoOPMae, on=["codProduto","seqTamanho","codCor"],how='left')
         consulta['qtdOPMae'].fillna(0,inplace=True)
         consulta['conciliacao'] = consulta['estoqueAtual'] - consulta['qtdOPMae']
