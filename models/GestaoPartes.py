@@ -297,7 +297,46 @@ class GestaoPartes():
         consulta = pd.merge(validarAguardandoPartesOPMae,consulta,on=['numeroOP','codProduto'],how='left')
 
 
+        #Convertendo Sortimento em CodCor
+        conversaoCOr = self.convertendoSortimentoCor()
+        consulta = pd.merge(consulta,conversaoCOr,on=['codSortimento','codProduto'],how='left')
+
+
         return consulta
 
+    def convertendoSortimentoCor(self):
+        '''Metodo que converte sortimento em Cor'''
+
+        sql = """
+        SELECT
+	s.codProduto ,
+	s.codSortimento ,
+	s.corBase as codCor
+FROM
+	tcp.SortimentosProduto s
+WHERE
+	s.codEmpresa = 1
+	and s.codProduto 
+in (
+	SELECT
+		op.codproduto
+	FROM
+		tco.OrdemProd op
+	WHERE
+		op.codempresa = 1
+		and op.situacao = 3)
+        """
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
 
 
