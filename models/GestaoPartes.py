@@ -229,7 +229,7 @@ class GestaoPartes():
                 i2.codCor,
                 t.descricao as tam,
                 i2.codSortimento ,
-	            i2.codSeqTamanho,
+	            i2.codSeqTamanho as seqTamanho,
 	            i2.codItemPai||'-0' as codProduto  
             FROM
                 est.DadosEstoque e
@@ -260,6 +260,8 @@ class GestaoPartes():
         # Substituir os dois primeiros dígitos por "01"
         consulta['codProduto'] = consulta['codProduto'].astype(str).str.replace(r'^\d{2}', '01', regex=True)
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
+        consulta['seqTamanho'] = consulta['seqTamanho'].astype(str)
+
         return consulta
 
 
