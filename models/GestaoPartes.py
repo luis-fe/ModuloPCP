@@ -423,3 +423,29 @@ in (
         consulta = consulta.groupby(["codProduto","seqTamanho","codCor","codItem"]).agg({"qtdOPMae":"sum"}).reset_index()
 
         return consulta
+
+    def estruturaItensPartes(self):
+        '''Metodo que retorna a estuturacao dos itens partes'''
+
+        sql = """
+    select
+        ic.codigo as "codItem",
+        ic.nome,
+        ic."codSortimento" ,
+        ic."codSeqTamanho"
+    from
+        pcp.itens_csw ic
+    where
+        ic."codItemPai" like ('6%')
+        or ic."codItemPai" like ('5%')
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql, conn)
+        conversaoCOr = self.convertendoSortimentoCor()
+        conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
+        consulta['codSortimento'] = consulta['codSortimento'].astype(str)
+
+        consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
+
+        return consulta
