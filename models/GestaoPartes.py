@@ -432,7 +432,7 @@ in (
                 ic.codigo as "codItem",
                 ic.nome,
                 ic."codSortimento"::int ,
-                ic."codSeqTamanho",
+                ic."codSeqTamanho"::int,
                 ic."codItemPai" ||'-0' as "codProduto"
             from
                 pcp.itens_csw ic
