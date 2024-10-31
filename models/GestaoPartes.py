@@ -425,15 +425,17 @@ in (
         return consulta
 
     def estruturaItensPartes(self):
-        '''Metodo que retorna a estuturacao dos itens partes'''
+        '''Metodo que retorna a estuturacao dos itens Semiacabado partes'''
 
+        # 1 - Carregando as ordem de producao em aberto das Partes (Fonte PCP : vem da automacao do CSW):
         sql = """
 	        select
                 ic.codigo as "codItem",
                 ic.nome,
                 ic."codSortimento"::int ,
                 ic."codSeqTamanho"::int,
-                ic."codItemPai" ||'-0' as "codProduto"
+                ic."codItemPai" ||'-0' as "codProduto",
+                '0' as "estoqueAtual"
             from
                 pcp.itens_csw ic
             where
@@ -446,19 +448,20 @@ in (
                 o."codProduto" like '6%' or o."codProduto" like '5%' 
                 )
         """
-
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql, conn)
+
+        # 2: convertendo codSortimento em cor:
         conversaoCOr = self.convertendoSortimentoCor2()
         conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
-
         consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
 
-
+        # 3: obetndo do ERP CSW o estoque das Partes
         sql2 = """
         SELECT
             d.codItem,
+            d.estoqueAtual,
             i2.codItemPai || '-0' as codProduto,
             i2.codCor,
             i2.codSortimento ,
@@ -484,15 +487,22 @@ in (
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 consulta2 = pd.DataFrame(rows, columns=colunas)
-
-        # Libera memória manualmente
         del rows
         gc.collect()
 
+        # 4: Realizando o groupBy das informacoes
         consulta = pd.concat([consulta, consulta2], ignore_index=True)
-        consulta = consulta.drop_duplicates()
+        consulta = consulta.groupby(["codItem","codProduto","codCor","codSortimento","codSeqTamanho","nome"]).agg({"estoqueAtual":"sum"}).reset_index()
 
+        # 5: obtendo as informacoes do Tamanho
+        consulta3 = self.obterDescricaoTamCsw()
+        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
+        consulta = pd.merge(consulta, consulta3, on='codSeqTamanho', how='left')
+        consulta['estoqueAtual'].fillna(0,inplace=True)
 
+        return consulta
+
+    def obterDescricaoTamCsw(self):
         sql3 = """
         	SELECT
                 t.sequencia as codSeqTamanho,
@@ -502,24 +512,17 @@ in (
             WHERE
                 t.codEmpresa = 1
         """
-
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql3)
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 consulta3 = pd.DataFrame(rows, columns=colunas)
-
         # Libera memória manualmente
         del rows
         gc.collect()
-
-        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
         consulta3['codSeqTamanho'] = consulta3['codSeqTamanho'].astype(str)
-
-        consulta = pd.merge(consulta, consulta3, on='codSeqTamanho', how='left')
-
-        return consulta
+        return consulta3
 
     def convertendoSortimentoCor2(self):
             '''Metodo que converte sortimento em Cor'''
