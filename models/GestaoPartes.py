@@ -490,7 +490,7 @@ in (
         gc.collect()
 
         consulta = pd.concat([consulta, consulta2], ignore_index=True)
-
+        consulta = consulta.drop_duplicates()
 
         return consulta
 
