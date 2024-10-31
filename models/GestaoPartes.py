@@ -10,7 +10,9 @@ class GestaoPartes():
         self.codFaseAguardandoPartes = codFaseAguardandoPartes
         self.codFaseMontagem = codFaseMontagem
     def validarAguardandoPartesOPMae(self):
-        '''Metodo que avalia se as Ops programadas que utilizam partes possue a fase aguardando Partes'''
+        '''Metodo que avalia se as Ops programadas que utilizam partes possue a fase aguardando Partes
+            e retorna: a fila de OPs antes do AGUARDANDO PARTES;
+        '''
 
         # 1 Verificar as Ops que possuem cadastro de fase
 
@@ -42,7 +44,7 @@ class GestaoPartes():
         df_filtrado = pd.merge(df_filtrado, agPartes , on='numeroOP', how='left')
         df_filtrado['possueFaseAgPartes'].fillna('Nao',inplace = True)
 
-        # Selecionar apenas as colunas 'OP' e 'fase atual'
+        # Selecionar apenas as colunas desejadas
         resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual','possueFaseAgPartes']]
 
 
@@ -287,7 +289,8 @@ class GestaoPartes():
             "codProduto",
             total_pcs as "qtdOPMae",
             "seqTamanho" ,
-            "codSortimento" 
+            "codSortimento",
+            codreduzido as "codItem"  
         from
 	        "PCP".pcp.ordemprod o
         """
@@ -304,6 +307,13 @@ class GestaoPartes():
         conversaoCOr = self.convertendoSortimentoCor()
         conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
         consulta = pd.merge(consulta,conversaoCOr,on=['codSortimento','codProduto'],how='left')
+
+        #Obtendo o codigo do item relacionado a parte
+        conversaoCodigo = self.converterPaiemParte()
+
+        consulta = pd.merge(consulta,conversaoCodigo,on='codItem',how='left')
+
+
 
 
         return consulta
