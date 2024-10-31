@@ -449,10 +449,37 @@ in (
 
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql, conn)
-        conversaoCOr = self.convertendoSortimentoCor()
+        conversaoCOr = self.convertendoSortimentoCor2()
         conversaoCOr['codSortimento'] = conversaoCOr['codSortimento'].astype(str)
         consulta['codSortimento'] = consulta['codSortimento'].astype(str)
 
         consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
 
         return consulta
+
+    def convertendoSortimentoCor2(self):
+            '''Metodo que converte sortimento em Cor'''
+
+            sql = """
+        SELECT
+            s.codProduto ,
+            s.codSortimento ,
+            s.corBase as codCor
+        FROM
+            tcp.SortimentosProduto s
+        WHERE
+            s.codEmpresa = 1
+            and (s.codProduto like '6%' or s.codProduto like '5%') 
+            """
+            with ConexaoBanco.Conexao2() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sql)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+            del rows
+            gc.collect()
+
+            return consulta
