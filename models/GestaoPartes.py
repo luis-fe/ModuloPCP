@@ -312,7 +312,7 @@ class GestaoPartes():
         conversaoCodigo = self.converterPaiemParte()
 
         consulta = pd.merge(consulta,conversaoCodigo,on='codItem',how='left')
-
+        consulta.fillna('-',inplace=True)
 
 
 
