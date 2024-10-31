@@ -416,7 +416,7 @@ in (
             from
                 "PCP".pcp.ordemprod o
             where
-                o."codProduto" like '6%'
+                o."codProduto" like '6%' or o."codProduto" like '5%' 
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
