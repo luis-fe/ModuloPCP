@@ -431,7 +431,7 @@ in (
 	        select
                 ic.codigo as "codItem",
                 ic.nome,
-                ic."codSortimento" ,
+                ic."codSortimento"::int ,
                 ic."codSeqTamanho",
                 ic."codItemPai" ||'-0' as "codProduto"
             from
@@ -463,7 +463,7 @@ in (
             sql = """
         SELECT
             s.codProduto ,
-            s.codSortimento::int ,
+            s.codSortimento ,
             s.corBase as codCor
         FROM
             tcp.SortimentosProduto s
