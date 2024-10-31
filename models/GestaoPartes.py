@@ -443,7 +443,7 @@ in (
             from
                 "PCP".pcp.ordemprod o
             where
-                o."codProduto" like '6%'
+                o."codProduto" like '6%' or o."codProduto" like '5%' 
                 )
         """
 
@@ -492,6 +492,33 @@ in (
         consulta = pd.concat([consulta, consulta2], ignore_index=True)
         consulta = consulta.drop_duplicates()
 
+
+        sql3 = """
+        	SELECT
+                t.sequencia as codSeqTamanho,
+                t.descricao as tam
+            FROM
+                tcp.Tamanhos t
+            WHERE
+                t.codEmpresa = 1
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql3)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta3 = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
+        consulta3['codSeqTamanho'] = consulta3['codSeqTamanho'].astype(str)
+
+        consulta = pd.merge(consulta, consulta3, on='codSeqTamanho', how='left')
+
         return consulta
 
     def convertendoSortimentoCor2(self):
@@ -518,8 +545,5 @@ in (
             # Libera memória manualmente
             del rows
             gc.collect()
-
-
-
 
             return consulta
