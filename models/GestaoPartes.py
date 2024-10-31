@@ -463,7 +463,7 @@ in (
             sql = """
         SELECT
             s.codProduto ,
-            s.codSortimento ,
+            s.codSortimento::int ,
             s.corBase as codCor
         FROM
             tcp.SortimentosProduto s
