@@ -509,6 +509,8 @@ in (
 
 
         consulta = pd.concat([consulta, consulta2], ignore_index=True)
+        consulta['estoqueAtual'] = consulta['estoqueAtual'].astype(str)
+
         consulta = consulta.groupby(["codItem","codProduto","codCor","codSortimento","codSeqTamanho","nome"]).agg({"estoqueAtual":"sum"}).reset_index()
 
         # 5: obtendo as informacoes do Tamanho
