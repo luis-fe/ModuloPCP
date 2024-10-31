@@ -455,6 +455,43 @@ in (
 
         consulta = pd.merge(consulta, conversaoCOr, on=['codSortimento', 'codProduto'], how='left')
 
+
+        sql2 = """
+        SELECT
+            d.codItem,
+            i2.codItemPai || '-0' as codProduto,
+            i2.codCor,
+            i2.codSortimento ,
+            i2.codSeqTamanho,
+            i.nome
+        FROM
+            est.DadosEstoque d
+        inner join
+            Cgi.Item2 i2 on
+            i2.Empresa = 1
+            and i2.codItem = d.codItem
+        inner JOIN 
+            cgi.Item i on i.codigo = i2.codItem 
+        WHERE
+            d.codEmpresa = 1
+            and d.codNatureza = 20
+            and d.estoqueAtual > 0
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql2)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta2 = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        consulta = pd.concat([consulta, consulta2], ignore_index=True)
+
+
         return consulta
 
     def convertendoSortimentoCor2(self):
@@ -481,5 +518,8 @@ in (
             # Libera memória manualmente
             del rows
             gc.collect()
+
+
+
 
             return consulta
