@@ -501,12 +501,18 @@ in (
         gc.collect()
 
         # 4: Realizando o groupBy das informacoes
+
+        consulta['codSortimento'] = consulta['codSortimento'].astype(str)
+        consulta2['codSortimento'] = consulta2['codSortimento'].astype(str)
+        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
+        consulta2['codSeqTamanho'] = consulta2['codSeqTamanho'].astype(str)
+
+
         consulta = pd.concat([consulta, consulta2], ignore_index=True)
         consulta = consulta.groupby(["codItem","codProduto","codCor","codSortimento","codSeqTamanho","nome"]).agg({"estoqueAtual":"sum"}).reset_index()
 
         # 5: obtendo as informacoes do Tamanho
         consulta3 = self.obterDescricaoTamCsw()
-        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
         consulta = pd.merge(consulta, consulta3, on='codSeqTamanho', how='left')
         consulta['estoqueAtual'].fillna(0,inplace=True)
 
