@@ -428,17 +428,23 @@ in (
         '''Metodo que retorna a estuturacao dos itens partes'''
 
         sql = """
-    select
-        ic.codigo as "codItem",
-        ic.nome,
-        ic."codSortimento" ,
-        ic."codSeqTamanho",
-        ic."codItemPai" as "codProduto"
-    from
-        pcp.itens_csw ic
-    where
-        ic."codItemPai" like ('6%')
-        or ic."codItemPai" like ('5%')
+	        select
+                ic.codigo as "codItem",
+                ic.nome,
+                ic."codSortimento" ,
+                ic."codSeqTamanho",
+                ic."codItemPai" ||'-0' as "codProduto"
+            from
+                pcp.itens_csw ic
+            where
+                 ic.codigo in (
+                select
+                o.codreduzido 
+            from
+                "PCP".pcp.ordemprod o
+            where
+                o."codProduto" like '6%'
+                )
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
