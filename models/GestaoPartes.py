@@ -61,7 +61,7 @@ class GestaoPartes():
         FROM
             tcp.ComponentesVariaveis c
         WHERE
-            codClassifComponente = 12
+            codClassifComponente in (12, 10)
             and c.codEmpresa = 1
         """
 
