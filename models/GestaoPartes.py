@@ -635,16 +635,17 @@ in (
 
         sql = """
         SELECT 
-	ot.codProduto ,ot.numeroop as numeroop , ot.codSortimento , seqTamanho, 
-  	case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end total_pcs 
-FROM 
-	tco.OrdemProdTamanhos ot
-WHERE ot.codEmpresa = 1 and ot.numeroOP in (
-	select 
-		op.numeroop 
-	from tco.OrdemProd op 
-	WHERE 
-		op.codempresa = 1 and op.situacao = 3 and op.codfaseatual = 401 
+	        ot.codProduto ,ot.numeroop as numeroop , ot.codSortimento , seqTamanho, 
+  	        case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end total_pcs 
+        FROM 
+	        tco.OrdemProdTamanhos ot
+        WHERE 
+            ot.codEmpresa = 1 and ot.numeroOP in (
+                select 
+                    op.numeroop 
+                from tco.OrdemProd op 
+                WHERE 
+                    op.codempresa = 1 and op.situacao = 3 and op.codfaseatual = 401 )
         """
 
         with ConexaoBanco.Conexao2() as conn:
