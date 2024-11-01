@@ -298,6 +298,12 @@ class GestaoPartes():
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sqlPortal,conn)
 
+        # 2: Obtendo as ops do Csw na fase 401-PCP a nivel de tamanho e cor
+        opPCP =self.ordemProdPCPTamCor()
+        # 2.1: realizando o contatenar entre as 2 consultas de op
+        consulta = pd.concat([consulta, opPCP], ignore_index=True)
+
+
         validarAguardandoPartesOPMae = self.validarAguardandoPartesOPMae()
 
         consulta = pd.merge(validarAguardandoPartesOPMae,consulta,on=['numeroOP','codProduto'],how='left')
@@ -623,3 +629,30 @@ in (
         relacaoPartes = relacaoPartes[['redParte', 'codItem','quantidade']]
 
         return relacaoPartes
+
+
+    def ordemProdPCPTamCor(self):
+
+        sql = """
+        SELECT 
+	ot.codProduto ,ot.numeroop as numeroop , ot.codSortimento , seqTamanho, 
+  	case WHEN ot.qtdePecas1Qualidade is null then ot.qtdePecasProgramadas else qtdePecas1Qualidade end total_pcs 
+FROM 
+	tco.OrdemProdTamanhos ot
+WHERE ot.codEmpresa = 1 and ot.numeroOP in (
+	select 
+		op.numeroop 
+	from tco.OrdemProd op 
+	WHERE 
+		op.codempresa = 1 and op.situacao = 3 and op.codfaseatual = 401 
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+
+        return consulta
