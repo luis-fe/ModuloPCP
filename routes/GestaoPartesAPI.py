@@ -61,7 +61,7 @@ def get_EstoquePartes():
 @GestaoPartes_routes.route('/pcp/api/DetalhaGradeOPMae', methods=['GET'])
 def get_DetalhaGradeOPMae():
 
-    dados = GP.GestaoPartes('','426','425').detalharOPMaeGrade()
+    dados = GP.GestaoPartes('','426','425','452').detalharOPMaeGrade()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
