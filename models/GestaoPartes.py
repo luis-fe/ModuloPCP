@@ -131,8 +131,7 @@ class GestaoPartes():
                     AND o.situacao = 3
                     and o.numeroOP like '%-001' 
         ) 
-        and ( r.codfase ="""+ str(self.codFaseAguardandoPartes)+"""
-        or r.codfase ="""+ str(self.codFaseAguarPecas)+""")"""
+        and ( r.codfase ="""+ str(self.codFaseAguardandoPartes)+""" or r.codfase ="""+ str(self.codFaseAguarPecas)+""")"""
 
 
         with ConexaoBanco.Conexao2() as conn:
