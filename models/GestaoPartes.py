@@ -5,10 +5,11 @@ from connection import ConexaoBanco, ConexaoPostgreWms
 
 class GestaoPartes():
     '''Classe utilizada para fazer o gerenciamento das Chamadas partes '''
-    def __init__(self, numeroOP = None, codFaseAguardandoPartes = None, codFaseMontagem = None):
+    def __init__(self, numeroOP = None, codFaseAguardandoPartes = None, codFaseMontagem = None, codFaseAguarPecas = None):
         self.numeroOP = numeroOP
         self.codFaseAguardandoPartes = codFaseAguardandoPartes
         self.codFaseMontagem = codFaseMontagem
+        self.codFaseAguarPecas = codFaseAguarPecas
     def validarAguardandoPartesOPMae(self):
         '''Metodo que avalia se as Ops programadas que utilizam partes possue a fase aguardando Partes
             e retorna: a fila de OPs antes do AGUARDANDO PARTES;
@@ -36,7 +37,7 @@ class GestaoPartes():
         df_merged['codSeqRoteiroAtual'] = df_merged['codSeqRoteiroAtual'].astype(int)
         df_merged['rotMax'] = df_merged['rotMax'].astype(int)
 
-        df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] < df_merged['rotMax']]
+        df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] <= df_merged['rotMax']]
 
 
         #1.7 verificando se a OP possue a fase aguardando Partes
@@ -130,7 +131,8 @@ class GestaoPartes():
                     AND o.situacao = 3
                     and o.numeroOP like '%-001' 
         ) 
-        and r.codfase ="""+ str(self.codFaseMontagem)+""""""
+        and ( r.codfase ="""+ str(self.codFaseAguardandoPartes)+"""
+        or r.codfase ="""+ str(self.codFaseAguarPecas)+""")"""
 
 
         with ConexaoBanco.Conexao2() as conn:

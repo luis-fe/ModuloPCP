@@ -24,7 +24,7 @@ def token_required(f):
 @GestaoPartes_routes.route('/pcp/api/OpsMaesAntesMontagem', methods=['GET'])
 def get_OpsMaesAntesMontagem():
 
-    dados = GP.GestaoPartes('','426','425').validarAguardandoPartesOPMae()
+    dados = GP.GestaoPartes('','426','425','452').validarAguardandoPartesOPMae()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -78,7 +78,8 @@ def get_DetalhaGradeOPMae():
 @GestaoPartes_routes.route('/pcp/api/OPposMotagem', methods=['GET'])
 def get_OPposMotagem():
 
-    dados = GP.GestaoPartes('','426','425').ordemProdAbertoPosMontagem()
+    dados = GP.GestaoPartes('','426','425',
+                            '426').ordemProdAbertoPosMontagem()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
