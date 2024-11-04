@@ -586,7 +586,6 @@ in (
                 WHERE
                     e.codEmpresa = 1
                     and e.codNatureza = 5
-                    and e.estoqueAtual > 0
                     and i.nome like 'KIT%'
             """
 
