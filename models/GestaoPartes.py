@@ -623,6 +623,11 @@ in (
                 rows = cursor.fetchall()
                 consulta = pd.DataFrame(rows, columns=colunas)
 
+        #Obtendo o codigo do item relacionado a parte
+        conversaoCodigo = self.converterPaiemParte()
+
+        consulta = pd.merge(consulta,conversaoCodigo,on='codItem',how='left')
+
 
         return consulta
 
