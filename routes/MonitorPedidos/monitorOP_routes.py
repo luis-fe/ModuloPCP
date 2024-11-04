@@ -53,7 +53,8 @@ def get_monitorOPs():
 @token_required
 def post_monitorOPsFiltroPedidos():
     data = request.get_json()
-    dataInico = data.get('dataInico', '-')
+
+    dataInico = data.get('dataInico')
     dataFim = data.get('dataFim')
     arrayPedidos = data.get('arrayPedidos')
 
