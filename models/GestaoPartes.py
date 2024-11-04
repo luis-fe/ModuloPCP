@@ -382,7 +382,7 @@ in (
         df_merged['codSeqRoteiroAtual'] = df_merged['codSeqRoteiroAtual'].astype(int)
         df_merged['rotMax'] = df_merged['rotMax'].astype(int)
 
-        df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] >= df_merged['rotMax']]
+        df_filtrado = df_merged[df_merged['codSeqRoteiroAtual'] > df_merged['rotMax']]
 
         # Selecionar apenas as colunas 'OP' e 'fase atual'
         resultado = df_filtrado[['numeroOP', 'codSeqRoteiroAtual','codProduto','codFaseAtual']]
@@ -658,3 +658,49 @@ in (
 
 
         return consulta
+
+
+    def estoquePA(self):
+
+
+        sql = """
+            SELECT
+                e.codItem ,
+                e.estoqueAtual,
+                i.nome,
+                i2.codCor as codCor,
+                t.descricao as tam,
+                i2.codSortimento ,
+	            i2.codSeqTamanho as seqTamanho,
+	            i2.codItemPai||'-0' as codProduto,
+	            e.precoMedio  
+            FROM
+                est.DadosEstoque e
+            join 
+                cgi.Item i on i.codigo = e.codItem 
+            JOIN 
+                cgi.Item2 i2 on i2.empresa = 2 and i2.coditem = i.codigo 
+            JOIN 
+                tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = i2.codSeqTamanho 
+            WHERE
+                e.codEmpresa = 1
+                and e.codNatureza = 5
+                and e.estoqueAtual > 0
+        """
+
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+
+        return consulta
+
+
+
+
+
+
