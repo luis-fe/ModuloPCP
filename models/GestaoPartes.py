@@ -561,33 +561,60 @@ in (
         return consulta
 
 
-    def estoquePA(self):
+    def estoquePA(self, filtrarKIt = False):
 
+        if filtrarKIt == True:
+            sql = """
+                SELECT
+                    e.codItem ,
+                    e.estoqueAtual,
+                    i.nome,
+                    i2.codCor as codCor,
+                    t.descricao as tam,
+                    i2.codSortimento ,
+                    i2.codSeqTamanho as seqTamanho,
+                    i2.codItemPai||'-0' as codProduto,
+                    e.precoMedio  
+                FROM
+                    est.DadosEstoque e
+                join 
+                    cgi.Item i on i.codigo = e.codItem 
+                JOIN 
+                    cgi.Item2 i2 on i2.empresa = 2 and i2.coditem = i.codigo 
+                JOIN 
+                    tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = i2.codSeqTamanho 
+                WHERE
+                    e.codEmpresa = 1
+                    and e.codNatureza = 5
+                    and e.estoqueAtual > 0
+                    and i.nome like 'KIT%'
+            """
 
-        sql = """
-            SELECT
-                e.codItem ,
-                e.estoqueAtual,
-                i.nome,
-                i2.codCor as codCor,
-                t.descricao as tam,
-                i2.codSortimento ,
-	            i2.codSeqTamanho as seqTamanho,
-	            i2.codItemPai||'-0' as codProduto,
-	            e.precoMedio  
-            FROM
-                est.DadosEstoque e
-            join 
-                cgi.Item i on i.codigo = e.codItem 
-            JOIN 
-                cgi.Item2 i2 on i2.empresa = 2 and i2.coditem = i.codigo 
-            JOIN 
-                tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = i2.codSeqTamanho 
-            WHERE
-                e.codEmpresa = 1
-                and e.codNatureza = 5
-                and e.estoqueAtual > 0
-        """
+        else:
+            sql = """
+                SELECT
+                    e.codItem ,
+                    e.estoqueAtual,
+                    i.nome,
+                    i2.codCor as codCor,
+                    t.descricao as tam,
+                    i2.codSortimento ,
+                    i2.codSeqTamanho as seqTamanho,
+                    i2.codItemPai||'-0' as codProduto,
+                    e.precoMedio  
+                FROM
+                    est.DadosEstoque e
+                join 
+                    cgi.Item i on i.codigo = e.codItem 
+                JOIN 
+                    cgi.Item2 i2 on i2.empresa = 2 and i2.coditem = i.codigo 
+                JOIN 
+                    tcp.Tamanhos t on t.codEmpresa = 1 and t.sequencia  = i2.codSeqTamanho 
+                WHERE
+                    e.codEmpresa = 1
+                    and e.codNatureza = 5
+                    and e.estoqueAtual > 0
+            """
 
 
         with ConexaoBanco.Conexao2() as conn:

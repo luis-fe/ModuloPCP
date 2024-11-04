@@ -132,7 +132,7 @@ def get_converterPaiemParte():
 @GestaoPartes_routes.route('/pcp/api/EstoquePANat05', methods=['GET'])
 def get_EstoquePANat05():
 
-    dados = GP.GestaoPartes('','426','425','452').estoquePA()
+    dados = GP.GestaoPartes('','426','425','452').estoquePA(True)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
