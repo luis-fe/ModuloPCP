@@ -31,7 +31,7 @@ class Revisor():
                     curr.execute(insert,(self.codRevisor, self.nomeRevisor,self.empresa))
                     conn.commit()
 
-            return pd.DataFrame([{'status':True,'Mensagem':'StatusRevisor alterado com sucesso'}])
+            return pd.DataFrame([{'status':True,'Mensagem':'Revisor cadastrado com sucesso'}])
 
         else:
             return pd.DataFrame([{'status':False,'Mensagem':'Revisor ja existe'}])
