@@ -15,7 +15,7 @@ class Revisor():
         '''Metodo utilizado para cadastrar um novo revisor '''
 
         #Verificar se existe o revisor
-        verificar = self.pesquisarRevisor()
+        verificar = self.pesquisarRevisorEspecifico()
 
         if verificar.empty:
 
