@@ -58,7 +58,8 @@ class Revisor():
         select = """
         select 
             * from pcp."Revisor" 
-        where  empresa = %s ;
+        where  empresa = %s 
+        order by "nomeRevisor" ;
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
