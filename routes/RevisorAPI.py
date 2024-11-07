@@ -62,3 +62,28 @@ def get_cInativarRevisor():
     del dados
     return jsonify(OP_data)
 
+
+@Revisores_Routes.route('/pcp/api/cadastrarRevisor', methods=['POST'])
+@token_required
+def post_cadastrarRevisor():
+    datas = request.get_json()
+
+    codRevisor = datas['codRevisor']
+    empresa = datas['empresa']
+    nomeRevisor = datas['nomeRevisor']
+
+
+    revisor = r.Revisor(codRevisor,nomeRevisor,empresa,'ATIVO')
+    dados = revisor.cadastrarRevisor()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
