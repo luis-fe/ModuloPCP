@@ -40,11 +40,15 @@ def get_consultaRevisores():
 @Revisores_Routes.route('/pcp/api/InativarRevisor', methods=['PUT'])
 @token_required
 def get_cInativarRevisor():
-    empresa = request.args.get('empresa','1')
+    datas = request.get_json()
 
-    revisor = r.Revisor('','',empresa)
+    codRevisor = datas['codRevisor']
+    empresa = datas['empresa']
+    situacaoRevisor = datas['situacaoRevisor']
+
+
+    revisor = r.Revisor(codRevisor,'',empresa,situacaoRevisor)
     dados = revisor.inativarRevisor()
-    #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
