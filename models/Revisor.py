@@ -28,7 +28,7 @@ class Revisor():
 
             with ConexaoPostgreWms.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
-                    curr.execute(insert,(self.situacaoRevisor, self.codRevisor,))
+                    curr.execute(insert,(self.situacaoRevisor, self.codRevisor,self.empresa))
                     conn.commit()
 
             return pd.DataFrame([{'status':True,'Mensagem':'StatusRevisor alterado com sucesso'}])
