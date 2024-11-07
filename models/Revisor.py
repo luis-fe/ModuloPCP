@@ -84,5 +84,40 @@ class Revisor():
         return pd.DataFrame([{'status':True,'Mensagem':'StatusRevisor alterado com sucesso'}])
 
 
+    def exlcuirRevisor(self):
+        '''Metodo que exclui o revisor, somente caso nao tenha historico de produtividade'''
+
+        # Verificar se possue historico de produtividade
+        consulta = """
+        select * from pcp."ProdutividadeRevisor" where empresa = %s and "codRevisor" = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn,params=(self.empresa, self.codRevisor,))
+
+        # IF's
+        if consulta.empty:
+
+            #Excluir o revisor
+            delete = """
+            delete from pcp."Revisor"
+            where empresa = % and "codRevisor" = %s
+            """
+
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(delete,(self.empresa, self.codRevisor))
+                    conn.commit()
+
+            return pd.DataFrame([{'status':True,'Mensagem':'Revisor excluido com sucesso'}])
+
+        else:
+
+            return pd.DataFrame([{'status':False,'Mensagem':'Revisor ja possue historico'}])
+
+
+
+
+
 
 
