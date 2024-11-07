@@ -23,12 +23,12 @@ class Revisor():
             insert into
                 pcp."Revisor" ("codRevisor","nomeRevisor", "empresa","situacaoRevisor")
             values
-                ( %s, %s , %s, "Ativo" )
+                ( %s, %s , %s, 'Ativo' )
             """
 
             with ConexaoPostgreWms.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
-                    curr.execute(insert,(self.situacaoRevisor, self.codRevisor,self.empresa))
+                    curr.execute(insert,(self.codRevisor, self.nomeRevisor,self.empresa))
                     conn.commit()
 
             return pd.DataFrame([{'status':True,'Mensagem':'StatusRevisor alterado com sucesso'}])
