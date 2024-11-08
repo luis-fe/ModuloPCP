@@ -1,5 +1,7 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
+from datetime import datetime
+import pytz
 class Liberacao():
     def __init__(self, Ncarrinho, codRevisor, empresa, numeroOP =None, Pecas = 1):
 
@@ -39,15 +41,17 @@ class Liberacao():
         '''Metodo utilizado para atribuir o revisor de cada OP'''
 
         insert = """
-        insert into "pcp"."ProdutividadeRevisor" ("empresa","Ncarrinho", "numeroop", "Pecas" , "codRevisor")
-        values (%s ,%s ,%s, %s, %s)
+        insert into "pcp"."ProdutividadeRevisor" ("empresa","Ncarrinho", "numeroop", "Pecas" , "codRevisor","dataHora")
+        values (%s ,%s ,%s, %s, %s, %s, %s)
         """
+
+        self.dataHora = self.obterHoraAtual()
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
-                curr.execute(insert, (self.empresa, self.Ncarrinho, self.numeroOP, self.Pecas, self.codRevisor))
+                curr.execute(insert, (self.empresa, self.Ncarrinho, self.numeroOP, self.Pecas, self.codRevisor,self.dataHora))
                 conn.commit()
 
-        return pd.DataFrame([{'status': True, 'Mensagem': 'O Revisor foi  Atribuido com sucesso'}])
+        return pd.DataFrame([{'status': True, 'Mensagem': 'Os Revisores foram  Atribuido com sucesso !!'}])
 
 
     def atribuirOPRevisorArray(self, array):
@@ -62,7 +66,14 @@ class Liberacao():
 
             self.atribuirOPRevisor()
 
-        return pd.DataFrame([{'status': True, 'Mensagem': 'O Revisores   Atribuidos com sucesso'}])
+        return pd.DataFrame([{'status': True, 'Mensagem': 'Os Revisores foram  Atribuido com sucesso !!'}])
+
+    def obterHoraAtual(self):
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y/%m/%d %H:%M:%S')
+
+        return agora
 
 
 
