@@ -23,6 +23,22 @@ def conexaoEngine():
     connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{portbanco}/{db_name}"
     return create_engine(connection_string)
 
+def conexaoEngineWms():
+    db_name = os.getenv('POSTGRES_DB')
+    db_name = 'Reposicao'
+    db_user = "postgres"
+    db_password = "Master100"
+    db_host = os.getenv('DATABASE_HOST')
+    db_host ='192.168.0.183'
+    portbanco = "5432"
+
+
+    if not all([db_name, db_user, db_password, db_host]):
+        raise ValueError("One or more environment variables are not set")
+
+    connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{portbanco}/{db_name}"
+    return create_engine(connection_string)
+
 def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     # Configurações de conexão ao banco de dados
     #database = os.getenv('POSTGRES_DB')
