@@ -145,8 +145,8 @@ def post_AlterarRevisor():
 
     codRevisor = datas['codRevisor']
     nomeRevisor = datas['nomeRevisor']
-    empresa = datas['empresa']
-    situacaoRevisor = datas['situacaoRevisor']
+    empresa = datas.get('empresa','1')
+    situacaoRevisor = datas.get('situacaoRevisor', 'ATIVO')  # Define 'ATIVO' como padrão
 
 
     revisor = r.Revisor(codRevisor,nomeRevisor,empresa,situacaoRevisor)
