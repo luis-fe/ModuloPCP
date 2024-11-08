@@ -110,3 +110,56 @@ def post_cadastrarRevisor():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@Revisores_Routes.route('/pcp/api/ExcluirRevisor', methods=['DELETE'])
+@token_required
+def post_ExcluirRevisor():
+    datas = request.get_json()
+
+    codRevisor = datas['codRevisor']
+    empresa = datas['empresa']
+
+
+    revisor = r.Revisor(codRevisor,'',empresa,'ATIVO')
+    dados = revisor.exlcuirRevisor()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
+@Revisores_Routes.route('/pcp/api/AlterarRevisor', methods=['PUT'])
+@token_required
+def post_AlterarRevisor():
+    datas = request.get_json()
+
+    codRevisor = datas['codRevisor']
+    nomeRevisor = datas['nomeRevisor']
+    empresa = datas['empresa']
+    situacaoRevisor = datas['situacaoRevisor']
+
+
+    revisor = r.Revisor(codRevisor,nomeRevisor,empresa,situacaoRevisor)
+    dados = revisor.alterarRevisor()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)

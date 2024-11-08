@@ -115,6 +115,25 @@ class Revisor():
 
             return pd.DataFrame([{'status':False,'Mensagem':'Revisor ja possue historico'}])
 
+    def alterarRevisor(self):
+            '''Metodo que inativa os revisores'''
+
+            update = """
+            update 
+                pcp."Revisor"
+            set 
+                "situacaoRevisor" = %s and "nomeRevisor" =%s
+            where 
+                "codRevisor" = %s
+            """
+
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(update, (self.situacaoRevisor, self.nomeRevisor, self.codRevisor,))
+                    conn.commit()
+
+            return pd.DataFrame([{'status': True, 'Mensagem': 'StatusRevisor alterado com sucesso'}])
+
 
 
 
