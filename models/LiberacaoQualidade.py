@@ -1,7 +1,7 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
 class Liberacao():
-    def __init__(self, Ncarrinho, codRevisor, empresa, numeroOP =None, Pecas = None):
+    def __init__(self, Ncarrinho, codRevisor, empresa, numeroOP =None, Pecas = 1):
 
         self.Ncarrinho = str(Ncarrinho)
         self.codRevisor = str(codRevisor)
