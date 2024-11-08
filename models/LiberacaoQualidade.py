@@ -42,7 +42,7 @@ class Liberacao():
 
         insert = """
         insert into "pcp"."ProdutividadeRevisor" ("empresa","Ncarrinho", "numeroop", "Pecas" , "codRevisor","dataHora")
-        values (%s ,%s ,%s, %s, %s, %s, %s)
+        values (%s ,%s ,%s, %s, %s, %s)
         """
 
         self.dataHora = self.obterHoraAtual()
