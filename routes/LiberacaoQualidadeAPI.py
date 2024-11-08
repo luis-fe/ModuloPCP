@@ -37,3 +37,25 @@ def get_consultarCargaCarrinho():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+@LiberacaoQualidade_Routes.route('/pcp/api/atribuirOPRevisorArray', methods=['POST'])
+@token_required
+def post_atribuirOPRevisorArray():
+    datas = request.get_json()
+    array = datas['array']
+
+
+    carrinho = lib.Liberacao('','','')
+    dados = carrinho.atribuirOPRevisorArray(array)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
