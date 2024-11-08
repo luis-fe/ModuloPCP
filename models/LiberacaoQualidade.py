@@ -25,7 +25,8 @@ class Liberacao():
 	        and codempresa = %s
 	        and (rq."statusNCarrinho" <> 'liberado' or rq."statusNCarrinho" is null)
         group by
-	        numeroop
+	        numeroop,
+	        "Ncarrinho"
         """
 
         conn = ConexaoPostgreWms.conexaoEngineWms()
