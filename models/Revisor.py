@@ -122,14 +122,14 @@ class Revisor():
             update 
                 pcp."Revisor"
             set 
-                "situacaoRevisor" = %s and "nomeRevisor" =%s
+                "situacaoRevisor" = %s , "nomeRevisor" =%s
             where 
-                "codRevisor" = %s
+                "codRevisor" = %s and "empresa" = %s
             """
 
             with ConexaoPostgreWms.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
-                    curr.execute(update, (self.situacaoRevisor, self.nomeRevisor, self.codRevisor,))
+                    curr.execute(update, (self.situacaoRevisor, self.nomeRevisor, self.codRevisor,self.empresa))
                     conn.commit()
 
             return pd.DataFrame([{'status': True, 'Mensagem': 'StatusRevisor alterado com sucesso'}])
