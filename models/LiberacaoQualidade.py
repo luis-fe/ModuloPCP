@@ -104,14 +104,47 @@ class Liberacao():
 
         totalPc=consulta['Pçs'].sum()
 
+        record = self.recordRevisor()
+        revisorRecord = record['nomeRevisor'][0]
+        dataRecord = record['dataHora'][0]
+        PcsRecord = record['Pçs'][0]
+
         dados = {
             '0-Total Pçs': f'{totalPc} pcs',
-            '1-Detalhamento': consulta.to_dict(orient='records')}
+            '1-RevisorRecord':f'{revisorRecord}',
+            '2-PcsRecord': f'{PcsRecord}',
+            '3-dataRecord': f'{dataRecord}',
+            '4-Detalhamento': consulta.to_dict(orient='records')}
 
         return pd.DataFrame([dados])
 
+    def recordRevisor(self):
+        '''Metodo que retorna o recodr na revisao'''
 
+        sql = """
+        select
+            pr."codRevisor",
+            r."nomeRevisor",
+            pr."dataHora"::date,
+            sum("Pecas") as "Pçs"
+        from
+            pcp."ProdutividadeRevisor" pr
+        inner join
+            pcp."Revisor" r on r."codRevisor" = pr."codRevisor" 
+        group by 
+            pr."codRevisor" ,
+            r."nomeRevisor",
+            pr."dataHora"::date
+        order by 
+            sum("Pecas") desc 
+        limit 
+            1
+        """
 
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
 
 
 
