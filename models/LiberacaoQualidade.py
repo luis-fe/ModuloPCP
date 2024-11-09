@@ -111,7 +111,7 @@ class Liberacao():
 
         dados = {
             '0-Total Pçs': f'{totalPc} pcs',
-            '1-RevisorRecord':f'{revisorRecord}',
+            '1-RevisorRecord':f'👑{revisorRecord}',
             '2-PcsRecord': f'{PcsRecord}',
             '3-dataRecord': f'{dataRecord}',
             '4-Detalhamento': consulta.to_dict(orient='records')}
