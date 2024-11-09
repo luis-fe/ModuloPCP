@@ -109,6 +109,8 @@ class Liberacao():
         dataRecord = record['dataHora'][0]
         PcsRecord = record['Pçs'][0]
 
+        consulta.loc[consulta['nomeRevisor'] == revisorRecord, 'nomeRevisor'] = '👑' + consulta['nomeRevisor']
+
         dados = {
             '0-Total Pçs': f'{totalPc} pcs',
             '1-RevisorRecord':f'👑{revisorRecord}',
