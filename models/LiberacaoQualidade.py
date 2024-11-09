@@ -76,6 +76,43 @@ class Liberacao():
         return agora
 
 
+    def produtividadePeriodo(self, dataInicio, dataFinal):
+        '''Metodo que retorna a produtividade dos revisores no Periodo'''
+
+        sql = """
+        select
+            pr."codRevisor" ,
+            r."nomeRevisor",
+            sum("Pecas") as "Pçs"
+        from
+            pcp."ProdutividadeRevisor" pr
+        inner join
+            pcp."Revisor" r on r."codRevisor" = pr."codRevisor" 
+        where 
+            pr."dataHora"::date >= %s
+            and 
+            pr."dataHora"::date <= %s
+        group by 
+            pr."codRevisor" ,
+            r."nomeRevisor"
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn,params=(dataInicio, dataFinal))
+        consulta = consulta.sort_values(by=['Pçs'], ascending=False)
+
+
+        totalPc=consulta['Pçs'].sum()
+
+        dados = {
+            '0-Total Pçs': f'{totalPc} pcs',
+            '1-Detalhamento': consulta.to_dict(orient='records')}
+
+        return pd.DataFrame([dados])
+
+
+
+
 
 
 
