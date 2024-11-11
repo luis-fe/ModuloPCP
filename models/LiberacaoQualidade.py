@@ -34,7 +34,7 @@ class Liberacao():
 
         consultar2 = """
         select
-            "Ncarrinho"
+            "Ncarrinho",
             numeroop,
             cor ,
             tamanho,
