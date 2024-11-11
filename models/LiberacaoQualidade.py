@@ -35,7 +35,7 @@ class Liberacao():
         consultar2 = """
         select
             "Ncarrinho"
-            distinct numeroop,
+            numeroop,
             cor ,
             tamanho,
             count(codbarrastag) as "Pecas"
