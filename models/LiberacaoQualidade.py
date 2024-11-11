@@ -207,7 +207,9 @@ class Liberacao():
 
 
         conn = ConexaoPostgreWms.conexaoEngineWms()
-        consulta = pd.read_sql(consulta, conn)
+        conn2 = ConexaoPostgreWms.conexaoEngine()
+
+        consulta = pd.read_sql(consulta, conn2)
 
 
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
