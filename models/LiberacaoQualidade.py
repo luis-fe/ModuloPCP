@@ -186,7 +186,7 @@ class Liberacao():
 
         consulta2 = """
         select
-            "codreduzido"
+            "codreduzido",
             "Ncarrinho",
             numeroop,
             cor ,
