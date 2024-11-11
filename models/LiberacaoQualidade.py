@@ -214,7 +214,7 @@ class Liberacao():
 
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
 
-        consulta2 = pd.merge(consulta,consulta2,on=['numeroop','codreduzido'], how='left')
+        consulta2 = pd.merge(consulta2,consulta,on=['numeroop','codreduzido'], how='left')
         consulta2.fillna('-',inplace=True)
 
         return consulta2
