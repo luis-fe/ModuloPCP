@@ -186,7 +186,6 @@ class Liberacao():
         consulta2 = """
         select
             "codreduzido",
-            "Ncarrinho",
             numeroop,
             cor,
             tamanho,
@@ -197,7 +196,6 @@ class Liberacao():
             "Ncarrinho" = %s and codempresa = %s
             and (rq."statusNCarrinho" <> 'liberado' or rq."statusNCarrinho" is null)
         group by
-            "Ncarrinho",
             numeroop,
             cor,
             tamanho,
