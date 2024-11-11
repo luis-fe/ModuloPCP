@@ -31,9 +31,28 @@ class Liberacao():
 	        "Ncarrinho"
         """
 
+
+        consultar2 = """
+        select
+            "Ncarrinho"
+            distinct numeroop,
+            cor ,
+            tamanho,
+            count(codbarrastag) as "Pecas"
+        from
+            "off".reposicao_qualidade rq
+        where
+            "Ncarrinho" = %s and codempresa = %s
+            and (rq."statusNCarrinho" <> 'liberado' or rq."statusNCarrinho" is null)
+        group by
+            numeroop,
+            cor ,
+            tamanho
+        """
+
         conn = ConexaoPostgreWms.conexaoEngineWms()
 
-        consulta = pd.read_sql(consultar, conn, params=(self.Ncarrinho, self.empresa))
+        consulta = pd.read_sql(consultar2, conn, params=(self.Ncarrinho, self.empresa))
 
         return consulta
 
