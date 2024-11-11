@@ -216,6 +216,10 @@ class Liberacao():
 
         consulta2 = pd.merge(consulta2,consulta,on=['numeroop','codreduzido'], how='left')
         consulta2.fillna('-',inplace=True)
+        consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str)+'/'+consulta2['total_pcs'].astype(str)
+        consulta2 = consulta2.drop(['total_pcs', 'codreduzido','Pecas'], axis=1)
+
+
 
         return consulta2
 
