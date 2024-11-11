@@ -169,6 +169,54 @@ class Liberacao():
         return consulta
 
 
+    def detalharCarrinhoDesmembramento(self):
+        '''Metodo utilizado para detalhar o carrinho para fazer desmembramento'''
+
+        consulta = """
+        select
+            o.numeroop ,
+            o.codreduzido,
+            sum(total_pcs) as total_pcs 
+        from
+            "PCP".pcp.ordemprod o
+        group by
+            o.numeroop,
+	codreduzido
+        """
+
+        consulta2 = """
+        select
+            "codreduzido"
+            "Ncarrinho",
+            numeroop,
+            cor ,
+            tamanho,
+            count(codbarrastag) as "Pecas"
+        from
+            "off".reposicao_qualidade rq
+        where
+            "Ncarrinho" = %s and codempresa = %s
+            and (rq."statusNCarrinho" <> 'liberado' or rq."statusNCarrinho" is null)
+        group by
+            "Ncarrinho",
+            numeroop,
+            cor ,
+            tamanho,
+            codreduzido
+        """
+
+
+        conn = ConexaoPostgreWms.conexaoEngineWms()
+
+        consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
+
+        consulta2 = pd.merge(consulta,consulta2,on=['numeroop','codreduzido'], how='left')
+        consulta2.fillna('-',inplace=True)
+
+        return consulta2
+
+
+
 
 
 
