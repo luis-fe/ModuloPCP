@@ -168,7 +168,6 @@ class Liberacao():
 
         return consulta
 
-
     def detalharCarrinhoDesmembramento(self):
         '''Metodo utilizado para detalhar o carrinho para fazer desmembramento'''
 
@@ -181,7 +180,7 @@ class Liberacao():
             "PCP".pcp.ordemprod o
         group by
             o.numeroop,
-	codreduzido
+            codreduzido
         """
 
         consulta2 = """
@@ -189,7 +188,7 @@ class Liberacao():
             "codreduzido",
             "Ncarrinho",
             numeroop,
-            cor ,
+            cor,
             tamanho,
             count(codbarrastag) as "Pecas"
         from
@@ -200,28 +199,36 @@ class Liberacao():
         group by
             "Ncarrinho",
             numeroop,
-            cor ,
+            cor,
             tamanho,
             codreduzido
         """
 
-
+        # Conexões com o banco
         conn = ConexaoPostgreWms.conexaoEngineWms()
         conn2 = ConexaoPostgreWms.conexaoEngine()
 
+        # Executando consultas SQL
         consulta = pd.read_sql(consulta, conn2)
-
-
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
 
-        consulta2 = pd.merge(consulta2,consulta,on=['numeroop','codreduzido'], how='left')
-        consulta2.fillna('-',inplace=True)
-        consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str)+'/'+consulta2['total_pcs'].astype(str)
-        consulta2 = consulta2.drop(['total_pcs', 'codreduzido','Pecas'], axis=1)
+        # Fazendo merge entre as consultas
+        consulta2 = pd.merge(consulta2, consulta, on=['numeroop', 'codreduzido'], how='left')
+        consulta2.fillna('-', inplace=True)
 
+        # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
+        consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str) + '/' + consulta2['total_pcs'].astype(str)
+        consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
+        # Agrupando e criando a coluna 'tamanhos-PcBipadas/Total' com listas de pares tamanho-PcBipadas/Total
+        consulta2 = (
+            consulta2.groupby(['Ncarrinho', 'numeroop', 'cor'])
+            .apply(lambda x: [f"{row['tamanho']}-{row['PcBipadas/Total']}" for _, row in x.iterrows()])
+            .reset_index(name="tamanhos-PcBipadas/Total")
+        )
 
         return consulta2
+
 
 
 
