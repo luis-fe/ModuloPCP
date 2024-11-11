@@ -45,6 +45,7 @@ class Liberacao():
             "Ncarrinho" = %s and codempresa = %s
             and (rq."statusNCarrinho" <> 'liberado' or rq."statusNCarrinho" is null)
         group by
+            "Ncarrinho",
             numeroop,
             cor ,
             tamanho
