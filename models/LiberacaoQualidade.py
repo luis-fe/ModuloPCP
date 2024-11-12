@@ -225,11 +225,12 @@ class Liberacao():
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
         filtro = consulta2['numeroop'][0]
 
-        consulta = consulta[consulta['numeroop']==filtro].reset_index()
 
 
         # Fazendo merge entre as consultas
         consulta2 = pd.merge(consulta, consulta2, on=['numeroop', 'codreduzido'], how='left')
+        consulta2 = consulta2[consulta2['numeroop']==filtro].reset_index()
+
         consulta2['Pecas'].fillna(0,inplace=True)
         consulta2.fillna('-', inplace=True)
 
