@@ -235,8 +235,10 @@ class Liberacao():
         consulta2.fillna('-', inplace=True)
 
         # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
+        consulta2['Pecas'] = consulta2['Pecas'].astype(str)
+        consulta2['Pecas'] = consulta2['Pecas'].str.replace('.0', '')
         consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str) + '/' + consulta2['total_pcs'].astype(str)
-        #consulta2['PcBipadas/Total'] = consulta2['PcBipadas/Total'].str.replace('.0', '')
+        consulta2['PcBipadas/Total'] = consulta2['PcBipadas/Total'].str.replace('.0', '')
 
         consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
