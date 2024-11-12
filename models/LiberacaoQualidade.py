@@ -1,5 +1,7 @@
+import gc
+
 import pandas as pd
-from connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime
 import pytz
 class Liberacao():
@@ -172,23 +174,31 @@ class Liberacao():
         '''Metodo utilizado para detalhar o carrinho para fazer desmembramento'''
 
         consulta = """
-        select
-            o.numeroop ,
-            o.codreduzido,
-            sum(total_pcs) as total_pcs 
-        from
-            "PCP".pcp.ordemprod o
-        group by
-            o.numeroop,
-            codreduzido
+            select
+                o.numeroop ,
+                ic."codCor" as cor  ,
+                o."codSortimento" ,
+                o.codreduzido,
+                o."seqTamanho" as "codSeqTamanho",
+                sum(total_pcs) as total_pcs 
+            from
+                "PCP".pcp.ordemprod o
+            inner join
+                "PCP".pcp.itens_csw ic on ic.codigo = o.codreduzido 
+            group by
+                o.numeroop,
+                codreduzido,
+                "seqTamanho",
+                ic."codCor" ,
+                o."codSortimento" 
+            order by 
+                o."codSortimento" asc 
         """
 
         consulta2 = """
         select
             "codreduzido",
             numeroop,
-            cor,
-            tamanho,
             count(codbarrastag) as "Pecas"
         from
             "off".reposicao_qualidade rq
@@ -197,8 +207,6 @@ class Liberacao():
             and (rq."statusNCarrinho" <> 'liberado' or rq."statusNCarrinho" is null)
         group by
             numeroop,
-            cor,
-            tamanho,
             codreduzido
         """
 
@@ -208,6 +216,11 @@ class Liberacao():
 
         # Executando consultas SQL
         consulta = pd.read_sql(consulta, conn2)
+
+        tamanhos = self.obterDescricaoTamCsw()
+        consulta = pd.merge(consulta, tamanhos, on='codSeqTamanho', how='left')
+
+
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
 
         # Fazendo merge entre as consultas
@@ -227,6 +240,27 @@ class Liberacao():
 
         return consulta2
 
+    def obterDescricaoTamCsw(self):
+        sql3 = """
+        	SELECT
+                t.sequencia as codSeqTamanho,
+                t.descricao as tamanho
+            FROM
+                tcp.Tamanhos t
+            WHERE
+                t.codEmpresa = 1
+        """
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql3)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta3 = pd.DataFrame(rows, columns=colunas)
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+        consulta3['codSeqTamanho'] = consulta3['codSeqTamanho'].astype(str)
+        return consulta3
 
 
 
