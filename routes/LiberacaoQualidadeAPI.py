@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models import LiberacaoQualidade as lib
+from flask_cors import CORS
 
 
 LiberacaoQualidade_Routes = Blueprint('LiberacaoQualidade', __name__)
+CORS(LiberacaoQualidade_Routes)
 
 def token_required(f):
     @wraps(f)
