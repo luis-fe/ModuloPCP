@@ -225,6 +225,7 @@ class Liberacao():
 
         # Fazendo merge entre as consultas
         consulta2 = pd.merge(consulta, consulta2, on=['numeroop', 'codreduzido'], how='left')
+        consulta2['Pecas'].fillna(0,inplace=True)
         consulta2.fillna('-', inplace=True)
 
         # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
