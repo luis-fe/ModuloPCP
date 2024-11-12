@@ -247,6 +247,9 @@ class Liberacao():
         consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
         # Agrupando e criando a coluna 'tamanhos-PcBipadas/Total' com listas de pares tamanho-PcBipadas/Total
+
+        consulta2['cor'] = consulta2["codSortimento"].astype(str) +'/'+consulta2["cor"].astype(str)
+
         consulta2 = (
             consulta2.groupby(['numeroop', 'cor'])
             .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
