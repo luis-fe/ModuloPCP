@@ -247,7 +247,7 @@ class Liberacao():
 
         # Renomeando a coluna para 'tamanhos-PcBipadas/Total'
         consulta2 = consulta2.rename(columns={0: "tamanhos-PcBipadas/Total"})
-        consulta2['tamanhos-PcBipadas/Total'] = consulta2['tamanhos-PcBipadas/Total'].str.repalce('.0','')
+        consulta2['tamanhos-PcBipadas/Total'] = consulta2['tamanhos-PcBipadas/Total'].str.replace('.0','')
 
         return consulta2
 
