@@ -234,7 +234,7 @@ class Liberacao():
         # Agrupando e criando a coluna 'tamanhos-PcBipadas/Total' com listas de pares tamanho-PcBipadas/Total
         consulta2 = (
             consulta2.groupby([ 'numeroop', 'cor'])
-            .apply(lambda x: [f"{row['tamanho']}-{row['PcBipadas/Total']}" for _, row in x.iterrows()])
+            .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
             .reset_index(name="tamanhos-PcBipadas/Total")
         )
 
