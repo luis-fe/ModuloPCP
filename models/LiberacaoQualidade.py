@@ -231,7 +231,7 @@ class Liberacao():
         consulta2 = pd.merge(consulta, consulta2, on=['numeroop', 'codreduzido'], how='left')
         consulta2 = consulta2[consulta2['numeroop']==filtro].reset_index()
 
-        consulta2['Pecas'] = consulta2['Pecas'].fillna(0,inplace=True)
+        consulta2['Pecas'].fillna(0,inplace=True)
         consulta2.fillna('-', inplace=True)
 
         # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
