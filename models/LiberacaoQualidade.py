@@ -237,6 +237,9 @@ class Liberacao():
         # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
         consulta2['Pecas'] = consulta2['Pecas'].astype(str)
         consulta2['Pecas'] = consulta2['Pecas'].str.replace(r'\.0$', '', regex=True)
+
+        consulta2['total_pcs'] = consulta2['total_pcs'].astype(str)
+        consulta2['total_pcs'] = consulta2['total_pcs'].str.replace(r'\.0$', '', regex=True)
         #consulta2['Pecas'] = consulta2['Pecas'].str.replace('.0', '')
         consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str) + '/' + consulta2['total_pcs'].astype(str)
         #consulta2['PcBipadas/Total'] = consulta2['PcBipadas/Total'].str.replace('.0', '')
