@@ -233,6 +233,8 @@ class Liberacao():
 
         consulta2['Pecas'].fillna(0,inplace=True)
         consulta2.fillna('-', inplace=True)
+        consulta2['Pecas'] = consulta2['Pecas'].str.replace('.0', '')
+        consulta2['total_pcs'] = consulta2['total_pcs'].str.replace('.0', '')
 
         # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
         consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str) + '/' + consulta2['total_pcs'].astype(str)
@@ -247,7 +249,7 @@ class Liberacao():
 
         # Renomeando a coluna para 'tamanhos-PcBipadas/Total'
         consulta2 = consulta2.rename(columns={0: "tamanhos-PcBipadas/Total"})
-        consulta2['tamanhos-PcBipadas/Total'] = consulta2['tamanhos-PcBipadas/Total'].str.replace('.0','')
+
 
         return consulta2
 
