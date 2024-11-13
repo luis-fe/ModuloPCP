@@ -236,6 +236,8 @@ class Liberacao():
         consulta2['PcBipadas/Total'] = consulta2['Pecas'] + '/' + consulta2['total_pcs']
 
         # Ajustando formato da cor e removendo colunas não necessárias
+        consulta2['codSortimento'] = consulta2['codSortimento'].astype(str).str.zfill(2)
+
         consulta2['cor'] = consulta2["codSortimento"].astype(str) + '/' + consulta2["cor"].astype(str)
         #consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
