@@ -250,7 +250,7 @@ class Liberacao():
 
         consulta2['cor'] = consulta2["codSortimento"].astype(str) +'/'+consulta2["cor"].astype(str)
 
-        consulta2 = (
+        consulta3 = (
             consulta2.groupby(['numeroop', 'cor'])
             .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
             .reset_index()
@@ -265,15 +265,15 @@ class Liberacao():
         subtotal['cor'] = 'total'
 
         # Renomeando a coluna para 'tamanhos-PcBipadas/Total'
-        consulta2 = consulta2.rename(columns={0: "tamanhos-PcBipadas/Total"})
-        subtotal = consulta2.rename(columns={0: "tamanhos-PcBipadas/Total"})
+        consulta3 = consulta3.rename(columns={0: "tamanhos-PcBipadas/Total"})
+        subtotal = subtotal.rename(columns={0: "tamanhos-PcBipadas/Total"})
 
-        consulta2 = pd.concat([consulta2, subtotal], ignore_index=True)
-
-
+        consulta3 = pd.concat([consulta3, subtotal], ignore_index=True)
 
 
-        return consulta2
+
+
+        return consulta3
 
     def obterDescricaoTamCsw(self):
         sql3 = """
