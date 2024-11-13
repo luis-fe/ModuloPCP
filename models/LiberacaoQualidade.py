@@ -237,7 +237,7 @@ class Liberacao():
 
         # Ajustando formato da cor e removendo colunas não necessárias
         consulta2['cor'] = consulta2["codSortimento"].astype(str) + '/' + consulta2["cor"].astype(str)
-        consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
+        #consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
         # Agrupamento principal
         consulta3 = (
@@ -249,7 +249,7 @@ class Liberacao():
         # Calcular subtotal para cada `numeroop`
         subtotal = (
             consulta2.groupby(['numeroop'])
-            .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
+            .apply(lambda x: [f"{row['tamanho']} : {row['Pecas']}" for _, row in x.iterrows()])
             .reset_index()
         )
 
