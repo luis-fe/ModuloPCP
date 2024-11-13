@@ -249,11 +249,13 @@ class Liberacao():
         # Calcular subtotal por combinação de 'numeroop' e 'tamanho'
         consulta2['Pecas'] = consulta2['Pecas'].astype(int)
         consulta2['subtotal'] = consulta2.groupby(['tamanho'])['Pecas'].transform('sum')
+        consulta2['Pecas'] = consulta2['total_pcs'].astype(int)
+        consulta2['subtotal2'] = consulta2.groupby(['tamanho'])['total_pcs'].transform('sum')
 
         # Criar DataFrame de subtotal, agrupando por 'numeroop' e removendo duplicatas em 'tamanho'
         subtotal = (
             consulta2.groupby('numeroop')
-            .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}" for _, row in
+            .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}/{row['subtotal2']}" for _, row in
                               x.drop_duplicates(subset='tamanho').iterrows()])
             .reset_index()
         )
