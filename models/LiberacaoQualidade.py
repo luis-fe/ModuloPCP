@@ -250,10 +250,11 @@ class Liberacao():
         consulta2['Pecas'] = consulta2['Pecas'].astype(int)
         consulta2['subtotal'] = consulta2.groupby(['tamanho'])['Pecas'].transform('sum')
 
-        # Criar DataFrame de subtotal, agrupando apenas por 'numeroop'
+        # Criar DataFrame de subtotal, agrupando por 'numeroop' e removendo duplicatas em 'tamanho'
         subtotal = (
             consulta2.groupby('numeroop')
-            .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}" for _, row in x.iterrows()])
+            .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}" for _, row in
+                              x.drop_duplicates(subset='tamanho').iterrows()])
             .reset_index()
         )
 
