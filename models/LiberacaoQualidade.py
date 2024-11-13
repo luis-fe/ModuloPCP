@@ -173,6 +173,7 @@ class Liberacao():
     def detalharCarrinhoDesmembramento(self):
         '''Metodo utilizado para detalhar o carrinho para fazer desmembramento'''
 
+        # Consultas SQL
         consulta = """
             select
                 o.numeroop ,
@@ -216,62 +217,51 @@ class Liberacao():
 
         # Executando consultas SQL
         consulta = pd.read_sql(consulta, conn2)
-
         tamanhos = self.obterDescricaoTamCsw()
         consulta = pd.merge(consulta, tamanhos, on='codSeqTamanho', how='left')
-
-
 
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
         filtro = consulta2['numeroop'][0]
 
-
-
-        # Fazendo merge entre as consultas
+        # Merge entre consultas
         consulta2 = pd.merge(consulta, consulta2, on=['numeroop', 'codreduzido'], how='left')
-        consulta2 = consulta2[consulta2['numeroop']==filtro].reset_index()
+        consulta2 = consulta2[consulta2['numeroop'] == filtro].reset_index()
 
-        consulta2['Pecas'].fillna(0,inplace=True)
+        consulta2['Pecas'].fillna(0, inplace=True)
         consulta2.fillna('-', inplace=True)
 
-        # Criando a coluna 'PcBipadas/Total' e removendo colunas não desejadas
-        consulta2['Pecas'] = consulta2['Pecas'].astype(str)
-        consulta2['Pecas'] = consulta2['Pecas'].str.replace(r'\.0$', '', regex=True)
+        # Coluna 'PcBipadas/Total'
+        consulta2['Pecas'] = consulta2['Pecas'].astype(int).astype(str)
+        consulta2['total_pcs'] = consulta2['total_pcs'].astype(int).astype(str)
+        consulta2['PcBipadas/Total'] = consulta2['Pecas'] + '/' + consulta2['total_pcs']
 
-        consulta2['total_pcs'] = consulta2['total_pcs'].astype(str)
-        consulta2['total_pcs'] = consulta2['total_pcs'].str.replace(r'\.0$', '', regex=True)
-        #consulta2['Pecas'] = consulta2['Pecas'].str.replace('.0', '')
-        consulta2['PcBipadas/Total'] = consulta2['Pecas'].astype(str) + '/' + consulta2['total_pcs'].astype(str)
-        #consulta2['PcBipadas/Total'] = consulta2['PcBipadas/Total'].str.replace('.0', '')
-
+        # Ajustando formato da cor e removendo colunas não necessárias
+        consulta2['cor'] = consulta2["codSortimento"].astype(str) + '/' + consulta2["cor"].astype(str)
         consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
-        # Agrupando e criando a coluna 'tamanhos-PcBipadas/Total' com listas de pares tamanho-PcBipadas/Total
-
-        consulta2['cor'] = consulta2["codSortimento"].astype(str) +'/'+consulta2["cor"].astype(str)
-
+        # Agrupamento principal
         consulta3 = (
             consulta2.groupby(['numeroop', 'cor'])
             .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
             .reset_index()
         )
 
+        # Calcular subtotal para cada `numeroop`
         subtotal = (
             consulta2.groupby(['numeroop'])
             .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
             .reset_index()
         )
 
+        # Adicionar coluna `cor` com o valor "total" para os subtotais
         subtotal['cor'] = 'total'
 
-        # Renomeando a coluna para 'tamanhos-PcBipadas/Total'
+        # Renomeando colunas para compatibilidade de concatenação
         consulta3 = consulta3.rename(columns={0: "tamanhos-PcBipadas/Total"})
         subtotal = subtotal.rename(columns={0: "tamanhos-PcBipadas/Total"})
 
+        # Concatenando consulta3 e subtotal
         consulta3 = pd.concat([consulta3, subtotal], ignore_index=True)
-
-
-
 
         return consulta3
 
