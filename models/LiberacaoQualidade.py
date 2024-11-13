@@ -256,8 +256,21 @@ class Liberacao():
             .reset_index()
         )
 
+        subtotal = (
+            consulta2.groupby(['numeroop'])
+            .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
+            .reset_index()
+        )
+
+        subtotal['cor'] = 'total'
+
         # Renomeando a coluna para 'tamanhos-PcBipadas/Total'
         consulta2 = consulta2.rename(columns={0: "tamanhos-PcBipadas/Total"})
+        subtotal = consulta2.rename(columns={0: "tamanhos-PcBipadas/Total"})
+
+        consulta2 = pd.concat([consulta2, subtotal], ignore_index=True)
+
+
 
 
         return consulta2
