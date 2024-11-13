@@ -247,6 +247,7 @@ class Liberacao():
         )
 
         # Calcular subtotal por combinação de 'numeroop' e 'tamanho'
+        consulta2['Pecas'] = consulta2['Pecas'].astype(int)
         consulta2['subtotal'] = consulta2.groupby(['tamanho'])['Pecas'].transform('sum')
 
         # Criar DataFrame de subtotal, agrupando apenas por 'numeroop'
