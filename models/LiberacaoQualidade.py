@@ -246,10 +246,13 @@ class Liberacao():
             .reset_index()
         )
 
-        # Calcular subtotal para cada `numeroop`
+        # Calcular subtotal por combinação de 'numeroop' e 'tamanho'
+        consulta2['subtotal'] = consulta2.groupby(['numeroop', 'tamanho'])['Pecas'].transform('sum')
+
+        # Criar DataFrame de subtotal, agrupando apenas por 'numeroop'
         subtotal = (
-            consulta2.groupby(['numeroop'])
-            .apply(lambda x: [f"{row['tamanho']} : {row['Pecas']}" for _, row in x.iterrows()])
+            consulta2.groupby('numeroop')
+            .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}" for _, row in x.iterrows()])
             .reset_index()
         )
 
