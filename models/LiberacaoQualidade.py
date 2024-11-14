@@ -250,6 +250,7 @@ class Liberacao():
 
         # Calcular subtotal por combinação de 'numeroop' e 'tamanho'
         consulta2['Pecas'] = consulta2['Pecas'].astype(int)
+        totalPcCarrinho = consulta2['Pecas'].sum()
         consulta2['subtotal'] = consulta2.groupby(['tamanho'])['Pecas'].transform('sum')
         consulta2['total_pcs'] = consulta2['total_pcs'].astype(int)
         consulta2['subtotal2'] = consulta2.groupby(['tamanho'])['total_pcs'].transform('sum')
@@ -271,6 +272,7 @@ class Liberacao():
 
         # Concatenando consulta3 e subtotal
         consulta3 = pd.concat([consulta3, subtotal], ignore_index=True)
+        consulta3['totalPcCarrinho'] = totalPcCarrinho
 
         return consulta3
 
