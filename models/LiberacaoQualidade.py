@@ -176,7 +176,7 @@ class Liberacao():
         # Consultas SQL
         consulta = """
             select
-                o.numeroop ,
+                substring(numeroop,0,7) as numeroop ,
                 ic."codCor" as cor  ,
                 o."codSortimento" ,
                 o.codreduzido,
@@ -199,7 +199,7 @@ class Liberacao():
         consulta2 = """
         select
             "codreduzido",
-            numeroop,
+            substring(numeroop,0,7) as numeroop,
             count(codbarrastag) as "Pecas"
         from
             "off".reposicao_qualidade rq
