@@ -217,6 +217,11 @@ class Liberacao():
 
         # Executando consultas SQL
         consulta = pd.read_sql(consulta, conn2)
+
+        consulta = consulta.groupby(['numeroop', 'cor','codSortimento','codreduzido','codSeqTamanho']).agg(
+            {'total_pcs': 'sum'}).reset_index()
+
+
         tamanhos = self.obterDescricaoTamCsw()
         consulta = pd.merge(consulta, tamanhos, on='codSeqTamanho', how='left')
 
