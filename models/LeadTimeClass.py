@@ -494,7 +494,11 @@ class LeadTimeCalculator:
             'LeadTimePonderado(categoria)'].round(2)
         leadTime['LeadTimePonderado(diasCorridos)'] = leadTime['LeadTimePonderado(diasCorridos)'].round()
 
-        leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
+        try:
+            leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean().round()
+        except:
+            leadTimeMedioGeral = leadTime['LeadTime(diasCorridos)'].mean()
+
 
         leadTime_ = leadTime.groupby(["categoria"]).agg({"LeadTime(diasCorridos)": "mean", "Realizado": "sum",
                                                          "LeadTimePonderado(diasCorridos)": 'sum'}).reset_index()
