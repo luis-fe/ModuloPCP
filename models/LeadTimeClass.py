@@ -176,10 +176,9 @@ class LeadTimeCalculator:
         saida['id'] = id
         saida['diaAtual'] = self.obterdiaAtual()
         self.deletar_backup(id,"leadTimeFases")
-        try:
-            ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','replace')
-        except:
-            print(f'erro, {saida}')
+
+        ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
+
         return saida
 
 
