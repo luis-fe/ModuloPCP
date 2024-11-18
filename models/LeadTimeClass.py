@@ -144,10 +144,11 @@ class LeadTimeCalculator:
         # Processar os dados
         entrada['seqRoteiro'] = entrada['seqRoteiro'] + 1
         entrada.rename(columns={'dataBaixa': 'dataEntrada'}, inplace=True)
-        saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
-        saida = saida.drop_duplicates()
         print('saida')
         print(saida)
+        saida = pd.merge(saida, entrada, on=['numeroop', 'seqRoteiro'])
+        saida = saida.drop_duplicates()
+
         saida = pd.merge(saida,sqlFasesCsw,on='codfase')
 
         # Verifica e converte para datetime se necessário
