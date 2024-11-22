@@ -522,17 +522,33 @@ class MonitorPedidosOps():
             return consulta
 
     def ObtendoEntregasSolicitadas(self):
-        consultasqlCsw = """
-        select 
-            top 100000 CAST(codPedido as varchar) as codPedido, 
-            numeroEntrega as entregas_Solicitadas 
-        from 
-            asgo_ped.Entregas 
-        where 
-            codEmpresa = 1  
-        order by 
-            codPedido desc
-        """
+
+        if self.empresa == 4 or self.empresa == '4':
+
+            consultasqlCsw = """
+            select 
+                top 100000 CAST(codPedido as varchar) as codPedido, 
+                numeroEntrega as entregas_Solicitadas 
+            from 
+                asgo_ped.Entregas 
+            where 
+                codEmpresa = 4 
+            order by 
+                codPedido desc
+            """
+
+        else:
+            consultasqlCsw = """
+            select 
+                top 100000 CAST(codPedido as varchar) as codPedido, 
+                numeroEntrega as entregas_Solicitadas 
+            from 
+                asgo_ped.Entregas 
+            where 
+                codEmpresa = 1  
+            order by 
+                codPedido desc
+            """
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(consultasqlCsw)
