@@ -262,6 +262,7 @@ class MonitorPedidosOps():
             pedidos = pd.concat([pedidos1, pedidos2])
 
         except:
+            pedidos['SituacaoDistrib'] = 'Distribuido1'
             print('segue o baile .....')
 
         # 23- Salvando os dados gerados em csv
