@@ -469,25 +469,49 @@ class MonitorPedidosOps():
             return consulta
 
     def ObtendoEntregas_Enviados(self):
-        consultasqlCsw = """
-            select  
-                top 300000 codPedido, 
-                count(codNumNota) as entregas_enviadas, 
-                max(dataFaturamento) as ultimo_fat 
-            from 
-                fat.NotaFiscal  
-            where 
-                codEmpresa = 1 
-                and codRepresentante
-                not in ('200','800','300','600','700','511') 
-                and situacao = 2 
-                and codpedido> 0 
-                and dataFaturamento > '2020-01-01' 
-            group by 
-                codPedido 
-            order by 
-                codPedido desc
-        """
+
+        if self.empresa == 4 or self.empresa == '4' :
+            consultasqlCsw = """
+                select  
+                    top 300000 codPedido, 
+                    count(codNumNota) as entregas_enviadas, 
+                    max(dataFaturamento) as ultimo_fat 
+                from 
+                    fat.NotaFiscal  
+                where 
+                    codEmpresa = 4 
+                    and codRepresentante
+                    not in ('200','800','300','600','700','511') 
+                    and situacao = 2 
+                    and codpedido> 0 
+                    and dataFaturamento > '2020-01-01' 
+                group by 
+                    codPedido 
+                order by 
+                    codPedido desc
+            """
+        else:
+            consultasqlCsw = """
+                select  
+                    top 300000 codPedido, 
+                    count(codNumNota) as entregas_enviadas, 
+                    max(dataFaturamento) as ultimo_fat 
+                from 
+                    fat.NotaFiscal  
+                where 
+                    codEmpresa = 1 
+                    and codRepresentante
+                    not in ('200','800','300','600','700','511') 
+                    and situacao = 2 
+                    and codpedido> 0 
+                    and dataFaturamento > '2020-01-01' 
+                group by 
+                    codPedido 
+                order by 
+                    codPedido desc
+            """
+
+
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(consultasqlCsw)
