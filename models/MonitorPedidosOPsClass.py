@@ -257,9 +257,12 @@ class MonitorPedidosOps():
         pedidos1.loc[:, 'SituacaoDistrib'] = 'Redistribui'
         pedidos1 = self.Ciclo2(pedidos1, avaliar_grupo)
         pedidos2 = pedidos[pedidos['totalPçDis'] > 0]
-        pedidos2.loc[:,'SituacaoDistrib'] ='Distribuido1'
+        try:
+            pedidos2.loc[:,'SituacaoDistrib'] ='Distribuido1'
+            pedidos = pd.concat([pedidos1, pedidos2])
 
-        pedidos = pd.concat([pedidos1, pedidos2])
+        except:
+            print('segue o baile .....')
 
         # 23- Salvando os dados gerados em csv
         # retirar as seguintes colunas: StatusSugestao, situacaobloq, dias_a_adicionar, Resultado    monitor.fillna('', inplace=True)
