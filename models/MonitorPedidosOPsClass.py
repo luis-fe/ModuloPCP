@@ -1613,7 +1613,7 @@ class MonitorPedidosOps():
 
 
         monitor1 = pd.merge(monitor1, self.consultaOPReduzido(),on=['numeroop','codreduzido'],how='left')
-        monitor1['qtdOP']  = monitor1['qtdOP'].fillna(0,inplace=True)
+        monitor1['qtdOP'].fillna(0,inplace=True)
 
         monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
         monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
