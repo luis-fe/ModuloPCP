@@ -1589,6 +1589,9 @@ class MonitorPedidosOps():
                 rows = cursor_csw.fetchall()
                 get = pd.DataFrame(rows, columns=colunas)
                 get['codFaseAtual'] = get['codFaseAtual'].astype(str)
+                get['codFaseAtual'] = get['codFaseAtual'].str.repalce('.0','')
+
+
                 del rows
 
                 cursor_csw.execute(sqlCswPrioridade)
