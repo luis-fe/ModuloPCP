@@ -1606,6 +1606,11 @@ class MonitorPedidosOps():
         monitor1['codFaseAtual'] = monitor1['codFaseAtual'].astype(str)
         monitor1['codFaseAtual'] = monitor1['codFaseAtual'].str.replace('.0', '', regex=False)
 
+
+        monitor1 = monitor1.rename(columns={'codProduto': 'codreduzido'})
+        monitor1['codreduzido'] = monitor1['codreduzido'].astype(str)
+
+
         monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
         monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
         monitor1.fillna('-', inplace=True)
