@@ -1521,13 +1521,13 @@ class MonitorPedidosOps():
 
         return pedidos
 
-
     def ops_tamanho_cor(self):
         '''Metodo para explodir por tam e cor o monitor'''
         descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
         monitor = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
         data = monitor[
-            (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
+            (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (
+                        monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
         unique_counts = data.drop_duplicates(subset=['numeroop', 'codPedido']).groupby('numeroop')['codPedido'].count()
 
@@ -1537,7 +1537,8 @@ class MonitorPedidosOps():
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
 
         monitor1 = monitor[
-            ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos",'nomeSKU','codCor']]
+            ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos",
+             'nomeSKU', 'codCor']]
 
         monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
 
@@ -1555,9 +1556,9 @@ class MonitorPedidosOps():
 
         monitor1 = monitor1[monitor1['numeroop'] != '-']
 
-        monitor1 = monitor1.groupby(['numeroop','nomeSKU']).agg(
+        monitor1 = monitor1.groupby(['numeroop', 'nomeSKU']).agg(
             {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
-             "QtdSaldo": "sum",'codCor':'first'}).reset_index()
+             "QtdSaldo": "sum", 'codCor': 'first'}).reset_index()
 
         monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
 
@@ -1569,15 +1570,15 @@ class MonitorPedidosOps():
 
         sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
         sqlCswPrioridade = """
-                           SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao,t.qtdOP, (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
-                       left JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
-                       join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
-                       left join (
-                       SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
-                       where codempresa = 1 group by numeroop
-                       ) t on t.numeroop =op.numeroop
-                       WHERE op.situacao = 3 and op.codEmpresa = 1
-                           """
+                             SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao,t.qtdOP, (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
+                         left JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
+                         join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
+                         left join (
+                         SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
+                         where codempresa = 1 group by numeroop
+                         ) t on t.numeroop =op.numeroop
+                         WHERE op.situacao = 3 and op.codEmpresa = 1
+                             """
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor_csw:
