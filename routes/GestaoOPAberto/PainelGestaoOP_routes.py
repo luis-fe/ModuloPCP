@@ -42,6 +42,9 @@ def CargadasOPs():
 
     print(f'foi classficado por {classificar}')
     client_ip = request.remote_addr
+
+
+
     datainicio = controle.obterHoraAtual()
     tempo = controle.TempoUltimaAtualizacaoPCP(datainicio,rotina)
     limite = 60
