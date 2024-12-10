@@ -1599,6 +1599,8 @@ class MonitorPedidosOps():
                 get2 = pd.DataFrame(rows, columns=colunas)
                 del rows
         monitor1['codFaseAtual'] = monitor1['codFaseAtual'].astype(str)
+        monitor1['codFaseAtual'] = monitor1['codFaseAtual'].str.replace('.0', '', regex=False)
+
         monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
         monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
         monitor1.fillna('-', inplace=True)
