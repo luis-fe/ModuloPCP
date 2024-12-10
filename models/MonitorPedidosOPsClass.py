@@ -1543,7 +1543,7 @@ class MonitorPedidosOps():
 
         monitor1 = monitor[
             ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos",
-             'nomeSKU', 'codCor']]
+             'nomeSKU', 'codCor','codProduto']]
 
         monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
 
@@ -1563,7 +1563,7 @@ class MonitorPedidosOps():
 
         monitor1 = monitor1.groupby(['numeroop', 'nomeSKU']).agg(
             {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
-             "QtdSaldo": "sum", 'codCor': 'first'}).reset_index()
+             "QtdSaldo": "sum", 'codCor': 'first','codProduto':'first'}).reset_index()
 
         monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
 
@@ -1619,6 +1619,24 @@ class MonitorPedidosOps():
         return pd.DataFrame([dados])
 
 
+    def consultaOPReduzido(self):
+        '''Metodo utilizado para consultar as op a nivel de reduzido '''
+
+        sql = """
+        select
+            numeroop,
+            codreduzido,
+            "seqTamanho", 
+            "qtdAcumulada" as qtdOP
+        from
+            "PCP".pcp.ordemprod o
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
 
 
 
