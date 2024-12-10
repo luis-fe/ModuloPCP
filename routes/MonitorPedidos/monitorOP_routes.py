@@ -154,3 +154,38 @@ def post_Op_tam_cor():
     #thread.start()
     return response
 
+
+@MonitorOp_routes.route('/pcp/api/Op_tam_corPedidos', methods=['POST'])
+@token_required
+def post_Op_tam_corPedidos():
+    data = request.get_json()
+
+    dataInico = data.get('dataInico')
+    dataFim = data.get('dataFim')
+    arrayPedidos = data.get('arrayPedidos')
+
+
+    empresa = 1
+    monitor = MonitorPedidosOPsClass.MonitorPedidosOps(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
+                                                       None, None, None, None, None)
+    dados = monitor.ops_tamanho_cor_Pedidos(arrayPedidos)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+
+    # Retorna os dados JSON para o cliente
+    response = jsonify(OP_data)
+
+    # Após retornar a resposta, reiniciar o app em uma nova thread
+    #porta_atual = 8000  # Substitua pela porta correta que você está utilizando
+    #thread = threading.Thread(target=monitor.reiniciandoAPP(), args=(porta_atual,))
+    #thread.start()
+    return response

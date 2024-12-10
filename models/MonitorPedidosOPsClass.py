@@ -1615,8 +1615,6 @@ class MonitorPedidosOps():
         monitor1 = pd.merge(monitor1, self.consultaOPReduzido(),on=['numeroop','codreduzido'],how='left')
         monitor1['qtdOP'].fillna(0,inplace=True)
 
-        monitor1 = monitor1[monitor1['qtdOP']>0].reset_index()
-
         monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
         monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
         monitor1.fillna('-', inplace=True)
@@ -1648,6 +1646,125 @@ class MonitorPedidosOps():
         consulta = pd.read_sql(sql,conn)
 
         return consulta
+
+
+    def ops_tamanho_cor_Pedidos(self,arrayPedidos):
+        '''Metodo para explodir por tam e cor o monitor'''
+        descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
+
+        arrayPedidos = pd.DataFrame(arrayPedidos, columns=['codPedido'])
+
+        monitor = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
+
+        monitor['codPedido'] = monitor['codPedido'].astype(str)
+        arrayPedidos['codPedido'] = arrayPedidos['codPedido'].astype(str)
+
+        monitor = pd.merge(monitor,arrayPedidos,on='codPedido')
+
+
+        monitor['numeroOP||codProduto'] = monitor['numeroop'] + monitor['codProduto'].astype(str)
+
+
+
+
+        data = monitor[
+            (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (
+                        monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
+        # Contar a quantidade de pedidos distintos para cada 'numeroop'
+
+        data['numeroOP||codProduto'] = data['numeroop'] + data['codProduto'].astype(str)
+        unique_counts = data.drop_duplicates(subset=['numeroop','numeroOP||codProduto', 'codPedido']).groupby('numeroOP||codProduto')['codPedido'].count()
+
+        # Adicionar essa contagem ao DataFrame original
+        monitor['Ocorrencia Pedidos'] = monitor['numeroOP||codProduto'].map(unique_counts)
+
+        # Contar a quantidade de pedidos distintos para cada 'numeroop'
+
+        monitor1 = monitor[
+            ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos",
+             'nomeSKU', 'codCor','codProduto']]
+
+        monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
+
+        # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
+        monitor1['dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce')
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce',
+                                                                infer_datetime_format=True)
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+        monitor1['numeroop'].fillna('-', inplace=True)
+
+        monitor1 = monitor1[monitor1['numeroop'] != '-']
+
+        monitor1 = monitor1.groupby(['numeroop', 'nomeSKU']).agg(
+            {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
+             "QtdSaldo": "sum", 'codCor': 'first','codProduto':'first'}).reset_index()
+
+        monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
+
+        monitorDetalhadoOps.to_csv(f'/home/mplti/ModuloPCP/dados/detalhadoops{self.descricaoArquivo}.csv')
+
+        monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
+                                        ascending=[False]).reset_index()
+        monitor1.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
+
+        sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
+        sqlCswPrioridade = """
+                             SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao, 
+                             (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
+                         left JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
+                         join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
+                         left join (
+                         SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
+                         where codempresa = 1 group by numeroop
+                         ) t on t.numeroop =op.numeroop
+                         WHERE op.situacao = 3 and op.codEmpresa = 1
+                             """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(sqlCsw)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                get = pd.DataFrame(rows, columns=colunas)
+                get['codFaseAtual'] = get['codFaseAtual'].astype(str)
+                get['codFaseAtual'] = get['codFaseAtual'].str.replace('.0', '', regex=False)
+
+                del rows
+
+                cursor_csw.execute(sqlCswPrioridade)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                get2 = pd.DataFrame(rows, columns=colunas)
+                del rows
+        monitor1['codFaseAtual'] = monitor1['codFaseAtual'].astype(str)
+        monitor1['codFaseAtual'] = monitor1['codFaseAtual'].str.replace('.0', '', regex=False)
+
+
+        monitor1 = monitor1.rename(columns={'codProduto': 'codreduzido'})
+        monitor1['codreduzido'] = monitor1['codreduzido'].astype(str)
+
+
+
+        monitor1 = pd.merge(monitor1, self.consultaOPReduzido(),on=['numeroop','codreduzido'],how='left')
+        monitor1['qtdOP'].fillna(0,inplace=True)
+
+        monitor1 = pd.merge(monitor1, get, on='codFaseAtual', how='left')
+        monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
+        monitor1.fillna('-', inplace=True)
+
+        dados = {
+            '0-Status': True,
+            '1-Mensagem': f'Atencao!! Calculado segundo o ultimo monitor emitido',
+            '6 -Detalhamento': monitor1.to_dict(orient='records')
+
+        }
+        return pd.DataFrame([dados])
 
 
 
