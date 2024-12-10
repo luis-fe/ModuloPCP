@@ -1589,8 +1589,7 @@ class MonitorPedidosOps():
                 rows = cursor_csw.fetchall()
                 get = pd.DataFrame(rows, columns=colunas)
                 get['codFaseAtual'] = get['codFaseAtual'].astype(str)
-                get['codFaseAtual'] = get['codFaseAtual'].str.repalce('.0','')
-
+                get['codFaseAtual'] = get['codFaseAtual'].str.replace('.0', '', regex=False)
 
                 del rows
 
