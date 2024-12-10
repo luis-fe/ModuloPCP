@@ -1531,7 +1531,7 @@ class MonitorPedidosOps():
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
 
         data['numeroOP||codProduto'] = data['numeroOP'] + data['codProduto'].astype(str)
-        unique_counts = data.drop_duplicates(subset=['numeroOP||codProduto', 'codPedido']).groupby('numeroop')['codPedido'].count()
+        unique_counts = data.drop_duplicates(subset=['numeroOP','numeroOP||codProduto', 'codPedido']).groupby('numeroop')['codPedido'].count()
 
         # Adicionar essa contagem ao DataFrame original
         monitor['Ocorrencia Pedidos'] = monitor['numeroOP||codProduto'].map(unique_counts)
