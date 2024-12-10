@@ -1525,13 +1525,16 @@ class MonitorPedidosOps():
         '''Metodo para explodir por tam e cor o monitor'''
         descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
         monitor = pd.read_csv(f'/home/mplti/ModuloPCP/dados/monitorOps{descricaoArquivo}.csv')
+        monitor['numeroOP||codProduto'] = monitor['numeroop'] + monitor['codProduto'].astype(str)
+
+
         data = monitor[
             (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (
                         monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
 
-        data['numeroOP||codProduto'] = data['numeroOP'] + data['codProduto'].astype(str)
-        unique_counts = data.drop_duplicates(subset=['numeroOP','numeroOP||codProduto', 'codPedido']).groupby('numeroop')['codPedido'].count()
+        data['numeroOP||codProduto'] = data['numeroop'] + data['codProduto'].astype(str)
+        unique_counts = data.drop_duplicates(subset=['numeroop','numeroOP||codProduto', 'codPedido']).groupby('numeroOP||codProduto')['codPedido'].count()
 
         # Adicionar essa contagem ao DataFrame original
         monitor['Ocorrencia Pedidos'] = monitor['numeroOP||codProduto'].map(unique_counts)
