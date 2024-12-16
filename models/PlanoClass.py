@@ -20,7 +20,7 @@ class Plano():
         self.fimFat = fimFat
         self.usuarioGerador = usuarioGerador
 
-    def InserirNovoPlano(self):
+    def inserirNovoPlano(self):
         '''
         Inserindo um novo plano
 
@@ -42,7 +42,6 @@ class Plano():
             values (%s, %s, %s, %s, %s, %s, %s, %s ) """
 
             data = self.obterdiaAtual()
-            print('data' + data)
             conn = ConexaoPostgreWms.conexaoInsercao()
             cur = conn.cursor()
             cur.execute(insert,
@@ -61,12 +60,12 @@ class Plano():
         '''
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.now(fuso_horario)
-        agora = agora.strftime('%d/%m/%Y')
+        agora = agora.strftime('%Y-%M-%D')
         return agora
 
     def consultarPlano(self):
         '''
-        Medoto que busca todos os planos cadastrados no Sistema do PCP
+        Metoto que busca todos os planos cadastrados no Sistema do PCP
         :return:
         DataFrame (em pandas) com todos os planos
         '''
@@ -94,3 +93,62 @@ class Plano():
         dataInicial = pd.read_sql(sql, conn, params=(str(self.codPlano),))
 
         return dataInicial['finalFat'][0]
+
+    def obterPlanos(self):
+        conn = ConexaoPostgreWms.conexaoEngine()
+        planos = pd.read_sql('SELECT * FROM pcp."Plano" ORDER BY codigo ASC;', conn)
+        planos.rename(
+            columns={'codigo': '01- Codigo Plano', 'descricaoPlano': '02- Descricao do Plano',
+                     'inicioVenda': '03- Inicio Venda',
+                     'FimVenda': '04- Final Venda', "inicoFat": "05- Inicio Faturamento",
+                     "finalFat": "06- Final Faturamento",
+                     'usuarioGerador': '07- Usuario Gerador', 'dataGeracao': '08- Data Geracao'},
+            inplace=True)
+        planos.fillna('-', inplace=True)
+
+        sqlLoteporPlano = """
+        select
+            plano as "01- Codigo Plano",
+            lote,
+            nomelote
+        from
+            "PCP".pcp."LoteporPlano"
+        """
+
+        sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
+
+        lotes = pd.read_sql(sqlLoteporPlano, conn)
+        TipoNotas = pd.read_sql(sqlTipoNotasPlano, conn)
+
+        lotes['01- Codigo Plano'] = lotes['01- Codigo Plano'].astype(str)
+
+        merged = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
+        merged = pd.merge(merged, TipoNotas, on='01- Codigo Plano', how='left')
+
+        # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
+        grouped = merged.groupby(['01- Codigo Plano', '02- Descricao do Plano', '03- Inicio Venda', '04- Final Venda',
+                                  '05- Inicio Faturamento', '06- Final Faturamento', '07- Usuario Gerador',
+                                  '08- Data Geracao']).agg({
+            'lote': lambda x: list(x.dropna().astype(str).unique()),
+            'nomelote': lambda x: list(x.dropna().astype(str).unique()),
+            'tipoNota': lambda x: list(x.dropna().astype(str).unique())
+        }).reset_index()
+
+        result = []
+        for index, row in grouped.iterrows():
+            entry = {
+                '01- Codigo Plano': row['01- Codigo Plano'],
+                '02- Descricao do Plano': row['02- Descricao do Plano'],
+                '03- Inicio Venda': row['03- Inicio Venda'],
+                '04- Final Venda': row['04- Final Venda'],
+                '05- Inicio Faturamento': row['05- Inicio Faturamento'],
+                '06- Final Faturamento': row['06- Final Faturamento'],
+                '07- Usuario Gerador': row['07- Usuario Gerador'],
+                '08- Data Geracao': row['08- Data Geracao'],
+                '09- lotes': row['lote'],
+                '10- nomelote': row['nomelote'],
+                '11-TipoNotas': row['tipoNota']
+            }
+            result.append(entry)
+
+        return result

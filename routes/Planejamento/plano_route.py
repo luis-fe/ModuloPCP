@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.Planejamento import plano
+from models import PlanoClass
 
 planoPCP_routes = Blueprint('planoPCP_routes', __name__)
 
@@ -18,7 +19,7 @@ def token_required(f):
 @planoPCP_routes.route('/pcp/api/Plano', methods=['GET'])
 @token_required
 def get_Plano():
-    dados = plano.ObeterPlanos()
+    dados = PlanoClass.Plano().obterPlanos()
     return jsonify(dados)
 
 @planoPCP_routes.route('/pcp/api/PlanoPorPlano', methods=['GET'])
@@ -42,10 +43,9 @@ def pOST_novoPlano():
     iniFat = data.get('iniFat', '-')
     fimFat = data.get('fimFat', '-')
     usuarioGerador = data.get('usuarioGerador', '-')
-    print(data)
 
 
-    dados = plano.InserirNovoPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador)
+    dados = PlanoClass.Plano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat, usuarioGerador).inserirNovoPlano()
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
