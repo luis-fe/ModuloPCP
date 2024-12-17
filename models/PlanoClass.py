@@ -1,7 +1,7 @@
 import pandas as pd
 import pytz
-from datetime import datetime
 from connection import ConexaoPostgreWms
+from datetime import datetime, timedelta
 
 
 class Plano():
@@ -211,3 +211,72 @@ class Plano():
             result.append(entry)
 
         return result
+
+
+    def obterNumeroSemanasVendas(self):
+            '''Metodo que obtem o numero de semanas de vendas do Plano
+            Calcula o número de semanas entre duas datas, considerando:
+            - A semana começa na segunda-feira.
+            - Se a data inicial não for uma segunda-feira, considera a primeira semana começando na data inicial.
+
+            Parâmetros:
+                ini (str): Data inicial no formato 'YYYY-MM-DD'.
+                fim (str): Data final no formato 'YYYY-MM-DD'.
+
+            Retorna:
+                int: Número de semanas entre as duas datas.
+            '''
+
+            self.iniVendas, self.fimVendas = self.pesquisarInicioFimVendas()
+
+            if self.iniVendas == '-':
+                return 0
+            else:
+
+                data_ini = datetime.strptime(self.iniVendas, '%Y-%m-%d')
+                data_fim = datetime.strptime(self.fimVendas, '%Y-%m-%d')
+
+                if data_ini > data_fim:
+                    raise ValueError("A data inicial deve ser anterior ou igual à data final.")
+
+                # Ajustar para a próxima segunda-feira, se a data inicial não for segunda
+                if data_ini.weekday() != 0:  # 0 representa segunda-feira
+                    proxima_segunda = data_ini + timedelta(days=(7 - data_ini.weekday()))
+                else:
+                    proxima_segunda = data_ini
+
+                # Calcular o número de semanas completas a partir da próxima segunda-feira
+                semanas_completas = (data_fim - proxima_segunda).days // 7
+
+                # Verificar se existe uma semana parcial no final
+                dias_restantes = (data_fim - proxima_segunda).days % 7
+                semana_inicial_parcial = 1 if data_ini.weekday() != 0 else 0
+                semana_final_parcial = 1 if dias_restantes > 0 else 0
+
+                return semanas_completas + semana_inicial_parcial + semana_final_parcial
+
+
+    def pesquisarInicioFimVendas(self):
+        '''metodo que pesquisa o inicio e o fim das vendas passeado no codPlano'''
+
+        sql = """
+        select 
+            "inicioVenda","FimVenda"
+        from
+            "PCP".pcp."LoteporPlano"
+        where
+            "codPlano" = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        if not consulta.empty:
+
+            inicioVenda = consulta['inicioVenda'][0]
+            FimVenda = consulta['FimVenda'][0]
+
+            return inicioVenda, FimVenda
+
+        else:
+            return '-', '-'
