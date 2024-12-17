@@ -35,3 +35,29 @@ def get_MetaGeralPlano():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+@metas_routes.route('/pcp/api/inserirOuAtualizarMetaPlano', methods=['POST'])
+@token_required
+def post_inserirOuAtualizarMetaPlano():
+    data = request.get_json()
+
+    codPlano = data.get('codPlano')
+    marca = data.get('marca', '-')
+    metaFinanceira = data.get('metaFinanceira', '-')
+    metaPecas = data.get('metaPecas', '-')
+
+
+    dados = Meta.Meta(codPlano,marca, metaFinanceira, metaPecas).inserirOuAtualizarMetasGeraisPlano()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
