@@ -19,6 +19,9 @@ class Meta ():
     def consultaMetaGeral(self):
         '''Metodo utilizada para consultar a Meta Geral '''
 
+        # Configura o locale para o formato brasileiro
+        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
         sql = """
         select 
             "codPlano",
