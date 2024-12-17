@@ -22,11 +22,14 @@ class Meta ():
         sql = """
         select 
             "codPlano",
+            p."descricaoPlano",
             "marca",
             "metaFinanceira",
             "metaPecas"
         from
-            "pcp"."Metas"
+            "pcp"."Metas" m
+        inner join
+            "pcp"."Plano" p on p.codigo = m."codPlano" 
         where
             "codPlano" = %s
         """
