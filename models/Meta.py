@@ -1,7 +1,6 @@
 from connection import ConexaoPostgreWms
 import pandas as pd
 from models import PlanoClass
-import locale
 
 class Meta ():
     '''Classe utilizada para definicao das METAS do PCP'''
@@ -19,8 +18,6 @@ class Meta ():
     def consultaMetaGeral(self):
         '''Metodo utilizada para consultar a Meta Geral '''
 
-        # Configura o locale para o formato brasileiro
-        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
         sql = """
         select 
@@ -37,10 +34,18 @@ class Meta ():
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
 
-        # Tratamento para formatar a coluna "metaFinanceira" no formato de moeda
-        consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(
-            lambda x: locale.currency(float(x.replace("R$ ", "").replace(".", "").replace(",", ".")), grouping=True)
-        )
+        # Função para tratar e formatar a string "R$xxxxxxx"
+        def formatar_meta_financeira(valor):
+            try:
+                # Remove o prefixo "R$" e converte para inteiro
+                valor_limpo = int(valor.replace("R$", "").strip())
+                # Formata como moeda brasileira: R$ 1.200.000,00
+                return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            except (ValueError, TypeError):
+                return None  # Retorna None para valores inválidos
+
+        # Aplica o tratamento à coluna metaFinanceira
+        consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
 
         return consulta
 
