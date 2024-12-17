@@ -36,10 +36,10 @@ class Meta ():
 
         # Função para tratar e formatar a string "R$xxxxxxx"
         def formatar_meta_financeira(valor):
-                # Remove o prefixo "R$" e converte para inteiro
-                valor_limpo = int(valor.replace("R$", "").strip())
-                # Formata como moeda brasileira: R$ 1.200.000,00
-                return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            # Remove o prefixo "R$", substitui vírgulas e converte para float
+            valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
+            # Formata como moeda brasileira: R$ 1.200.000,00
+            return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
         # Aplica o tratamento à coluna metaFinanceira
