@@ -1,6 +1,8 @@
 from connection import ConexaoPostgreWms
 import pandas as pd
 from models import PlanoClass
+import locale
+
 class Meta ():
     '''Classe utilizada para definicao das METAS do PCP'''
 
@@ -31,6 +33,11 @@ class Meta ():
 
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        # Tratamento para formatar a coluna "metaFinanceira" no formato de moeda
+        consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(
+            lambda x: locale.currency(float(x.replace("R$ ", "").replace(".", "").replace(",", ".")), grouping=True)
+        )
 
         return consulta
 
