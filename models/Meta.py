@@ -54,15 +54,13 @@ class Meta ():
 
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
-
+        totalFinanceiro = consulta['metaFinanceira'].apply(formatar_meta_financeira_float).sum()
         # Cria a linha de total
         total = pd.DataFrame([{
             'codPlano': self.codPlano,
             'descricaoPlano': consulta['descricaoPlano'].iloc[0],
             'marca': 'TOTAL',
-            'metaFinanceira': consulta['metaFinanceira']
-            .apply(formatar_meta_financeira_float)
-            .sum().astype(str),  # Soma os valores numéricos
+            'metaFinanceira': f'R$ {totalFinanceiro:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),  # Soma os valores numéricos
             'metaPecas': 'TOTAL'
         }])
 
