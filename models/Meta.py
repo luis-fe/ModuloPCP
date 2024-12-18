@@ -62,7 +62,7 @@ class Meta ():
             'marca': 'TOTAL',
             'metaFinanceira': consulta['metaFinanceira']
             .apply(formatar_meta_financeira_float)
-            .sum(),  # Soma os valores numéricos
+            .sum().astype(str),  # Soma os valores numéricos
             'metaPecas': 'TOTAL'
         }])
 
