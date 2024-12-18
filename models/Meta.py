@@ -50,7 +50,7 @@ class Meta ():
         def formatar_meta_pecas(valor):
             try:
                 valor_limpo = int(valor)
-                return f'{valor_limpo:,.0f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+                return f'{valor_limpo:,.0f}'.replace(",", "X").replace("X", ".")
             except ValueError:
                 return valor  # Retorna o valor original caso não seja convertível
 
