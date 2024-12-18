@@ -55,6 +55,7 @@ class Meta ():
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
         totalFinanceiro = consulta['metaFinanceira'].apply(formatar_meta_financeira_float).sum()
+        totalFinanceiro = totalFinanceiro/100
         # Cria a linha de total
         total = pd.DataFrame([{
             'codPlano': self.codPlano,
