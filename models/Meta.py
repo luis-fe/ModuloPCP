@@ -14,39 +14,61 @@ class Meta ():
         self.metaFinanceira = str(metaFinanceira)
         self.metaPecas = str(metaPecas)
 
-
     def consultaMetaGeral(self):
-        '''Metodo utilizada para consultar a Meta Geral '''
-
+        '''Método utilizado para consultar a Meta Geral.'''
 
         sql = """
-        select 
+        SELECT 
             "codPlano",
             p."descricaoPlano",
             "marca",
             "metaFinanceira",
             "metaPecas"
-        from
+        FROM
             "pcp"."Metas" m
-        inner join
-            "pcp"."Plano" p on p.codigo = m."codPlano" 
-        where
+        INNER JOIN
+            "pcp"."Plano" p ON p.codigo = m."codPlano" 
+        WHERE
             "codPlano" = %s
         """
 
+        # Obtem a conexão com o banco
         conn = ConexaoPostgreWms.conexaoEngine()
-        consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        # Realiza a consulta no banco de dados
+        consulta = pd.read_sql(sql, conn, params=(self.codPlano,))
 
         # Função para tratar e formatar a string "R$xxxxxxx"
         def formatar_meta_financeira(valor):
-            # Remove o prefixo "R$", substitui vírgulas e converte para float
-            valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
-            # Formata como moeda brasileira: R$ 1.200.000,00
-            return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            try:
+                valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
+                return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            except ValueError:
+                return valor  # Retorna o valor original caso não seja convertível
 
+        def formatar_meta_financeira_float(valor):
+            try:
+                valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
+                return valor_limpo
+            except ValueError:
+                return 0.0  # Retorna 0.0 se houver erro na conversão
 
-        # Aplica o tratamento à coluna metaFinanceira
+        # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
+
+        # Cria a linha de total
+        total = pd.DataFrame([{
+            'codPlano': self.codPlano,
+            'descricaoPlano': consulta['descricaoPlano'].iloc[0],
+            'marca': 'TOTAL',
+            'metaFinanceira': consulta['metaFinanceira']
+            .apply(formatar_meta_financeira_float)
+            .sum(),  # Soma os valores numéricos
+            'metaPecas': 'TOTAL'
+        }])
+
+        # Concatena o total ao DataFrame original
+        consulta = pd.concat([consulta, total], ignore_index=True)
 
         return consulta
 
