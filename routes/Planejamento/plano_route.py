@@ -68,10 +68,9 @@ def PUT_AlterPlano():
     fimVendas = data.get('fimVendas', '-')
     iniFat = data.get('iniFat', '-')
     fimFat = data.get('fimFat', '-')
-    print(data)
 
 
-    dados = plano.AlterPlano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat)
+    dados = PlanoClass.Plano(codigoPlano, descricaoPlano, iniVendas, fimVendas, iniFat, fimFat).AlterPlano()
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []

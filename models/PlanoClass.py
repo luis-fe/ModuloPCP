@@ -2,13 +2,14 @@ import pandas as pd
 import pytz
 from connection import ConexaoPostgreWms
 from datetime import datetime, timedelta
+from models import Lote
 
 
 class Plano():
     '''
     Classe criada para o "Plano" do PCP que é um conjunto de parametrizacoes para se fazer um planejamento.
     '''
-    def __init__(self, codPlano= None ,descricaoPlano = None, iniVendas= None, fimVendas= None, iniFat= None, fimFat= None, usuarioGerador= None):
+    def __init__(self, codPlano= None ,descricaoPlano = None, iniVendas= None, fimVendas= None, iniFat= None, fimFat= None, usuarioGerador= None, codLote = None):
         '''
         Definicao do construtor: atributos do plano
         '''
@@ -19,6 +20,7 @@ class Plano():
         self.iniFat = iniFat
         self.fimFat = fimFat
         self.usuarioGerador = usuarioGerador
+        self.codLote = codLote
 
     def inserirNovoPlano(self):
         '''
@@ -280,3 +282,82 @@ class Plano():
 
         else:
             return '-', '-'
+
+    def AlterPlano(self):
+        # Validando se o Plano ja existe
+        validador = self.consultarPlano()
+        validador = validador[validador['codigo'] == self.codPlano].reset_index()
+
+        if validador.empty:
+
+            return pd.DataFrame([{'Status': False, 'Mensagem': 'O Plano Informado nao existe'}])
+        else:
+            descricaoPlanoAtual = validador['descricaoPlano'][0]
+            if descricaoPlanoAtual == self.descricaoPlano or self.descricaoPlano == '-':
+                self.descricaoPlano = descricaoPlanoAtual
+
+
+            iniVendasAtual = validador['inicioVenda'][0]
+            if iniVendasAtual == self.iniVendas or self.iniVendas == '-':
+                self.iniVendas = iniVendasAtual
+
+
+            FimVendaAtual = validador['FimVenda'][0]
+            if FimVendaAtual == self.fimVendas or self.fimVendas == '-':
+                self.fimVendas = FimVendaAtual
+
+
+            inicoFatAtual = validador['inicoFat'][0]
+            if inicoFatAtual == self.iniFat or self.iniFat == '-':
+                self.iniFat = inicoFatAtual
+
+            finalFatAtual = validador['finalFat'][0]
+            if finalFatAtual == self.fimFat or self.fimFat == '-':
+                self.fimFat = finalFatAtual
+
+            update = """update "PCP".pcp."Plano"  set "descricaoPlano" = %s , "inicioVenda" = %s , "FimVenda" = %s , "inicoFat" = %s , "finalFat" = %s
+            where "codigo" = %s
+            """
+
+            conn = ConexaoPostgreWms.conexaoInsercao()
+            cur = conn.cursor()
+            cur.execute(update, (self.descricaoPlano, self.iniVendas, self.fimVendas, self.iniFat, self.fimFat, self.codPlano,))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return pd.DataFrame([{'Status': True, 'Mensagem': 'O Plano foi alterado com sucesso !'}])
+
+    def VincularLotesAoPlano(self, arrayCodLoteCsw):
+        empresa = '1'
+        # Validando se o Plano ja existe
+        validador = self.consultarPlano()
+        validador = validador[validador['codigo'] == self.codPlano].reset_index()
+
+        if validador.empty:
+
+            return pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+        else:
+
+            # Deletando caso ja exista vinculo do lote no planto
+            deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s AND plano = %s """
+            insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
+            delete = """Delete from pcp.lote_itens where "codLote" = %s """
+            conn = ConexaoPostgreWms.conexaoInsercao()
+            cur = conn.cursor()
+
+            for lote in arrayCodLoteCsw:
+                nomelote = Lote.Lote(self.codLote).consultarLoteEspecificoCsw()
+                cur.execute(deleteVinculo, (lote, self.codPlano,))
+                conn.commit()
+                cur.execute(insert, (empresa, self.codPlano, lote, nomelote,))
+                conn.commit()
+                cur.execute(delete, (lote,))
+                conn.commit()
+
+            cur.close()
+            conn.close()
+
+            '''Metodo que insere no banco de dados os itens do lote '''
+            #loteCsw.ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw)
+
+            return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes adicionados ao Plano com sucesso !'}])

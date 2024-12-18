@@ -144,3 +144,23 @@ class Lote():
         else:
             mes1 = '//'
         return lote[3:5] + mes1 + '20' + lote[:2] + '-' + nomeLote
+
+    def consultarLoteEspecificoCsw(self):
+        sql = """Select codLote, descricao as nomeLote from tcl.lote where codEmpresa= """ + str(
+            self.codEmpresa) + """ and codLote =""" + "'" + self.codLote + "'"
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                lotes = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        nomeLote = lotes['nomeLote'][0]
+        nomeLote = nomeLote[:2] + '-' + nomeLote
+
+        return nomeLote
