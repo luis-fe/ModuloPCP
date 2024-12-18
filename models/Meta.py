@@ -54,6 +54,11 @@ class Meta ():
             except ValueError:
                 return valor  # Retorna o valor original caso não seja convertível
 
+        def formatar_meta_financeira_int(valor):
+                # Remove o prefixo "R$", pontos e vírgulas, e converte para float
+                valor_limpo = int(valor.replace("R$", "").replace(".", ""))
+                return valor_limpo
+
         def formatar_meta_financeira_float(valor):
                 # Remove o prefixo "R$", pontos e vírgulas, e converte para float
                 valor_limpo = float(valor.replace("R$", "").replace(".", "").replace(",", ".").strip())
@@ -67,13 +72,15 @@ class Meta ():
 
 
         totalFinanceiro = consulta['metaFinanceira'].apply(formatar_meta_financeira_float).sum()
+        totalPecas = consulta['metaPecas'].apply(formatar_meta_financeira_int).sum()
+
         # Cria a linha de total
         total = pd.DataFrame([{
             'codPlano': self.codPlano,
             'descricaoPlano': consulta['descricaoPlano'].iloc[0],
             'marca': 'TOTAL',
             'metaFinanceira': f'R$ {totalFinanceiro:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),  # Soma os valores numéricos
-            'metaPecas': 'TOTAL'
+            'metaPecas': f'{totalPecas:,.0f}'.replace(",", "X").replace("X", ".")
         }])
 
         # Concatena o total ao DataFrame original
