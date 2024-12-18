@@ -47,11 +47,9 @@ class Meta ():
                 return valor  # Retorna o valor original caso não seja convertível
 
         def formatar_meta_financeira_float(valor):
-            try:
                 valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
                 return valor_limpo
-            except ValueError:
-                return 0.0  # Retorna 0.0 se houver erro na conversão
+
 
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
