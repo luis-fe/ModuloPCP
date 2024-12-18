@@ -47,6 +47,7 @@ class Meta ():
                 return valor  # Retorna o valor original caso não seja convertível
 
         def formatar_meta_financeira_float(valor):
+                valor = valor.replace(".","")
                 valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
                 return valor_limpo
 
