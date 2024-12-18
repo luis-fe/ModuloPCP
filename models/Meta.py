@@ -46,6 +46,14 @@ class Meta ():
             except ValueError:
                 return valor  # Retorna o valor original caso não seja convertível
 
+
+        def formatar_meta_pecas(valor):
+            try:
+                valor_limpo = int(valor)
+                return f'{valor_limpo:,.0f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            except ValueError:
+                return valor  # Retorna o valor original caso não seja convertível
+
         def formatar_meta_financeira_float(valor):
                 valor = valor.replace(".","")
                 valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
@@ -54,6 +62,9 @@ class Meta ():
 
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
+        consulta['metaPecas'] = consulta['metaPecas'].apply(formatar_meta_pecas)
+
+
         totalFinanceiro = consulta['metaFinanceira'].apply(formatar_meta_financeira_float).sum()
         # Cria a linha de total
         total = pd.DataFrame([{
