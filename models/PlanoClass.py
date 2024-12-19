@@ -265,7 +265,7 @@ class Plano():
         select 
             "inicioVenda","FimVenda"
         from
-            "PCP".pcp."LoteporPlano"
+            "PCP".pcp."Plano"
         where
             "codPlano" = %s
         """
