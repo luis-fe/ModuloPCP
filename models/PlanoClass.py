@@ -267,7 +267,7 @@ class Plano():
         from
             "PCP".pcp."Plano"
         where
-            "codPlano" = %s
+            "codigo" = %s
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
