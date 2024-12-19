@@ -327,7 +327,8 @@ class Plano():
             conn.close()
             return pd.DataFrame([{'Status': True, 'Mensagem': 'O Plano foi alterado com sucesso !'}])
 
-    def VincularLotesAoPlano(self, arrayCodLoteCsw):
+    def vinculandoLotesAoPlano(self, arrayCodLoteCsw):
+        '''Metodo que vincula lotes ao plano'''
         empresa = '1'
         # Validando se o Plano ja existe
         validador = self.consultarPlano()

@@ -1,6 +1,7 @@
 import gc
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
+from models import ProdutosClass
 
 
 class Lote():
@@ -164,3 +165,70 @@ class Lote():
         nomeLote = nomeLote[:2] + '-' + nomeLote
 
         return nomeLote
+
+    def explodindoAsReferenciasLote(self, arrayCodLoteCsw):
+        '''Metodo que explode (detalha) os skus previsionados no lote '''
+
+        # 1 - Transformando o array em padrao "in sql"
+        nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
+        novo = ", ".join(nomes_com_aspas)
+        sqlLotes = """
+        select Empresa , t.codLote, codengenharia, t.codSeqTamanho , t.codSortimento , t.qtdePecasImplementadas as previsao FROM tcl.LoteSeqTamanho t
+        WHERE t.Empresa = """ + self.codEmpresa + """and t.codLote in (""" + novo + """) 
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sqlLotes)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                lotes = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        # Implantando no banco de dados do Pcp, atualizando o cadastro de itens e atualizando o roteiro
+        ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
+        ProdutosClass.Produto().RecarregarItens()
+        self.carregarRoteiroEngLote(arrayCodLoteCsw)
+
+        return lotes
+
+    def carregarRoteiroEngLote(self, arrayCodLoteCsw):
+        nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
+        novo = ", ".join(nomes_com_aspas)
+
+        sql = """
+        SELECT p.codEngenharia , p.codFase , p.nomeFase, p.seqProcesso  FROM tcp.ProcessosEngenharia p
+    WHERE p.codEmpresa = 1 and p.codEngenharia like '%-0' and 
+    p.codEngenharia in (select l.codEngenharia from tcl.LoteEngenharia l WHERE l.empresa =""" + str(
+            self.codEmpresa) + """ and l.codlote in ( """ + novo + """))"""
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                EngRoteiro = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        # Verificando as engenharias que ja existe:
+        sqlPCP = """select distinct "codEngenharia", 'ok' as situacao from pcp."Eng_Roteiro" """
+
+        conn2 = ConexaoPostgreWms.conexaoEngine()
+        sqlPCP = pd.read_sql(sqlPCP, conn2)
+
+        EngRoteiro = pd.merge(EngRoteiro, sqlPCP, on='codEngenharia', how='left')
+        EngRoteiro.fillna('-', inplace=True)
+        EngRoteiro = EngRoteiro[EngRoteiro['situacao'] == '-'].reset_index()
+        EngRoteiro = EngRoteiro.drop(columns=['situacao', 'index'])
+        print(EngRoteiro)
+        if EngRoteiro['codEngenharia'].size > 0:
+            # Implantando no banco de dados do Pcp
+            ConexaoPostgreWms.Funcao_InserirOFF(EngRoteiro, EngRoteiro['codEngenharia'].size, 'Eng_Roteiro', 'append')
+        else:
+            print('segue o baile')

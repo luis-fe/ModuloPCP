@@ -90,10 +90,9 @@ def put_VincularLotesPlano():
 
     codigoPlano = data.get('codigoPlano')
     arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
-    print(data)
 
 
-    dados = plano.VincularLotesAoPlano(codigoPlano,arrayCodLoteCsw)
+    dados = PlanoClass.Plano(codigoPlano).vinculandoLotesAoPlano(arrayCodLoteCsw)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
