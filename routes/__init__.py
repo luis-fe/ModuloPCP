@@ -32,6 +32,7 @@ from .GestaoPartesAPI import GestaoPartes_routes
 from .RevisorAPI import Revisores_Routes
 from .LiberacaoQualidadeAPI import LiberacaoQualidade_Routes
 from .MetaApi import metas_routes
+from .VendasApi import vendas_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -62,3 +63,4 @@ routes_blueprint.register_blueprint(GestaoPartes_routes)
 routes_blueprint.register_blueprint(Revisores_Routes)
 routes_blueprint.register_blueprint(LiberacaoQualidade_Routes)
 routes_blueprint.register_blueprint(metas_routes)
+routes_blueprint.register_blueprint(vendas_routes)
