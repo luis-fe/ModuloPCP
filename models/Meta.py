@@ -134,7 +134,7 @@ class Meta ():
 
 
         update = """
-        update pcp"."Metas"
+        update "pcp"."Metas"
         set
             "metaFinanceira" = %s,
             "metaPecas" = %s
