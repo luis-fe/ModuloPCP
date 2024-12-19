@@ -27,39 +27,7 @@ def ConsultaPlano():
 
 
 
-def VincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
-    empresa = '1'
-    # Validando se o Plano ja existe
-    validador = ConsultaPlano()
-    validador = validador[validador['codigo'] == codigoPlano].reset_index()
 
-    if  validador.empty:
-
-        return pd.DataFrame([{'Status':False,'Mensagem':f'O Plano {codigoPlano} NAO existe'}])
-    else:
-
-        # Deletando caso ja exista vinculo do lote no planto
-        deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s AND plano = %s """
-        insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
-        delete = """Delete from pcp.lote_itens where "codLote" = %s """
-        conn = ConexaoPostgreWms.conexaoInsercao()
-        cur = conn.cursor()
-
-        for lote in arrayCodLoteCsw:
-            nomelote = loteCsw.ConsultarLoteEspecificoCsw(empresa,lote)
-            cur.execute(deleteVinculo,(lote,codigoPlano,))
-            conn.commit()
-            cur.execute(insert,(empresa, codigoPlano, lote, nomelote,))
-            conn.commit()
-            cur.execute(delete,(lote,))
-            conn.commit()
-
-        cur.close()
-        conn.close()
-
-        loteCsw.ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw )
-
-        return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes adicionados ao Plano com sucesso !'}])
 
 def DesvincularLotesAoPlano(codigoPlano, arrayCodLoteCsw):
 
@@ -124,21 +92,7 @@ def IncluirData(mes, nomeLote,lote):
     return lote[3:5]+ mes1 + '20' + lote[:2]  + '-' + nomeLote
 
 
-def ConsultarLotesVinculados(plano):
-    sql = """SELECT plano, lote, nomelote, p."descricaoPlano" 
-             FROM pcp."LoteporPlano" l
-             INNER JOIN pcp."Plano" p ON p.codigo = l.plano
-             WHERE plano = %s"""
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    try:
-        df = pd.read_sql(sql, conn, params=(plano,))
-        df['nomelote'] = df.apply(lambda r: IncluirData(r['lote'][2] if len(r['lote']) > 2 else '', r['nomelote'],r['lote']),
-                                  axis=1)
-    finally:
-        conn.dispose()
-
-    return df
 
 def ConsultarTipoNotasVinculados(plano):
     sql = """select "tipo nota","tipo nota"||'-'||nome as "Descricao" , plano  from pcp."tipoNotaporPlano" tnp  WHERE plano = %s """

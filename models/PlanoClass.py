@@ -363,3 +363,20 @@ class Plano():
             #loteCsw.ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw)
 
             return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes adicionados ao Plano com sucesso !'}])
+
+    def desvincularLotesAoPlano(self,arrayCodLoteCsw):
+
+        empresa = '1'
+        # Validando se o Plano ja existe
+        validador = self.consultarPlano()
+        validador = validador[validador['codigo'] == self.codPlano].reset_index()
+
+        if validador.empty:
+
+            return pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+        else:
+            for lote in arrayCodLoteCsw:
+                self.codLote = lote
+                Lote.Lote(self.codLote,'1',self.codPlano).desvincularLotePlano()
+
+            return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes Desvinculados do Plano com sucesso !'}])

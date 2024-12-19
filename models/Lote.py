@@ -232,3 +232,30 @@ class Lote():
             ConexaoPostgreWms.Funcao_InserirOFF(EngRoteiro, EngRoteiro['codEngenharia'].size, 'Eng_Roteiro', 'append')
         else:
             print('segue o baile')
+
+    def desvincularLotePlano(self):
+        '''Metodo que desvincula um lote ao plano e ainda deleta a previsao dos itens no banco de dados PCP ."lote_itens" '''
+
+
+        # Passo 1: Excluir o lote do plano vinculado
+        deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s and plano = %s """
+        conn = ConexaoPostgreWms.conexaoInsercao()
+        cur = conn.cursor()
+        cur.execute(deletarLote, (self.codLote, self.codPlano))
+        conn.commit()
+
+        # Passo 2: Verifica se o lote existe em outros planos
+        conn2 = ConexaoPostgreWms.conexaoEngine()
+        sql = """Select lote from pcp."LoteporPlano" WHERE lote = %s """
+        verifca = pd.read_sql(sql, conn2, params=(self.codLote,))
+
+        if verifca.empty:
+
+            deletarLoteIntens = """Delete from pcp.lote_itens where "codLote" = %s  """
+            cur.execute(deletarLoteIntens, (self.codLote,))
+            conn.commit()
+
+        else:
+            print('sem lote para exlcuir dos lotes engenharias')
+        cur.close()
+        conn.close()
