@@ -347,6 +347,7 @@ class Plano():
             cur = conn.cursor()
 
             for lote in arrayCodLoteCsw:
+                self.codLote = lote
                 nomelote = Lote.Lote(self.codLote).consultarLoteEspecificoCsw()
                 cur.execute(deleteVinculo, (lote, self.codPlano,))
                 conn.commit()
