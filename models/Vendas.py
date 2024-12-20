@@ -38,7 +38,7 @@ class VendasAcom():
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
 
         df_loaded = df_loaded.loc[:,
-                    ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota'
+                    ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
                      'PrecoLiquido']]
         # consultar = consultar.rename(columns={'StatusSugestao': 'Sugestao(Pedido)'})
