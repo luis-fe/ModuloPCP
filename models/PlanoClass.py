@@ -380,3 +380,21 @@ class Plano():
                 Lote.Lote(self.codLote,'1',self.codPlano).desvincularLotePlano()
 
             return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes Desvinculados do Plano com sucesso !'}])
+
+
+    def pesquisarTipoNotasPlano(self):
+        '''Metodo utilizado para obter os tipo de notas de um determinado plano'''
+
+        sql = """
+            select
+	            "tipo nota" as "codTipoNota"
+            from
+	            "PCP".pcp."tipoNotaporPlano" tnp
+            where
+	            plano = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        return consulta
