@@ -23,9 +23,10 @@ def post_VendasPorPlano():
     data = request.get_json()
 
     codPlano = data.get('codPlano')
+    consideraPedidosBloqueado = data.get('consideraPedidosBloqueado','nao')
 
 
-    dados = Vendas.VendasAcom(codPlano).vendasGeraisPorPlano()
+    dados = Vendas.VendasAcom(codPlano,'1',consideraPedidosBloqueado).vendasGeraisPorPlano()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
