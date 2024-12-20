@@ -62,11 +62,11 @@ class VendasAcom():
         totalVendasPeca = df_loaded['qtdePedida'] .sum()
 
         filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("0102")]
-        totalVendasPeca = filtroMPollo['qtdePedida'] .sum()
+        totalVendasPecaMpollo = filtroMPollo['qtdePedida'] .sum()
 
         resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
                                    'Total Vendas Peca':totalVendasPeca
-                                      ,'M.Pollo':f'{totalVendasPeca}'}])
+                                      ,'M.Pollo':f'{totalVendasPecaMpollo}'}])
 
         return resultado
 
