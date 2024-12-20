@@ -50,6 +50,9 @@ class VendasAcom():
                      'PrecoLiquido']]
 
         df_loaded = pd.merge(df_loaded,produtos,on='codProduto',how='left')
+        df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
+        df_loaded['codItemPai'].fillna('-',inplace=True)
+
         # consultar = consultar.rename(columns={'StatusSugestao': 'Sugestao(Pedido)'})
 
         df_loaded['qtdeSugerida'] = pd.to_numeric(df_loaded['qtdeSugerida'], errors='coerce').fillna(0)
