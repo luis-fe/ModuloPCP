@@ -41,7 +41,7 @@ class VendasAcom():
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
-                     'PrecoLiquido','codItemPai']]
+                     'PrecoLiquido']]
         # consultar = consultar.rename(columns={'StatusSugestao': 'Sugestao(Pedido)'})
 
         df_loaded['qtdeSugerida'] = pd.to_numeric(df_loaded['qtdeSugerida'], errors='coerce').fillna(0)
@@ -61,12 +61,13 @@ class VendasAcom():
 
         totalVendasPeca = df_loaded['qtdePedida'].sum()
 
-        filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("0102")]
-        totalVendasPecaMpollo = filtroMPollo['qtdePedida'].sum()
+        #filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("0102")]
+        #totalVendasPecaMpollo = filtroMPollo['qtdePedida'].sum()
 
         resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
                                    'Total Vendas Peca':totalVendasPeca
-                                      ,'M.Pollo':f'{totalVendasPecaMpollo}'}])
+                                   #   ,'M.Pollo':f'{totalVendasPecaMpollo}'
+                                   }])
 
         return resultado
 
