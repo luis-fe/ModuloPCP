@@ -8,10 +8,11 @@ class VendasAcom():
     '''Classe utilizada para acompanhar as vendas de acordo com o plano'''
 
 
-    def __init__(self, codPlano = None, empresa = '1'):
+    def __init__(self, codPlano = None, empresa = '1', consideraPedidosBloqueados = 'nao'):
 
         self.codPlano = codPlano
         self.empresa = empresa
+        self.consideraPedidosBloqueados = consideraPedidosBloqueados
 
 
     def vendasGeraisPorPlano(self):
@@ -50,6 +51,14 @@ class VendasAcom():
 
         df_loaded = pd.merge(df_loaded,tiponotas,on='codTipoNota')
 
+
+        if self.consideraPedidosBloqueados == 'nao':
+            pedidosBloqueados = self.Monitor_PedidosBloqueados()
+            df_loaded = pd.merge(df_loaded, pedidosBloqueados, on='codPedido', how='left')
+            df_loaded['situacaobloq'].fillna('Liberado', inplace=True)
+            df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
+
+
         totalVendasPeca = df_loaded['qtdePedida'] .sum()
 
         resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
@@ -82,3 +91,23 @@ class VendasAcom():
         with ConexaoBanco.Conexao2() as conn:
             consulta = pd.read_sql(sqlCswCapaPedidos, conn)
         return consulta
+
+    def Monitor_PedidosBloqueados(self):
+        consultacsw = """SELECT * FROM (
+        SELECT top 300000 bc.codPedido, 'analise comercial' as situacaobloq  from ped.PedidoBloqComl  bc WHERE codEmpresa = 1  
+        and bc.situacaoBloq = 1
+        order by codPedido desc
+        UNION 
+        SELECT top 300000 codPedido, 'analise credito'as situacaobloq  FROM Cre.PedidoCreditoBloq WHERE Empresa  = 1  
+        and situacao = 1
+        order BY codPedido DESC) as D"""
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(consultacsw)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            del rows
+            return consulta
