@@ -37,7 +37,7 @@ class VendasAcom():
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
-
+        print(df_loaded.columns)
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
@@ -59,10 +59,10 @@ class VendasAcom():
             df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
 
 
-        totalVendasPeca = df_loaded['qtdePedida'] .sum()
+        totalVendasPeca = df_loaded['qtdePedida'].sum()
 
         filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("0102")]
-        totalVendasPecaMpollo = filtroMPollo['qtdePedida'] .sum()
+        totalVendasPecaMpollo = filtroMPollo['qtdePedida'].sum()
 
         resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
                                    'Total Vendas Peca':totalVendasPeca
