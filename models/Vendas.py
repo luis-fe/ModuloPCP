@@ -60,6 +60,7 @@ class VendasAcom():
 
 
         totalVendasPeca = df_loaded['qtdePedida'] .sum()
+        print(df_loaded['codProduto'])
 
         resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
                                    'Total Vendas Peca':totalVendasPeca}])
