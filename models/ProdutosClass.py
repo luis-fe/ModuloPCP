@@ -155,4 +155,27 @@ class Produto():
         return consulta
 
 
+    def consultaItensReduzidos(self):
+        '''Metodo utilizado para consultar os itens reduzidos x informacoes: codPai , codCor , nome, categoria'''
+
+        sql = """
+        	select
+                codigo,
+                nome,
+                "codItemPai",
+                "codCor",
+                categoria
+            from
+                "PCP".pcp.itens_csw ic
+            where
+                "codItemPai" like '1%'
+                or "codItemPai" like '2%'
+                or "codItemPai" like '3%' 
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+        return consulta
+
+
 

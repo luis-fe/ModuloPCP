@@ -3,7 +3,7 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 import os
-from models import PlanoClass
+from models import PlanoClass, ProdutosClass
 class VendasAcom():
     '''Classe utilizada para acompanhar as vendas de acordo com o plano'''
 
@@ -29,6 +29,13 @@ class VendasAcom():
         plano = PlanoClass.Plano(self.codPlano)
         self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
 
+        produtos = ProdutosClass.Produto().consultaItensReduzidos()
+        produtos.rename(
+            columns={'codigo': 'codProduto'},
+            inplace=True)
+
+
+
         tiponotas = plano.pesquisarTipoNotasPlano()
 
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
@@ -37,11 +44,12 @@ class VendasAcom():
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
-        print(df_loaded.columns)
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
                      'PrecoLiquido']]
+
+        df_loaded = pd.merge(df_loaded,produtos,on='codProduto',how='left')
         # consultar = consultar.rename(columns={'StatusSugestao': 'Sugestao(Pedido)'})
 
         df_loaded['qtdeSugerida'] = pd.to_numeric(df_loaded['qtdeSugerida'], errors='coerce').fillna(0)
@@ -61,12 +69,12 @@ class VendasAcom():
 
         totalVendasPeca = df_loaded['qtdePedida'].sum()
 
-        #filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("0102")]
-        #totalVendasPecaMpollo = filtroMPollo['qtdePedida'].sum()
+        filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("102")]
+        totalVendasPecaMpollo = filtroMPollo['qtdePedida'].sum()
 
         resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
                                    'Total Vendas Peca':totalVendasPeca
-                                   #   ,'M.Pollo':f'{totalVendasPecaMpollo}'
+                                    ,'M.Pollo':f'{totalVendasPecaMpollo}'
                                    }])
 
         return resultado
@@ -116,3 +124,5 @@ class VendasAcom():
 
             del rows
             return consulta
+
+
