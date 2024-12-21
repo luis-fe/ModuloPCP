@@ -71,7 +71,6 @@ class VendasAcom():
             df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
 
 
-        totalVendasPeca = df_loaded['qtdePedida'].sum()
 
         conditions = [
             df_loaded['codItemPai'].str.startswith("102"),
@@ -82,9 +81,10 @@ class VendasAcom():
         choices = ["M.POLLO","M.POLLO", "PACO","PACO"]
 
         df_loaded['Marca'] = np.select(conditions, choices, default="OUTROS")
-
+        df_loaded = df_loaded[df_loaded['Marca'] != 'OUTROS'].reset_index()
         groupByMarca = df_loaded.groupby(["Marca"]).agg({"qtdePedida":"sum"}).reset_index()
 
+        totalVendasPeca = groupByMarca['qtdePedida'].sum()
 
 
         data = {
