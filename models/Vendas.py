@@ -80,9 +80,9 @@ class VendasAcom():
         ]
         choices = ["M.POLLO","M.POLLO", "PACO","PACO"]
 
-        df_loaded['Marca'] = np.select(conditions, choices, default="OUTROS")
-        df_loaded = df_loaded[df_loaded['Marca'] != 'OUTROS'].reset_index()
-        groupByMarca = df_loaded.groupby(["Marca"]).agg({"qtdePedida":"sum"}).reset_index()
+        df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
+        df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
+        groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum"}).reset_index()
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         metas = Meta.Meta(self.codPlano)
