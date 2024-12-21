@@ -112,11 +112,10 @@ class VendasAcom():
         groupByMarca['valorVendido'] = pd.to_numeric(groupByMarca['valorVendido'], errors='coerce')
         # Aplicando o arredondamento
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
-        groupByMarca['preçoMedio'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
+        groupByMarca['preçoMedioRealizado'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
 
         groupByMarca['preçoMedioRealizado'] = groupByMarca['preçoMedioRealizado'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
-
         groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
 
         # Cria a linha de total
