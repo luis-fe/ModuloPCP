@@ -113,6 +113,8 @@ class VendasAcom():
         # Aplicando o arredondamento
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
         groupByMarca['preçoMedio'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
+        groupByMarca['preçoMedio'] = groupByMarca['metaFinanceira'].apply(self.formatar_financeiro)
+
 
         # Cria a linha de total
         total = pd.DataFrame([{
@@ -120,7 +122,8 @@ class VendasAcom():
             'metaPecas': f'{totalMetasPeca}',
             'metaFinanceira': f'R$',
             'qtdePedida':f'{totalVendasPeca}',
-            'valorVendido' : f'R$'
+            'valorVendido' : f'R$',
+            'preçoMedio':f'R$'
         }])
 
         # Concatena o total ao DataFrame original
@@ -179,4 +182,10 @@ class VendasAcom():
             del rows
             return consulta
 
+    def formatar_financeiro(self,valor):
+        try:
+            valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
+            return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
 
