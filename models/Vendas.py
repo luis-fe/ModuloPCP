@@ -60,6 +60,7 @@ class VendasAcom():
         df_loaded['qtdePedida'] = pd.to_numeric(df_loaded['qtdePedida'], errors='coerce').fillna(0)
         df_loaded['qtdeFaturada'] = pd.to_numeric(df_loaded['qtdeFaturada'], errors='coerce').fillna(0)
         df_loaded['qtdeCancelada'] = pd.to_numeric(df_loaded['qtdeCancelada'], errors='coerce').fillna(0)
+        df_loaded['valorVendido'] = df_loaded['qtdePedida'] * df_loaded['PrecoLiquido']
 
         df_loaded = pd.merge(df_loaded,tiponotas,on='codTipoNota')
 
@@ -82,7 +83,7 @@ class VendasAcom():
 
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
-        groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum"}).reset_index()
+        groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         metas = Meta.Meta(self.codPlano)
@@ -108,7 +109,8 @@ class VendasAcom():
             'marca': 'TOTAL',
             'metaPecas': f'{totalMetasPeca}',
             'metaFinanceira': f'R$',
-            'qtdePedida':f'{totalVendasPeca}'
+            'qtdePedida':f'{totalVendasPeca}',
+            'valorVendido' : f'R$'
         }])
 
         # Concatena o total ao DataFrame original
