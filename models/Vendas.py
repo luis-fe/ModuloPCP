@@ -73,11 +73,15 @@ class VendasAcom():
 
         totalVendasPeca = df_loaded['qtdePedida'].sum()
 
-        df_loaded['Marca'] = np.where(
+        conditions = [
             df_loaded['codItemPai'].str.startswith("102"),
-            "M.POLLO",
-            "PACO"
-        )
+            df_loaded['codItemPai'].str.startswith("202"),
+            df_loaded['codItemPai'].str.startswith("104"),
+            df_loaded['codItemPai'].str.startswith("204")
+        ]
+        choices = ["M.POLLO","M.POLLO", "PACO","PACO"]
+
+        df_loaded['Marca'] = np.select(conditions, choices, default="OUTROS")
 
         groupByMarca = df_loaded.groupby(["Marca"]).agg({"qtdePedida":"sum"}).reset_index()
 
