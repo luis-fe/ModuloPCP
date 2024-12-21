@@ -87,11 +87,16 @@ class VendasAcom():
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         metas = Meta.Meta(self.codPlano)
 
-        totalMetasPeca = metas.consultaMetaGeral()
-        if totalMetasPeca.empty:
+        metasDataFrame = metas.consultaMetaGeral()
+        if metasDataFrame.empty:
+            metasDataFrame = pd.DataFrame([{'marca':['M.Pollo','PACO'],'metaPecas':['0','0']}])
+            groupByMarca = pd.merge(groupByMarca,metasDataFrame,on='marca',how='left')
             totalMetasPeca = '0'
         else:
-            totalMetasPeca = totalMetasPeca['metaPecas'].str.replace('.','').astype(int).sum()
+            metasDataFrame = df_loaded.loc[:,
+                        ['marca', 'metaFinanceira', 'metaPecas']]
+            groupByMarca = pd.merge(groupByMarca, metasDataFrame, on='marca', how='left')
+            totalMetasPeca = metasDataFrame['metaPecas'].str.replace('.','').astype(int).sum()
 
         data = {
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
