@@ -117,7 +117,7 @@ class VendasAcom():
         groupByMarca['preçoMedioRealizado'] = groupByMarca['preçoMedioRealizado'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
 
-        groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro())
+        groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
 
         # Cria a linha de total
         total = pd.DataFrame([{
