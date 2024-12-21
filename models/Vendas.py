@@ -113,6 +113,7 @@ class VendasAcom():
         # Aplicando o arredondamento
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
         groupByMarca['preçoMedio'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
+
         groupByMarca['preçoMedio'] = groupByMarca['preçoMedio'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
 
@@ -185,8 +186,7 @@ class VendasAcom():
 
     def formatar_financeiro(self,valor):
         try:
-            valor_limpo = float(valor.replace("R$", "").replace(",", "").strip())
-            return f'R$ {valor_limpo:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            return f'R$ {valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
