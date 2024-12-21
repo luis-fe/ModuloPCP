@@ -4,7 +4,7 @@ from connection import ConexaoPostgreWms, ConexaoBanco
 import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 import os
-from models import PlanoClass, ProdutosClass
+from models import PlanoClass, ProdutosClass, Meta
 class VendasAcom():
     '''Classe utilizada para acompanhar as vendas de acordo com o plano'''
 
@@ -85,11 +85,18 @@ class VendasAcom():
         groupByMarca = df_loaded.groupby(["Marca"]).agg({"qtdePedida":"sum"}).reset_index()
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
+        metas = Meta.Meta(self.codPlano)
 
+        totalMetasPeca = metas.consultaMetaGeral()
+        if totalMetasPeca.empty:
+            totalMetasPeca = '0'
+        else:
+            totalMetasPeca = totalMetasPeca['metaPecas'][0]
 
         data = {
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
-                '2 Vendas Gerais':f'{totalVendasPeca}',
+                '2 Vendas Geral Pcs':f'{totalVendasPeca}',
+                '3 Meta Geral Pcs':f'{totalMetasPeca}',
                 '4- Pecas por Marcas:': groupByMarca.to_dict(orient='records')
             }
         return pd.DataFrame([data])
