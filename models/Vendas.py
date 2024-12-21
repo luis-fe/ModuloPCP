@@ -91,7 +91,7 @@ class VendasAcom():
         if totalMetasPeca.empty:
             totalMetasPeca = '0'
         else:
-            totalMetasPeca = totalMetasPeca['metaPecas'].astype(int).sum()
+            totalMetasPeca = totalMetasPeca['metaPecas'].str.replace('.','').astype(int).sum()
 
         data = {
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
