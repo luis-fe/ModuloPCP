@@ -90,6 +90,8 @@ class VendasAcom():
         groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
+        totalVendasReais = groupByMarca['valorVendido'].sum()
+
         metas = Meta.Meta(self.codPlano)
 
         metasDataFrame = metas.consultaMetaGeral()
@@ -118,14 +120,16 @@ class VendasAcom():
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
         groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
 
+        totalPrecoMedio = totalVendasReais/totalVendasPeca
+
         # Cria a linha de total
         total = pd.DataFrame([{
             'marca': 'TOTAL',
             'metaPecas': f'{totalMetasPeca}',
             'metaFinanceira': f'R$',
             'qtdePedida':f'{totalVendasPeca}',
-            'valorVendido' : f'R$',
-            'preçoMedioRealizado':f'R$'
+            'valorVendido' : f'R$ {totalVendasReais:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),
+            'preçoMedioRealizado':f'R$ {totalPrecoMedio:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
         }])
 
         # Concatena o total ao DataFrame original
