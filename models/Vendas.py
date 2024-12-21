@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from connection import ConexaoPostgreWms, ConexaoBanco
 import fastparquet as fp
@@ -72,15 +73,23 @@ class VendasAcom():
 
         totalVendasPeca = df_loaded['qtdePedida'].sum()
 
-        filtroMPollo = df_loaded[df_loaded["codItemPai"].str.startswith("102")]
-        totalVendasPecaMpollo = filtroMPollo['qtdePedida'].sum()
+        df_loaded['Marca'] = np.where(
+            df_loaded['codItemPai'].str.startswith("102"),
+            "M.POLLO",
+            "PACO"
+        )
 
-        resultado = pd.DataFrame([{'Intervalo Venda do Plano':f'{self.iniVendas} - {self.fimVendas}',
-                                   'Total Vendas Peca':totalVendasPeca
-                                    ,'M.Pollo':f'{totalVendasPecaMpollo}'
-                                   }])
+        groupByMarca = df_loaded.groupby(["Marca"]).agg({"qtdePedida":"sum"}).reset_index()
 
-        return resultado
+
+
+        data = {
+                '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
+                '2 Vendas Gerais':f'{totalVendasPeca}',
+                '4- Pecas por Marcas:': groupByMarca.to_dict(orient='records')
+            }
+        return pd.DataFrame([data])
+
 
     def capaPedidos(self):
         empresa = "'" + str(self.empresa) + "'"
