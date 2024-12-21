@@ -110,7 +110,7 @@ class VendasAcom():
                         ['marca', 'metaFinanceira', 'metaPecas']]
             groupByMarca = pd.merge(groupByMarca, metasDataFrame, on='marca', how='left')
             totalMetasPeca = metasDataFrame['metaPecas'].str.replace('.','').astype(int).sum()
-            totalMetaFinanceira = metasDataFrame['metaFinanceira'].str.replace('R$','').str.replace(".", "").astype(float).sum()
+            totalMetaFinanceira = metasDataFrame['metaFinanceira'].str.replace('R$ ','').str.replace(".", "").str.replace(",", ".").astype(float).sum()
 
 
         # Convertendo para float antes de arredondar
