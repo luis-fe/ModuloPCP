@@ -61,7 +61,7 @@ class VendasAcom():
         df_loaded['qtdeFaturada'] = pd.to_numeric(df_loaded['qtdeFaturada'], errors='coerce').fillna(0)
         df_loaded['qtdeCancelada'] = pd.to_numeric(df_loaded['qtdeCancelada'], errors='coerce').fillna(0)
         df_loaded['valorVendido'] = df_loaded['qtdePedida'] * df_loaded['PrecoLiquido']
-
+        df_loaded['valorVendido'] = df_loaded['valorVendido'].round(2)
         df_loaded = pd.merge(df_loaded,tiponotas,on='codTipoNota')
 
 
