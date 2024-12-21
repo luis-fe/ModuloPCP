@@ -104,11 +104,14 @@ class VendasAcom():
             })
             groupByMarca = pd.merge(groupByMarca,metasDataFrame,on='marca',how='left')
             totalMetasPeca = '0'
+            totalMetaFinanceira = 'R$ 0,00'
         else:
             metasDataFrame = metasDataFrame.loc[:,
                         ['marca', 'metaFinanceira', 'metaPecas']]
             groupByMarca = pd.merge(groupByMarca, metasDataFrame, on='marca', how='left')
             totalMetasPeca = metasDataFrame['metaPecas'].str.replace('.','').astype(int).sum()
+            totalMetaFinanceira = metasDataFrame['metaFinanceira'].str.replace('R$','').str.replace(".", "").astype(float).sum()
+
 
         # Convertendo para float antes de arredondar
         groupByMarca['valorVendido'] = pd.to_numeric(groupByMarca['valorVendido'], errors='coerce')
@@ -125,9 +128,9 @@ class VendasAcom():
         # Cria a linha de total
         total = pd.DataFrame([{
             'marca': 'TOTAL',
-            'metaPecas': f'{totalMetasPeca}',
+            'metaPecas': f'{totalMetasPeca:,.0f}'.replace(",", "X").replace("X", "."),
             'metaFinanceira': f'R$',
-            'qtdePedida':f'{totalVendasPeca}',
+            'qtdePedida':f'{totalVendasPeca:,.0f}'.replace(",", "X").replace("X", "."),
             'valorVendido' : f'R$ {totalVendasReais:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),
             'preçoMedioRealizado':f'R$ {totalPrecoMedio:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
         }])
