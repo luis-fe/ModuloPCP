@@ -89,7 +89,7 @@ class VendasAcom():
 
         metasDataFrame = metas.consultaMetaGeral()
         if metasDataFrame.empty:
-            metasDataFrame = pd.DataFrame([{'marca':['M.Pollo','PACO'],'metaPecas':['0','0']}])
+            metasDataFrame = pd.DataFrame({'marca':['M.Pollo','PACO'],'metaPecas':['0','0']})
             groupByMarca = pd.merge(groupByMarca,metasDataFrame,on='marca',how='left')
             totalMetasPeca = '0'
         else:
