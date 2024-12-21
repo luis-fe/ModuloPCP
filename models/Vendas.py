@@ -112,6 +112,7 @@ class VendasAcom():
         groupByMarca['valorVendido'] = pd.to_numeric(groupByMarca['valorVendido'], errors='coerce')
         # Aplicando o arredondamento
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
+        groupByMarca['preçoMedio'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
 
         # Cria a linha de total
         total = pd.DataFrame([{
