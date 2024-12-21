@@ -89,7 +89,12 @@ class VendasAcom():
 
         metasDataFrame = metas.consultaMetaGeral()
         if metasDataFrame.empty:
-            metasDataFrame = pd.DataFrame({'marca':['M.Pollo','PACO'],'metaPecas':['0','0']})
+            metasDataFrame = pd.DataFrame({
+                'marca':['M.POLLO','PACO']
+                ,'metaPecas':['0','0']
+                , 'metaFinanceira': ['0', '0']
+
+            })
             groupByMarca = pd.merge(groupByMarca,metasDataFrame,on='marca',how='left')
             totalMetasPeca = '0'
         else:
@@ -98,11 +103,20 @@ class VendasAcom():
             groupByMarca = pd.merge(groupByMarca, metasDataFrame, on='marca', how='left')
             totalMetasPeca = metasDataFrame['metaPecas'].str.replace('.','').astype(int).sum()
 
+        # Cria a linha de total
+        total = pd.DataFrame([{
+            'marca': 'TOTAL',
+            'metaPecas': f'{totalMetasPeca}',
+            'metaFinanceira': f'R$',
+            'qtdePedida':f'{totalVendasPeca}'
+        }])
+
+        # Concatena o total ao DataFrame original
+        groupByMarca = pd.concat([groupByMarca, total], ignore_index=True)
+
         data = {
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
-                '2 Vendas Geral Pcs':f'{totalVendasPeca}',
-                '3 Meta Geral Pcs':f'{totalMetasPeca}',
-                '4- Pecas por Marcas:': groupByMarca.to_dict(orient='records')
+                '2- Detalhamento:': groupByMarca.to_dict(orient='records')
             }
         return pd.DataFrame([data])
 
