@@ -114,9 +114,10 @@ class VendasAcom():
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
         groupByMarca['preçoMedio'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
 
-        groupByMarca['preçoMedio'] = groupByMarca['preçoMedio'].apply(self.formatar_financeiro)
+        groupByMarca['preçoMedioRealizado'] = groupByMarca['preçoMedioRealizado'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
 
+        groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro())
 
         # Cria a linha de total
         total = pd.DataFrame([{
@@ -125,7 +126,7 @@ class VendasAcom():
             'metaFinanceira': f'R$',
             'qtdePedida':f'{totalVendasPeca}',
             'valorVendido' : f'R$',
-            'preçoMedio':f'R$'
+            'preçoMedioRealizado':f'R$'
         }])
 
         # Concatena o total ao DataFrame original
@@ -190,3 +191,8 @@ class VendasAcom():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
+    def formatar_padraoInteiro(self,valor):
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
