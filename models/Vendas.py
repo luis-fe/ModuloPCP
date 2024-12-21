@@ -108,6 +108,11 @@ class VendasAcom():
             groupByMarca = pd.merge(groupByMarca, metasDataFrame, on='marca', how='left')
             totalMetasPeca = metasDataFrame['metaPecas'].str.replace('.','').astype(int).sum()
 
+        # Convertendo para float antes de arredondar
+        groupByMarca['valorVendido'] = pd.to_numeric(groupByMarca['valorVendido'], errors='coerce')
+        # Aplicando o arredondamento
+        groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
+
         # Cria a linha de total
         total = pd.DataFrame([{
             'marca': 'TOTAL',
