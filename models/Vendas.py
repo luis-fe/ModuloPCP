@@ -93,7 +93,7 @@ class VendasAcom():
             groupByMarca = pd.merge(groupByMarca,metasDataFrame,on='marca',how='left')
             totalMetasPeca = '0'
         else:
-            metasDataFrame = df_loaded.loc[:,
+            metasDataFrame = metasDataFrame.loc[:,
                         ['marca', 'metaFinanceira', 'metaPecas']]
             groupByMarca = pd.merge(groupByMarca, metasDataFrame, on='marca', how='left')
             totalMetasPeca = metasDataFrame['metaPecas'].str.replace('.','').astype(int).sum()
