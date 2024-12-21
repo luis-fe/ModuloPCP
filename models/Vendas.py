@@ -113,7 +113,8 @@ class VendasAcom():
         # Aplicando o arredondamento
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
         groupByMarca['preçoMedio'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
-        groupByMarca['preçoMedio'] = groupByMarca['metaFinanceira'].apply(self.formatar_financeiro)
+        groupByMarca['preçoMedio'] = groupByMarca['preçoMedio'].apply(self.formatar_financeiro)
+        groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
 
 
         # Cria a linha de total
