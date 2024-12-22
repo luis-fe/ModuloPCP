@@ -42,13 +42,14 @@ class VendasAcom():
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
         df_loaded['filtro2'] = df_loaded['dataEmissao'] >= self.fimVendas
-        print(df_loaded)
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
                      'PrecoLiquido']]
+        print(df_loaded)
+
 
         df_loaded = pd.merge(df_loaded,produtos,on='codProduto',how='left')
         df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
