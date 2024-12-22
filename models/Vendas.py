@@ -29,6 +29,7 @@ class VendasAcom():
 
         plano = PlanoClass.Plano(self.codPlano)
         self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
+        self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
 
         produtos = ProdutosClass.Produto().consultaItensReduzidos()
         produtos.rename(
@@ -146,7 +147,9 @@ class VendasAcom():
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
                 '2- Semanas de Venda':f'{plano.obterNumeroSemanasVendas()} semanas',
                 '3- Semana de Venda Atual':f'{semanaAtual}',
-                '4- Detalhamento:': groupByMarca.to_dict(orient='records')
+                '4- Intervalo Faturamento do Plano:': f'{self.iniFat} - {self.fimFat}',
+                '5- Semanas de Faturamento': f'{plano.obterNumeroSemanasFaturamento()} semanas',
+                '6- Detalhamento:': groupByMarca.to_dict(orient='records')
             }
         return pd.DataFrame([data])
 

@@ -257,7 +257,47 @@ class Plano():
 
                 return semanas_completas + semana_inicial_parcial + semana_final_parcial
 
-    from datetime import datetime, timedelta
+    def obterNumeroSemanasFaturamento(self):
+            '''Metodo que obtem o numero de semanas de faturamento do Plano
+            Calcula o número de semanas entre duas datas, considerando:
+            - A semana começa na segunda-feira.
+            - Se a data inicial não for uma segunda-feira, considera a primeira semana começando na data inicial.
+
+            Parâmetros:
+                ini (str): Data inicial no formato 'YYYY-MM-DD'.
+                fim (str): Data final no formato 'YYYY-MM-DD'.
+
+            Retorna:
+                int: Número de semanas entre as duas datas.
+            '''
+
+            self.iniFat, self.fimFat = self.pesquisarInicioFimFat()
+
+            if self.iniFat == '-':
+                return 0
+            else:
+
+                data_ini = datetime.strptime(self.iniFat, '%Y-%m-%d')
+                data_fim = datetime.strptime(self.fimFat, '%Y-%m-%d')
+
+                if data_ini > data_fim:
+                    raise ValueError("A data inicial deve ser anterior ou igual à data final.")
+
+                # Ajustar para a próxima segunda-feira, se a data inicial não for segunda
+                if data_ini.weekday() != 0:  # 0 representa segunda-feira
+                    proxima_segunda = data_ini + timedelta(days=(7 - data_ini.weekday()))
+                else:
+                    proxima_segunda = data_ini
+
+                # Calcular o número de semanas completas a partir da próxima segunda-feira
+                semanas_completas = (data_fim - proxima_segunda).days // 7
+
+                # Verificar se existe uma semana parcial no final
+                dias_restantes = (data_fim - proxima_segunda).days % 7
+                semana_inicial_parcial = 1 if data_ini.weekday() != 0 else 0
+                semana_final_parcial = 1 if dias_restantes > 0 else 0
+
+                return semanas_completas + semana_inicial_parcial + semana_final_parcial
 
     def obterSemanaAtual(self):
         '''Calcula em qual semana está o dia atual dentro do intervalo de vendas.
@@ -317,6 +357,31 @@ class Plano():
             FimVenda = consulta['FimVenda'][0]
 
             return inicioVenda, FimVenda
+
+        else:
+            return '-', '-'
+
+    def pesquisarInicioFimFat(self):
+        '''metodo que pesquisa o inicio e o fim das vendas passeado no codPlano'''
+
+        sql = """
+        select 
+            "inicoFat","finalFat"
+        from
+            "PCP".pcp."Plano"
+        where
+            "codigo" = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        if not consulta.empty:
+
+            inicoFat = consulta['inicoFat'][0]
+            finalFat = consulta['finalFat'][0]
+
+            return inicoFat, finalFat
 
         else:
             return '-', '-'
