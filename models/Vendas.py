@@ -49,7 +49,6 @@ class VendasAcom():
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
                      'PrecoLiquido']]
-        print(df_loaded)
 
 
         df_loaded = pd.merge(df_loaded,produtos,on='codProduto',how='left')
@@ -120,9 +119,9 @@ class VendasAcom():
         groupByMarca['valorVendido'] = pd.to_numeric(groupByMarca['valorVendido'], errors='coerce')
         # Aplicando o arredondamento
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].round(2)
-        groupByMarca['preçoMedioRealizado'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
+        groupByMarca['precoMedioRealizado'] = (groupByMarca['valorVendido'] / groupByMarca['qtdePedida']).round(2)
 
-        groupByMarca['preçoMedioRealizado'] = groupByMarca['preçoMedioRealizado'].apply(self.formatar_financeiro)
+        groupByMarca['precoMedioRealizado'] = groupByMarca['precoMedioRealizado'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
         groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
 
@@ -135,13 +134,14 @@ class VendasAcom():
             'metaFinanceira': totalMetaFinanceira,
             'qtdePedida':f'{totalVendasPeca:,.0f}'.replace(",", "X").replace("X", "."),
             'valorVendido' : f'R$ {totalVendasReais:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),
-            'preçoMedioRealizado':f'R$ {totalPrecoMedio:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+            'precoMedioRealizado':f'R$ {totalPrecoMedio:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
         }])
 
         # Concatena o total ao DataFrame original
         groupByMarca = pd.concat([groupByMarca, total], ignore_index=True)
 
         semanaAtual = plano.obterSemanaAtual()
+        semanaAtualFat = plano.obterSemanaAtualFat()
 
         data = {
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
@@ -149,7 +149,8 @@ class VendasAcom():
                 '3- Semana de Venda Atual':f'{semanaAtual}',
                 '4- Intervalo Faturamento do Plano:': f'{self.iniFat} - {self.fimFat}',
                 '5- Semanas de Faturamento': f'{plano.obterNumeroSemanasFaturamento()} semanas',
-                '6- Detalhamento:': groupByMarca.to_dict(orient='records')
+                '6- Semana de Faturamento Atual': f'{semanaAtualFat}',
+                '7- Detalhamento:': groupByMarca.to_dict(orient='records')
             }
         return pd.DataFrame([data])
 
