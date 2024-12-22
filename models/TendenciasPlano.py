@@ -33,7 +33,7 @@ class TendenciaPlano():
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(inserir,(self.parametroABC))
+                curr.execute(inserir,(self.parametroABC,))
                 conn.commit()
 
         return pd.DataFrame([{'status':True,'Mensagem':'Novo parametroABC inserido com sucesso'}])
