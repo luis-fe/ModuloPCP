@@ -145,7 +145,7 @@ class VendasAcom():
                 '1- Intervalo Venda do Plano:': f'{self.iniVendas} - {self.fimVendas}',
                 '2- Semanas de Venda':f'{plano.obterNumeroSemanasVendas()} semanas',
                 '3- Semana de Venda Atual':f'{semanaAtual}',
-                '3- Detalhamento:': groupByMarca.to_dict(orient='records')
+                '4- Detalhamento:': groupByMarca.to_dict(orient='records')
             }
         return pd.DataFrame([data])
 
