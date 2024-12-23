@@ -89,6 +89,7 @@ class VendasAcom():
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
         groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
+        groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
@@ -151,7 +152,7 @@ class VendasAcom():
                 '5- Semanas de Faturamento': f'{plano.obterNumeroSemanasFaturamento()} semanas',
                 '6- Semana de Faturamento Atual': f'{semanaAtualFat}',
                 '7- Detalhamento:': groupByMarca.to_dict(orient='records'),
-                '8- DetalhamentoCategoria':self.vendasGeraisPorPlano().to_dict(orient='records')
+                '8- DetalhamentoCategoria': groupByCategoria.to_dict(orient='records')
             }
         return pd.DataFrame([data])
 
