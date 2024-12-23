@@ -39,7 +39,7 @@ class VendasAcom():
 
 
         tiponotas = plano.pesquisarTipoNotasPlano()
-        print(df_loaded.columns)
+
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
@@ -150,7 +150,8 @@ class VendasAcom():
                 '4- Intervalo Faturamento do Plano:': f'{self.iniFat} - {self.fimFat}',
                 '5- Semanas de Faturamento': f'{plano.obterNumeroSemanasFaturamento()} semanas',
                 '6- Semana de Faturamento Atual': f'{semanaAtualFat}',
-                '7- Detalhamento:': groupByMarca.to_dict(orient='records')
+                '7- Detalhamento:': groupByMarca.to_dict(orient='records'),
+                '8- DetalhamentoCategoria':self.vendasGeraisPorPlano().to_dict(orient='records')
             }
         return pd.DataFrame([data])
 
@@ -217,3 +218,72 @@ class VendasAcom():
 
     def VendasCategorias(self):
         '''Metodo para desdobrar as metas em categorias'''
+
+
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        # Carregar o arquivo Parquet
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
+
+        # Converter para DataFrame do Pandas
+        df_loaded = parquet_file.to_pandas()
+
+        plano = PlanoClass.Plano(self.codPlano)
+        self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
+        self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+
+        produtos = ProdutosClass.Produto().consultaItensReduzidos()
+        produtos.rename(
+            columns={'codigo': 'codProduto'},
+            inplace=True)
+
+
+
+        tiponotas = plano.pesquisarTipoNotasPlano()
+        df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
+        df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
+        df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
+        df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
+        df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
+        df_loaded = df_loaded.loc[:,
+                    ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida',
+                     'codTipoNota',
+                     # 'StatusSugestao',
+                     'PrecoLiquido']]
+
+        df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
+        df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
+        df_loaded['codItemPai'].fillna('-', inplace=True)
+
+        df_loaded['qtdeSugerida'] = pd.to_numeric(df_loaded['qtdeSugerida'], errors='coerce').fillna(0)
+        df_loaded['qtdePedida'] = pd.to_numeric(df_loaded['qtdePedida'], errors='coerce').fillna(0)
+        df_loaded['qtdeFaturada'] = pd.to_numeric(df_loaded['qtdeFaturada'], errors='coerce').fillna(0)
+        df_loaded['qtdeCancelada'] = pd.to_numeric(df_loaded['qtdeCancelada'], errors='coerce').fillna(0)
+        df_loaded['valorVendido'] = df_loaded['qtdePedida'] * df_loaded['PrecoLiquido']
+        # Convertendo para float antes de arredondar
+        df_loaded['valorVendido'] = pd.to_numeric(df_loaded['valorVendido'], errors='coerce')
+
+        # Aplicando o arredondamento
+        df_loaded['valorVendido'] = df_loaded['valorVendido'].round(2)
+        df_loaded = pd.merge(df_loaded, tiponotas, on='codTipoNota')
+
+        if self.consideraPedidosBloqueados == 'nao':
+            pedidosBloqueados = self.Monitor_PedidosBloqueados()
+            df_loaded = pd.merge(df_loaded, pedidosBloqueados, on='codPedido', how='left')
+            df_loaded['situacaobloq'].fillna('Liberado', inplace=True)
+            df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
+
+        conditions = [
+            df_loaded['codItemPai'].str.startswith("102"),
+            df_loaded['codItemPai'].str.startswith("202"),
+            df_loaded['codItemPai'].str.startswith("104"),
+            df_loaded['codItemPai'].str.startswith("204")
+        ]
+        choices = ["M.POLLO", "M.POLLO", "PACO", "PACO"]
+
+        df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
+        df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
+        groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida": "sum", "valorVendido": 'sum'}).reset_index()
+
+        return groupByCategoria
+
