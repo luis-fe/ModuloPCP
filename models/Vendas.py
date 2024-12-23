@@ -107,15 +107,17 @@ class VendasAcom():
         #groupByCategoria = groupByCategoria.drop(columns=['marca2'])
 
         # Renomear colunas, se necessário
-        groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido",
-                                         "categoria":"1-categoria",
-                                         "qtdePedida2":"2-TotalqtdePedida"}, inplace=True)
+        groupByCategoria.rename(columns={"marca": "8.3-qtdVendido","marca2":"valorVendido",
+                                         "categoria":"8.1-categoria",
+                                         "qtdePedida2":"8.2-TotalqtdePedida"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
 
-        groupByCategoria = groupByCategoria.sort_values(by=['2-TotalqtdePedida'],
+        groupByCategoria = groupByCategoria.sort_values(by=['8.2-TotalqtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
+        groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
+
 
         metas = Meta.Meta(self.codPlano)
 
