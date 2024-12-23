@@ -73,14 +73,14 @@ class TendenciaPlano():
         verifica1 = verifica1[verifica1['nomeABC'] == self.parametroABC].reset_index()
 
         if verifica1.empty:
-            return pd.DataFram([{'status': False, 'Mensagem': 'Parametro Abc nao existe !'}])
+            return pd.DataFrame([{'status': False, 'Mensagem': 'Parametro Abc nao existe !'}])
 
         verifica = self.consultaPlanejamentoABC()
         if not verifica.empty:
             self.inserirPlanejamentoABC()
         else:
             self.updatePlanejamentoABC()
-        return pd.DataFram([{'status':True,'Mensagem':'Inserido ou Atualizado com sucesso!'}])
+        return pd.DataFrame([{'status':True,'Mensagem':'Inserido ou Atualizado com sucesso!'}])
 
     def consultaPlanABC(self):
 
