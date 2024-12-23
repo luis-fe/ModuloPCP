@@ -14,7 +14,7 @@ class TendenciaPlano():
         '''Metodo utilizado para planejar a distribuicacao ABC'''
 
         sql = """
-        Select "nomeABC" , "perc_dist" from "Plano_ABC"
+        Select "nomeABC" , "perc_dist" from pcp."Plano_ABC"
         where 
             "codPlano" = %s
         order by 
