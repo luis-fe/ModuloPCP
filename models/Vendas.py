@@ -92,6 +92,8 @@ class VendasAcom():
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
         groupByCategoria = groupByCategoria.sort_values(by=['qtdePedida','categoria','marca'],
                                         ascending=False)  # escolher como deseja classificar
+
+        groupByCategoria['qtdePedida2'] = groupByCategoria['qtdePedida']
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
@@ -101,12 +103,14 @@ class VendasAcom():
         groupByCategoria = groupByCategoria.groupby("categoria").agg({
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
             "marca2": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido'])),
-            "qtdePedida": "sum"
+            "qtdePedida2": "sum"
         }).reset_index()
         #groupByCategoria = groupByCategoria.drop(columns=['marca2'])
 
         # Renomear colunas, se necessário
-        groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido","qtdePedida":"TotalqtdePedida"}, inplace=True)
+        groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido",
+                                         "categoria":"1- categoria",
+                                         "qtdePedida2":"TotalqtdePedida"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
