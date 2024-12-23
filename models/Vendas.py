@@ -93,6 +93,7 @@ class VendasAcom():
         groupByCategoria = groupByCategoria.sort_values(by=['qtdePedida','categoria','marca'],
                                         ascending=False)  # escolher como deseja classificar
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
