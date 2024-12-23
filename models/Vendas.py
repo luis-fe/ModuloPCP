@@ -105,7 +105,7 @@ class VendasAcom():
         #groupByCategoria = groupByCategoria.drop(columns=['marca2'])
 
         # Renomear colunas, se necessário
-        groupByCategoria.rename(columns={"marca": "qtdVendido"}, inplace=True)
+        groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
