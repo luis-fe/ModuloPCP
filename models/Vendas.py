@@ -90,8 +90,7 @@ class VendasAcom():
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
         groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
-        groupByCategoria = groupByCategoria.sort_values(by=['qtdePedida','categoria','marca'],
-                                        ascending=False)  # escolher como deseja classificar
+
 
         groupByCategoria['qtdePedida2'] = groupByCategoria['qtdePedida']
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
@@ -109,11 +108,14 @@ class VendasAcom():
 
         # Renomear colunas, se necessário
         groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido",
-                                         "categoria":"1- categoria",
-                                         "qtdePedida2":"TotalqtdePedida"}, inplace=True)
+                                         "categoria":"1-categoria",
+                                         "qtdePedida2":"2-TotalqtdePedida"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
+
+        groupByCategoria = groupByCategoria.sort_values(by=['2-TotalqtdePedida'],
+                                                        ascending=False)  # escolher como deseja classificar
 
         metas = Meta.Meta(self.codPlano)
 
