@@ -98,7 +98,7 @@ class VendasAcom():
         # Agregar valores por categoria
         groupByCategoria = groupByCategoria.groupby("categoria").agg({
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
-            "valorVendido": list
+            "valorVendido": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido']))
         }).reset_index()
 
         # Renomear colunas, se necessário
