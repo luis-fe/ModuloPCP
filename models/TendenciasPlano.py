@@ -76,7 +76,7 @@ class TendenciaPlano():
             return pd.DataFrame([{'status': False, 'Mensagem': 'Parametro Abc nao existe !'}])
 
         verifica = self.consultaPlanejamentoABC()
-        if not verifica.empty:
+        if verifica.empty:
             self.inserirPlanejamentoABC()
         else:
             self.updatePlanejamentoABC()
