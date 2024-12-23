@@ -93,6 +93,8 @@ class VendasAcom():
 
 
         groupByCategoria['qtdePedida2'] = groupByCategoria['qtdePedida']
+        groupByCategoria['valorVendido2'] = groupByCategoria['valorVendido']
+
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
@@ -102,13 +104,15 @@ class VendasAcom():
         groupByCategoria = groupByCategoria.groupby("categoria").agg({
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
             "marca2": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido'])),
-            "qtdePedida2": "sum"
+            "qtdePedida2": "sum",
+            "valorVendido2":"sum"
         }).reset_index()
         #groupByCategoria = groupByCategoria.drop(columns=['marca2'])
 
         # Renomear colunas, se necessário
-        groupByCategoria.rename(columns={"marca": "8.3-qtdVendido","marca2":"valorVendido",
+        groupByCategoria.rename(columns={"marca": "8.3-qtdVendido","marca2":"8.4-valorVendido",
                                          "categoria":"8.1-categoria",
+                                         "valorVendido2":"8.3-TotalvalorVendido",
                                          "qtdePedida2":"8.2-TotalqtdePedida"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
@@ -117,6 +121,7 @@ class VendasAcom():
         groupByCategoria = groupByCategoria.sort_values(by=['8.2-TotalqtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
         groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['8.3-TotalvalorVendido'] = groupByCategoria['8.3-TotalvalorVendido'].apply(self.formatar_financeiro)
 
 
         metas = Meta.Meta(self.codPlano)
