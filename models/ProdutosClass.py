@@ -154,6 +154,19 @@ class Produto():
 
         return consulta
 
+    def categoriasDisponiveis(self):
+        '''Metodo que consulta as marcas disponiveis '''
+
+        sql = """
+        select * from "PCP".pcp."Categorias"
+        order by "nomeCategoria" asc
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
+
 
     def consultaItensReduzidos(self):
         '''Metodo utilizado para consultar os itens reduzidos x informacoes: codPai , codCor , nome, categoria'''
