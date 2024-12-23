@@ -120,7 +120,7 @@ class VendasAcom():
 
         groupByCategoria = groupByCategoria.sort_values(by=['8.2-TotalqtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
-        groupByCategoria['8.5-precoMedioRealizado'] = (groupByCategoria['8.2-TotalqtdePedida'] / groupByCategoria['8.3-TotalvalorVendido']).round(2)
+        groupByCategoria['8.5-precoMedioRealizado'] = (groupByCategoria['8.3-TotalvalorVendido'] / groupByCategoria['8.2-TotalqtdePedida']).round(2)
 
         groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['8.3-TotalvalorVendido'] = groupByCategoria['8.3-TotalvalorVendido'].apply(self.formatar_financeiro)
