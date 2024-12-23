@@ -39,7 +39,7 @@ class VendasAcom():
 
 
         tiponotas = plano.pesquisarTipoNotasPlano()
-
+        print(df_loaded.columns)
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
@@ -212,3 +212,8 @@ class VendasAcom():
             return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
+
+
+
+    def VendasCategorias(self):
+        '''Metodo para desdobrar as metas em categorias'''
