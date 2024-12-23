@@ -95,6 +95,15 @@ class VendasAcom():
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
+        # Agregar valores por categoria
+        groupByCategoria = groupByCategoria.groupby("categoria").agg({
+            "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
+            "valorVendido": list
+        }).reset_index()
+
+        # Renomear colunas, se necessário
+        groupByCategoria.rename(columns={"marca": "qtdVendido"}, inplace=True)
+
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
 
