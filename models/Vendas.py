@@ -95,13 +95,12 @@ class VendasAcom():
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
-        # Copiar o DataFrame original antes do agrupamento
-        original_df = groupByCategoria.copy()
+        groupByCategoria['marca2'] = groupByCategoria['marca']
 
         # Agregar valores por categoria
-        groupByCategoria = original_df.groupby("categoria").agg({
-            "marca": lambda x: dict(zip(x, original_df.loc[x.index, 'qtdePedida'])),
-            "valorVendido": lambda x: dict(zip(x, original_df.loc[x.index, 'valorVendido']))
+        groupByCategoria = groupByCategoria.groupby("categoria").agg({
+            "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
+            "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido']))
         }).reset_index()
 
         # Renomear colunas, se necessário
