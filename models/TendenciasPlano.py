@@ -39,7 +39,7 @@ class TendenciaPlano():
         '''Metodo utilizado para inserir plano'''
 
         inserir = """
-        insert into "Plano_ABC" ("codPlano", "nomeABC", "perc_dist") values ( %s, %s, %s)
+        insert into pcp."Plano_ABC" ("codPlano", "nomeABC", "perc_dist") values ( %s, %s, %s)
         """
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
@@ -54,7 +54,7 @@ class TendenciaPlano():
         '''Metodo que faz o update no planejamento ABC do Plano'''
 
         update = """
-        update "Plano_ABC"
+        update pcp."Plano_ABC"
         set "perc_dist" = %s
         where "nomeABC" = %s and "codPlano" = %s
         """
