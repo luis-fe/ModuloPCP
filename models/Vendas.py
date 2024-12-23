@@ -92,6 +92,7 @@ class VendasAcom():
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
         groupByCategoria = groupByCategoria.sort_values(by=['qtdePedida','categoria','marca'],
                                         ascending=False)  # escolher como deseja classificar
+        groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
