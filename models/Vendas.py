@@ -300,4 +300,3 @@ class VendasAcom():
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida": "sum", "valorVendido": 'sum'}).reset_index()
 
         return groupByCategoria
-
