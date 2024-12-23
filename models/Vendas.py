@@ -100,12 +100,13 @@ class VendasAcom():
         # Agregar valores por categoria
         groupByCategoria = groupByCategoria.groupby("categoria").agg({
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
-            "marca2": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido']))
+            "marca2": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido'])),
+            "qtdePedida": "sum"
         }).reset_index()
         #groupByCategoria = groupByCategoria.drop(columns=['marca2'])
 
         # Renomear colunas, se necessário
-        groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido"}, inplace=True)
+        groupByCategoria.rename(columns={"marca": "qtdVendido","marca2":"valorVendido","qtdePedida":"TotalqtdePedida"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
