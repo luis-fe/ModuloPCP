@@ -6,13 +6,14 @@ class Meta ():
     '''Classe utilizada para definicao das METAS do PCP'''
 
 
-    def __init__(self, codPlano = None, marca = None, metaFinanceira = None , metaPecas = None):
+    def __init__(self, codPlano = None, marca = None, metaFinanceira = None , metaPecas = None, nomeCategoria = None):
         '''Contrutor da clasee'''
 
         self.codPlano = codPlano
         self.marca = marca
         self.metaFinanceira = str(metaFinanceira)
         self.metaPecas = str(metaPecas)
+        self.nomeCategoria = nomeCategoria
 
     def consultaMetaGeral(self):
         '''Método utilizado para consultar a Meta Geral.'''
@@ -221,11 +222,121 @@ class Meta ():
              and "marca" = %s
         """
 
+    def inserirMetaCategoriaPlano(self):
+        '''Metodo para inserir a meta de categoria '''
+
+        sql = """
+        insert into pcp."Meta_Categoria_Plano" 
+        ("codPlano", "nomeCategoria" , "marca" , "metaPc" , "metaFinanceira")
+        values
+        ( %s, %s, %s , %s , %s)
+        """
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(sql, (
+                self.codPlano, self.nomeCategoria, self.marca, self.metaPecas, self.metaFinanceira))
+                conn.commit()
+
+
+    def updateMetaCategoriaPlano(self):
+        '''Metodo que atualiza as metas de categoria no plano '''
+
+        update = """
+        update 
+            pcp."Meta_Categoria_Plano" 
+        set
+            "metaPc" = %s , 
+            "metaFinanceira" = %s
+        where 
+            "codPlano" = %s 
+            and "marca" = %s
+            and "nomeCategoria" = %s
+        """
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(update, (
+                self.metaPecas, self.metaFinanceira, self.codPlano, self.marca, self.nomeCategoria))
+                conn.commit()
+
+
+    def consultaEspecificaMetaPorCategoriaPlano(self):
+        '''metodo de consulta de meta, marca e categoria especifica no plano'''
+
+        sql = """
+        select * from pcp."Meta_Categoria_Plano"
+        where 
+            "codPlano" = %s 
+            and "marca" = %s
+            and "nomeCategoria" = %s
+        """
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql, conn,params=(self.codPlano, self.marca, self.nomeCategoria))
+
+        return consulta
+
+    def atualizaOuInserirMetaCategoria(self):
+        '''Metodo que inseri a meta por categoria '''
+
+        verifica = self.consultaEspecificaMetaPorCategoriaPlano()
+
+        if verifica.empty:
+            self.inserirMetaCategoriaPlano()
+        else:
+            self.updateMetaCategoriaPlano()
+
+        return pd.DataFrame([{'status':True, 'mensagem':'meta da categoria/marca inserido com sucesso !'}])
 
 
 
+    def consultarMetaCategoriaPlano(self):
+        '''metodo que realiza a consulta da meta por categoria do plano e da Marca '''
+
+        consulta1 = self.consultaMetaGeralPlanoMarca()
+
+        if consulta1.empty:
+            totalPecas = 0
+            totalReais = 0
+        else:
+            totalPecas = consulta1['metaPecas'][0]
+            totalReais = consulta1['metaFinanceira'][0]
+
+        sql1 = """
+        select
+			m."nomeCategoria" ,
+			m."metaPc" ,
+			m."metaFinanceira" 
+		from
+			"PCP".pcp."Meta_Categoria_Plano" m
+		where 
+			"codPlano" = %s 
+			and "marca" = %s
+        """
+
+        sql2 ="""
+        select
+			distinct "nomeCategoria"
+		from
+			"PCP".pcp."Categorias" c
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+
+        consulta1 = pd.read_sql(sql1,conn,params=(self.codPlano, self.marca))
+        consulta2 = pd.read_sql(sql2,conn)
+
+        consulta = pd.merge(consulta2, consulta1, on=['nomeCategoria'],how='left')
+        consulta.fillna('-', inplace=True)
 
 
+        data = {
+                '1- Plano - Marca:': f'{self.codPlano} - {self.marca}',
+                '2- Total Pecas':f'{totalPecas}',
+                '3 - Total R$':f'{totalReais}',
+                '4- DetalhamentoCategoria': consulta.to_dict(orient='records')
+            }
+        return pd.DataFrame([data])
 
 
 
