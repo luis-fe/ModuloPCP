@@ -329,6 +329,9 @@ class Meta ():
         consulta = pd.merge(consulta2, consulta1, on=['nomeCategoria'],how='left')
         consulta.fillna('-', inplace=True)
 
+        consulta = consulta.sort_values(by=['metaPc'],
+                                                        ascending=False)  # escolher como deseja classificar
+
 
         data = {
                 '1- Plano - Marca:': f'{self.codPlano} - {self.marca}',
