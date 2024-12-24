@@ -350,7 +350,13 @@ class VendasAcom():
 
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
-        groupBy = df_loaded.groupby(["codProduto"]).agg({"nome":'first',"codItemPai":'first',"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
+        groupBy = df_loaded.groupby(["codProduto"]).agg({"marca":"first",
+                                                         "nome":'first',
+                                                         "codItemPai":'first',
+                                                         "qtdePedida":"sum",
+                                                         "valorVendido":'sum'}).reset_index()
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
+        groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
+        groupBy['qtdePedida'] = groupBy['qtdePedida'].apply(self.formatar_padraoInteiro)
         return groupBy
