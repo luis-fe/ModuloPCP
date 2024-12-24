@@ -411,6 +411,6 @@ class VendasAcom():
         afv = ProdutosClass.Produto().statusAFV()
 
         groupBy = pd.merge(groupBy, afv, on='codReduzido',how='left')
-        groupBy['statusAFV'].fillna('Normal',index=True)
+        groupBy['statusAFV'].fillna('Normal',inplace=True)
 
         return groupBy
