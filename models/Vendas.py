@@ -99,11 +99,29 @@ class VendasAcom():
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
         groupByCategoria['marca2'] = groupByCategoria['marca']
+        groupByCategoria['marca3'] = groupByCategoria['marca']
+
+        sqlMetaCategoria = """
+                select
+        			m."nomeCategoria" as "categoria",
+        			m."metaPc" ,
+        			m."metaFinanceira",
+        			m."marca" 
+        		from
+        			"PCP".pcp."Meta_Categoria_Plano" m
+        		where
+        		    m."codPlano" = %s        
+                """
+        conn = ConexaoPostgreWms.conexaoEngine()
+        sqlMetaCategoria = pd.read_sql(sqlMetaCategoria, conn, params=(self.codPlano,))
+        groupByCategoria = pd.merge(groupByCategoria,sqlMetaCategoria,on=['categoria','marca'],how='left')
+        groupByCategoria.fillna('-',inplace=True)
 
         # Agregar valores por categoria
         groupByCategoria = groupByCategoria.groupby("categoria").agg({
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
             "marca2": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido'])),
+            "marca3": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'metaPc'])),
             "qtdePedida2": "sum",
             "valorVendido2":"sum"
         }).reset_index()
@@ -111,6 +129,7 @@ class VendasAcom():
 
         # Renomear colunas, se necessário
         groupByCategoria.rename(columns={"marca": "8.3-qtdVendido","marca2":"8.4-valorVendido",
+                                         "marca3":"8.6-metaPcs",
                                          "categoria":"8.1-categoria",
                                          "valorVendido2":"8.3-TotalvalorVendido",
                                          "qtdePedida2":"8.2-TotalqtdePedida"}, inplace=True)
@@ -125,6 +144,7 @@ class VendasAcom():
         groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['8.3-TotalvalorVendido'] = groupByCategoria['8.3-TotalvalorVendido'].apply(self.formatar_financeiro)
         groupByCategoria['8.5-precoMedioRealizado'] = groupByCategoria['8.5-precoMedioRealizado'].apply(self.formatar_financeiro)
+
 
 
         metas = Meta.Meta(self.codPlano)
