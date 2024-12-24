@@ -45,11 +45,12 @@ class VendasAcom():
 
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
-        #df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFat
+        df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFat
         #df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= self.fimFat
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
+        print(df_loaded['filtro3'])
         #df_loaded = df_loaded[df_loaded['filtro3'] == True].reset_index()
         #df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
 
