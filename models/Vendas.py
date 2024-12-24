@@ -117,6 +117,9 @@ class VendasAcom():
         groupByCategoria = pd.merge(groupByCategoria,sqlMetaCategoria,on=['categoria','marca'],how='left')
         groupByCategoria.fillna('-',inplace=True)
 
+        groupByCategoria['metaPc'] = groupByCategoria['metaPc'].apply(self.formatar_padraoInteiro)
+
+
         # Agregar valores por categoria
         groupByCategoria = groupByCategoria.groupby("categoria").agg({
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
@@ -142,6 +145,7 @@ class VendasAcom():
         groupByCategoria['8.5-precoMedioRealizado'] = (groupByCategoria['8.3-TotalvalorVendido'] / groupByCategoria['8.2-TotalqtdePedida']).round(2)
 
         groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
+
         groupByCategoria['8.3-TotalvalorVendido'] = groupByCategoria['8.3-TotalvalorVendido'].apply(self.formatar_financeiro)
         groupByCategoria['8.5-precoMedioRealizado'] = groupByCategoria['8.5-precoMedioRealizado'].apply(self.formatar_financeiro)
 
