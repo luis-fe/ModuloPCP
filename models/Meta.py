@@ -335,9 +335,9 @@ class Meta ():
 
 
         data = {
-                '1- Plano - Marca:': f'{self.codPlano} - {self.marca}',
-                '2- Total Pecas':f'{totalPecas}',
-                '3 - Total R$':f'{totalReais}',
+                '1- Plano - Marca:': f'({self.codPlano})-{self.marca}',
+                '2- Total Pecas':f'{totalPecas:,.0f}'.replace(",", "X").replace("X", "."),
+                '3 - Total R$':f'R$ {totalReais:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),
                 '4- DetalhamentoCategoria': consulta.to_dict(orient='records')
             }
         return pd.DataFrame([data])
