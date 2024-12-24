@@ -352,6 +352,8 @@ class VendasAcom():
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
         groupBy = df_loaded.groupby(["codProduto"]).agg({"marca":"first",
                                                          "nome":'first',
+                                                         "nomeCategoria":'first',
+                                                         "codCor":"first",
                                                          "codItemPai":'first',
                                                          "qtdePedida":"sum",
                                                          "valorVendido":'sum'}).reset_index()
@@ -359,4 +361,9 @@ class VendasAcom():
                                                         ascending=False)  # escolher como deseja classificar
         groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
         groupBy['qtdePedida'] = groupBy['qtdePedida'].apply(self.formatar_padraoInteiro)
+
+        # Renomear colunas, se necessário
+        groupBy.rename(columns={"codProduto":"codReduzido"}, inplace=True)
+
+
         return groupBy
