@@ -300,8 +300,9 @@ class Meta ():
             totalReais = 0
         else:
             totalPecas = consulta1['metaPecas'][0]
+            totalPecas = int(totalPecas)
             totalReais = consulta1['metaFinanceira'][0]
-
+            totalReais = float(totalReais)
         sql1 = """
         select
 			m."nomeCategoria" ,
