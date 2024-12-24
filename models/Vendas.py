@@ -200,6 +200,7 @@ class VendasAcom():
         groupByMarca['precoMedioRealizado'] = groupByMarca['precoMedioRealizado'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
         groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
+        groupByMarca['qtdeFaturada'] = groupByMarca['qtdeFaturada'].apply(self.formatar_padraoInteiro)
 
         totalPrecoMedio = totalVendasReais/totalVendasPeca
 
