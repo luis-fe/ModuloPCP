@@ -406,7 +406,7 @@ class VendasAcom():
         groupBy['qtdeFaturada'] = groupBy['qtdeFaturada'].apply(self.formatar_padraoInteiro)
 
         # Renomear colunas, se necessário
-        groupBy.rename(columns={"codProduto":"codReduzido","codPedido":"qtdPedidos"}, inplace=True)
+        groupBy.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
 
 
         return groupBy
