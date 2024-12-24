@@ -223,3 +223,34 @@ class Produto():
         gc.collect()
 
         return consulta
+
+
+    def estoqueNat5(self):
+        '''metodo que consulta o estoque da natureza 05 '''
+
+        sql = """
+    SELECT
+        d.codItem as codReduzido,
+        d.estoqueAtual
+    FROM
+        est.DadosEstoque d
+    WHERE
+        d.codEmpresa = 1
+        and d.codNatureza = 5
+        and d.estoqueAtual > 0
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
