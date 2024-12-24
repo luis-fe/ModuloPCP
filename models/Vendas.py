@@ -397,7 +397,8 @@ class VendasAcom():
                                                          "codItemPai":'first',
                                                          "qtdePedida":"sum",
                                                          "qtdeFaturada":'sum',
-                                                         "valorVendido":'sum'}).reset_index()
+                                                         "valorVendido":'sum',
+                                                         "codPedido":'count'}).reset_index()
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
         groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
@@ -405,7 +406,7 @@ class VendasAcom():
         groupBy['qtdeFaturada'] = groupBy['qtdeFaturada'].apply(self.formatar_padraoInteiro)
 
         # Renomear colunas, se necessário
-        groupBy.rename(columns={"codProduto":"codReduzido"}, inplace=True)
+        groupBy.rename(columns={"codProduto":"codReduzido","codPedido":"qtdPedidos"}, inplace=True)
 
 
         return groupBy
