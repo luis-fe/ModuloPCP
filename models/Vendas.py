@@ -55,6 +55,8 @@ class VendasAcom():
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro3'] == True].reset_index()
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
 
         df_loaded = df_loaded.loc[:,
