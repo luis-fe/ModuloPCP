@@ -210,6 +210,7 @@ class VendasAcom():
             'metaPecas': f'{totalMetasPeca:,.0f}'.replace(",", "X").replace("X", "."),
             'metaFinanceira': totalMetaFinanceira,
             'qtdePedida':f'{totalVendasPeca:,.0f}'.replace(",", "X").replace("X", "."),
+            'qtdeFaturada': f'',
             'valorVendido' : f'R$ {totalVendasReais:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),
             'precoMedioRealizado':f'R$ {totalPrecoMedio:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
         }])
