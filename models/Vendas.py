@@ -277,9 +277,8 @@ class VendasAcom():
             return valor  # Retorna o valor original caso não seja convertível
 
 
-
-    def VendasCategorias(self):
-        '''Metodo para desdobrar as metas em categorias'''
+    def vendasPorSku(self):
+        '''Metodo que disponibiliza as vendas a nivel de sku do Plano'''
 
 
         load_dotenv('db.env')
@@ -302,20 +301,23 @@ class VendasAcom():
 
 
         tiponotas = plano.pesquisarTipoNotasPlano()
+
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
         df_loaded = df_loaded.loc[:,
-                    ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida',
-                     'codTipoNota',
+                    ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
                      'PrecoLiquido']]
 
-        df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
+
+        df_loaded = pd.merge(df_loaded,produtos,on='codProduto',how='left')
         df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
-        df_loaded['codItemPai'].fillna('-', inplace=True)
+        df_loaded['codItemPai'].fillna('-',inplace=True)
+
+        # consultar = consultar.rename(columns={'StatusSugestao': 'Sugestao(Pedido)'})
 
         df_loaded['qtdeSugerida'] = pd.to_numeric(df_loaded['qtdeSugerida'], errors='coerce').fillna(0)
         df_loaded['qtdePedida'] = pd.to_numeric(df_loaded['qtdePedida'], errors='coerce').fillna(0)
@@ -327,7 +329,8 @@ class VendasAcom():
 
         # Aplicando o arredondamento
         df_loaded['valorVendido'] = df_loaded['valorVendido'].round(2)
-        df_loaded = pd.merge(df_loaded, tiponotas, on='codTipoNota')
+        df_loaded = pd.merge(df_loaded,tiponotas,on='codTipoNota')
+
 
         if self.consideraPedidosBloqueados == 'nao':
             pedidosBloqueados = self.Monitor_PedidosBloqueados()
@@ -335,16 +338,19 @@ class VendasAcom():
             df_loaded['situacaobloq'].fillna('Liberado', inplace=True)
             df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
 
+
+
         conditions = [
             df_loaded['codItemPai'].str.startswith("102"),
             df_loaded['codItemPai'].str.startswith("202"),
             df_loaded['codItemPai'].str.startswith("104"),
             df_loaded['codItemPai'].str.startswith("204")
         ]
-        choices = ["M.POLLO", "M.POLLO", "PACO", "PACO"]
+        choices = ["M.POLLO","M.POLLO", "PACO","PACO"]
 
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
-        groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida": "sum", "valorVendido": 'sum'}).reset_index()
-
-        return groupByCategoria
+        groupBy = df_loaded.groupby(["codProduto"]).agg({"nome":'first',"codItemPai":'first',"qtdePedida":"sum","valorVendido":'sum'}).reset_index()
+        groupBy = groupBy.sort_values(by=['qtdePedida'],
+                                                        ascending=False)  # escolher como deseja classificar
+        return groupBy
