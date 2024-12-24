@@ -100,6 +100,7 @@ class VendasAcom():
 
         groupByCategoria['marca2'] = groupByCategoria['marca']
         groupByCategoria['marca3'] = groupByCategoria['marca']
+        groupByCategoria['marca4'] = groupByCategoria['marca']
 
         sqlMetaCategoria = """
                 select
@@ -118,6 +119,7 @@ class VendasAcom():
         groupByCategoria.fillna('-',inplace=True)
 
         groupByCategoria['metaPc'] = groupByCategoria['metaPc'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['metaFinanceira'] = groupByCategoria['metaFinanceira'].apply(self.formatar_financeiro)
 
 
         # Agregar valores por categoria
@@ -125,6 +127,7 @@ class VendasAcom():
             "marca": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'qtdePedida'])),
             "marca2": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'valorVendido'])),
             "marca3": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'metaPc'])),
+            "marca4": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'metaFinanceira'])),
             "qtdePedida2": "sum",
             "valorVendido2":"sum"
         }).reset_index()
@@ -133,6 +136,7 @@ class VendasAcom():
         # Renomear colunas, se necessário
         groupByCategoria.rename(columns={"marca": "8.3-qtdVendido","marca2":"8.4-valorVendido",
                                          "marca3":"8.6-metaPcs",
+                                         "marca4": "8.7-metaFinanceira",
                                          "categoria":"8.1-categoria",
                                          "valorVendido2":"8.3-TotalvalorVendido",
                                          "qtdePedida2":"8.2-TotalqtdePedida"}, inplace=True)
