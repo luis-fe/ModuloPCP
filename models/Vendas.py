@@ -408,5 +408,9 @@ class VendasAcom():
         # Renomear colunas, se necessário
         groupBy.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
 
+        afv = ProdutosClass.Produto().statusAFV()
+
+        groupBy = pd.merge(groupBy, afv, on='codReduzido',how='left')
+        groupBy['statusAFV'].fillna('Normal',index=True)
 
         return groupBy

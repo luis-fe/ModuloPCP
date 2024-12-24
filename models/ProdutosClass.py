@@ -190,5 +190,36 @@ class Produto():
         consulta = pd.read_sql(sql,conn)
         return consulta
 
+    def statusAFV(self):
+        '''Metodo que consulta o status AFV dos skus '''
 
+        sql = """
+        SELECT
+            b.Reduzido as codReduzido,
+            'Bloqueado' as statusAFV
+        FROM
+            Asgo_Afv.EngenhariasBloqueadas b
+        WHERE
+            b.Empresa = 1
+        union	
+        SELECT
+            b.Reduzido as codReduzido ,
+            'Acompanhamento' as statusAFV
+        FROM
+            Asgo_Afv.EngenhariasAcompanhamento b
+        WHERE
+            b.Empresa = 1
+        """
 
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
