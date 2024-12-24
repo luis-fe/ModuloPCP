@@ -50,7 +50,7 @@ class VendasAcom():
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
-        print(df_loaded['filtro3'])
+        print(df_loaded['dataPrevFat'])
         #df_loaded = df_loaded[df_loaded['filtro3'] == True].reset_index()
         #df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
 
