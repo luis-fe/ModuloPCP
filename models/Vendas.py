@@ -108,6 +108,7 @@ class VendasAcom():
 
         groupByCategoria['qtdePedida2'] = groupByCategoria['qtdePedida']
         groupByCategoria['valorVendido2'] = groupByCategoria['valorVendido']
+        groupByCategoria['qtdeFaturada2'] = groupByCategoria['qtdeFaturada']
 
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
@@ -143,16 +144,19 @@ class VendasAcom():
             "marca3": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'metaPc'])),
             "marca4": lambda x: dict(zip(x, groupByCategoria.loc[x.index, 'metaFinanceira'])),
             "qtdePedida2": "sum",
-            "valorVendido2":"sum"
+            "valorVendido2":"sum",
+            "qtdeFaturada2":'sum'
         }).reset_index()
         #groupByCategoria = groupByCategoria.drop(columns=['marca2'])
 
         # Renomear colunas, se necessário
-        groupByCategoria.rename(columns={"marca": "8.3-qtdVendido","marca2":"8.4-valorVendido",
-                                         "marca3":"8.6-metaPcs",
-                                         "marca4": "8.7-metaFinanceira",
+        groupByCategoria.rename(columns={"marca": "8.5-qtdVendido",
+                                         "marca2":"8.6-valorVendido",
+                                         "marca3":"8.7-metaPcs",
+                                         "marca4": "8.8-metaFinanceira",
                                          "categoria":"8.1-categoria",
                                          "valorVendido2":"8.3-TotalvalorVendido",
+                                         "qtdeFaturada2": "8.4-TotalFaturadoPcs",
                                          "qtdePedida2":"8.2-TotalqtdePedida"}, inplace=True)
 
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
@@ -164,6 +168,7 @@ class VendasAcom():
         groupByCategoria['8.5-precoMedioRealizado'] = (groupByCategoria['8.3-TotalvalorVendido'] / groupByCategoria['8.2-TotalqtdePedida']).round(2)
 
         groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['8.4-TotalFaturadoPcs'] = groupByCategoria['8.4-TotalFaturadoPcs'].apply(self.formatar_padraoInteiro)
 
         groupByCategoria['8.3-TotalvalorVendido'] = groupByCategoria['8.3-TotalvalorVendido'].apply(self.formatar_financeiro)
         groupByCategoria['8.5-precoMedioRealizado'] = groupByCategoria['8.5-precoMedioRealizado'].apply(self.formatar_financeiro)
