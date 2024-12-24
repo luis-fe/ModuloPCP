@@ -324,13 +324,14 @@ class Meta ():
         conn = ConexaoPostgreWms.conexaoEngine()
 
         consulta1 = pd.read_sql(sql1,conn,params=(self.codPlano, self.marca))
+        consulta1['metaPc'] = consulta1['metaPc'].apply(self.formatar_padraoInteiro)
+        consulta1['metaFinanceira'] = consulta1['metaFinanceira'].apply(self.formatar_financeiro)
+
         consulta2 = pd.read_sql(sql2,conn)
 
         consulta = pd.merge(consulta2, consulta1, on=['nomeCategoria'],how='left')
         consulta.fillna('-', inplace=True)
 
-        consulta = consulta.sort_values(by=['metaPc'],
-                                                        ascending=False)  # escolher como deseja classificar
 
 
         data = {
@@ -342,4 +343,15 @@ class Meta ():
         return pd.DataFrame([data])
 
 
+    def formatar_financeiro(self,valor):
+        try:
+            return f'R$ {valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
+
+    def formatar_padraoInteiro(self,valor):
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
 
