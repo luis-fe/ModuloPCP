@@ -352,7 +352,7 @@ class VendasAcom():
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
         groupBy = df_loaded.groupby(["codProduto"]).agg({"marca":"first",
                                                          "nome":'first',
-                                                         "nomeCategoria":'first',
+                                                         "categoria":'first',
                                                          "codCor":"first",
                                                          "codItemPai":'first',
                                                          "qtdePedida":"sum",
