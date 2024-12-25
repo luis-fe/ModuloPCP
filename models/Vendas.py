@@ -509,7 +509,7 @@ class VendasAcom():
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
 
-        df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido].reset_index()
+        df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
 
         return df_loaded
 
