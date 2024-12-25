@@ -253,4 +253,25 @@ class Produto():
 
         return consulta
 
+    def emProducao(self):
+        '''metodo que lista os produtos e as quantidades em processo de producao'''
 
+        sql = """
+        select
+            ic.codigo as "codReduzido",
+            sum(total_pcs) as "emProcesso"
+        from
+            "PCP".pcp.itens_csw ic
+        inner join 
+            "PCP".pcp.ordemprod o 
+            on substring(o."codProduto",2,8) = "codItemPai"
+            and o."codSortimento" = ic."codSortimento"::varchar
+            and o."seqTamanho" = "codSeqTamanho"::varchar
+        group by 
+            ic.codigo 
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta

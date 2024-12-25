@@ -410,11 +410,19 @@ class VendasAcom():
 
         afv = ProdutosClass.Produto().statusAFV()
         estoque = ProdutosClass.Produto().estoqueNat5()
+        emProcesso = ProdutosClass.Produto().emProducao()
 
         groupBy = pd.merge(groupBy, afv, on='codReduzido',how='left')
         groupBy['statusAFV'].fillna('Normal',inplace=True)
         groupBy = pd.merge(groupBy, estoque, on='codReduzido',how='left')
         groupBy['estoqueAtual'].fillna(0,inplace=True)
+        groupBy = pd.merge(groupBy, emProcesso, on='codReduzido',how='left')
+        groupBy['emProcesso'].fillna(0,inplace=True)
 
 
         return groupBy
+
+
+
+
+
