@@ -473,11 +473,6 @@ class VendasAcom():
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
 
-        df_loaded = df_loaded.loc[:,
-                    ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida',
-                     'codTipoNota',
-                     # 'StatusSugestao',
-                     'PrecoLiquido']]
 
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
         df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
