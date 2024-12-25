@@ -513,16 +513,14 @@ class VendasAcom():
 
 
         groupBy = df_loaded.groupby(["codPedido"]).agg({"marca":"first",
-                                                         "nome":'first',
-                                                         "categoria":'first',
-                                                         "codCor":"first",
-                                                         "codItemPai":'first',
                                                          "qtdePedida":"sum",
                                                          "qtdeFaturada":'sum',
                                                          "valorVendido":'sum',
                                                         "codTipoNota":"first",
                                                         "dataEmissao":"first",
                                                         "dataPrevFat":"first"}).reset_index()
+        groupBy = groupBy.sort_values(by=['qtdePedida'],
+                                                        ascending=False)  # escolher como deseja classificar
         return groupBy
 
 
