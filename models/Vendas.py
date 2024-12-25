@@ -511,6 +511,18 @@ class VendasAcom():
 
         df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
 
-        return df_loaded
+
+        groupBy = df_loaded.groupby(["codPedido"]).agg({"marca":"first",
+                                                         "nome":'first',
+                                                         "categoria":'first',
+                                                         "codCor":"first",
+                                                         "codItemPai":'first',
+                                                         "qtdePedida":"sum",
+                                                         "qtdeFaturada":'sum',
+                                                         "valorVendido":'sum',
+                                                        "codTipoNota":"first",
+                                                        "dataEmissao":"first",
+                                                        "dataPrevFat":"first"}).reset_index()
+        return groupBy
 
 
