@@ -401,9 +401,7 @@ class VendasAcom():
                                                          "codPedido":'count'}).reset_index()
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
-        groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
-        groupBy['qtdePedida'] = groupBy['qtdePedida'].apply(self.formatar_padraoInteiro)
-        groupBy['qtdeFaturada'] = groupBy['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+
 
         # Renomear colunas, se necessário
         groupBy.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
@@ -419,6 +417,14 @@ class VendasAcom():
         groupBy = pd.merge(groupBy, emProcesso, on='codReduzido',how='left')
         groupBy['emProcesso'].fillna(0,inplace=True)
 
+        groupBy['disponivel'] = (groupBy['emProcesso'] + groupBy['estoqueAtual'] ) - (groupBy['qtdePedida'] - groupBy['qtdeFaturada'] )
+
+        groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
+        groupBy['qtdePedida'] = groupBy['qtdePedida'].apply(self.formatar_padraoInteiro)
+        groupBy['qtdeFaturada'] = groupBy['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+        groupBy['disponivel'] = groupBy['disponivel'].apply(self.formatar_padraoInteiro)
+        groupBy['emProcesso'] = groupBy['emProcesso'].apply(self.formatar_padraoInteiro)
+        groupBy['estoqueAtual'] = groupBy['estoqueAtual'].apply(self.formatar_padraoInteiro)
 
         return groupBy
 
