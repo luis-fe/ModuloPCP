@@ -25,6 +25,7 @@ class VendasAcom():
 
         # Encontrando o disponivel :
         disponivel = df_loaded.groupby(["codProduto"]).agg({
+                                                        "marca":'first',
                                                          "qtdePedida": "sum",
                                                          "qtdeFaturada": 'sum'}).reset_index()
         disponivel.rename(columns={"codProduto":"codReduzido"}, inplace=True)
