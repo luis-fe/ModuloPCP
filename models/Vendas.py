@@ -109,6 +109,7 @@ class VendasAcom():
         totalVendasPeca = groupByMarca['qtdePedida'].sum()
         totalVendasReais = groupByMarca['valorVendido'].sum()
         totalqtdeFaturada = groupByMarca['qtdeFaturada'].sum()
+        totalfaltaProgVendido = groupByMarca['faltaProgVendido'].sum()
 
         groupByCategoria = groupByCategoria.sort_values(by=['8.2-TotalqtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
@@ -144,6 +145,7 @@ class VendasAcom():
             totalMetaFinanceira = metasDataFrame[metasDataFrame['marca']=='TOTAL'].reset_index()
             totalMetaFinanceira = totalMetaFinanceira['metaFinanceira'][0]
 
+
         # Convertendo para float antes de arredondar
         groupByMarca['valorVendido'] = pd.to_numeric(groupByMarca['valorVendido'], errors='coerce')
         # Aplicando o arredondamento
@@ -165,6 +167,7 @@ class VendasAcom():
             'metaPecas': f'{totalMetasPeca:,.0f}'.replace(",", "X").replace("X", "."),
             'metaFinanceira': totalMetaFinanceira,
             'qtdePedida':f'{totalVendasPeca:,.0f}'.replace(",", "X").replace("X", "."),
+            'faltaProgVendido': totalfaltaProgVendido,
             'qtdeFaturada': f'{totalqtdeFaturada:,.0f}'.replace(",", "X").replace("X", "."),
             'valorVendido' : f'R$ {totalVendasReais:,.2f}'.replace(",", "X").replace(".", ",").replace("X", "."),
             'precoMedioRealizado':f'R$ {totalPrecoMedio:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
