@@ -42,7 +42,7 @@ class VendasAcom():
 
         disponivel = disponivel.groupby(["marca"]).agg({"faltaProgVendido": 'sum'}).reset_index()
 
-        df_loaded['disponivel'].fillna(0,inplace=True)
+        df_loaded['faltaProgVendido'].fillna(0,inplace=True)
         groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
         groupByMarca = pd.merge(groupByMarca, disponivel,on='marca', how='left')
 
