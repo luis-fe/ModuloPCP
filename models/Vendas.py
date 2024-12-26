@@ -23,6 +23,23 @@ class VendasAcom():
         df_loaded = self.listagemPedidosSku()
         plano = PlanoClass.Plano(self.codPlano)
 
+        # Encontrando o disponivel :
+        disponivel = df_loaded.groupby(["codProduto"]).agg({
+                                                         "qtdePedida": "sum",
+                                                         "qtdeFaturada": 'sum'}).reset_index()
+        disponivel.rename(columns={"codProduto":"codReduzido"}, inplace=True)
+        estoque = ProdutosClass.Produto().estoqueNat5()
+        emProcesso = ProdutosClass.Produto().emProducao()
+
+        disponivel = pd.merge(disponivel, estoque, on='codReduzido', how='left')
+        disponivel['estoqueAtual'].fillna(0, inplace=True)
+        disponivel = pd.merge(disponivel, emProcesso, on='codReduzido', how='left')
+        disponivel['emProcesso'].fillna(0, inplace=True)
+        disponivel['disponivel'] = (disponivel['emProcesso'] + disponivel['estoqueAtual']) - (
+                    disponivel['qtdePedida'] - disponivel['qtdeFaturada'])
+        disponivel['faltaProgVendido'] = disponivel['disponivel'].where(disponivel['disponivel'] < 0, 0)
+
+
         groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
 
@@ -168,14 +185,31 @@ class VendasAcom():
 
 
     def Monitor_PedidosBloqueados(self):
-        consultacsw = """SELECT * FROM (
-        SELECT top 300000 bc.codPedido, 'analise comercial' as situacaobloq  from ped.PedidoBloqComl  bc WHERE codEmpresa = 1  
-        and bc.situacaoBloq = 1
-        order by codPedido desc
-        UNION 
-        SELECT top 300000 codPedido, 'analise credito'as situacaobloq  FROM Cre.PedidoCreditoBloq WHERE Empresa  = 1  
-        and situacao = 1
-        order BY codPedido DESC) as D"""
+        consultacsw = """
+        SELECT 
+            * FROM (
+                    SELECT top 300000 
+                        bc.codPedido, 
+                        'analise comercial' as situacaobloq  
+                    from 
+                        ped.PedidoBloqComl  bc 
+                    WHERE 
+                        codEmpresa = 1  
+                        and bc.situacaoBloq = 1
+                    order by c
+                        odPedido desc
+                    UNION 
+                    SELECT top 300000 
+                        codPedido, 
+                        'analise credito'as situacaobloq  
+                    FROM 
+                        Cre.PedidoCreditoBloq 
+                    WHERE 
+                        Empresa  = 1  
+                        and situacao = 1
+                    order BY 
+                        codPedido DESC) as D
+        """
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
