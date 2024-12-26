@@ -518,6 +518,7 @@ class VendasAcom():
                                                          "valorVendido":'sum',
                                                         "codTipoNota":"first",
                                                         "dataEmissao":"first",
+                                                        "situacaoPedido":"first",
                                                         "dataPrevFat":"first"}).reset_index()
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
