@@ -39,11 +39,12 @@ class VendasAcom():
                     disponivel['qtdePedida'] - disponivel['qtdeFaturada'])
         disponivel['faltaProgVendido'] = disponivel['disponivel'].where(disponivel['disponivel'] < 0, 0)
 
-        df_loaded.rename(columns={"codProduto":"codReduzido",'qtdePedida':'1',"qtdeFaturada":'2'}, inplace=True)
+        disponivel = disponivel.groupby(["marca"]).agg({"faltaProgVendido": 'sum'}).reset_index()
 
-        df_loaded = pd.merge(df_loaded, disponivel,on='codReduzido', how='left')
         df_loaded['disponivel'].fillna(0,inplace=True)
-        groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum","faltaProgVendido":'sum'}).reset_index()
+        groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
+        groupByMarca = pd.merge(groupByMarca, disponivel,on='marca', how='left')
+
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
 
 
