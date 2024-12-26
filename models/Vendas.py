@@ -300,7 +300,7 @@ class VendasAcom():
         ]
         choices = ["M.POLLO", "M.POLLO", "PACO", "PACO"]
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
-        df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS'].reset_index()
+        df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
         return df_loaded
 
     def detalhaPedidosSku(self):
