@@ -347,7 +347,7 @@ class VendasAcom():
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
-        df_loaded['situacaoPedido'] = df_loaded[df_loaded['situacaoPedido']=='9'].reset_index()
+        df_loaded['situacaoPedido'] = df_loaded[df_loaded['situacaoPedido']=='9']
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
