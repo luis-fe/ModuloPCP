@@ -54,6 +54,9 @@ class VendasAcom():
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['qtdeFaturada'] = groupByCategoria['qtdeFaturada'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
+        groupByCategoria['faltaProgVendido'] = -1 * groupByCategoria['faltaProgVendido']
+        groupByCategoria['faltaProgVendido'] = groupByCategoria['faltaProgVendido'].apply(self.formatar_padraoInteiro)
+
 
         groupByCategoria['marca2'] = groupByCategoria['marca']
         groupByCategoria['marca3'] = groupByCategoria['marca']
