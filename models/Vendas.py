@@ -54,7 +54,6 @@ class VendasAcom():
         groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByCategoria['qtdeFaturada'] = groupByCategoria['qtdeFaturada'].apply(self.formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
-        groupByCategoria['faltaProgVendido'] = groupByCategoria['faltaProgVendido'].apply(self.formatar_padraoInteiro)
 
 
         groupByCategoria['marca2'] = groupByCategoria['marca']
@@ -155,6 +154,8 @@ class VendasAcom():
         groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
         groupByMarca['qtdeFaturada'] = groupByMarca['qtdeFaturada'].apply(self.formatar_padraoInteiro)
         groupByMarca['qtdeFaturada'].fillna('0',inplace=True)
+        groupByMarca['faltaProgVendido'] = groupByMarca['faltaProgVendido'].apply(self.formatar_padraoInteiro)
+
         totalPrecoMedio = totalVendasReais/totalVendasPeca
 
         # Cria a linha de total
