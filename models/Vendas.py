@@ -39,7 +39,7 @@ class VendasAcom():
                     disponivel['qtdePedida'] - disponivel['qtdeFaturada'])
         disponivel['faltaProgVendido'] = disponivel['disponivel'].where(disponivel['disponivel'] < 0, 0)
 
-        df_loaded.rename(columns={"codProduto":"codReduzido"}, inplace=True)
+        df_loaded.rename(columns={"codProduto":"codReduzido",'qtdePedida':'1',"qtdeFaturada":'2'}, inplace=True)
 
         df_loaded = pd.merge(df_loaded, disponivel,on='codReduzido', how='left')
         df_loaded['disponivel'].fillna(0,inplace=True)
