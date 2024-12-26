@@ -522,6 +522,8 @@ class VendasAcom():
                                                         "dataEmissao":"first",
                                                         "situacaoPedido":"first",
                                                         "dataPrevFat":"first"}).reset_index()
+        groupBy['dataEmissao'] = pd.to_datetime(groupBy['dataEmissao'], format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%Y-%m-%d')
+
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
         return groupBy
