@@ -59,7 +59,7 @@ class VendasAcom():
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
-        df_loaded['situacaoPedido'] = df_loaded[df_loaded['situacaoPedido']!='9']
+        df_loaded = df_loaded[df_loaded['situacaoPedido']!='9']
 
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
@@ -348,7 +348,7 @@ class VendasAcom():
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
-        df_loaded['situacaoPedido'] = df_loaded[df_loaded['situacaoPedido']!='9']
+        df_loaded = df_loaded[df_loaded['situacaoPedido']!='9']
         df_loaded = df_loaded.loc[:,
                     ['codPedido', 'codProduto', 'qtdePedida', 'qtdeFaturada', 'qtdeCancelada', 'qtdeSugerida','codTipoNota',
                      # 'StatusSugestao',
@@ -473,7 +473,7 @@ class VendasAcom():
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
-        df_loaded['situacaoPedido'] = df_loaded[df_loaded['situacaoPedido']!='9']
+        df_loaded = df_loaded[df_loaded['situacaoPedido']!='9']
 
 
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
