@@ -370,11 +370,15 @@ class Meta ():
 
     def converterFloat(self, valor):
 
-        # Remover "R$"
-        valor = valor.replace("R$", "").strip()
-        # Substituir o ponto por nada e a vírgula por ponto
-        valor = valor.replace(".", "").replace(",", ".")
-        # Converter para float
-        valor_float = float(valor)
+        try:
+            # Remover "R$"
+            valor = valor.replace("R$", "").strip()
+            # Substituir o ponto por nada e a vírgula por ponto
+            valor = valor.replace(".", "").replace(",", ".")
+            # Converter para float
+            valor_float = float(valor)
 
-        return valor_float
+            return valor_float
+        except:
+            return valor
+
