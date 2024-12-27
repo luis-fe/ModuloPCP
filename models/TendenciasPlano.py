@@ -136,9 +136,16 @@ class TendenciaPlano():
 
         consultaVendasSku = vendas.listagemPedidosSku()
 
+        # Filtrar categorias diferentes de 'sacola'
+        df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'Sacola']
 
-        # Contar o número de SKUs (referências) por marca
-        consultaVendasSku['totalPcs'] = consultaVendasSku.groupby('marca')['qtdePedida'].sum()
+        # Somar o acumulado de vendas por marca
+        vendas_acumuladas = df_filtered.groupby('marca')['qtdPedida'].sum()
+
+        # Mapear os valores acumulados para o DataFrame original
+        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.apply(
+            lambda row: vendas_acumuladas[row['marca']] if row['categoria'] != 'Sacola' else '-', axis=1
+        )
 
 
         return consultaVendasSku
