@@ -370,7 +370,10 @@ class Meta ():
 
     def converterFloat(self, valor):
 
-        try:
+        if isinstance(valor, float):
+
+            return valor
+        else:
             # Remover "R$"
             valor = valor.replace("R$", "").strip()
             # Substituir o ponto por nada e a vírgula por ponto
@@ -379,6 +382,3 @@ class Meta ():
             valor_float = float(valor)
 
             return valor_float
-        except:
-            return valor
-
