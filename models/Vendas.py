@@ -206,8 +206,7 @@ class VendasAcom():
                     WHERE 
                         codEmpresa = 1  
                         and bc.situacaoBloq = 1
-                    order by c
-                        odPedido desc
+                    order by codPedido desc
                     UNION 
                     SELECT top 300000 
                         codPedido, 
