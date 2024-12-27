@@ -304,7 +304,7 @@ class Meta ():
             totalPecas = int(totalPecas)
 
             consulta1['metaFinanceira'] = consulta1['metaFinanceira'].str.replace('R\$', '', regex=True).str.strip()
-            consulta1['metaFinanceira'] = consulta1['metaFinanceira'].str.replace('.','').str.replace(',','.')
+            consulta1['metaFinanceira'] = consulta1['metaFinanceira'].str.replace('.','').str.replace(',','x')
             totalReais = consulta1['metaFinanceira'][0]
             totalReais = float(totalReais)
         sql1 = """
