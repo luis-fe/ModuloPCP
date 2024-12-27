@@ -299,7 +299,7 @@ class Meta ():
             totalPecas = 0
             totalReais = 0
         else:
-            totalPecas = consulta1['metaPecas'][0]
+            totalPecas = consulta1['metaPecas'][0].str.replace('.','')
             totalPecas = int(totalPecas)
             totalReais = consulta1['metaFinanceira'][0]
             totalReais = float(totalReais)
