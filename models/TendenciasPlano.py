@@ -140,7 +140,7 @@ class TendenciaPlano():
         df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'Sacola']
 
         # Somar o acumulado de vendas por marca
-        vendas_acumuladas = df_filtered.groupby('marca')['qtdPedido'].sum()
+        vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
 
         # Mapear os valores acumulados para o DataFrame original
         consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.apply(
