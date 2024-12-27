@@ -26,6 +26,9 @@ class TendenciaPlano():
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql, conn, params=(self.codPlano,))
 
+        consulta['perc_Acumulado'] = consulta.groupby()['perc_dist'].cumsum()
+
+
         totalDistribuido = consulta['perc_dist'].sum()
         faltaDistribuir = 100 - totalDistribuido
 
