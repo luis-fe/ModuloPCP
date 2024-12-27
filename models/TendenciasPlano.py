@@ -1,14 +1,16 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
-
+from models import Vendas
 class TendenciaPlano():
     '''Classe utilizada para a analise de tendencias de vendas de um determinado Plano '''
 
-    def __init__(self, codPlano = None, parametroABC = None, perc_dist = None):
+    def __init__(self, codPlano = None, parametroABC = None, perc_dist = None, empresa = '1',consideraPedBloq = 'nao'):
 
         self.codPlano = codPlano
         self.parametroABC = parametroABC
         self.perc_dist = perc_dist
+        self.empresa = empresa
+        self.consideraPedBloq = consideraPedBloq
 
     def consultaPlanejamentoABC(self):
         '''Metodo utilizado para planejar a distribuicacao ABC'''
@@ -127,4 +129,20 @@ class TendenciaPlano():
 
         return pd.DataFrame([{'status':True,'Mensagem':'Novo parametroABC inserido com sucesso'}])
 
+    def tendenciaVendasAbc(self):
+        '''Metodo que desdobra a tendencia ABC de vendas '''
 
+        vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
+
+        consultaVendasSku = vendas.listagemPedidosSku()
+        # Filtrar categorias diferentes de 'sacola'
+        df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'sacola']
+
+        # Contar o número de SKUs (referências) por marca
+        sku_count = df_filtered.groupby('marca')['qtdePedida'].sum()
+
+        # Mapear os valores de contagem para o DataFrame original
+        consultaVendasSku['total'] = consultaVendasSku.apply(
+            lambda row: sku_count[row['marca']] if row['categoria'] != 'sacola' else '-', axis=1
+        )
+        return consultaVendasSku
