@@ -37,7 +37,8 @@ class TendenciaPlano():
                 '2- Falta Distribuir':f'{faltaDistribuir}%',
                 '3- Detalhamento:': consulta.to_dict(orient='records')
             }
-        print(consulta['3- Detalhamento:'])
+        teste = pd.DataFrame([data])
+        print(teste['3- Detalhamento:'])
         return pd.DataFrame([data])
 
 
