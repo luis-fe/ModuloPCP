@@ -162,5 +162,8 @@ class TendenciaPlano():
             lambda row: vendas_acumuladas[row['marca']] if row['categoria'] != 'Sacola' else '-', axis=1
         )
 
+        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
+
+        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
         return consultaVendasSku
