@@ -67,6 +67,7 @@ class Meta ():
 
 
 
+
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
         consulta['metaPecas'] = consulta['metaPecas'].apply(formatar_meta_pecas)
@@ -125,6 +126,8 @@ class Meta ():
         values 
             (%s, %s, %s, %s)
         """
+
+        self.metaFinanceira = self.converterFloat(self.metaFinanceira)
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
@@ -365,3 +368,13 @@ class Meta ():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
+    def converterFloat(self, valor):
+
+        # Remover "R$"
+        valor = valor.replace("R$", "").strip()
+        # Substituir o ponto por nada e a vírgula por ponto
+        valor = valor.replace(".", "").replace(",", ".")
+        # Converter para float
+        valor_float = float(valor)
+
+        return valor_float
