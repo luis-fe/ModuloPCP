@@ -152,7 +152,7 @@ class TendenciaPlano():
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
 
         # Filtrar categorias diferentes de 'sacola'
-        df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'Sacola']
+        df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
         # Somar o acumulado de vendas por marca
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
