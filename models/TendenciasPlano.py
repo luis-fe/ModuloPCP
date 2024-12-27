@@ -135,14 +135,10 @@ class TendenciaPlano():
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
 
         consultaVendasSku = vendas.listagemPedidosSku()
-        # Filtrar categorias diferentes de 'sacola'
-        df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'sacola']
+
 
         # Contar o número de SKUs (referências) por marca
-        sku_count = df_filtered.groupby('marca')['qtdePedida'].sum()
+        consultaVendasSku['totalPcs'] = consultaVendasSku.groupby('marca')['qtdePedida'].sum()
 
-        # Mapear os valores de contagem para o DataFrame original
-        consultaVendasSku['total'] = consultaVendasSku.apply(
-            lambda row: sku_count[row['marca']] if row['categoria'] != 'sacola' else '-', axis=1
-        )
+
         return consultaVendasSku
