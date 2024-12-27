@@ -169,7 +169,7 @@ class TendenciaPlano():
 
         # Filtrar categorias diferentes de 'sacola'
         df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
-        df_filtered= df_filtered[df_filtered['afv']=='Normal']
+        df_filtered= df_filtered[df_filtered['statusAFV']=='Normal']
 
         # Somar o acumulado de vendas por marca
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
