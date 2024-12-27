@@ -162,8 +162,14 @@ class TendenciaPlano():
         # Renomear colunas, se necessário
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
 
+        afv = ProdutosClass.Produto().statusAFV()
+        consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
+        consultaVendasSku = pd.merge(consultaVendasSku, afv, on='codReduzido',how='left')
+        consultaVendasSku['statusAFV'].fillna('Normal',inplace=True)
+
         # Filtrar categorias diferentes de 'sacola'
         df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
+        df_filtered= df_filtered[df_filtered['afv']=='Normal']
 
         # Somar o acumulado de vendas por marca
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
@@ -182,9 +188,6 @@ class TendenciaPlano():
 
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['vendasAcumuladas']
 
-        afv = ProdutosClass.Produto().statusAFV()
-        consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
-        consultaVendasSku = pd.merge(consultaVendasSku, afv, on='codReduzido',how='left')
-        consultaVendasSku['statusAFV'].fillna('Normal',inplace=True)
+
 
         return consultaVendasSku
