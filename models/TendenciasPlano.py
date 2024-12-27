@@ -37,8 +37,6 @@ class TendenciaPlano():
                 '2- Falta Distribuir':f'{faltaDistribuir}%',
                 '3- Detalhamento:': consulta.to_dict(orient='records')
             }
-        teste = pd.DataFrame([data])
-        print(teste['3- Detalhamento:'])
         return pd.DataFrame([data])
 
 
@@ -173,9 +171,12 @@ class TendenciaPlano():
             lambda row: vendas_acumuladas[row['marca']] if row['categoria'] != 'Sacola' else '-', axis=1
         )
 
-        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
+        consultaVendasSku['%'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
 
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
-        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
+        #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
+
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['vendasAcumuladas']
+
 
         return consultaVendasSku
