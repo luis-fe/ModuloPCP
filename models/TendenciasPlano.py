@@ -77,7 +77,13 @@ class TendenciaPlano():
         if verifica1.empty:
             return pd.DataFrame([{'status': False, 'Mensagem': 'Parametro Abc nao existe !'}])
 
-        verifica = self.consultaPlanejamentoABC()
+        verifica = """
+        Select "nomeABC" , "perc_dist" from pcp."Plano_ABC"
+        where 
+            "codPlano" = %s and "nomeABC" = %s
+        """
+        conn = ConexaoPostgreWms.conexaoEngine()
+        verifica = pd.read_sql(verifica,conn,params=(self.codPlano, self.parametroABC,))
         if verifica.empty:
             self.inserirPlanejamentoABC()
         else:
