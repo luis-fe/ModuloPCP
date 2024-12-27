@@ -136,6 +136,21 @@ class TendenciaPlano():
 
         consultaVendasSku = vendas.listagemPedidosSku()
 
+        consultaVendasSku = consultaVendasSku.groupby(["codProduto"]).agg({"marca": "first",
+                                                         "nome": 'first',
+                                                         "categoria": 'first',
+                                                         "codCor": "first",
+                                                         "codItemPai": 'first',
+                                                         "qtdePedida": "sum",
+                                                         "qtdeFaturada": 'sum',
+                                                         "valorVendido": 'sum',
+                                                         "codPedido": 'count'}).reset_index()
+        consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
+                                      ascending=False)  # escolher como deseja classificar
+
+        # Renomear colunas, se necessário
+        consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
+
         # Filtrar categorias diferentes de 'sacola'
         df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'Sacola']
 
