@@ -1,6 +1,8 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
-from models import Vendas
+from models import Vendas, ProdutosClass
+
+
 class TendenciaPlano():
     '''Classe utilizada para a analise de tendencias de vendas de um determinado Plano '''
 
@@ -176,7 +178,13 @@ class TendenciaPlano():
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
         #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
+        # Obtendo a Meta por marca
+
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['vendasAcumuladas']
 
+        afv = ProdutosClass.Produto().statusAFV()
+        consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
+        consultaVendasSku = pd.merge(consultaVendasSku, afv, on='codReduzido',how='left')
+        consultaVendasSku['statusAFV'].fillna('Normal',inplace=True)
 
         return consultaVendasSku
