@@ -11,8 +11,8 @@ class Meta ():
 
         self.codPlano = codPlano
         self.marca = marca
-        self.metaFinanceira = str(metaFinanceira)
-        self.metaPecas = str(metaPecas)
+        self.metaFinanceira = metaFinanceira
+        self.metaPecas = metaPecas
         self.nomeCategoria = nomeCategoria
 
     def consultaMetaGeral(self):
@@ -116,15 +116,15 @@ class Meta ():
         '''metodo criado para cadastrar as metas gerais '''
 
         insert = """
-        insert into "pcp"."Metas"
-        (   "codPlano",
+        insert into 
+            "pcp"."Metas"
+        ("codPlano",
             "marca",
             "metaFinanceira",
             "metaPecas")
-        values (%s, %s, %s, %s)
+        values 
+            (%s, %s, %s, %s)
         """
-
-        self.metaFinanceira = 'R$' + self.metaFinanceira
 
         with ConexaoPostgreWms.conexaoInsercao() as conn:
             with conn.cursor() as curr:
@@ -152,6 +152,11 @@ class Meta ():
 
     def inserirOuAtualizarMetasGeraisPlano(self):
         '''Metodo utilizado para inserir ou atualizar as metas gerais por Plano e Marca'''
+        if self.metaFinanceira == None:
+            return pd.DataFrame([{'status': False, "mensagem": 'Metas Financeira nao encontrada'}])
+
+        if self.metaPecas == None:
+            return pd.DataFrame([{'status': False, "mensagem": 'Metas em Pecas nao encontrada'}])
 
         verifica = self.consultaMetaGeralPlanoMarca()
 
