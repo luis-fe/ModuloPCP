@@ -164,6 +164,7 @@ class TendenciaPlano():
 
         consultaVendasSku['vendasAcumuladas'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
 
+        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
         consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
         return consultaVendasSku
