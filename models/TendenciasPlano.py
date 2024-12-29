@@ -1,6 +1,7 @@
 import pandas as pd
 from connection import ConexaoPostgreWms
 from models import Vendas, ProdutosClass
+from models.Meta import Meta
 
 
 class TendenciaPlano():
@@ -185,7 +186,8 @@ class TendenciaPlano():
         #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
         # Obtendo a Meta por marca
-
+        meta = Meta(self.codPlano).consultaMetaGeral()
+        consultaVendasSku = pd.merge(consultaVendasSku,meta,on='marca',how='left')
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['vendasAcumuladas']
 
 
