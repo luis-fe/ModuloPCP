@@ -108,9 +108,9 @@ def post_InserirOuAlterPlanoABC():
 
 
 
-@tendencia_routes.route('/pcp/api/tendenciaAbcSku', methods=['POST'])
+@tendencia_routes.route('/pcp/api/tendenciaSku', methods=['POST'])
 @token_required
-def post_tendenciaAbcSku():
+def post_tendenciaSku():
     data = request.get_json()
 
     codPlano = data.get('codPlano')
