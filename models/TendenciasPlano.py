@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from connection import ConexaoPostgreWms
 from models import Vendas, ProdutosClass
@@ -186,9 +187,11 @@ class TendenciaPlano():
             lambda row: row['vendasAcumuladas'] if row['statusAFV'] == 'Normal' else 0, axis=1
         )
 
-
-        consultaVendasSku['dist%'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
-
+        consultaVendasSku['dist%'] = np.where(
+            consultaVendasSku['vendasAcumuladas'] == 0,  # Condição
+            0,  # Valor se condição for verdadeira
+            consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladas']  # Valor se falsa
+        )
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
         #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
