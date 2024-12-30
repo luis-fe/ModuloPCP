@@ -255,12 +255,22 @@ class TendenciaPlano():
 
 
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
+        consultaVendasSku['totalVendasCategoria'] = consultaVendasSku.groupby(['marca','categoria'])['qtdePedida'].transform('sum')
+
 
         consultaVendasSku['ABCdist%'] = np.where(
             consultaVendasSku['qtdePedida'] == 0,  # Condição
             0,  # Valor se condição for verdadeira
             consultaVendasSku['qtdePedida'] / consultaVendasSku['totalVendas']  # Valor se falsa
         )
+
+        consultaVendasSku['ABCdist%Categoria'] = np.where(
+            consultaVendasSku['qtdePedida'] == 0,  # Condição
+            0,  # Valor se condição for verdadeira
+            consultaVendasSku['qtdePedida'] / consultaVendasSku['totalVendasCategoria']  # Valor se falsa
+        )
+
+
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
         consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['ABCdist%'].cumsum()
@@ -291,7 +301,7 @@ class TendenciaPlano():
             labels=labels,
             include_lowest=True
         )
-        consultaVendasSku.drop(['ABCdist%'], axis=1, inplace=True)
+        consultaVendasSku.drop(['ABCdist%',"totalVendas","totalVendasCategoria"], axis=1, inplace=True)
 
 
         return consultaVendasSku
