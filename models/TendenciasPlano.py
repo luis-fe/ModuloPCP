@@ -187,7 +187,7 @@ class TendenciaPlano():
 
         # Obtendo a Meta por marca
         meta = Meta(self.codPlano).consultaMetaGeral()
-        meta['metaPecas'] = meta['metaPecas'].astype(int)
+        meta['metaPecas'] = meta['metaPecas'].str.replace('.','').astype(int)
         consultaVendasSku = pd.merge(consultaVendasSku,meta,on='marca',how='left')
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['vendasAcumuladas']
 
