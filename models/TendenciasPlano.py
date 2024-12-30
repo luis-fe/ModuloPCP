@@ -263,5 +263,34 @@ class TendenciaPlano():
         )
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
+        consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
+
+
+        # Consultando o ABC cadastrado para o Plano:
+        sql = """
+        Select "nomeABC" , "perc_dist", "codPlano" from pcp."Plano_ABC"
+        where 
+            "codPlano" = %s
+        order by 
+            "nomeABC"
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql, conn, params=(self.codPlano,))
+
+        consulta['perc_dist'] = consulta['perc_dist'].cumsum()
+
+        # Reestruturando o DataFrame
+        consulta = consulta.pivot(index='codPlano', columns='nomeABC', values='perc_dist').reset_index()
+
+        # Renomeando as colunas para manter a consistência
+        consulta.columns.name = None  # Remove o nome das colunas
+        consulta = consulta.rename_axis(None, axis=1)
+
+
+        print(consulta)
+
+
+
 
         return consultaVendasSku
