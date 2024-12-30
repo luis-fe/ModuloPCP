@@ -261,5 +261,6 @@ class TendenciaPlano():
             0,  # Valor se condição for verdadeira
             consultaVendasSku['qtdePedida'] / consultaVendasSku['totalVendas']  # Valor se falsa
         )
+        consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
 
         return consultaVendasSku
