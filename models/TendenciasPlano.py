@@ -307,7 +307,7 @@ class TendenciaPlano():
         )
 
         consultaVendasSku['classCategoria'] = pd.cut(
-            consultaVendasSku['ABC_Acum%'],
+            consultaVendasSku['ABC_Acum%Categoria'],
             bins=bins,
             labels=labels,
             include_lowest=True
