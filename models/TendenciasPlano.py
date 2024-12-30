@@ -250,14 +250,10 @@ class TendenciaPlano():
                                                                            "codItemPai": 'first',
                                                                            "qtdePedida": "sum",
                                                                            "qtdeFaturada": 'sum',
-                                                                           "valorVendido": 'sum',
-                                                                           "codPedido": 'count'}).reset_index()
+                                                                           "valorVendido": 'sum'}).reset_index()
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                                           ascending=False)  # escolher como deseja classificar
 
-        # Renomear colunas, se necessário
-        consultaVendasSku.rename(columns={"codPedido": "Ocorrencia em Pedidos"},
-                                 inplace=True)
 
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
 
