@@ -280,17 +280,16 @@ class TendenciaPlano():
 
         consulta['perc_dist'] = consulta['perc_dist'].cumsum()
 
-        # Reestruturando o DataFrame
-        consulta = consulta.pivot(index='codPlano', columns='nomeABC', values='perc_dist').reset_index()
+        # Adiciona os limites inferiores das faixas
+        bins = [0] + consulta['perc_dist'].tolist()  # [0, 20, 50, 100]
+        labels = consulta['nomeABC'].tolist()  # ['a', 'b', 'c']
 
-        # Renomeando as colunas para manter a consistência
-        consulta.columns.name = None  # Remove o nome das colunas
-        consulta = consulta.rename_axis(None, axis=1)
-
-
-        print(consulta)
-
-
-
+        # Classifica cada percentual de vendas nas faixas definidas
+        consultaVendasSku['class'] = pd.cut(
+            consultaVendasSku['ABC_Acum%'],
+            bins=bins,
+            labels=labels,
+            include_lowest=True
+        )
 
         return consultaVendasSku
