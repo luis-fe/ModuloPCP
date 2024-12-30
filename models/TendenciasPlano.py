@@ -229,7 +229,9 @@ class TendenciaPlano():
         consultaVendasSku['estoqueAtual'].fillna(0, inplace=True)
         consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
         consultaVendasSku['emProcesso'].fillna(0, inplace=True)
-
+        consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+        consultaVendasSku['faltaProg'] = consultaVendasSku['disponivel'].where(consultaVendasSku['disponivel'] < 0, 0)
 
 
 
