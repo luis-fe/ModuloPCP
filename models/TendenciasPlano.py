@@ -216,5 +216,5 @@ class TendenciaPlano():
         apos as operacoes a previsao deve ser tratata como int 
         #########################################################################################
         '''
-
+        consultaVendasSku.fillna(0,inplace=True)
         return consultaVendasSku
