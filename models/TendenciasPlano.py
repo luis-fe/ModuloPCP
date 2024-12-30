@@ -142,7 +142,7 @@ class TendenciaPlano():
 
         return pd.DataFrame([{'status':True,'Mensagem':'Novo parametroABC inserido com sucesso'}])
 
-    def tendenciaVendasAbc(self):
+    def tendenciaVendas(self):
         '''Metodo que desdobra a tendencia ABC de vendas '''
 
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
@@ -234,5 +234,37 @@ class TendenciaPlano():
         consultaVendasSku['faltaProg'] = consultaVendasSku['disponivel'].where(consultaVendasSku['disponivel'] < 0, 0)
 
 
+
+        return consultaVendasSku
+
+    def tendenciaAbc(self):
+        '''Metodo que retorna a tendencia ABC '''
+
+        vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
+
+        consultaVendasSku = vendas.listagemPedidosSku()
+
+        consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
+                                                                           "nome": 'first',
+                                                                           "categoria": 'first',
+                                                                           "codItemPai": 'first',
+                                                                           "qtdePedida": "sum",
+                                                                           "qtdeFaturada": 'sum',
+                                                                           "valorVendido": 'sum',
+                                                                           "codPedido": 'count'}).reset_index()
+        consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
+                                                          ascending=False)  # escolher como deseja classificar
+
+        # Renomear colunas, se necessário
+        consultaVendasSku.rename(columns={"codPedido": "Ocorrencia em Pedidos"},
+                                 inplace=True)
+
+        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
+
+        consultaVendasSku['ABCdist%'] = np.where(
+            consultaVendasSku['vendasAcumuladas'] == 0,  # Condição
+            0,  # Valor se condição for verdadeira
+            consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladas']  # Valor se falsa
+        )
 
         return consultaVendasSku
