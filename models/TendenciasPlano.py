@@ -209,7 +209,7 @@ class TendenciaPlano():
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
 
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].astype(int)
-
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['qtdePedida']
 
         '''
         #########################################################################################
@@ -223,6 +223,7 @@ class TendenciaPlano():
         '''
         consultaVendasSku.fillna(0,inplace=True)
 
+        consultaVendasSku.drop(['faltaVender','index','totalVendas','vendasAcumuladas'], axis=1, inplace=True)
 
 
         return consultaVendasSku
