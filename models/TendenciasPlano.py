@@ -247,7 +247,6 @@ class TendenciaPlano():
         consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
                                                                            "nome": 'first',
                                                                            "categoria": 'first',
-                                                                           "codItemPai": 'first',
                                                                            "qtdePedida": "sum",
                                                                            "qtdeFaturada": 'sum',
                                                                            "valorVendido": 'sum'}).reset_index()
