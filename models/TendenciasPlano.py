@@ -274,7 +274,11 @@ class TendenciaPlano():
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
         consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['ABCdist%'].cumsum()
+        consultaVendasSku['ABC_Acum%Categoria'] = consultaVendasSku.groupby(['marca','categoria'])['ABCdist%Categoria'].cumsum()
+
         consultaVendasSku['ABC_Acum%'] = consultaVendasSku['ABC_Acum%'].round(4)
+        consultaVendasSku['ABC_Acum%Categoria'] = consultaVendasSku['ABC_Acum%Categoria'].round(4)
+
 
         # Consultando o ABC cadastrado para o Plano:
         sql = """
@@ -301,7 +305,17 @@ class TendenciaPlano():
             labels=labels,
             include_lowest=True
         )
-        consultaVendasSku.drop(['ABCdist%',"totalVendas","totalVendasCategoria"], axis=1, inplace=True)
+
+        consultaVendasSku['classCategoria'] = pd.cut(
+            consultaVendasSku['ABC_Acum%'],
+            bins=bins,
+            labels=labels,
+            include_lowest=True
+        )
+
+
+
+        consultaVendasSku.drop(['ABCdist%','ABCdist%Categoria',"totalVendas","totalVendasCategoria"], axis=1, inplace=True)
 
 
         return consultaVendasSku
