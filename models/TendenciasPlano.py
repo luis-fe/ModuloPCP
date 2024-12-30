@@ -200,7 +200,7 @@ class TendenciaPlano():
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
 
         consultaVendasSku['faltaVender'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
-        consultaVendasSku['faltaVender'] = consultaVendasSku.apply(lambda r: r['faltaVender'] if r['faltaVender'] > 0 else 0, axis = 1)
+        consultaVendasSku['faltaVender'] = consultaVendasSku['faltaVender'].clip(lower=0)
 
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['faltaVender']
         consultaVendasSku['%'] = consultaVendasSku['%'].round(4)
