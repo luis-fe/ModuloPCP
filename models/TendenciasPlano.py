@@ -195,7 +195,7 @@ class TendenciaPlano():
         consultaVendasSku['faltaVender'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['faltaVender']
 
-        consultaVendasSku['%'] = consultaVendasSku['%'].round(2)
-
+        consultaVendasSku['%'] = consultaVendasSku['%'].round(4)
+        consultaVendasSku['%'] = consultaVendasSku['%'] *100
 
         return consultaVendasSku
