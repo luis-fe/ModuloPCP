@@ -268,7 +268,7 @@ class TendenciaPlano():
 
         # Consultando o ABC cadastrado para o Plano:
         sql = """
-        Select "nomeABC" , "perc_dist"/100, "codPlano" from pcp."Plano_ABC"
+        Select "nomeABC" , "perc_dist", "codPlano" from pcp."Plano_ABC"
         where 
             "codPlano" = %s
         order by 
@@ -279,7 +279,7 @@ class TendenciaPlano():
         consulta = pd.read_sql(sql, conn, params=(self.codPlano,))
 
         consulta['perc_dist'] = consulta['perc_dist'].cumsum()
-
+        consulta['perc_dist'] = consulta['perc_dist']/100
         # Adiciona os limites inferiores das faixas
         bins = [0] + consulta['perc_dist'].tolist()  # [0, 20, 50, 100]
         labels = consulta['nomeABC'].tolist()  # ['a', 'b', 'c']
