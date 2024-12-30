@@ -268,7 +268,7 @@ class TendenciaPlano():
 
         # Consultando o ABC cadastrado para o Plano:
         sql = """
-        Select "nomeABC" , "perc_dist", "codPlano" from pcp."Plano_ABC"
+        Select "nomeABC" , "perc_dist"/100, "codPlano" from pcp."Plano_ABC"
         where 
             "codPlano" = %s
         order by 
