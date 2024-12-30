@@ -263,7 +263,7 @@ class TendenciaPlano():
         )
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
         consultaVendasSku['nome'] = consultaVendasSku['nome'].str.rsplit(' ', n=2).str[:-1].str.join(' ')
-        consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
+        consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['ABCdist'].cumsum()
 
 
         # Consultando o ABC cadastrado para o Plano:
