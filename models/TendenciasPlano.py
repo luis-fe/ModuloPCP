@@ -223,7 +223,7 @@ class TendenciaPlano():
         '''
         consultaVendasSku.fillna(0,inplace=True)
 
-        consultaVendasSku.drop(['faltaVender','index','totalVendas','vendasAcumuladas'], axis=1, inplace=True)
+        consultaVendasSku.drop(['faltaVender','index','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
 
 
         return consultaVendasSku
