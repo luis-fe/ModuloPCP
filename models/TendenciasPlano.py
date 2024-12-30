@@ -188,9 +188,10 @@ class TendenciaPlano():
         # Obtendo a Meta por marca
         meta = Meta(self.codPlano).consultaMetaGeral()
         meta['metaPecas'] = meta['metaPecas'].str.replace('.','').astype(int)
-        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].sum()
 
         consultaVendasSku = pd.merge(consultaVendasSku,meta,on='marca',how='left')
+        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
+
         consultaVendasSku['faltaVender'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['faltaVender']
 
