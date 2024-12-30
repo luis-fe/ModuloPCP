@@ -257,9 +257,9 @@ class TendenciaPlano():
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
 
         consultaVendasSku['ABCdist%'] = np.where(
-            consultaVendasSku['vendasAcumuladas'] == 0,  # Condição
+            consultaVendasSku['qtdePedida'] == 0,  # Condição
             0,  # Valor se condição for verdadeira
-            consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladas']  # Valor se falsa
+            consultaVendasSku['qtdePedida'] / consultaVendasSku['totalVendas']  # Valor se falsa
         )
 
         return consultaVendasSku
