@@ -187,7 +187,7 @@ class TendenciaPlano():
         )
 
 
-        consultaVendasSku['%'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
+        consultaVendasSku['dist%'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
 
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
         #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
@@ -203,8 +203,8 @@ class TendenciaPlano():
         consultaVendasSku['faltaVender'] = consultaVendasSku['faltaVender'].clip(lower=0)
 
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['faltaVender']
-        consultaVendasSku['%'] = consultaVendasSku['%'].round(4)
-        consultaVendasSku['%'] = consultaVendasSku['%'] *100
+        consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(4)
+        consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
 
         '''
         #########################################################################################
