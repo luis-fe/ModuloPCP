@@ -291,5 +291,7 @@ class TendenciaPlano():
             labels=labels,
             include_lowest=True
         )
+        consultaVendasSku.drop(['ABCdist%'], axis=1, inplace=True)
+
 
         return consultaVendasSku
