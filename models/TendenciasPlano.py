@@ -180,6 +180,13 @@ class TendenciaPlano():
             lambda row: vendas_acumuladas[row['marca']] if row['categoria'] != 'Sacola' else '-', axis=1
         )
 
+
+        # Mapear os valores acumulados para o DataFrame original
+        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.apply(
+            lambda row: row['vendasAcumuladas'] if row['statusAFV'] == 'Normal' else 0, axis=1
+        )
+
+
         consultaVendasSku['%'] = consultaVendasSku['qtdePedida']/consultaVendasSku['vendasAcumuladas']
 
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
@@ -193,9 +200,21 @@ class TendenciaPlano():
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
 
         consultaVendasSku['faltaVender'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
-        consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['faltaVender']
+        consultaVendasSku['faltaVender'] = pd.apply(lambda r: r['faltaVender'] if r['faltaVender'] > 0 else 0, axis = 1)
 
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['%']* consultaVendasSku['faltaVender']
         consultaVendasSku['%'] = consultaVendasSku['%'].round(4)
         consultaVendasSku['%'] = consultaVendasSku['%'] *100
+
+        '''
+        #########################################################################################
+        Verificar: 
+        ['totalVendas'] considerear as vendas em geral indenpendente do status;
+        ['faltaVender'] subtrair a meta geral pelo vendido ate o momento, caso negativo, considerar "0"
+        bloqueio e acompanhamento nao deve ter previsao e nem % de distribuicao
+        
+        apos as operacoes a previsao deve ser tratata como int 
+        #########################################################################################
+        '''
 
         return consultaVendasSku
