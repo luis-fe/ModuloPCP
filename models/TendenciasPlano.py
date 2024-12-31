@@ -177,13 +177,17 @@ class TendenciaPlano():
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
 
         # Mapear os valores acumulados para o DataFrame original
-        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.apply(
-            lambda row: vendas_acumuladas[row['marca']] if row['categoria'] != 'Sacola' else '-', axis=1
+        consultaVendasSku['vendasAcumuladas'] = np.where(
+            consultaVendasSku['categoria'] != 'Sacola',
+            consultaVendasSku['marca'].map(vendas_acumuladas),
+            '-'
         )
 
         # Mapear os valores acumulados para o DataFrame original
-        consultaVendasSku['vendasAcumuladas'] = consultaVendasSku.apply(
-            lambda row: row['vendasAcumuladas'] if row['statusAFV'] == 'Normal' else 0, axis=1
+        consultaVendasSku['vendasAcumuladas'] = np.where(
+            consultaVendasSku['statusAFV'] == 'Normal',
+            consultaVendasSku['vendasAcumuladas'],
+            0
         )
 
         consultaVendasSku['dist%'] = np.where(
