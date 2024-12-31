@@ -239,6 +239,7 @@ class TendenciaPlano():
         consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
+        consultaVendasSku['faltaProg'] = consultaVendasSku['faltaProg'].apply(self.formatar_padraoInteiro)
 
 
 
