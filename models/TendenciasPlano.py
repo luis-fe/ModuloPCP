@@ -232,6 +232,8 @@ class TendenciaPlano():
         consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
                 consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
         consultaVendasSku['faltaProg'] = consultaVendasSku['disponivel'].where(consultaVendasSku['disponivel'] < 0, 0)
+        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
+        consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
 
 
 
@@ -319,3 +321,16 @@ class TendenciaPlano():
 
 
         return consultaVendasSku
+
+
+    def formatar_financeiro(self,valor):
+        try:
+            return f'R$ {valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
+
+    def formatar_padraoInteiro(self,valor):
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
