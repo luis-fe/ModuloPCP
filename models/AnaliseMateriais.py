@@ -6,6 +6,9 @@ import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 import os
 
+from models import PlanoClass, ProdutosClass
+
+
 class AnaliseMateriais():
     '''Classe criada para a analise das necessidades de materia prima, utilizada mo PCP'''
 
@@ -194,8 +197,38 @@ class AnaliseMateriais():
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
+        plano = PlanoClass.Plano(self.codPlano)
+        self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
+        self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+        produtos = ProdutosClass.Produto().consultaItensReduzidos()
+        produtos.rename(
+            columns={'codigo': 'codProduto'},
+            inplace=True)
+        tiponotas = plano.pesquisarTipoNotasPlano()
+        df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
+        df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
+        df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
+        df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
+        df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFat
+        df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= self.fimFat
+        df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
+        df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
+        # print(df_loaded['filtro3'].drop_duplicates())
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
+        df_loaded = df_loaded[df_loaded['filtro3'] == True].reset_index()
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
+        df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index()
+        df_loaded = df_loaded[df_loaded['situacaoPedido'] != '9']
+        df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
+        df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
+        df_loaded['codItemPai'].fillna('-', inplace=True)
         df_loaded = df_loaded.loc[:,
                          ['codItemPai']]
+
+
+        df_loaded['codItemPai'] = '0'+df_loaded['codItemPai']+'-0'
 
         return df_loaded
 
