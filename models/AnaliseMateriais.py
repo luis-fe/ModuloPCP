@@ -229,7 +229,7 @@ class AnaliseMateriais():
 
 
         df_loaded['codItemPai'] = '0'+df_loaded['codItemPai']+'-0'
-
+        df_loaded.drop_duplicates()
         return df_loaded
 
 
