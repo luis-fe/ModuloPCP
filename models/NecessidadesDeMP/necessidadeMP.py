@@ -71,45 +71,68 @@ def AnaliseDeMateriais(codPlano, codLote, congelado):
 
         #Obtendo os consumos de todos os componentes relacionados nas engenharias
         sqlcsw = """
-        SELECT v.codProduto as codEngenharia, cv.codSortimento, cv.seqTamanho as codSeqTamanho,  v.CodComponente,
-        (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
-        (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
-        cv.quantidade  from tcp.ComponentesVariaveis v 
-        join tcp.CompVarSorGraTam cv on cv.codEmpresa = v.codEmpresa and cv.codProduto = v.codProduto and cv.sequencia = v.codSequencia 
-        WHERE v.codEmpresa = 1
-        and v.codProduto in (select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '"""+codLote+"""')
-        and v.codClassifComponente <> 12
+            SELECT 
+                v.codProduto as codEngenharia, 
+                cv.codSortimento, 
+                cv.seqTamanho as codSeqTamanho,  
+                v.CodComponente,
+                (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
+                (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                cv.quantidade  
+            from 
+                tcp.ComponentesVariaveis v 
+            join 
+                tcp.CompVarSorGraTam cv 
+                on cv.codEmpresa = v.codEmpresa 
+                and cv.codProduto = v.codProduto 
+                and cv.sequencia = v.codSequencia 
+            WHERE 
+                v.codEmpresa = 1
+                and v.codProduto in 
+                (select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '"""+codLote+"""')
+                and v.codClassifComponente <> 12
         UNION 
-        SELECT v.codProduto as codEngenharia,  l.codSortimento ,l.codSeqTamanho as codSeqTamanho, v.CodComponente,
-        (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
-        (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
-        v.quantidade  from tcp.ComponentesPadroes  v 
-        join tcl.LoteSeqTamanho l on l.Empresa = v.codEmpresa and l.codEngenharia = v.codProduto and l.codlote = '"""+codLote+"""'"""
+            SELECT 
+                v.codProduto as codEngenharia,  
+                l.codSortimento ,
+                l.codSeqTamanho as codSeqTamanho, 
+                v.CodComponente,
+                (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
+                (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                v.quantidade  
+            from 
+                tcp.ComponentesPadroes  v 
+            join 
+                tcl.LoteSeqTamanho l 
+                on l.Empresa = v.codEmpresa 
+                and l.codEngenharia = v.codProduto 
+                and l.codlote = '"""+codLote+"""'"""
 
         sqlEstoque = """
-        SELECT
-	    d.codItem as CodComponente ,
-	    d.estoqueAtual
-        FROM
-	    est.DadosEstoque d
-        WHERE
-	    d.codEmpresa = 1
-	    and d.codNatureza in (1, 3, 2)
-	    and d.estoqueAtual > 0
+            SELECT
+	            d.codItem as CodComponente ,
+	            d.estoqueAtual
+            FROM
+	            est.DadosEstoque d
+            WHERE
+	            d.codEmpresa = 1
+	            and d.codNatureza in (1, 3, 2)
+	            and d.estoqueAtual > 0
         """
 
         sqlRequisicaoAberto = """
         SELECT
-	ri.codMaterial as CodComponente ,
-	ri.qtdeRequisitada as EmRequisicao
-    FROM
-	tcq.RequisicaoItem ri
-    join tcq.Requisicao r on
-	r.codEmpresa = ri.codEmpresa
-	and r.numero = ri.codRequisicao
-    where
-	ri.codEmpresa = 1
-	and r.sitBaixa <0
+	        ri.codMaterial as CodComponente ,
+	        ri.qtdeRequisitada as EmRequisicao
+        FROM
+	        tcq.RequisicaoItem ri
+        join 
+            tcq.Requisicao r on
+	        r.codEmpresa = ri.codEmpresa
+	        and r.numero = ri.codRequisicao
+        where
+	        ri.codEmpresa = 1
+	        and r.sitBaixa <0
         """
 
         sqlAtendidoParcial = """

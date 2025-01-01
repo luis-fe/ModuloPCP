@@ -286,10 +286,13 @@ class VendasAcom():
         return groupBy
 
     def listagemPedidosSku(self):
+        # 1:  Carregar as variaveis de ambiente e o nome do caminho
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
-        # Carregar o arquivo Parquet
+        # 1.2 - Carregar o arquivo Parquet
         parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
+
+
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
         plano = PlanoClass.Plano(self.codPlano)

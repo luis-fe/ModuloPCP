@@ -13,6 +13,13 @@ class TendenciaPlano():
         self.codPlano = codPlano
         self.parametroABC = parametroABC
         self.perc_dist = perc_dist
+
+        if self.perc_dist != None:
+            if ',' in self.perc_dist:
+                self.perc_dist = self.perc_dist.replace(',', '.')
+
+
+
         self.empresa = empresa
         self.consideraPedBloq = consideraPedBloq
 
@@ -146,7 +153,6 @@ class TendenciaPlano():
         '''Metodo que desdobra a tendencia ABC de vendas '''
 
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
-
         consultaVendasSku = vendas.listagemPedidosSku()
 
         consultaVendasSku = consultaVendasSku.groupby(["codProduto"]).agg({"marca": "first",
