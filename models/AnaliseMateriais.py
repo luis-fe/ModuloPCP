@@ -204,7 +204,6 @@ class AnaliseMateriais():
         produtos.rename(
             columns={'codigo': 'codProduto'},
             inplace=True)
-        tiponotas = plano.pesquisarTipoNotasPlano()
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
