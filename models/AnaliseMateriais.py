@@ -18,34 +18,73 @@ class AnaliseMateriais():
         self.codLote = codLote
         self.codPlano = codPlano
 
-    def estruturaPorLote(self):
-        # Obtendo os consumos de todos os componentes relacionados nas engenharias
-        sqlcsw = """
-                    SELECT 
-                        v.codProduto as codEngenharia, 
-                        cv.codSortimento, 
-                        cv.seqTamanho as codSeqTamanho,  
-                        v.CodComponente,
-                        (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
-                        (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
-                        cv.quantidade  
-                    from 
-                        tcp.ComponentesVariaveis v 
-                    join 
-                        tcp.CompVarSorGraTam cv 
-                        on cv.codEmpresa = v.codEmpresa 
-                        and cv.codProduto = v.codProduto 
-                        and cv.sequencia = v.codSequencia 
-                    WHERE 
-                        v.codEmpresa = 1
-                        and v.codProduto in 
-                        (select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLote + """')
-                        and v.codClassifComponente <> 12
-                UNION 
+    def estruturaItens(self, pesquisaPor = 'lote'):
+
+        if pesquisaPor == 'lote':
+            inPesquisa = """(select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLote + """)"""
+            sqlcsw = """
+                        SELECT 
+                            v.codProduto as codEngenharia, 
+                            cv.codSortimento, 
+                            cv.seqTamanho as codSeqTamanho,  
+                            v.CodComponente,
+                            (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
+                            (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                            cv.quantidade  
+                        from 
+                            tcp.ComponentesVariaveis v 
+                        join 
+                            tcp.CompVarSorGraTam cv 
+                            on cv.codEmpresa = v.codEmpresa 
+                            and cv.codProduto = v.codProduto 
+                            and cv.sequencia = v.codSequencia 
+                        WHERE 
+                            v.codEmpresa = 1
+                            and v.codProduto in """ + inPesquisa + """
+                            and v.codClassifComponente <> 12
+                    UNION 
+                        SELECT 
+                            v.codProduto as codEngenharia,  
+                            l.codSortimento ,
+                            l.codSeqTamanho as codSeqTamanho, 
+                            v.CodComponente,
+                            (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
+                            (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                            v.quantidade  
+                        from 
+                            tcp.ComponentesPadroes  v 
+                        join 
+                            tcl.LoteSeqTamanho l 
+                            on l.Empresa = v.codEmpresa 
+                            and l.codEngenharia = v.codProduto 
+                            and l.codlote = '""" + self.codLote + """'"""
+        else:
+            inPesquisa = """(select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLote + """)"""
+            sqlcsw = """
+                        SELECT 
+                            v.codProduto as codEngenharia, 
+                            cv.codSortimento, 
+                            cv.seqTamanho as codSeqTamanho,  
+                            v.CodComponente,
+                            (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
+                            (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                            cv.quantidade  
+                        from 
+                            tcp.ComponentesVariaveis v 
+                        join 
+                            tcp.CompVarSorGraTam cv 
+                            on cv.codEmpresa = v.codEmpresa 
+                            and cv.codProduto = v.codProduto 
+                            and cv.sequencia = v.codSequencia 
+                        WHERE 
+                            v.codEmpresa = 1
+                            and v.codProduto in """ + inPesquisa + """
+                            and v.codClassifComponente <> 12
+                    UNION 
                     SELECT 
                         v.codProduto as codEngenharia,  
                         l.codSortimento ,
-                        l.codSeqTamanho as codSeqTamanho, 
+                        l.codSeqTamanho  as codSeqTamanho, 
                         v.CodComponente,
                         (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
                         (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
@@ -53,10 +92,18 @@ class AnaliseMateriais():
                     from 
                         tcp.ComponentesPadroes  v 
                     join 
-                        tcl.LoteSeqTamanho l 
-                        on l.Empresa = v.codEmpresa 
-                        and l.codEngenharia = v.codProduto 
-                        and l.codlote = '""" + self.codLote + """'"""
+                        cgi.Item2 l
+                        on l.Empresa  = v.codEmpresa
+                        and v.codEmpresa = 1
+                        and l.codCor  > 0
+                        and '0'||l.codItemPai ||'-0' = v.codProduto
+                    where
+                        v.codProduto  in """ + inPesquisa
+
+
+
+        # Obtendo os consumos de todos os componentes relacionados nas engenharias
+
 
         sqlEstoque = """
                     SELECT
