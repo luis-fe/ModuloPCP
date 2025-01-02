@@ -168,7 +168,7 @@ class TendenciaPlano():
                                       ascending=False)  # escolher como deseja classificar
         tam = ProdutosClass.Produto().get_tamanhos()
         consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0','')
-        tam['codSeqTamanho'] = tam['codSeqTamanho'].astype(str)
+        tam['codSeqTamanho'] = tam['codSeqTamanho'].astype(str).str.replace('.0','')
         consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
 
         # Renomear colunas, se necessário
