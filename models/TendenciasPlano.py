@@ -154,7 +154,7 @@ class TendenciaPlano():
 
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
         consultaVendasSku = vendas.listagemPedidosSku()
-
+        print(consultaVendasSku.columns)
         consultaVendasSku = consultaVendasSku.groupby(["codProduto"]).agg({"marca": "first",
                                                          "nome": 'first',
                                                          "categoria": 'first',
