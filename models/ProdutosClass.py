@@ -275,3 +275,33 @@ class Produto():
         consulta = pd.read_sql(sql,conn)
 
         return consulta
+
+
+    def get_tamanhos(self):
+        '''Metodo que retorna os tamanhos do tcp do csw '''
+
+        sql = """
+        	SELECT
+                t.codSeqOrden as codSeqTamanho, t.descricao 
+            FROM
+                tcp.Tamanhos t
+            WHERE
+                t.codEmpresa = 1 
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+
+

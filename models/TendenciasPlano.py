@@ -163,9 +163,12 @@ class TendenciaPlano():
                                                          "qtdePedida": "sum",
                                                          "qtdeFaturada": 'sum',
                                                          "valorVendido": 'sum',
+                                                         "codSeqTamanho":'first',
                                                          "codPedido": 'count'}).reset_index()
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                       ascending=False)  # escolher como deseja classificar
+        tam = ProdutosClass.Produto().get_tamanhos()
+        consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
 
         # Renomear colunas, se necessário
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
