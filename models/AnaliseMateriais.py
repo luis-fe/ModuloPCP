@@ -223,17 +223,16 @@ class AnaliseMateriais():
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
         df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
         df_loaded['codItemPai'].fillna('-', inplace=True)
-        df_loaded = df_loaded.loc[:,
-                         ['codItemPai']]
+
 
 
         df_loaded['codItemPai'] = '0'+df_loaded['codItemPai']+'-0'
-        df_loaded = df_loaded.drop_duplicates()
+        df_loaded['codItemPai'] = df_loaded['codItemPai'].drop_duplicates()
 
         result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
-        print(result)
 
-        return df_loaded
+
+        return result
 
 
 
