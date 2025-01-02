@@ -283,7 +283,7 @@ class Produto():
 
         sql = """
         	SELECT
-                t.codSeqOrden as codSeqTamanho, t.descricao as tam
+                t.sequencia as codSeqTamanho, t.descricao as tam
             FROM
                 tcp.Tamanhos t
             WHERE
