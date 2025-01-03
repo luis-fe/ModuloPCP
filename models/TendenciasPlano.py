@@ -244,8 +244,10 @@ class TendenciaPlano():
         consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
         consultaVendasSku['emProcesso'].fillna(0, inplace=True)
         consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+        consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
                 consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
-        consultaVendasSku['faltaProg'] = consultaVendasSku['disponivel'].where(consultaVendasSku['disponivel'] < 0, 0)
+        consultaVendasSku['faltaProg'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['disponivel'] < 0, 0)
         consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
         consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
@@ -254,6 +256,7 @@ class TendenciaPlano():
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['faltaProg'] = consultaVendasSku['faltaProg'].apply(self.formatar_padraoInteiro)
+        consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
 
 
 
