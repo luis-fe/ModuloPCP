@@ -257,19 +257,7 @@ class TendenciaPlano():
         consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
 
-        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
-        consultaVendasSku['totalVendasPai'] = consultaVendasSku.groupby('codItemPai')['qtdePedida'].transform('sum')
         consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
-
-        consultaVendasSku['ABCdist%'] = np.where(
-            consultaVendasSku['totalVendasPai'] == 0,  # Condição
-            0,  # Valor se condição for verdadeira
-            consultaVendasSku['totalVendasPai'] / consultaVendasSku['totalVendas']  # Valor se falsa
-        )
-        consultaVendasSku = consultaVendasSku.sort_values(by=['totalVendasPai'],
-                                                          ascending=False)  # escolher como deseja classificar
-
-        consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['ABCdist%'].cumsum()
 
 
 
@@ -290,6 +278,7 @@ class TendenciaPlano():
                                                                            "valorVendido": 'sum'}).reset_index()
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                                           ascending=False)  # escolher como deseja classificar
+        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
 
 
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
