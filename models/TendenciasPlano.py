@@ -247,16 +247,29 @@ class TendenciaPlano():
                 consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
         consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
                 consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
-        consultaVendasSku['faltaProg'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['disponivel'] < 0, 0)
+        consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
         consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
-        consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['faltaProg'] = consultaVendasSku['faltaProg'].apply(self.formatar_padraoInteiro)
+        consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
+
+        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
+        consultaVendasSku['totalVendasPai'] = consultaVendasSku.groupby('codItemPai')['qtdePedida'].transform('sum')
+        consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
+
+        consultaVendasSku['ABCdist%'] = np.where(
+            consultaVendasSku['totalVendasPai'] == 0,  # Condição
+            0,  # Valor se condição for verdadeira
+            consultaVendasSku['totalVendasPai'] / consultaVendasSku['totalVendas']  # Valor se falsa
+        )
+        consultaVendasSku = consultaVendasSku.sort_values(by=['totalVendasPai'],
+                                                          ascending=False)  # escolher como deseja classificar
+
+        consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['ABCdist%'].cumsum()
 
 
 
