@@ -359,3 +359,15 @@ class TendenciaPlano():
             return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
+
+
+    def simulacaoProgramacao(self, arraySimulaAbc):
+        abc = self.tendenciaAbc()
+        abc = abc.loc[:,
+                         ['codItemPai', 'class']]
+        tendencia = self.tendenciaVendas()
+        tendencia = pd.merge(tendencia,abc,on="codItemPai",how='left')
+        tendencia = tendencia.fillna('-',inplace=True)
+
+        return tendencia
+
