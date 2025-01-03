@@ -367,7 +367,6 @@ class TendenciaPlano():
                          ['codItemPai', 'class']]
         tendencia = self.tendenciaVendas()
         tendencia = pd.merge(tendencia,abc,on="codItemPai",how='left')
-        tendencia['class'].fillna('-',inplace=True)
 
 
 
