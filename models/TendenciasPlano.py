@@ -362,12 +362,21 @@ class TendenciaPlano():
 
 
     def simulacaoProgramacao(self, arraySimulaAbc):
+
+        # Transformando em DataFrame
+        dfSimulaAbc = pd.DataFrame({
+            'class': arraySimulaAbc[0],
+            'percentual': arraySimulaAbc[1]
+        })
+
         abc = self.tendenciaAbc()
         abc = abc.loc[:,
                          ['codItemPai', 'class']]
         tendencia = self.tendenciaVendas()
         tendencia = pd.merge(tendencia,abc,on="codItemPai",how='left')
+        tendencia = pd.merge(tendencia, dfSimulaAbc, on='class',how='left')
 
+        tendencia['percentual'].fillna(0, inplace=True)
 
 
         return tendencia
