@@ -74,11 +74,19 @@ class AnaliseMateriais():
                             and l.codlote = '""" + self.codLote + """'"""
             sqlMetas = ''
 
+            with ConexaoBanco.Conexao2() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sqlcsw)
+                    colunas = [desc[0] for desc in cursor.description]
+                    rows = cursor.fetchall()
+                    consumo = pd.DataFrame(rows, columns=colunas)
+
+
         else:
 
             inPesquisa = self.estruturaPrevisao()
             sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
-            sqlcsw = self.carregandoComponentes()
+            consumo = self.carregandoComponentes()
 
 
 
@@ -143,10 +151,6 @@ class AnaliseMateriais():
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(sqlcsw)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                consumo = pd.DataFrame(rows, columns=colunas)
 
                 cursor.execute(sqlEstoque)
                 colunas = [desc[0] for desc in cursor.description]
