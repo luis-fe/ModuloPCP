@@ -182,9 +182,7 @@ class Produto():
             from
                 "PCP".pcp.itens_csw ic
             where
-                "codItemPai" like '1%'
-                or "codItemPai" like '2%'
-                or "codItemPai" like '3%' 
+                "codItemPai" not like '6%' 
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
