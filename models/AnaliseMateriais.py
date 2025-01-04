@@ -6,7 +6,7 @@ import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 import os
 
-from models import PlanoClass, ProdutosClass
+from models import PlanoClass, ProdutosClass, TendenciasPlano
 
 
 class AnaliseMateriais():
@@ -17,6 +17,20 @@ class AnaliseMateriais():
 
         self.codLote = codLote
         self.codPlano = codPlano
+
+
+    def carregandoComponentes(self):
+        # 1:  Carregar as variaveis de ambiente e o nome do caminho
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        # 1.2 - Carregar o arquivo Parquet
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/compVar.parquet')
+
+
+        # Converter para DataFrame do Pandas
+        df_loaded = parquet_file.to_pandas()
+
+        return df_loaded
 
     def estruturaItens(self, pesquisaPor = 'lote'):
 
@@ -58,49 +72,13 @@ class AnaliseMateriais():
                             on l.Empresa = v.codEmpresa 
                             and l.codEngenharia = v.codProduto 
                             and l.codlote = '""" + self.codLote + """'"""
+            sqlMetas = ''
+
         else:
 
             inPesquisa = self.estruturaPrevisao()
-            print(inPesquisa)
-            sqlcsw = """
-                        SELECT 
-                            v.codProduto as codEngenharia, 
-                            cv.codSortimento, 
-                            cv.seqTamanho as codSeqTamanho,  
-                            v.CodComponente,
-                            (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
-                            (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
-                            cv.quantidade  
-                        from 
-                            tcp.ComponentesVariaveis v 
-                        join 
-                            tcp.CompVarSorGraTam cv 
-                            on cv.codEmpresa = v.codEmpresa 
-                            and cv.codProduto = v.codProduto 
-                            and cv.sequencia = v.codSequencia 
-                        WHERE 
-                            v.codEmpresa = 1
-                            and v.codProduto in """ + inPesquisa + """
-                            and v.codClassifComponente <> 12
-                        UNION 
-                        SELECT 
-                            v.codProduto as codEngenharia,  
-                            l.codSortimento ,
-                            l.codSeqTamanho  as codSeqTamanho, 
-                            v.CodComponente,
-                            (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
-                            (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
-                            v.quantidade  
-                        from 
-                            tcp.ComponentesPadroes  v 
-                        join 
-                            cgi.Item2 l
-                            on l.Empresa  = v.codEmpresa
-                            and v.codEmpresa = 1
-                            and l.codCor  > 0
-                            and '0'||l.codItemPai ||'-0' = v.codProduto
-                        where
-                            v.codProduto  in """ + inPesquisa
+            sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
+            sqlcsw = self.carregandoComponentes()
 
 
 
@@ -204,7 +182,10 @@ class AnaliseMateriais():
                 del rows
                 gc.collect()
 
-        return consumo.loc[:100]
+        Necessidade = pd.merge(sqlMetas, consumo, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"], how='left')
+
+
+        return Necessidade.loc[:100]
 
     def metaLote(self):
         conn = ConexaoPostgreWms.conexaoEngine()
