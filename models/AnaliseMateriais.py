@@ -286,7 +286,7 @@ class AnaliseMateriais():
         df_loaded['codItemPai'].fillna('-', inplace=True)
         df_loaded = df_loaded.loc[:,
                          ['codItemPai']]
-        df_loaded['codItemPai'] = df_loaded['codItemPai'].where(~df_loaded['codItemPai'].duplicated())
+        df_loaded = df_loaded.drop_duplicates(subset='codItemPai')
 
         print(df_loaded)
 
