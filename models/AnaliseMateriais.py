@@ -285,7 +285,7 @@ class AnaliseMateriais():
 
         df_loaded['codItemPai'].fillna('-', inplace=True)
         df_loaded = df_loaded.loc[:,
-                         ['codProduto']]
+                         ['codItemPai']]
         print(df_loaded)
 
 
