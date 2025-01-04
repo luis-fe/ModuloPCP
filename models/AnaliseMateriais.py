@@ -288,16 +288,15 @@ class AnaliseMateriais():
                          ['codItemPai']]
         df_loaded = df_loaded.drop_duplicates(subset='codItemPai')
 
-        print(df_loaded)
 
 
 
         df_loaded['codItemPai'] = '0'+df_loaded['codItemPai']+'-0'
         df_loaded['codItemPai'].fillna('-',inplace=True)
 
-        #result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
 
-        #print(df_loaded)
+        result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
+
 
         return df_loaded
 
