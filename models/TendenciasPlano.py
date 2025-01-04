@@ -386,5 +386,15 @@ class TendenciaPlano():
         tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
             tendencia['Prev Sobra'] < 0, 0)
 
+        tendencia['estoqueAtual'] = tendencia['estoqueAtual'].apply(self.formatar_padraoInteiro)
+        tendencia['emProcesso'] = tendencia['emProcesso'].apply(self.formatar_padraoInteiro)
+        tendencia['qtdeFaturada'] = tendencia['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+        tendencia['qtdePedida'] = tendencia['qtdePedida'].apply(self.formatar_padraoInteiro)
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].apply(self.formatar_padraoInteiro)
+        tendencia['disponivel'] = tendencia['disponivel'].apply(self.formatar_padraoInteiro)
+        tendencia['faltaProg (Tendencia)'] = tendencia['faltaProg (Tendencia)'].apply(
+            self.formatar_padraoInteiro)
+        tendencia['Prev Sobra'] = tendencia['Prev Sobra'].apply(self.formatar_padraoInteiro)
+
         return tendencia
 
