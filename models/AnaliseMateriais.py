@@ -59,7 +59,8 @@ class AnaliseMateriais():
                             and l.codEngenharia = v.codProduto 
                             and l.codlote = '""" + self.codLote + """'"""
         else:
-            inPesquisa = """(select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLote + """)"""
+
+            inPesquisa = self.estruturaPrevisao()
             sqlcsw = """
                         SELECT 
                             v.codProduto as codEngenharia, 
@@ -80,25 +81,25 @@ class AnaliseMateriais():
                             v.codEmpresa = 1
                             and v.codProduto in """ + inPesquisa + """
                             and v.codClassifComponente <> 12
-                    UNION 
-                    SELECT 
-                        v.codProduto as codEngenharia,  
-                        l.codSortimento ,
-                        l.codSeqTamanho  as codSeqTamanho, 
-                        v.CodComponente,
-                        (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
-                        (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
-                        v.quantidade  
-                    from 
-                        tcp.ComponentesPadroes  v 
-                    join 
-                        cgi.Item2 l
-                        on l.Empresa  = v.codEmpresa
-                        and v.codEmpresa = 1
-                        and l.codCor  > 0
-                        and '0'||l.codItemPai ||'-0' = v.codProduto
-                    where
-                        v.codProduto  in """ + inPesquisa
+                        UNION 
+                        SELECT 
+                            v.codProduto as codEngenharia,  
+                            l.codSortimento ,
+                            l.codSeqTamanho  as codSeqTamanho, 
+                            v.CodComponente,
+                            (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
+                            (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                            v.quantidade  
+                        from 
+                            tcp.ComponentesPadroes  v 
+                        join 
+                            cgi.Item2 l
+                            on l.Empresa  = v.codEmpresa
+                            and v.codEmpresa = 1
+                            and l.codCor  > 0
+                            and '0'||l.codItemPai ||'-0' = v.codProduto
+                        where
+                            v.codProduto  in """ + inPesquisa
 
 
 
@@ -202,6 +203,8 @@ class AnaliseMateriais():
                 del rows
                 gc.collect()
 
+        return consumo
+
     def metaLote(self):
         conn = ConexaoPostgreWms.conexaoEngine()
         # Obtendo as Previsao do Lote
@@ -232,6 +235,8 @@ class AnaliseMateriais():
 
         sqlMetas = pd.merge(sqlMetas, consulta, on=["codEngenharia", "codSeqTamanho", "codSortimento"], how='left')
         sqlMetas['codItem'].fillna('-', inplace=True)
+
+        return sqlMetas
 
 
     def estruturaPrevisao(self):
