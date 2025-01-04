@@ -61,6 +61,7 @@ class AnaliseMateriais():
         else:
 
             inPesquisa = self.estruturaPrevisao()
+            print(inPesquisa)
             sqlcsw = """
                         SELECT 
                             v.codProduto as codEngenharia, 
