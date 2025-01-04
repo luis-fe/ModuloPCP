@@ -24,7 +24,7 @@ def post_AnaliseMateriaisPelaTendencia():
     consideraPedBloq = data.get('consideraPedBloq','nao')
 
 
-    dados = AnaliseMateriais.AnaliseMateriais(codPlano).estruturaPrevisao()
+    dados = AnaliseMateriais.AnaliseMateriais(codPlano).estruturaItens('nao')
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

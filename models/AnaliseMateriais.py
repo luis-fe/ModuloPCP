@@ -298,7 +298,7 @@ class AnaliseMateriais():
         result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
 
 
-        return df_loaded
+        return result
 
 
 
