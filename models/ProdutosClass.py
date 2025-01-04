@@ -189,7 +189,7 @@ class Produto():
 
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql,conn)
-
+        consulta['codigo'] = consulta['codigo'].astype(str).str.replace('.0','')
         return consulta
 
     def statusAFV(self):
