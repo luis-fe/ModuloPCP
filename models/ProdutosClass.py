@@ -189,6 +189,7 @@ class Produto():
 
         conn = ConexaoPostgreWms.conexaoEngine()
         consulta = pd.read_sql(sql,conn)
+
         return consulta
 
     def statusAFV(self):
