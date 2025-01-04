@@ -284,6 +284,7 @@ class AnaliseMateriais():
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
 
         df_loaded['codItemPai'].fillna('-', inplace=True)
+        print(df_loaded)
 
 
 
