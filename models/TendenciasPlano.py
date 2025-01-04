@@ -249,16 +249,17 @@ class TendenciaPlano():
                 consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
         consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
         consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
-        consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
-        if aplicaTratamento == 'sim':
-            consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
 
-        consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
+        if aplicaTratamento == 'sim':
+            consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
+            consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
+
 
 
 
@@ -379,8 +380,11 @@ class TendenciaPlano():
 
         tendencia['percentual'].fillna(0, inplace=True)
 
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * tendencia['percentual']
-
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual']/100)
+        tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
+                tendencia['previcaoVendas'] - tendencia['qtdeFaturada'])
+        tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
+            tendencia['Prev Sobra'] < 0, 0)
 
         return tendencia
 
