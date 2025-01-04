@@ -149,7 +149,7 @@ class TendenciaPlano():
 
         return pd.DataFrame([{'status':True,'Mensagem':'Novo parametroABC inserido com sucesso'}])
 
-    def tendenciaVendas(self):
+    def tendenciaVendas(self, aplicaTratamento = 'sim'):
         '''Metodo que desdobra a tendencia ABC de vendas '''
 
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
@@ -252,7 +252,8 @@ class TendenciaPlano():
         consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
-        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
+        if aplicaTratamento == 'sim':
+            consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
         consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
@@ -372,11 +373,13 @@ class TendenciaPlano():
         abc = self.tendenciaAbc()
         abc = abc.loc[:,
                          ['codItemPai', 'class']]
-        tendencia = self.tendenciaVendas()
+        tendencia = self.tendenciaVendas('nao')
         tendencia = pd.merge(tendencia,abc,on="codItemPai",how='left')
         tendencia = pd.merge(tendencia, dfSimulaAbc, on='class',how='left')
 
         tendencia['percentual'].fillna(0, inplace=True)
+
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * tendencia['percentual']
 
 
         return tendencia
