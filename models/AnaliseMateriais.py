@@ -285,6 +285,7 @@ class AnaliseMateriais():
         df_loaded['codItemPai'] = df_loaded['codItemPai'].drop_duplicates()
         result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
 
+        print(df_loaded)
 
         return df_loaded
 
