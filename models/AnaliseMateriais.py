@@ -204,7 +204,7 @@ class AnaliseMateriais():
                 del rows
                 gc.collect()
 
-        return consumo
+        return consumo.loc[:100]
 
     def metaLote(self):
         conn = ConexaoPostgreWms.conexaoEngine()
