@@ -144,7 +144,7 @@ class AnaliseMateriais():
         	    WHERE
         		    i.codempresa = 1 
         		    and i.codPedido >0 
-        		    and codPedido in (select codpedido FROM up.PedidoCompraItem p WHERE
+        		    and codPedido in (select codpedido FROM sup.PedidoCompraItem p WHERE
         	        p.situacao in (0, 2))
                 """
 
