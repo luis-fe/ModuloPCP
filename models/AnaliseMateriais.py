@@ -292,9 +292,9 @@ class AnaliseMateriais():
         df_loaded['codItemPai'].fillna('-',inplace=True)
 
         df_loaded = df_loaded['codItemPai'].drop_duplicates()
-        result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
+        #result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
 
-        print(df_loaded)
+        #print(df_loaded)
 
         return df_loaded
 
