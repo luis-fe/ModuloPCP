@@ -275,6 +275,9 @@ class AnaliseMateriais():
         df_loaded = df_loaded[df_loaded['situacaoPedido'] != '9']
         df_loaded['codProduto'] = df_loaded['codProduto'].astype(str)
 
+        df_loaded = df_loaded.loc[:,
+                         ['codProduto']]
+
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
 
         df_loaded['codItemPai'].fillna('-', inplace=True)
