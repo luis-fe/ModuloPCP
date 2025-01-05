@@ -193,9 +193,18 @@ class AnaliseMateriais():
         sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
 
         Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
+        Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+        Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
+        Necessidade = sqlPedidos.groupby(["CodComponente"]).agg(
+            {"disponivelVendas": "sum",
+             "faltaProg (Tendencia)": "sum",
+             "descricaoComponente":'first',
+             "unid":'first'
+             }).reset_index()
 
 
-        return Necessidade.loc[:100]
+
+        return Necessidade
 
     def metaLote(self):
         conn = ConexaoPostgreWms.conexaoEngine()
