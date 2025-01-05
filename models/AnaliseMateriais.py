@@ -187,7 +187,7 @@ class AnaliseMateriais():
                 del rows
                 gc.collect()
 
-        Necessidade = pd.merge(sqlMetas, consumo, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"], how='left')
+        Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
 
 
         return Necessidade.loc[:100]
