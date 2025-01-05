@@ -201,9 +201,9 @@ class AnaliseMateriais():
              "descricaoComponente":'first',
              "unid":'first'
              }).reset_index()
-        Necessidade = pd.merge(Necessidade, sqlPedidos,on='codComponente',how='left')
-        Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto,on='codComponente',how='left')
-        Necessidade = pd.merge(Necessidade, sqlEstoque,on='codComponente',how='left')
+        Necessidade = pd.merge(Necessidade, sqlPedidos,on='CodComponente',how='left')
+        Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto,on='CodComponente',how='left')
+        Necessidade = pd.merge(Necessidade, sqlEstoque,on='CodComponente',how='left')
 
         Necessidade['SaldoPedCompras'].fillna(0,inplace=True)
         Necessidade['EmRequisicao'].fillna(0,inplace=True)
