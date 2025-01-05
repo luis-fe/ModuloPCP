@@ -193,7 +193,7 @@ class AnaliseMateriais():
         Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
 
 
-        return consumo.loc[:100]
+        return sqlMetas.loc[:100]
 
     def metaLote(self):
         conn = ConexaoPostgreWms.conexaoEngine()
