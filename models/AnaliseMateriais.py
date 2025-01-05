@@ -195,7 +195,7 @@ class AnaliseMateriais():
         Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
         Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
         Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
-        Necessidade = sqlPedidos.groupby(["CodComponente"]).agg(
+        Necessidade = Necessidade.groupby(["CodComponente"]).agg(
             {"disponivelVendas": "sum",
              "faltaProg (Tendencia)": "sum",
              "descricaoComponente":'first',
