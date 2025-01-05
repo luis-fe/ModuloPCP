@@ -187,10 +187,10 @@ class AnaliseMateriais():
                 del rows
                 gc.collect()
 
-        #Necessidade = pd.merge(sqlMetas, consumo, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"], how='left')
+        Necessidade = pd.merge(sqlMetas, consumo, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"], how='left')
 
 
-        return consumo.loc[:100]
+        return Necessidade.loc[:100]
 
     def metaLote(self):
         conn = ConexaoPostgreWms.conexaoEngine()
