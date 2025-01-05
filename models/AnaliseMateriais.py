@@ -87,6 +87,7 @@ class AnaliseMateriais():
             inPesquisa = self.estruturaPrevisao()
             sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
             consumo = self.carregandoComponentes()
+            consumo = pd.mege(consumo,inPesquisa, on='codEngenharia')
 
 
 
@@ -276,14 +277,14 @@ class AnaliseMateriais():
 
 
 
-        df_loaded['codItemPai'] = '0'+df_loaded['codItemPai']+'-0'
+        df_loaded['codEngenharia'] = '0'+df_loaded['codItemPai']+'-0'
         df_loaded['codItemPai'].fillna('-',inplace=True)
 
 
-        result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
+        #result = f"({', '.join(repr(x) for x in df_loaded['codItemPai'])})"
 
 
-        return result
+        return df_loaded
 
 
 
