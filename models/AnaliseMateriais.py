@@ -201,8 +201,14 @@ class AnaliseMateriais():
              "descricaoComponente":'first',
              "unid":'first'
              }).reset_index()
+        Necessidade = pd.merge(Necessidade, sqlPedidos,on='codComponente',how='left')
+        Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto,on='codComponente',how='left')
+        Necessidade = pd.merge(Necessidade, sqlEstoque,on='codComponente',how='left')
 
-
+        Necessidade['SaldoPedCompras'].fillna(0,inplace=True)
+        Necessidade['EmRequisicao'].fillna(0,inplace=True)
+        Necessidade['estoqueAtual'].fillna(0,inplace=True)
+        Necessidade['Nwcessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)']*-1)-Necessidade['estoqueAtual']-Necessidade['SaldoPedCompras']+Necessidade['EmRequisicao']
 
         return Necessidade
 
