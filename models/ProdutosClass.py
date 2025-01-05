@@ -178,7 +178,8 @@ class Produto():
                 "codItemPai",
                 "codCor",
                 categoria,
-                "codSeqTamanho"
+                "codSeqTamanho",
+                "codSortimento"
             from
                 "PCP".pcp.itens_csw ic
             where
