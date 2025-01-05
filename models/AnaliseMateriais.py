@@ -188,6 +188,8 @@ class AnaliseMateriais():
                 gc.collect()
 
         sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
+        sqlMetas['codSortimento'] = sqlMetas['codSortimento'].str.replace('.0','')
+
         sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
 
         Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
