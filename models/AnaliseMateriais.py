@@ -210,6 +210,10 @@ class AnaliseMateriais():
         Necessidade['estoqueAtual'].fillna(0,inplace=True)
         Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)'])+Necessidade['estoqueAtual']+Necessidade['SaldoPedCompras']-Necessidade['EmRequisicao']
                                             # -100 + 10 + 5 -5 ( o negativo significa necessidade de compra)
+        Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
+        Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
+        Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
+
         return Necessidade
 
     def metaLote(self):
@@ -242,6 +246,7 @@ class AnaliseMateriais():
 
         sqlMetas = pd.merge(sqlMetas, consulta, on=["codEngenharia", "codSeqTamanho", "codSortimento"], how='left')
         sqlMetas['codItem'].fillna('-', inplace=True)
+
 
         return sqlMetas
 
@@ -305,6 +310,14 @@ class AnaliseMateriais():
 
 
         return df_loaded
+
+
+
+    def formatar_float(self,valor):
+        try:
+            return f'{valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
 
 
 
