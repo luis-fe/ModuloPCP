@@ -163,6 +163,7 @@ class TendenciaPlano():
                                                          "qtdeFaturada": 'sum',
                                                          "valorVendido": 'sum',
                                                          "codSeqTamanho":'first',
+                                                        "codSortimento":"first",
                                                          "codPedido": 'count'}).reset_index()
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                       ascending=False)  # escolher como deseja classificar

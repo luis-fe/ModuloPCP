@@ -255,7 +255,6 @@ class VendasAcom():
                                                          "qtdePedida":"sum",
                                                          "qtdeFaturada":'sum',
                                                          "valorVendido":'sum',
-                                                         "codSortimento":"first",
                                                          "codSeqTamanho":'first',
                                                          "codPedido":'count'}).reset_index()
         groupBy = groupBy.sort_values(by=['qtdePedida'],
