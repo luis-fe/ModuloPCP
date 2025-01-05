@@ -208,8 +208,8 @@ class AnaliseMateriais():
         Necessidade['SaldoPedCompras'].fillna(0,inplace=True)
         Necessidade['EmRequisicao'].fillna(0,inplace=True)
         Necessidade['estoqueAtual'].fillna(0,inplace=True)
-        Necessidade['Nwcessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)']*-1)-Necessidade['estoqueAtual']-Necessidade['SaldoPedCompras']+Necessidade['EmRequisicao']
-
+        Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)'])+Necessidade['estoqueAtual']+Necessidade['SaldoPedCompras']-Necessidade['EmRequisicao']
+                                            # -100 + 10 + 5 -5 ( o negativo significa necessidade de compra)
         return Necessidade
 
     def metaLote(self):
