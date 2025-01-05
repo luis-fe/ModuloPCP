@@ -87,7 +87,7 @@ class AnaliseMateriais():
             inPesquisa = self.estruturaPrevisao()
             sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
             consumo = self.carregandoComponentes()
-            consumo = pd.mege(consumo,inPesquisa, on='codEngenharia')
+            consumo = pd.merge(consumo,inPesquisa, on='codEngenharia')
 
 
 
