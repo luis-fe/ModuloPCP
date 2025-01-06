@@ -66,6 +66,8 @@ class Meta ():
                 return valor_limpo
 
         consulta['metaFinanceira'].fillna('R$ 0,00',inplace=True)
+        consulta['metaPecas'].fillna('0',inplace=True)
+
         consulta.fillna('-',inplace=True)
 
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
