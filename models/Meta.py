@@ -65,8 +65,7 @@ class Meta ():
                 valor_limpo = float(valor.replace("R$", "").replace(".", "").replace(",", ".").strip())
                 return valor_limpo
 
-
-
+        consulta['metaFinanceira'].fillna('R$',inplace=True)
         consulta.fillna('-',inplace=True)
 
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
