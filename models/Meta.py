@@ -67,6 +67,7 @@ class Meta ():
 
 
 
+        consulta.fillna('-',inplace=True)
 
         # Aplica o tratamento à coluna 'metaFinanceira' (formatação monetária)
         consulta['metaFinanceira'] = consulta['metaFinanceira'].apply(formatar_meta_financeira)
@@ -75,7 +76,6 @@ class Meta ():
 
         totalFinanceiro = consulta['metaFinanceira'].apply(formatar_meta_financeira_float).sum()
         totalPecas = consulta['metaPecas'].apply(formatar_meta_financeira_int).sum()
-        consulta.fillna('-',inplace=True)
 
         # Cria a linha de total
         total = pd.DataFrame([{
