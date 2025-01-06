@@ -20,17 +20,17 @@ class Meta ():
 
         sql = """
         SELECT 
-            "codPlano",
+            codigo as "codPlano",
             p."descricaoPlano",
             "marca",
             "metaFinanceira",
             "metaPecas"
         FROM
             "pcp"."Metas" m
-        INNER JOIN
+        right JOIN
             "pcp"."Plano" p ON p.codigo = m."codPlano" 
         WHERE
-            "codPlano" = %s
+            "codigo" = %s
         """
 
         # Obtem a conexão com o banco
@@ -75,6 +75,7 @@ class Meta ():
 
         totalFinanceiro = consulta['metaFinanceira'].apply(formatar_meta_financeira_float).sum()
         totalPecas = consulta['metaPecas'].apply(formatar_meta_financeira_int).sum()
+        consulta.fillna('-',inplace=True)
 
         # Cria a linha de total
         total = pd.DataFrame([{
