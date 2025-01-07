@@ -222,7 +222,7 @@ class TendenciaPlano():
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['dist%']* consultaVendasSku['faltaVender']
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(4)
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
-
+        consultaVendasSku['previcaoVendas'].fillna(0,inplace=True)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['qtdePedida']
 
