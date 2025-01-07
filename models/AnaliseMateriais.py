@@ -348,6 +348,7 @@ class AnaliseMateriais():
             f.codEmpresa = 1
             and f.fornecedorPreferencial = 1
             and q.referenciaPrincipal = 1
+            and q.codigo > 18
                 """
 
         with ConexaoBanco.Conexao2() as conn:
