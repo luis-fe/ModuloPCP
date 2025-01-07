@@ -214,6 +214,8 @@ class AnaliseMateriais():
         Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
         Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
 
+        informacoes = self.informacoesComponente()
+        Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
         return Necessidade
 
     def metaLote(self):
@@ -246,6 +248,8 @@ class AnaliseMateriais():
 
         sqlMetas = pd.merge(sqlMetas, consulta, on=["codEngenharia", "codSeqTamanho", "codSortimento"], how='left')
         sqlMetas['codItem'].fillna('-', inplace=True)
+
+
 
 
         return sqlMetas
@@ -321,8 +325,35 @@ class AnaliseMateriais():
 
 
 
+    def informacoesComponente(self):
+        '''Metodo de informacao dos componentes '''
 
 
+        sql = """
+        SELECT
+            q.codigo as CodComponente ,
+            f.nomeFornecedor as fornencedorPreferencial,
+            q.diasEntrega as LeadTime,
+            q.qtdMinCom as LoteMin,
+            q.qtdMultCom as loteMut,
+            q.fatorConversao
+        FROM
+            Cgi.FornecHomologados f
+        right join 
+            Cgi.DadosQualidadeFornecedor q on
+            q.codEmpresa = f.codEmpresa
+            and f.codItem = q.codigo
+            and f.codFornecedor = q.codFornecedor
+        WHERE
+            f.codEmpresa = 1
+            and f.fornecedorPreferencial = 1
+                """
 
-
-
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo = pd.DataFrame(rows, columns=colunas)
+        consumo['fatorConversao'].fillna(1,inplace=True)
+        return consumo
