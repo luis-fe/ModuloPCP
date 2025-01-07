@@ -359,6 +359,6 @@ class AnaliseMateriais():
         consumo['fatorConversao'].fillna(1,inplace=True)
         consumo['LeadTime'].fillna(1,inplace=True)
         consumo['CodComponente'] = consumo['CodComponente'].astype(str)
-        consumo['CodComponente'] = consumo['CodComponente'].str.replace('0.','')
+        consumo['CodComponente'] = consumo['CodComponente'].str.replace('.0','')
 
         return consumo
