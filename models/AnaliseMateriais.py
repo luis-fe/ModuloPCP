@@ -347,6 +347,7 @@ class AnaliseMateriais():
         WHERE
             f.codEmpresa = 1
             and f.fornecedorPreferencial = 1
+            and q.referenciaPrincipal = 1
                 """
 
         with ConexaoBanco.Conexao2() as conn:
