@@ -357,4 +357,6 @@ class AnaliseMateriais():
                 rows = cursor.fetchall()
                 consumo = pd.DataFrame(rows, columns=colunas)
         consumo['fatorConversao'].fillna(1,inplace=True)
+        consumo['LeadTime'].fillna(1,inplace=True)
+
         return consumo
