@@ -216,6 +216,7 @@ class AnaliseMateriais():
 
         informacoes = self.informacoesComponente()
         Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
+        Necessidade.fillna('-',inplace=True)
         return Necessidade
 
     def metaLote(self):
