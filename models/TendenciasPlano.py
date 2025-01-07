@@ -343,8 +343,11 @@ class TendenciaPlano():
             include_lowest=True
         )
 
-        consultaVendasSku['class'].fillna('-',inplace=True)
-        consultaVendasSku['classCategoria'].fillna('-',inplace=True)
+        consultaVendasSku['class'] = consultaVendasSku['class'].astype(str)
+        consultaVendasSku['class'].fillna('-', inplace=True)
+
+        consultaVendasSku['classCategoria'] = consultaVendasSku['classCategoria'].astype(str)
+        consultaVendasSku['classCategoria'].fillna('-', inplace=True)
 
 
         consultaVendasSku.drop(['ABCdist%','ABCdist%Categoria',"totalVendas","totalVendasCategoria"], axis=1, inplace=True)
