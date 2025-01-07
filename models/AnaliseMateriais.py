@@ -224,6 +224,12 @@ class AnaliseMateriais():
                      'fornencedorPreferencial': '04-fornencedorPreferencial',
                      'unid': '05-unidade',
                      'faltaProg (Tendencia)': '06-Necessidade faltaProg(Tendencia)',
+                     'EmRequisicao': '07-EmRequisicao',
+                     'estoqueAtual': '08-estoqueAtual',
+                     'SaldoPedCompras': '09-SaldoPedCompras',
+                     'Necessidade faltaProg (Tendencia)': '11-Necessidade Compra (Tendencia)',
+                     #'SaldoPedCompras': '12-Necessidade Ajustada Compra (Tendencia)',
+                     #'SaldoPedCompras': '12-Necessidade Ajustada Compra (Tendencia)'
                      },
             inplace=True)
         return Necessidade
