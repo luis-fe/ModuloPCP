@@ -175,6 +175,7 @@ class VendasAcom():
 
         # Concatena o total ao DataFrame original
         groupByMarca = pd.concat([groupByMarca, total], ignore_index=True)
+        groupByMarca.fillna('-',inplace=True)
 
         semanaAtual = plano.obterSemanaAtual()
         semanaAtualFat = plano.obterSemanaAtualFat()
