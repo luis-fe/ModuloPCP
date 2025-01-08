@@ -242,7 +242,9 @@ class AnaliseMateriais():
 
         # Função para ajustar a necessidade
         def ajustar_necessidade(necessidade, lote_multiplo):
+            necessidade = necessidade * -1
             if lote_multiplo != 0:
+
                 return np.ceil(necessidade / lote_multiplo) * lote_multiplo
             else:
                 return necessidade
