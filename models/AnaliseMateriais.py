@@ -246,11 +246,12 @@ class AnaliseMateriais():
             if necessidade > 0 and necessidade < lotemin:
 
                 return lotemin
-            if lote_multiplo != 0:
-
-                return np.ceil(necessidade / lote_multiplo) * lote_multiplo
             else:
-                return necessidade
+                if lote_multiplo != 0:
+
+                    return np.ceil(necessidade / lote_multiplo) * lote_multiplo
+                else:
+                    return necessidade
 
         # Aplicando o ajuste
         Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
