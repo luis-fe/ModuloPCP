@@ -215,11 +215,12 @@ class AnaliseMateriais():
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
         Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
         Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
-        Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.formatar_padraoInteiro)
 
         informacoes = self.informacoesComponente()
         Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
         Necessidade['loteMut'].fillna(1,inplace=True)
+        Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.formatar_padraoInteiro)
+
 
         Necessidade.fillna('-',inplace=True)
         Necessidade.rename(
