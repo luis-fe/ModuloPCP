@@ -215,7 +215,7 @@ class AnaliseMateriais():
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
         Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
         Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
-        Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_padraoInteiro)
+        Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.formatar_padraoInteiro)
 
         informacoes = self.informacoesComponente()
         Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
@@ -252,6 +252,8 @@ class AnaliseMateriais():
         )
 
         Necessidade = Necessidade.drop(columns=['disponivelVendas'])
+        Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade["12-Necessidade Ajustada Compra (Tendencia)"]  * -1
+        Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade['12-Necessidade Ajustada Compra (Tendencia)'].apply(self.formatar_float)
 
         return Necessidade
 
