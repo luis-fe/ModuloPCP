@@ -266,6 +266,7 @@ class AnaliseMateriais():
         Necessidade['11-Lote Mutiplo'] = Necessidade['11-Lote Mutiplo'].apply(self.formatar_float)
         Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'].apply(self.formatar_float)
         Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.formatar_float)
+        Necessidade['06-Necessidade faltaProg(Tendencia)'] = Necessidade['06-Necessidade faltaProg(Tendencia)'].apply(self.formatar_float)
 
         return Necessidade
 
