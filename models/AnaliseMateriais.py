@@ -210,7 +210,7 @@ class AnaliseMateriais():
         Necessidade['estoqueAtual'].fillna(0,inplace=True)
         Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)'])+Necessidade['estoqueAtual']+Necessidade['SaldoPedCompras']-Necessidade['EmRequisicao']
                                             # -0 + 1.747 + 2 -741,49 ( o negativo significa necessidade de compra)
-        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
+        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] > 0, 0)
 
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
         Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
@@ -249,6 +249,7 @@ class AnaliseMateriais():
         Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
             lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"]), axis=1
         )
+
         Necessidade = Necessidade.drop(columns=['disponivelVendas'])
 
         return Necessidade
