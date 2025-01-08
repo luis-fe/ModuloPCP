@@ -237,7 +237,7 @@ class AnaliseMateriais():
                      'SaldoPedCompras': '09-SaldoPedCompras',
                      'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
                      'LeadTime': '13-LeadTime',
-                     'LoteMin': '14-Lead Mínimo',
+                     'LoteMin': '14-Lote Mínimo',
                      'loteMut': '11-Lote Mutiplo'
                      },
             inplace=True)
@@ -261,7 +261,11 @@ class AnaliseMateriais():
         )
 
         Necessidade = Necessidade.drop(columns=['disponivelVendas'])
-        #Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade['12-Necessidade Ajustada Compra (Tendencia)'].apply(self.formatar_float)
+        Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade['12-Necessidade Ajustada Compra (Tendencia)'].apply(self.formatar_float)
+        Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'] * -1
+        Necessidade['11-Lote Mutiplo'] = Necessidade['11-Lote Mutiplo'].apply(self.formatar_float)
+        Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'].apply(self.formatar_float)
+        Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.formatar_float)
 
         return Necessidade
 
