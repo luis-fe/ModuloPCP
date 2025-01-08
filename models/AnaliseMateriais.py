@@ -216,6 +216,8 @@ class AnaliseMateriais():
 
         informacoes = self.informacoesComponente()
         Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
+        Necessidade['loteMut'].fillna(1,inplace=True)
+
         Necessidade.fillna('-',inplace=True)
         Necessidade.rename(
             columns={'CodComponente': '01-codReduzido',
