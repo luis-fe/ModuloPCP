@@ -257,7 +257,7 @@ class AnaliseMateriais():
 
         # Aplicando o ajuste
         Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
-            lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"],row["14-Lead Mínimo"]), axis=1
+            lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"],row["14-Lote Mínimo"]), axis=1
         )
 
         Necessidade = Necessidade.drop(columns=['disponivelVendas'])
