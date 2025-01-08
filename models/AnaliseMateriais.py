@@ -215,6 +215,7 @@ class AnaliseMateriais():
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
         Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
         Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
+        Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_padraoInteiro)
 
         informacoes = self.informacoesComponente()
         Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
@@ -297,7 +298,8 @@ class AnaliseMateriais():
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         # 1.2 - Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
+        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parque'
+                                      f't')
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
@@ -401,3 +403,10 @@ class AnaliseMateriais():
         print(consumo['CodComponente'])
 
         return consumo
+
+
+    def formatar_padraoInteiro(self,valor):
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
