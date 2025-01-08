@@ -227,8 +227,8 @@ class AnaliseMateriais():
                      'EmRequisicao': '07-EmRequisicao',
                      'estoqueAtual': '08-estoqueAtual',
                      'SaldoPedCompras': '09-SaldoPedCompras',
-                     'Necessidade faltaProg (Tendencia)': '11-Necessidade Compra (Tendencia)',
-                     #'SaldoPedCompras': '12-Necessidade Ajustada Compra (Tendencia)',
+                     'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
+                     'loteMut': '11-Lote Mutiplo',
                      #'SaldoPedCompras': '12-Necessidade Ajustada Compra (Tendencia)'
                      },
             inplace=True)
