@@ -253,7 +253,6 @@ class AnaliseMateriais():
         )
 
         Necessidade = Necessidade.drop(columns=['disponivelVendas'])
-        Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade["12-Necessidade Ajustada Compra (Tendencia)"]  * -1
         Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade['12-Necessidade Ajustada Compra (Tendencia)'].apply(self.formatar_float)
 
         return Necessidade
