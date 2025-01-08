@@ -219,6 +219,8 @@ class AnaliseMateriais():
         informacoes = self.informacoesComponente()
         Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
         Necessidade['loteMut'].fillna(1,inplace=True)
+        Necessidade['LoteMin'].fillna(0,inplace=True)
+
         Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.formatar_padraoInteiro)
 
 
