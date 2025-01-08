@@ -230,6 +230,8 @@ class AnaliseMateriais():
                      'estoqueAtual': '08-estoqueAtual',
                      'SaldoPedCompras': '09-SaldoPedCompras',
                      'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
+                     'LeadTime': '13-LeadTime',
+                     'LoteMin': '14-Lead Mínimo',
                      'loteMut': '11-Lote Mutiplo'
                      },
             inplace=True)
@@ -245,6 +247,8 @@ class AnaliseMateriais():
         Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
             lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"]), axis=1
         )
+        Necessidade = Necessidade.drop(columns=['disponivelVendas'])
+
         return Necessidade
 
     def metaLote(self):
