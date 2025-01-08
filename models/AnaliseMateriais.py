@@ -241,8 +241,11 @@ class AnaliseMateriais():
             inplace=True)
 
         # Função para ajustar a necessidade
-        def ajustar_necessidade(necessidade, lote_multiplo):
+        def ajustar_necessidade(necessidade, lote_multiplo, lotemin):
             necessidade = necessidade * -1
+            if necessidade > 0 and necessidade < lotemin:
+
+                return lotemin
             if lote_multiplo != 0:
 
                 return np.ceil(necessidade / lote_multiplo) * lote_multiplo
@@ -251,7 +254,7 @@ class AnaliseMateriais():
 
         # Aplicando o ajuste
         Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
-            lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"]), axis=1
+            lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"],row["14-Lead Mínimo"]), axis=1
         )
 
         Necessidade = Necessidade.drop(columns=['disponivelVendas'])
