@@ -228,10 +228,18 @@ class AnaliseMateriais():
                      'estoqueAtual': '08-estoqueAtual',
                      'SaldoPedCompras': '09-SaldoPedCompras',
                      'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
-                     'loteMut': '11-Lote Mutiplo',
-                     #'SaldoPedCompras': '12-Necessidade Ajustada Compra (Tendencia)'
+                     'loteMut': '11-Lote Mutiplo'
                      },
             inplace=True)
+
+        # Função para ajustar a necessidade
+        def ajustar_necessidade(necessidade, lote_multiplo):
+            return np.ceil(necessidade / lote_multiplo) * lote_multiplo
+
+        # Aplicando o ajuste
+        Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
+            lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"]), axis=1
+        )
         return Necessidade
 
     def metaLote(self):
