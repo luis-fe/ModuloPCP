@@ -273,7 +273,7 @@ class AnaliseMateriais():
         Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'].apply(self.formatar_float)
         Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.formatar_float)
         Necessidade['06-Necessidade faltaProg(Tendencia)'] = Necessidade['06-Necessidade faltaProg(Tendencia)'].apply(self.formatar_float)
-
+        Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
         return Necessidade
 
     def metaLote(self):
