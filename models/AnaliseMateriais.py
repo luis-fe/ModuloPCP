@@ -13,10 +13,11 @@ class AnaliseMateriais():
     '''Classe criada para a analise das necessidades de materia prima, utilizada mo PCP'''
 
 
-    def __init__(self, codPlano = None , codLote= None):
+    def __init__(self, codPlano = None , codLote= None, consideraBloqueado = 'nao'):
 
         self.codLote = codLote
         self.codPlano = codPlano
+        self.consideraBloqueado = consideraBloqueado
 
 
     def carregandoComponentes(self):
@@ -86,9 +87,9 @@ class AnaliseMateriais():
 
             inPesquisa = self.estruturaPrevisao()
             if arraySimulaAbc == 'nao':
-                sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
+                sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
             else:
-                sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).simulacaoProgramacao(arraySimulaAbc)
+                sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).simulacaoProgramacao(arraySimulaAbc)
 
 
             consumo = self.carregandoComponentes()
