@@ -32,7 +32,7 @@ class AnaliseMateriais():
 
         return df_loaded
 
-    def estruturaItens(self, pesquisaPor = 'lote'):
+    def estruturaItens(self, pesquisaPor = 'lote', arraySimulaAbc = 'nao'):
 
         if pesquisaPor == 'lote':
             inPesquisa = """(select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLote + """)"""
@@ -85,7 +85,12 @@ class AnaliseMateriais():
         else:
 
             inPesquisa = self.estruturaPrevisao()
-            sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
+            if arraySimulaAbc == 'nao':
+                sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).tendenciaVendas('nao')
+            else:
+                sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano).simulacaoProgramacao(arraySimulaAbc)
+
+
             consumo = self.carregandoComponentes()
             consumo = pd.merge(consumo,inPesquisa, on='codEngenharia')
 

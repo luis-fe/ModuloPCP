@@ -131,6 +131,7 @@ def put_VincularNotasPlano():
 def Delete_DesvincularLotesPlano():
 
     data = request.get_json()
+    print(data)
 
     codigoPlano = data.get('codigoPlano')
     arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
