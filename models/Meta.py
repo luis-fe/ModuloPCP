@@ -377,8 +377,8 @@ class Meta ():
             return valor
         else:
             # Remover "R$"
-            valor = valor.replace("R$", "").strip()
-            # Substituir o ponto por nada e a vírgula por ponto
+            if "R$" in valor:
+                valor = valor.replace("R$", "").strip()            # Substituir o ponto por nada e a vírgula por ponto
             valor = valor.replace(".", "").replace(",", ".")
             # Converter para float
             valor_float = float(valor)
