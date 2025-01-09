@@ -375,6 +375,11 @@ class Meta ():
         if isinstance(valor, float):
 
             return valor
+        elif isinstance(valor, int):
+            valor = float(valor)
+
+            return valor
+
         else:
             # Remover "R$"
             if "R$" in valor:
