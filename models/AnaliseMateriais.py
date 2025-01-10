@@ -454,8 +454,8 @@ class AnaliseMateriais():
              "descricaoComponente":'first',
              "unid":'first'
              }).reset_index()
-
-        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+        print(self.codComponente)
+#        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
 
 
