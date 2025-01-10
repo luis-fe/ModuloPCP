@@ -452,122 +452,37 @@ class AnaliseMateriais():
 
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
-        Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+        Necessidade['Necesidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
         Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
-        '''
-        Necessidade = Necessidade.groupby(["CodComponente"]).agg(
-            {"disponivelVendas": "sum",
-             "faltaProg (Tendencia)": "sum",
-             "descricaoComponente":'first',
-             "unid":'first'
-             }).reset_index()
 
-        # Obtendo os consumos de todos os componentes relacionados nas engenharias
+        Necessidade.fillna('-',inplace=True)
+        Necessidade.rename(
+            columns={'codReduzido': '01-codReduzido',
+                     'codItemPai': '02-codItemPai',
+                     'codCor': '03-codCor',
+                     'tam': '04-tam',
+                     'nome': '05-nome',
+                     'qtdePedida':'06-qtdePedida',
+                     'previcaoVendas': '07-previcaoVendas',
+                     'faltaProg (Tendencia)': '08-faltaProg (Tendencia)',
+                     'quantidade':'09-consumo',
+                     'unid': '10-unid',
+                     'Necesidade faltaProg (Tendencia)': '11-Necesidade faltaProg (Tendencia)'
+                     #'descricaoComponente': '03-descricaoComponente',
+                     #'fornencedorPreferencial': '04-fornencedorPreferencial',
+                     #'unid': '05-unidade',
+                     #'faltaProg (Tendencia)': '06-Necessidade faltaProg(Tendencia)',
+                     #'EmRequisicao': '07-EmRequisicao',
+                     #'estoqueAtual': '08-estoqueAtual',
+                     #'SaldoPedCompras': '09-SaldoPedCompras',
+                     #'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
+                     #'LeadTime': '13-LeadTime',
+                     #'LoteMin': '14-Lote Mínimo',
+                     #'loteMut': '11-Lote Mutiplo'
+                     },
+            inplace=True)
+        Necessidade['11-Necesidade faltaProg (Tendencia)'] = Necessidade['11-Necesidade faltaProg (Tendencia)'].apply(self.formatar_float)
 
-        sqlEstoque = """
-                           SELECT
-               	            d.codItem as CodComponente ,
-               	            d.estoqueAtual
-                           FROM
-               	            est.DadosEstoque d
-                           WHERE
-               	            d.codEmpresa = 1
-               	            and d.codNatureza in (1, 3, 2)
-               	            and d.estoqueAtual > 0
-                       """
-
-        sqlRequisicaoAberto = """
-                       SELECT
-               	        ri.codMaterial as CodComponente ,
-               	        ri.qtdeRequisitada as EmRequisicao
-                       FROM
-               	        tcq.RequisicaoItem ri
-                       join 
-                           tcq.Requisicao r on
-               	        r.codEmpresa = ri.codEmpresa
-               	        and r.numero = ri.codRequisicao
-                       where
-               	        ri.codEmpresa = 1
-               	        and r.sitBaixa <0
-                       """
-
-        sqlAtendidoParcial = """
-                       SELECT
-               		    i.codPedido as pedCompra,
-               		    i.codPedidoItem as seqitem,
-               		    i.quantidade as qtAtendida
-               	    FROM
-               		    Est.NotaFiscalEntradaItens i
-               	    WHERE
-               		    i.codempresa = 1 
-               		    and i.codPedido >0 
-               		    and codPedido in (select codpedido FROM sup.PedidoCompraItem p WHERE
-               	        p.situacao in (0, 2))
-                       """
-
-        sqlPedidos = """
-                       SELECT
-               	        p.codPedido pedCompra,
-               	        p.codProduto as CodComponente,
-               	        p.quantidade as qtdPedida,
-               	        p.dataPrevisao,
-               	        p.itemPedido as seqitem,
-               	        p.situacao
-                       from 
-               	        sup.PedidoCompraItem p
-                       WHERE
-               	        p.situacao in (0, 2)
-               	        and p.codEmpresa = 1
-                       """
-
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-
-                cursor.execute(sqlEstoque)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                sqlEstoque = pd.DataFrame(rows, columns=colunas)
-
-                # Agrupando os componentes nas requisicoes em aberto
-                cursor.execute(sqlRequisicaoAberto)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                sqlRequisicaoAberto = pd.DataFrame(rows, columns=colunas)
-                sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
-                    {"EmRequisicao": "sum"}).reset_index()
-
-                cursor.execute(sqlAtendidoParcial)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                sqlAtendidoParcial = pd.DataFrame(rows, columns=colunas)
-
-                cursor.execute(sqlPedidos)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                sqlPedidos = pd.DataFrame(rows, columns=colunas)
-
-                sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['pedCompra','seqitem'],how='left')
-
-                sqlPedidos['qtAtendida'].fillna(0,inplace=True)
-                sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
-                sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
-                    {"SaldoPedCompras": "sum"}).reset_index()
-
-                # Libera memória manualmente
-                del rows
-                gc.collect()
-
-        Necessidade = pd.merge(Necessidade, sqlPedidos, on='CodComponente', how='left')
-        Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
-        Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
-
-        Necessidade['SaldoPedCompras'].fillna(0, inplace=True)
-        Necessidade['EmRequisicao'].fillna(0, inplace=True)
-        Necessidade['estoqueAtual'].fillna(0, inplace=True)
-        Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)']) + Necessidade[
-            'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
-        # -0 + 1.747 + 2 -741,49 ( o negativo significa necessidade de compra)
-        '''
 
         return Necessidade
 
