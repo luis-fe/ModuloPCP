@@ -453,6 +453,7 @@ class AnaliseMateriais():
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
         Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+        Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
 
         Necessidade = Necessidade.groupby(["CodComponente"]).agg(
             {"disponivelVendas": "sum",
