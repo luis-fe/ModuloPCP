@@ -484,12 +484,12 @@ class AnaliseMateriais():
 
     def consultaImagem(self):
         sql = """
-         SELECT s.stream  
-         FROM Utils_Persistence.Csw1Stream s
-         WHERE rotina = 'CCCGI015' 
-         AND documentoReferencia = 'Item-250101854' 
-         AND mimeType = 'image/jpeg'
-         """
+        SELECT s.stream  
+        FROM Utils_Persistence.Csw1Stream s
+        WHERE rotina = 'CCCGI015' 
+        AND documentoReferencia = 'Item-250101854' 
+        AND mimeType = 'image/jpeg'
+        """
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
