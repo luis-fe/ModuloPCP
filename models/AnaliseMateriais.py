@@ -438,9 +438,10 @@ class AnaliseMateriais():
 
         carregarComponente = self.carregandoComponentes()
         carregarComponente['CodComponente'] = carregarComponente['CodComponente'].astype(str)
+        print(carregarComponente['CodComponente'])
+
         carregarComponente = carregarComponente[carregarComponente['CodComponente']==self.codComponente].reset_index()
 
-        print(carregarComponente)
 
         sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
 
