@@ -471,7 +471,7 @@ class AnaliseMateriais():
 
                      },
             inplace=True)
-        Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','narca','index','descricaoComponente'
+        Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','marca','index','descricaoComponente'
             ,'descricaoPlano','disponivel','dist%','emProcesso','estoqueAtual'])
 
 
