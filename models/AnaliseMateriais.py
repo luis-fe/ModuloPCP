@@ -454,7 +454,7 @@ class AnaliseMateriais():
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
-        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade'] * -1
 
 
         Necessidade.rename(
