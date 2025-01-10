@@ -102,8 +102,6 @@ def ger_consultaImagemItem():
 
 
     imagem_data = AnaliseMateriais.AnaliseMateriais().consultaImagem()
-    #controle.salvarStatus(rotina, ip, datainicio)
-
     if imagem_data:
         # Retorna a imagem no formato JPEG
         return Response(

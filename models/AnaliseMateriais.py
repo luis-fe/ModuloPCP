@@ -496,9 +496,10 @@ class AnaliseMateriais():
                 cursor.execute(sql)
                 row = cursor.fetchone()  # Busca apenas a primeira linha
                 if row:
-                    stream_data = row[0]  # Dado binário da imagem
-                    return stream_data
+                    stream_data = row[0]  # Dado binário como CacheInputStream
+                    # Lê os dados do stream e converte para bytes
+                    bytes_data = stream_data.read()
+                    return bytes_data
                 else:
                     return None
-
 
