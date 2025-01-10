@@ -437,6 +437,7 @@ class AnaliseMateriais():
         '''metodo que detalha a necessidade de um componente '''
 
         carregarComponente = self.carregandoComponentes()
+        carregarComponente['CodComponente'] = carregarComponente['CodComponente'].astype(str)
         carregarComponente = carregarComponente[carregarComponente['CodComponente']==self.codComponente].reset_index()
 
         print(carregarComponente)
