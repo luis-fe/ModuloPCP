@@ -452,7 +452,7 @@ class AnaliseMateriais():
 
         Necessidade = pd.read_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
-        print(Necessidade['CodComponente'] )
+        Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
 
