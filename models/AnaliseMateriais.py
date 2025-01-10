@@ -451,6 +451,7 @@ class AnaliseMateriais():
         caminhoAbsoluto = os.getenv('CAMINHO')
 
         Necessidade = pd.read_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
 
