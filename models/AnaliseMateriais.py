@@ -462,6 +462,13 @@ class AnaliseMateriais():
                      'tam': '04-tam',
                      'codCor': '05-codCor',
                      'qtdePedida': '06-qtdePedida',
+                     'Ocorrencia em Pedidos':'07-Ocorrencia em Pedidos',
+                     'previcaoVendas': '09-previcaoVendas',
+                     'faltaProg (Tendencia)': '10-faltaProg (Tendencia)',
+                     'CodComponente': '11-CodComponente',
+                     'unid': '12-unid',
+                     'quantidade':'13-consumo'
+
                      },
             inplace=True)
 
