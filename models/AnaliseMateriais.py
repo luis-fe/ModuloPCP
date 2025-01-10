@@ -200,12 +200,13 @@ class AnaliseMateriais():
         sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
 
         Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
-        Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
         # Salvar o DataFrame na memoria:
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+
+        Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
         Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
 
@@ -446,53 +447,11 @@ class AnaliseMateriais():
     def detalhaNecessidade(self):
         '''metodo que detalha a necessidade de um componente '''
 
-        carregarComponente = self.carregandoComponentes()
-        carregarComponente = carregarComponente[carregarComponente['CodComponente']==self.codComponente].reset_index()
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
 
-        sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
-
-        sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
-        sqlMetas['codSortimento'] = sqlMetas['codSortimento'].str.replace('.0','')
-
-        sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
-
-        Necessidade = pd.merge(sqlMetas, carregarComponente, on=["codEngenharia" , "codSeqTamanho" , "codSortimento"])
-        #Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
-
-
+        Necessidade = pd.read_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
-
-        Necessidade['Necesidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
-        Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
-
-        Necessidade.fillna('-',inplace=True)
-        Necessidade.rename(
-            columns={'codReduzido': '01-codReduzido',
-                     'codEngenharia': '02-codEngenharia',
-                     'codCor': '03-codCor',
-                     'tam': '04-tam',
-                     'nome': '05-nome',
-                     'qtdePedida':'06-qtdePedida',
-                     'previcaoVendas': '07-previcaoVendas',
-                     'faltaProg (Tendencia)': '08-faltaProg (Tendencia)',
-                     'quantidade':'10-consumo',
-                     'unid': '11-unid',
-                     'Necesidade faltaProg (Tendencia)': '12-Necesidade faltaProg (Tendencia)',
-                     'CodComponente': '09-CodComponente'
-                     #'fornencedorPreferencial': '04-fornencedorPreferencial',
-                     #'unid': '05-unidade',
-                     #'faltaProg (Tendencia)': '06-Necessidade faltaProg(Tendencia)',
-                     #'EmRequisicao': '07-EmRequisicao',
-                     #'estoqueAtual': '08-estoqueAtual',
-                     #'SaldoPedCompras': '09-SaldoPedCompras',
-                     #'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
-                     #'LeadTime': '13-LeadTime',
-                     #'LoteMin': '14-Lote Mínimo',
-                     #'loteMut': '11-Lote Mutiplo'
-                     },
-            inplace=True)
-        Necessidade['12-Necesidade faltaProg (Tendencia)'] = Necessidade['12-Necesidade faltaProg (Tendencia)'].apply(self.formatar_float)
-        Necessidade = Necessidade.drop(columns=['Ocorrencia em Pedidos','categoria','codItemPai','codPlano','marca','valorVendido','Prev Sobra'])
 
 
         return Necessidade
