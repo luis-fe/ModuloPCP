@@ -437,14 +437,6 @@ class AnaliseMateriais():
         '''metodo que detalha a necessidade de um componente '''
 
         carregarComponente = self.carregandoComponentes()
-        carregarComponente['CodComponente'] = carregarComponente['CodComponente'].astype(int)
-        carregarComponente = carregarComponente[carregarComponente['CodComponente']>736262].reset_index()
-
-        print(carregarComponente['CodComponente'])
-
-        carregarComponente = carregarComponente[carregarComponente['CodComponente']==self.codComponente].reset_index()
-
-
         sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
 
         sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
@@ -455,6 +447,8 @@ class AnaliseMateriais():
         carregarComponente = pd.merge(carregarComponente, inPesquisa, on='codEngenharia')
 
         Necessidade = pd.merge(sqlMetas, carregarComponente, on=["codItemPai" , "codSeqTamanho" , "codSortimento"])
+        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+
 
         return Necessidade
 
