@@ -478,6 +478,7 @@ class AnaliseMateriais():
             ,'descricaoPlano','disponivel','dist%','emProcesso','estoqueAtual','codItemPai','codPlano','codSeqTamanho','codSortimento',
                                                 'valorVendido','qtdeFaturada'])
 
+        Necessidade['14-Necessidade faltaProg (Tendencia)'] = Necessidade['14-Necessidade faltaProg (Tendencia)'].round(2)
 
         return Necessidade
 
