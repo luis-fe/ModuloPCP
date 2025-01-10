@@ -454,6 +454,8 @@ class AnaliseMateriais():
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+
 
         Necessidade.rename(
             columns={'codEngenharia': '01-codEngenharia',
@@ -468,8 +470,8 @@ class AnaliseMateriais():
                      'faltaProg (Tendencia)': '10-faltaProg (Tendencia)',
                      'CodComponente': '11-CodComponente',
                      'unid': '12-unid',
-                     'quantidade':'13-consumo'
-
+                     'quantidade':'13-consumoUnit',
+                     'Necessidade faltaProg (Tendencia)':'14-Necessidade faltaProg (Tendencia)'
                      },
             inplace=True)
         Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','marca','index','descricaoComponente'
