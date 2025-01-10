@@ -458,17 +458,17 @@ class AnaliseMateriais():
         Necessidade.fillna('-',inplace=True)
         Necessidade.rename(
             columns={'codReduzido': '01-codReduzido',
-                     'codItemPai': '02-codItemPai',
+                     'codEngeharia': '02-codEngeharia',
                      'codCor': '03-codCor',
                      'tam': '04-tam',
                      'nome': '05-nome',
                      'qtdePedida':'06-qtdePedida',
                      'previcaoVendas': '07-previcaoVendas',
                      'faltaProg (Tendencia)': '08-faltaProg (Tendencia)',
-                     'quantidade':'09-consumo',
-                     'unid': '10-unid',
-                     'Necesidade faltaProg (Tendencia)': '11-Necesidade faltaProg (Tendencia)'
-                     #'descricaoComponente': '03-descricaoComponente',
+                     'quantidade':'10-consumo',
+                     'unid': '11-unid',
+                     'Necesidade faltaProg (Tendencia)': '12-Necesidade faltaProg (Tendencia)',
+                     'CodComponente': '09-CodComponente'
                      #'fornencedorPreferencial': '04-fornencedorPreferencial',
                      #'unid': '05-unidade',
                      #'faltaProg (Tendencia)': '06-Necessidade faltaProg(Tendencia)',
@@ -481,7 +481,8 @@ class AnaliseMateriais():
                      #'loteMut': '11-Lote Mutiplo'
                      },
             inplace=True)
-        Necessidade['11-Necesidade faltaProg (Tendencia)'] = Necessidade['11-Necesidade faltaProg (Tendencia)'].apply(self.formatar_float)
+        Necessidade['12-Necesidade faltaProg (Tendencia)'] = Necessidade['12-Necesidade faltaProg (Tendencia)'].apply(self.formatar_float)
+        Necessidade = Necessidade.drop(columns=['Ocorrencia em Pedidos','categoria','codItemPai','codPlano','marca','valorVendido'])
 
 
         return Necessidade
