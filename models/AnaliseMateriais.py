@@ -455,6 +455,9 @@ class AnaliseMateriais():
              "unid":'first'
              }).reset_index()
 
+        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+
+
 
         return Necessidade
 
