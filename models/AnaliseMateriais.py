@@ -454,7 +454,7 @@ class AnaliseMateriais():
 
         Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
         Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
-
+        '''
         Necessidade = Necessidade.groupby(["CodComponente"]).agg(
             {"disponivelVendas": "sum",
              "faltaProg (Tendencia)": "sum",
@@ -567,7 +567,7 @@ class AnaliseMateriais():
         Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)']) + Necessidade[
             'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
         # -0 + 1.747 + 2 -741,49 ( o negativo significa necessidade de compra)
-
+        '''
 
         return Necessidade
 
