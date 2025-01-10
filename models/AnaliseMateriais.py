@@ -447,7 +447,7 @@ class AnaliseMateriais():
         carregarComponente = pd.merge(carregarComponente, inPesquisa, on='codEngenharia')
 
         Necessidade = pd.merge(sqlMetas, carregarComponente, on=["codItemPai" , "codSeqTamanho" , "codSortimento"])
-        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+        #Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
 
         return Necessidade
