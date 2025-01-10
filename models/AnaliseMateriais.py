@@ -452,6 +452,7 @@ class AnaliseMateriais():
 
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
+        Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
 
         return Necessidade
