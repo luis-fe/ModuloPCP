@@ -482,21 +482,23 @@ class AnaliseMateriais():
 
         return Necessidade
 
-
     def consultaImagem(self):
-
         sql = """
-SELECT s.stream  FROM Utils_Persistence.Csw1Stream s
-WHERE rotina = 'CCCGI015' and documentoReferencia = 'Item-250101854' and mimeType = 'image/jpeg'
-                        """
+         SELECT s.stream  
+         FROM Utils_Persistence.Csw1Stream s
+         WHERE rotina = 'CCCGI015' 
+         AND documentoReferencia = 'Item-250101854' 
+         AND mimeType = 'image/jpeg'
+         """
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                consulta = pd.DataFrame(rows, columns=colunas)
-
-        return consulta
+                row = cursor.fetchone()  # Busca apenas a primeira linha
+                if row:
+                    stream_data = row[0]  # Dado binário da imagem
+                    return stream_data
+                else:
+                    return None
 
 

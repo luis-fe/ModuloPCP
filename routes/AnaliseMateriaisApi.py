@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Response
 from functools import wraps
 from models import AnaliseMateriais
+import io
 
 
 analiseMP_routes = Blueprint('analiseMP_routes', __name__)
@@ -100,17 +101,16 @@ def ger_consultaImagemItem():
 
 
 
-    dados = AnaliseMateriais.AnaliseMateriais().consultaImagem()
+    imagem_data = AnaliseMateriais.AnaliseMateriais().consultaImagem()
     #controle.salvarStatus(rotina, ip, datainicio)
 
-    # Obtém os nomes das colunas
-    column_names = dados.columns
-    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
-    OP_data = []
-    for index, row in dados.iterrows():
-        op_dict = {}
-        for column_name in column_names:
-            op_dict[column_name] = row[column_name]
-        OP_data.append(op_dict)
-    del dados
-    return jsonify(OP_data)
+    if imagem_data:
+        # Retorna a imagem no formato JPEG
+        return Response(
+            io.BytesIO(imagem_data),
+            mimetype='image/jpeg',
+            headers={"Content-Disposition": "inline; filename=imagem.jpeg"}
+        )
+    else:
+        # Retorna uma mensagem de erro se não houver dados
+        return jsonify({"error": "Imagem não encontrada"}), 404
