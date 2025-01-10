@@ -449,13 +449,8 @@ class AnaliseMateriais():
         Necessidade = pd.merge(sqlMetas, carregarComponente, on=["codItemPai" , "codSeqTamanho" , "codSortimento"])
         #Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
-        Necessidade = Necessidade.groupby(["CodComponente"]).agg(
-            {
-             "descricaoComponente":'first',
-             "unid":'first'
-             }).reset_index()
-        print(self.codComponente)
-#        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+
+        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
 
 
