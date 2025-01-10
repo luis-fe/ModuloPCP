@@ -438,7 +438,7 @@ class AnaliseMateriais():
 
         carregarComponente = self.carregandoComponentes()
         carregarComponente['CodComponente'] = carregarComponente['CodComponente'].astype(int)
-        carregarComponente = carregarComponente[carregarComponente['CodComponente']>736200].reset_index()
+        carregarComponente = carregarComponente[carregarComponente['CodComponente']>736262].reset_index()
 
         print(carregarComponente['CodComponente'])
 
