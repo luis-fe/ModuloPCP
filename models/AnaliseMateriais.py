@@ -445,8 +445,6 @@ class AnaliseMateriais():
         sqlMetas['codSortimento'] = sqlMetas['codSortimento'].str.replace('.0','')
 
         sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
-        inPesquisa = self.estruturaPrevisao()
-        carregarComponente = pd.merge(carregarComponente, inPesquisa, on='codEngenharia')
 
         Necessidade = pd.merge(sqlMetas, carregarComponente, on=["codItemPai" , "codSeqTamanho" , "codSortimento"])
         #Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
