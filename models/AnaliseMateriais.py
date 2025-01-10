@@ -455,6 +455,16 @@ class AnaliseMateriais():
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
 
+        Necessidade.rename(
+            columns={'codEngenharia': '01-codEngenharia',
+                     'codReduzido': '02-codReduzido',
+                     'nome': '03-nome',
+                     'tam': '04-tam',
+                     'codCor': '05-codCor',
+                     'qtdePedida': '06-qtdePedida',
+                     },
+            inplace=True)
+
 
         return Necessidade
 
