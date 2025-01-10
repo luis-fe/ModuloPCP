@@ -463,6 +463,7 @@ class AnaliseMateriais():
                      'codCor': '05-codCor',
                      'qtdePedida': '06-qtdePedida',
                      'Ocorrencia em Pedidos':'07-Ocorrencia em Pedidos',
+                     'statusAFV': '08-statusAFV',
                      'previcaoVendas': '09-previcaoVendas',
                      'faltaProg (Tendencia)': '10-faltaProg (Tendencia)',
                      'CodComponente': '11-CodComponente',
@@ -472,7 +473,8 @@ class AnaliseMateriais():
                      },
             inplace=True)
         Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','marca','index','descricaoComponente'
-            ,'descricaoPlano','disponivel','dist%','emProcesso','estoqueAtual'])
+            ,'descricaoPlano','disponivel','dist%','emProcesso','estoqueAtual','codItemPai','codPlano','codSeqTamanho','codSortimento',
+                                                'valorVendido','qtdeFaturada'])
 
 
         return Necessidade
