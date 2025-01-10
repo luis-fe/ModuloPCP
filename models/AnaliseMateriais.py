@@ -201,7 +201,17 @@ class AnaliseMateriais():
 
         Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai" , "codSeqTamanho" , "codSortimento"], how='left')
         Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+
+        # Salvar o DataFrame na memoria:
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+
         Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
+
+
+
+
         Necessidade = Necessidade.groupby(["CodComponente"]).agg(
             {"disponivelVendas": "sum",
              "faltaProg (Tendencia)": "sum",
