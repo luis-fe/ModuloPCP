@@ -437,6 +437,8 @@ class AnaliseMateriais():
         '''metodo que detalha a necessidade de um componente '''
 
         carregarComponente = self.carregandoComponentes()
+        carregarComponente = carregarComponente[carregarComponente['CodComponente']==self.codComponente].reset_index()
+
         sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
 
         sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
@@ -458,7 +460,7 @@ class AnaliseMateriais():
         Necessidade.fillna('-',inplace=True)
         Necessidade.rename(
             columns={'codReduzido': '01-codReduzido',
-                     'codEngeharia': '02-codEngeharia',
+                     'codEngenharia': '02-codEngenharia',
                      'codCor': '03-codCor',
                      'tam': '04-tam',
                      'nome': '05-nome',
@@ -482,7 +484,7 @@ class AnaliseMateriais():
                      },
             inplace=True)
         Necessidade['12-Necesidade faltaProg (Tendencia)'] = Necessidade['12-Necesidade faltaProg (Tendencia)'].apply(self.formatar_float)
-        Necessidade = Necessidade.drop(columns=['Ocorrencia em Pedidos','categoria','codItemPai','codPlano','marca','valorVendido'])
+        Necessidade = Necessidade.drop(columns=['Ocorrencia em Pedidos','categoria','codItemPai','codPlano','marca','valorVendido','Prev Sobra'])
 
 
         return Necessidade
