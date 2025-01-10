@@ -13,11 +13,12 @@ class AnaliseMateriais():
     '''Classe criada para a analise das necessidades de materia prima, utilizada mo PCP'''
 
 
-    def __init__(self, codPlano = None , codLote= None, consideraBloqueado = 'nao'):
+    def __init__(self, codPlano = None , codLote= None, consideraBloqueado = 'nao', codComponente = ''):
 
         self.codLote = codLote
         self.codPlano = codPlano
         self.consideraBloqueado = consideraBloqueado
+        self.codComponente = codComponente
 
 
     def carregandoComponentes(self):
@@ -431,3 +432,21 @@ class AnaliseMateriais():
             return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
+
+    def detalhaNecessidade(self):
+        '''metodo que detalha a necessidade de um componente '''
+
+        carregarComponente = self.carregandoComponentes()
+        carregarComponente = carregarComponente[carregarComponente['CodComponente']==self.codComponente]
+        sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
+
+        sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
+        sqlMetas['codSortimento'] = sqlMetas['codSortimento'].str.replace('.0','')
+
+        sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
+
+        Necessidade = pd.merge(sqlMetas, carregarComponente, on=["codItemPai" , "codSeqTamanho" , "codSortimento"])
+
+        return Necessidade
+
+
