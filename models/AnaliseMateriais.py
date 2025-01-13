@@ -484,28 +484,40 @@ class AnaliseMateriais():
 
     def consultaImagem(self):
         sql = """
-        SELECT s.stream  
-        FROM Utils_Persistence.Csw1Stream s
-        WHERE rotina = 'CCCGI015' 
-        AND documentoReferencia = 'Item-250101854' 
-        AND mimeType = 'image/jpeg'
-        """
+         SELECT ID
+         FROM Utils_Persistence.Csw1Stream
+         WHERE rotina = 'CCCGI015'
+           AND documentoReferencia = 'Item-250101854'
+           AND mimeType = 'image/jpeg'
+         """
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
-                row = cursor.fetchone()  # Busca apenas a primeira linha
+                row = cursor.fetchone()  # Recupera o ID do registro
                 if row:
-                    stream_data = row[0]  # Stream do banco
-
-                    # Verifica se o objeto suporta leitura (como CacheInputStream)
-                    if hasattr(stream_data, "read"):
-                        print('true')
-                        bytes_data = stream_data.read()  # Converte o stream para bytes
-                        print(bytes_data)
-                        return bytes_data
-                    else:
-                        raise TypeError("O dado retornado não é um stream válido.")
+                    record_id = row[0]
+                    stream_data = self.read_stream(record_id, conn)
+                    return stream_data
                 else:
                     return None
+
+    def read_stream(self, record_id, conn):
+        # Consulta para buscar o stream usando o ID
+        sql = f"SELECT stream FROM Utils_Persistence.Csw1Stream WHERE ID = {record_id}"
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            row = cursor.fetchone()
+            if row:
+                stream_data = row[0]  # Objeto do tipo Stream
+                # Lê o stream no Python
+                bytes_data = b""
+                while True:
+                    chunk = stream_data.read(4096)  # Lê 4 KB por vez
+                    if not chunk:
+                        break
+                    bytes_data += chunk
+                return bytes_data
+            else:
+                return None
 
