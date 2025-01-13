@@ -497,8 +497,16 @@ class AnaliseMateriais():
                 row = cursor.fetchone()  # Busca apenas a primeira linha
                 if row:
                     stream_data = row[0]  # Dado binário como CacheInputStream
-                    # Lê os dados do stream e converte para bytes
-                    bytes_data = stream_data.read()
+                    # Converte para bytes, tratando tipos intermediários como JInt
+                    if hasattr(stream_data, 'read'):  # Se for um stream
+                        bytes_data = stream_data.read()
+                    elif isinstance(stream_data, (bytes, bytearray)):  # Se já for bytes
+                        bytes_data = stream_data
+                    elif isinstance(stream_data, int):  # Caso JInt ou similar
+                        bytes_data = bytes([stream_data])
+                    else:
+                        raise TypeError(f"Tipo inesperado: {type(stream_data)}")
+
                     return bytes_data
                 else:
                     return None
