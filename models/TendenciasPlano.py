@@ -190,9 +190,16 @@ class TendenciaPlano():
         # 3 Filtrar categorias diferentes de 'sacola'
         consultaVendasSku['qtdePedida'] = np.where(
             (consultaVendasSku['codReduzido'] == '795532') | (consultaVendasSku['codReduzido'] == '795567'),
-            consultaVendasSku['qtdePedida'] / 3,
+            consultaVendasSku['qtdePedida'] / 50,
             consultaVendasSku['qtdePedida']
         )
+
+        consultaVendasSku['qtdeFaturada'] = np.where(
+            (consultaVendasSku['codReduzido'] == '795532') | (consultaVendasSku['codReduzido'] == '795567'),
+            consultaVendasSku['qtdeFaturada'] / 50,
+            consultaVendasSku['qtdeFaturada']
+        )
+
 
         #df_difereSacola= consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
