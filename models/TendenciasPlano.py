@@ -150,10 +150,14 @@ class TendenciaPlano():
         return pd.DataFrame([{'status':True,'Mensagem':'Novo parametroABC inserido com sucesso'}])
 
     def tendenciaVendas(self, aplicaTratamento = 'sim'):
-        '''Metodo que desdobra a tendencia ABC de vendas '''
+        '''Metodo que desdobra a tendencia DE VENDAS  por sku '''
 
+        # 1 - Carregando o acomponhamento de vendas: instancia o objeto "vendas" da classe Vendas
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
+            # 1.2 listar as vendas por sku: retorna consultaVendasSku no tipo "dataFrame"
         consultaVendasSku = vendas.listagemPedidosSku()
+
+        # 2 - Agrupando as vendas por codProduto (codigo reduzido "sku")
         consultaVendasSku = consultaVendasSku.groupby(["codProduto"]).agg({"marca": "first",
                                                          "nome": 'first',
                                                          "categoria": 'first',
@@ -165,34 +169,46 @@ class TendenciaPlano():
                                                          "codSeqTamanho":'first',
                                                         "codSortimento":"first",
                                                          "codPedido": 'count'}).reset_index()
+            # 2.1 - ordenando por tamanho
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                       ascending=False)  # escolher como deseja classificar
+            #2.2 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
         tam = ProdutosClass.Produto().get_tamanhos()
         consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0','')
         tam['codSeqTamanho'] = tam['codSeqTamanho'].astype(str).str.replace('.0','')
         consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
 
-        # Renomear colunas, se necessário
+            # 2.3 Renomear as colunas necessárias
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
 
+            # 2.4 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
         afv = ProdutosClass.Produto().statusAFV()
         consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
         consultaVendasSku = pd.merge(consultaVendasSku, afv, on='codReduzido',how='left')
         consultaVendasSku['statusAFV'].fillna('Normal',inplace=True)
 
-        # Filtrar categorias diferentes de 'sacola'
-        df_filtered = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
-        df_filtered= df_filtered[df_filtered['statusAFV']=='Normal']
+        # 3 Filtrar categorias diferentes de 'sacola'
+        consultaVendasSku['qtdePedida'] = np.where(
+            consultaVendasSku['codProduto'] == '795532',
+            consultaVendasSku['qtdePedida'] / 3,
+            consultaVendasSku['qtdePedida']
+        )
+        #df_difereSacola= consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
-        # Somar o acumulado de vendas por marca
+        # 4 Filtrar status AFV Normal apenas
+        df_filtered= consultaVendasSku[consultaVendasSku['statusAFV']=='Normal']
+
+            # 4.1 Somar o acumulado de vendas por marca, considerando somente o status Normal
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
 
         # Mapear os valores acumulados para o DataFrame original
+        '''
         consultaVendasSku['vendasAcumuladas'] = np.where(
             consultaVendasSku['categoria'] != 'Sacola',
             consultaVendasSku['marca'].map(vendas_acumuladas),
             0
         )
+        '''
 
         # Mapear os valores acumulados para o DataFrame original
         consultaVendasSku['vendasAcumuladas'] = np.where(
@@ -206,7 +222,7 @@ class TendenciaPlano():
             0,  # Valor se condição for verdadeira
             consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladas']  # Valor se falsa
         )
-        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
+        #consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
         #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
         # Obtendo a Meta por marca
