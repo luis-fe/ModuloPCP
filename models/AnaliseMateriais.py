@@ -496,23 +496,15 @@ class AnaliseMateriais():
                 cursor.execute(sql)
                 row = cursor.fetchone()  # Busca apenas a primeira linha
                 if row:
-                    stream_data = row[0]  # Dado binário como CacheInputStream
-                    print(stream_data)
+                    stream_data = row[0]  # Stream do banco
 
-                    # Converte para bytes, tratando tipos intermediários como JInt
-                    if hasattr(stream_data, 'read'):  # Se for um stream
-                        bytes_data = stream_data.read()
-                    elif isinstance(stream_data, (bytes, bytearray)):  # Se já for bytes
-                        bytes_data = stream_data
-                    elif isinstance(stream_data, int):  # Caso JInt ou similar
-                        print('true - jint')
-                        bytes_data = bytes([stream_data])
+                    # Verifica se o objeto suporta leitura (como CacheInputStream)
+                    if hasattr(stream_data, "read"):
+                        print('true')
+                        bytes_data = stream_data.read()  # Converte o stream para bytes
+                        return bytes_data
                     else:
-                        print('true - tipo inesperado')
-
-                        raise TypeError(f"Tipo inesperado: {type(stream_data)}")
-
-                    return bytes_data
+                        raise TypeError("O dado retornado não é um stream válido.")
                 else:
                     return None
 
