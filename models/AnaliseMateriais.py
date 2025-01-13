@@ -503,6 +503,7 @@ class AnaliseMateriais():
                     elif isinstance(stream_data, (bytes, bytearray)):  # Se já for bytes
                         bytes_data = stream_data
                     elif isinstance(stream_data, int):  # Caso JInt ou similar
+                        print('true - jint')
                         bytes_data = bytes([stream_data])
                     else:
                         raise TypeError(f"Tipo inesperado: {type(stream_data)}")
