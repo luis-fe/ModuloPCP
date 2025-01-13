@@ -496,6 +496,7 @@ class AnaliseMateriais():
                 cursor.execute(sql)
                 row = cursor.fetchone()  # Busca apenas a primeira linha
                 if row:
+                    print(row)
                     stream_data = row[0]  # Dado binário como CacheInputStream
                     # Converte para bytes, tratando tipos intermediários como JInt
                     if hasattr(stream_data, 'read'):  # Se for um stream
