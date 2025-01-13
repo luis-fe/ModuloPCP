@@ -506,6 +506,8 @@ class AnaliseMateriais():
                         print('true - jint')
                         bytes_data = bytes([stream_data])
                     else:
+                        print('true - tipo inesperado')
+
                         raise TypeError(f"Tipo inesperado: {type(stream_data)}")
 
                     return bytes_data
