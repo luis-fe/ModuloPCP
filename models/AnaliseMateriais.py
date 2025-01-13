@@ -510,6 +510,8 @@ class AnaliseMateriais():
             row = cursor.fetchone()
             if row:
                 stream_data = row[0]  # Objeto do tipo CacheInputStream
+                print(stream_data)
+
                 bytes_data = b""
                 buffer = bytearray(4096)  # Cria um buffer de 4 KB
                 while True:
@@ -517,7 +519,6 @@ class AnaliseMateriais():
                     if bytes_read == -1:  # -1 indica EOF (fim do stream)
                         break
                     bytes_data += buffer[:bytes_read]  # Adiciona ao resultado
-                print(bytes_data)
                 return bytes_data
             else:
                 return None
