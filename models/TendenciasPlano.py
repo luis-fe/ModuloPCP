@@ -269,7 +269,7 @@ class TendenciaPlano():
 
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
-        caminhoAbsoluto.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+        consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
         estoque = ProdutosClass.Produto().estoqueNat5()
