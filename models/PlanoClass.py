@@ -1,6 +1,8 @@
+import gc
+
 import pandas as pd
 import pytz
-from connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime, timedelta
 from models import Lote
 
@@ -500,7 +502,7 @@ class Plano():
             conn.close()
 
             '''Metodo que insere no banco de dados os itens do lote '''
-            #loteCsw.ExplodindoAsReferenciasLote(empresa, arrayCodLoteCsw)
+            self.ExplodindoAsReferenciasLote(arrayCodLoteCsw)
 
             return pd.DataFrame([{'Status': True, 'Mensagem': 'Lotes adicionados ao Plano com sucesso !'}])
 
@@ -538,3 +540,30 @@ class Plano():
         consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
 
         return consulta
+
+    def ExplodindoAsReferenciasLote(self, arrayCodLoteCsw):
+        nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
+        novo = ", ".join(nomes_com_aspas)
+        print(novo)
+        sqlLotes = """
+        select Empresa , t.codLote, codengenharia, t.codSeqTamanho , t.codSortimento , t.qtdePecasImplementadas as previsao FROM tcl.LoteSeqTamanho t
+        WHERE t.Empresa = """ + '1' + """and t.codLote in (""" + novo + """) 
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sqlLotes)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                lotes = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        # Implantando no banco de dados do Pcp
+        ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
+        #ProdutosClass.Produto().RecarregarItens()
+        #CarregarRoteiroEngLote(empresa, arrayCodLoteCsw)
+
+        return lotes
