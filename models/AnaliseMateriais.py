@@ -502,6 +502,7 @@ class AnaliseMateriais():
                     if hasattr(stream_data, "read"):
                         print('true')
                         bytes_data = stream_data.read()  # Converte o stream para bytes
+                        print(bytes_data)
                         return bytes_data
                     else:
                         raise TypeError("O dado retornado não é um stream válido.")
