@@ -517,6 +517,7 @@ class AnaliseMateriais():
                     if bytes_read == -1:  # -1 indica EOF (fim do stream)
                         break
                     bytes_data += buffer[:bytes_read]  # Adiciona ao resultado
+                print(bytes_data)
                 return bytes_data
             else:
                 return None
