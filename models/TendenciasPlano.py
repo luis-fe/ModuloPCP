@@ -253,7 +253,7 @@ class TendenciaPlano():
         #########################################################################################
         '''
         consultaVendasSku.fillna(0,inplace=True)
-        consultaVendasSku.drop(['faltaVender','index','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
+        consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
         estoque = ProdutosClass.Produto().estoqueNat5()
         emProcesso = ProdutosClass.Produto().emProducao()
         consultaVendasSku = pd.merge(consultaVendasSku, estoque, on='codReduzido', how='left')
