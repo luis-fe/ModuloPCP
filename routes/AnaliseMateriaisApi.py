@@ -121,7 +121,7 @@ def ger_naturezaEstoqueComponentes():
 
 
 
-    dados = AnaliseMateriais.AnaliseMateriais().sqlEstoqueItem()
+    dados = AnaliseMateriais.AnaliseMateriais().sqlEstoque()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
