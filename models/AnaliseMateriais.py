@@ -550,22 +550,24 @@ class AnaliseMateriais():
 
         return consumo
 
-    def sqlEstoqueItem(self):
+    def sqlEstoqueComprometido(self):
 
         sql = """
-                    SELECT
-        	            d.codItem as CodComponente ,
-        	            (select n.codnatureza||'-'||n.descricao from est.Natureza n WHERE n.codempresa = 1 and d.codNatureza = n.codnatureza)as natureza,
-        	            i.nome,
-        	            d.estoqueAtual
-                    FROM
-        	            est.DadosEstoque d
-        	        join cgi.Item i on i.codigo = d.codItem 
-                    WHERE
-        	            d.codEmpresa = 1
-        	            and d.codNatureza in (1, 3, 2,10)
-        	            and d.estoqueAtual > 0
-        	            and codItem = """+self.codComponente
+                 SELECT
+                 	r.numOPConfec as OP,
+        	        ri.codMaterial as CodComponente ,
+        	        ri.nomeMaterial,
+        	        ri.qtdeRequisitada as EmRequisicao
+                FROM
+        	        tcq.RequisicaoItem ri
+                join 
+                    tcq.Requisicao r on
+        	        r.codEmpresa = 1
+        	        and r.numero = ri.codRequisicao
+                where
+        	        ri.codEmpresa = 1
+        	        and r.sitBaixa <0
+        """
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
