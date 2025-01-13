@@ -213,7 +213,7 @@ class TendenciaPlano():
         # Mapear os valores acumulados para o DataFrame original
         consultaVendasSku['vendasAcumuladas'] = np.where(
             consultaVendasSku['statusAFV'] == 'Normal',
-            consultaVendasSku['vendasAcumuladas'],
+            consultaVendasSku['marca'].map(vendas_acumuladas),
             0
         )
 
