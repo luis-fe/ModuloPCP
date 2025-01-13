@@ -189,10 +189,11 @@ class TendenciaPlano():
 
         # 3 Filtrar categorias diferentes de 'sacola'
         consultaVendasSku['qtdePedida'] = np.where(
-            consultaVendasSku['codReduzido'] == '795532',
+            (consultaVendasSku['codReduzido'] == '795532') | (consultaVendasSku['codReduzido'] == '795567'),
             consultaVendasSku['qtdePedida'] / 3,
             consultaVendasSku['qtdePedida']
         )
+
         #df_difereSacola= consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
         # 4 Filtrar status AFV Normal apenas
