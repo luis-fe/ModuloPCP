@@ -3,7 +3,8 @@ import pandas as pd
 from connection import ConexaoPostgreWms
 from models import Vendas, ProdutosClass
 from models.Meta import Meta
-
+from dotenv import load_dotenv, dotenv_values
+import os
 
 class TendenciaPlano():
     '''Classe utilizada para a analise de tendencias de vendas de um determinado Plano '''
@@ -156,6 +157,7 @@ class TendenciaPlano():
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
             # 1.2 listar as vendas por sku: retorna consultaVendasSku no tipo "dataFrame"
         consultaVendasSku = vendas.listagemPedidosSku()
+            # 1.3 - desconsiderando as sacolas do tipo de nota de bonificacao
         mask = (consultaVendasSku['categoria'] == 'SACOLA') & (consultaVendasSku['codTipoNota'] == '40')
         consultaVendasSku = consultaVendasSku[~mask]
 
@@ -216,22 +218,16 @@ class TendenciaPlano():
             # 4.1 Somar o acumulado de vendas por marca, considerando somente o status Normal
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
 
-        # Mapear os valores acumulados para o DataFrame original
-        '''
-        consultaVendasSku['vendasAcumuladas'] = np.where(
-            consultaVendasSku['categoria'] != 'Sacola',
-            consultaVendasSku['marca'].map(vendas_acumuladas),
-            0
-        )
-        '''
 
-        # Mapear os valores acumulados para o DataFrame original
+
+        # 5 - Considerar as vendas acumuladas somente para o status AFV normal
         consultaVendasSku['vendasAcumuladas'] = np.where(
             consultaVendasSku['statusAFV'] == 'Normal',
             consultaVendasSku['marca'].map(vendas_acumuladas),
             0
         )
 
+        # 6 - Calculando o % distribuido para os status AFV IGUAL a Normal
         consultaVendasSku['dist%'] = np.where(
             consultaVendasSku['vendasAcumuladas'] == 0,  # Condição
             0,  # Valor se condição for verdadeira
@@ -240,22 +236,24 @@ class TendenciaPlano():
         #consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
         #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
 
-        # Obtendo a Meta por marca
+        # 7 - Obtendo a Meta por marca
         meta = Meta(self.codPlano).consultaMetaGeral()
         meta['metaPecas'] = meta['metaPecas'].str.replace('.','').astype(int)
-
         consultaVendasSku = pd.merge(consultaVendasSku,meta,on='marca',how='left')
-        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
 
+        # 8 - Calculando o total de vendas e o que falta vender por MARCA
+        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
         consultaVendasSku['faltaVender'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
         consultaVendasSku['faltaVender'] = consultaVendasSku['faltaVender'].clip(lower=0)
 
+        # 9 - Encontradno a previsao de vendas
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['dist%']* consultaVendasSku['faltaVender']
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(4)
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
         consultaVendasSku['previcaoVendas'].fillna(0,inplace=True)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['qtdePedida']
+
 
         '''
         #########################################################################################
@@ -268,6 +266,11 @@ class TendenciaPlano():
         #########################################################################################
         '''
         consultaVendasSku.fillna(0,inplace=True)
+
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        caminhoAbsoluto.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+
         consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
         estoque = ProdutosClass.Produto().estoqueNat5()
         emProcesso = ProdutosClass.Produto().emProducao()
