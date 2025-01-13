@@ -4,7 +4,8 @@ import pandas as pd
 import pytz
 from connection import ConexaoPostgreWms, ConexaoBanco
 from datetime import datetime, timedelta
-from models import Lote
+from models import Lote, ProdutosClass
+from models.Planejamento.loteCsw import CarregarRoteiroEngLote
 
 
 class Plano():
@@ -563,7 +564,7 @@ class Plano():
 
         # Implantando no banco de dados do Pcp
         ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
-        #ProdutosClass.Produto().RecarregarItens()
-        #CarregarRoteiroEngLote(empresa, arrayCodLoteCsw)
+        ProdutosClass.Produto().RecarregarItens()
+        CarregarRoteiroEngLote('1', arrayCodLoteCsw)
 
         return lotes

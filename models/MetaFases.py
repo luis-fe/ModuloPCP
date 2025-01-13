@@ -21,3 +21,17 @@ def metasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         FROM "PCP".pcp.lote_itens li
         WHERE "codLote" IN (%s)
         """ % novo
+
+        sqlRoteiro = """
+        select * from "PCP".pcp."Eng_Roteiro" er 
+        """
+
+        sqlApresentacao = """
+        select "nomeFase" , apresentacao  from "PCP".pcp."SeqApresentacao" sa 
+        """
+
+        consulta = """
+        select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
+        """
+
+
