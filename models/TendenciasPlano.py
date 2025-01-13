@@ -290,7 +290,7 @@ class TendenciaPlano():
             consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
             consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
             consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
             consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
             consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
             consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
