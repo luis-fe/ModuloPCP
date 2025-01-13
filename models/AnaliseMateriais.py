@@ -509,14 +509,14 @@ class AnaliseMateriais():
             cursor.execute(sql)
             row = cursor.fetchone()
             if row:
-                stream_data = row[0]  # Objeto do tipo Stream
-                # Lê o stream no Python
+                stream_data = row[0]  # Objeto do tipo CacheInputStream
                 bytes_data = b""
+                buffer = bytearray(4096)  # Cria um buffer de 4 KB
                 while True:
-                    chunk = stream_data.read(4096)  # Lê 4 KB por vez
-                    if not chunk:
+                    bytes_read = stream_data.read(buffer, 0, len(buffer))  # Lê no buffer
+                    if bytes_read == -1:  # -1 indica EOF (fim do stream)
                         break
-                    bytes_data += chunk
+                    bytes_data += buffer[:bytes_read]  # Adiciona ao resultado
                 return bytes_data
             else:
                 return None
