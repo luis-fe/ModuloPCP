@@ -109,7 +109,7 @@ class AnaliseMateriais():
         	            est.DadosEstoque d
                     WHERE
         	            d.codEmpresa = 1
-        	            and d.codNatureza in (1, 3, 2)
+        	            and d.codNatureza in (1, 3, 2,10)
         	            and d.estoqueAtual > 0
                 """
 
@@ -524,3 +524,54 @@ class AnaliseMateriais():
             else:
                 return None
 
+    def sqlEstoque(self):
+
+        sql = """
+                    SELECT
+        	            d.codItem as CodComponente ,
+        	            (select n.codnatureza||'-'||n.descricao from est.Natureza n WHERE n.codempresa = 1 and d.codNatureza = n.codnatureza)as natureza,
+        	            i.nome,
+        	            d.estoqueAtual
+                    FROM
+        	            est.DadosEstoque d
+        	        join cgi.Item i on i.codigo = d.codItem 
+                    WHERE
+        	            d.codEmpresa = 1
+        	            and d.codNatureza in (1, 3, 2,10)
+        	            and d.estoqueAtual > 0
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo = pd.DataFrame(rows, columns=colunas)
+
+        return consumo
+
+    def sqlEstoqueItem(self):
+
+        sql = """
+                    SELECT
+        	            d.codItem as CodComponente ,
+        	            (select n.codnatureza||'-'||n.descricao from est.Natureza n WHERE n.codempresa = 1 and d.codNatureza = n.codnatureza)as natureza,
+        	            i.nome,
+        	            d.estoqueAtual
+                    FROM
+        	            est.DadosEstoque d
+        	        join cgi.Item i on i.codigo = d.codItem 
+                    WHERE
+        	            d.codEmpresa = 1
+        	            and d.codNatureza in (1, 3, 2,10)
+        	            and d.estoqueAtual > 0
+        	            and codItem = """+self.codComponente
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo = pd.DataFrame(rows, columns=colunas)
+
+        return consumo
