@@ -174,14 +174,16 @@ class TendenciaPlano():
                                       ascending=False)  # escolher como deseja classificar
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != '-']
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'BRINDES']
+        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'BRINDES']
 
         #2.2 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
         tam = ProdutosClass.Produto().get_tamanhos()
         consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0','')
         tam['codSeqTamanho'] = tam['codSeqTamanho'].astype(str).str.replace('.0','')
         consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
+        consultaVendasSku = consultaVendasSku[~consultaVendasSku['tam'].str.contains('CM', na=False)]
 
-            # 2.3 Renomear as colunas necessárias
+        # 2.3 Renomear as colunas necessárias
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
 
             # 2.4 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
