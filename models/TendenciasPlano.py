@@ -189,7 +189,7 @@ class TendenciaPlano():
 
         # 3 Filtrar categorias diferentes de 'sacola'
         consultaVendasSku['qtdePedida'] = np.where(
-            consultaVendasSku['codProduto'] == '795532',
+            consultaVendasSku['codReduzido'] == '795532',
             consultaVendasSku['qtdePedida'] / 3,
             consultaVendasSku['qtdePedida']
         )
