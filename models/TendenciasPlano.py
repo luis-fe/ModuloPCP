@@ -156,7 +156,7 @@ class TendenciaPlano():
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
             # 1.2 listar as vendas por sku: retorna consultaVendasSku no tipo "dataFrame"
         consultaVendasSku = vendas.listagemPedidosSku()
-        mask = (consultaVendasSku['codProduto'] == '763499') & (consultaVendasSku['codTipoNota'] == '40')
+        mask = (consultaVendasSku['categoria'] == 'SACOLA') & (consultaVendasSku['codTipoNota'] == '40')
         consultaVendasSku = consultaVendasSku[~mask]
 
         # 2 - Agrupando as vendas por codProduto (codigo reduzido "sku")
