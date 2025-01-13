@@ -172,7 +172,9 @@ class TendenciaPlano():
             # 2.1 - ordenando por tamanho
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                       ascending=False)  # escolher como deseja classificar
-            #2.2 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
+        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != '-']
+
+        #2.2 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
         tam = ProdutosClass.Produto().get_tamanhos()
         consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0','')
         tam['codSeqTamanho'] = tam['codSeqTamanho'].astype(str).str.replace('.0','')
