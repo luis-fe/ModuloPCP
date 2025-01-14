@@ -282,13 +282,15 @@ class TendenciaPlano():
         # 12 - Calculando o falta programar, baseado na previsao de vendas
         consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
 
-        # 13 - Tratando o valor financeiro
-        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
 
         # 14 - Salvando o dataFrame na memoria do servidor, para ser congelado para analises
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+
+        # 15 - Tratando o valor financeiro
+        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
+
 
         #if aplicaTratamento == 'sim':
             #consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
