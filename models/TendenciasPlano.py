@@ -314,7 +314,7 @@ class TendenciaPlano():
 
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
-        consultaVendasSku = pd.read_sql(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+        consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
                                                                            "nome": 'first',
