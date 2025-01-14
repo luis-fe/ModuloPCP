@@ -293,6 +293,7 @@ class TendenciaPlano():
 
         # 16 - Acescentando tendencia abc
         abc = self.tendenciaAbc('sim')
+        abc['codItemPai'] = abc['codItemPai'].astype(str)
         consultaVendasSku = pd.merge(consultaVendasSku, abc , on='codItemPai', how='left')
         consultaVendasSku.fillna('-', inplace=True)
 
