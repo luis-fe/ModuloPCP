@@ -401,12 +401,13 @@ class TendenciaPlano():
         consultaVendasSku['classCategoria'] = consultaVendasSku['classCategoria'].astype(str)
         consultaVendasSku['classCategoria'].fillna('-', inplace=True)
 
-
-        consultaVendasSku.drop(['ABCdist%','ABCdist%Categoria',"totalVendas","totalVendasCategoria"], axis=1, inplace=True)
-
         if utilizaCongelento == 'sim':
             consultaVendasSku = consultaVendasSku.loc[:,
                   ['codItemPai', 'class','classCategoria']]
+
+        else:
+            consultaVendasSku.drop(['ABCdist%', 'ABCdist%Categoria', "totalVendas", "totalVendasCategoria"], axis=1,
+                                   inplace=True)
 
         return consultaVendasSku
 
@@ -433,10 +434,15 @@ class TendenciaPlano():
             'percentual': arraySimulaAbc[1]
         })
 
-        abc = self.tendenciaAbc()
-        abc = abc.loc[:,
-                         ['codItemPai', 'class']]
-        tendencia = self.tendenciaVendas('nao')
+        #2 - Caregar a tendencia congelada
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+
+
+        abc = self.tendenciaAbc('sim')
+        abc['codItemPai'] = abc['codItemPai'].astype(str)
+
         tendencia = pd.merge(tendencia,abc,on="codItemPai",how='left')
         tendencia = pd.merge(tendencia, dfSimulaAbc, on='class',how='left')
 
@@ -448,15 +454,11 @@ class TendenciaPlano():
         tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
             tendencia['Prev Sobra'] < 0, 0)
 
-        tendencia['estoqueAtual'] = tendencia['estoqueAtual'].apply(self.formatar_padraoInteiro)
-        tendencia['emProcesso'] = tendencia['emProcesso'].apply(self.formatar_padraoInteiro)
-        tendencia['qtdeFaturada'] = tendencia['qtdeFaturada'].apply(self.formatar_padraoInteiro)
-        tendencia['qtdePedida'] = tendencia['qtdePedida'].apply(self.formatar_padraoInteiro)
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].apply(self.formatar_padraoInteiro)
-        tendencia['disponivel'] = tendencia['disponivel'].apply(self.formatar_padraoInteiro)
-        tendencia['faltaProg (Tendencia)'] = tendencia['faltaProg (Tendencia)'].apply(
-            self.formatar_padraoInteiro)
-        tendencia['Prev Sobra'] = tendencia['Prev Sobra'].apply(self.formatar_padraoInteiro)
+
+        # 15 - Tratando o valor financeiro
+        tendencia['valorVendido'] = tendencia['valorVendido'].apply(self.formatar_financeiro)
+
+
 
         return tendencia
 
