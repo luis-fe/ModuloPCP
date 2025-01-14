@@ -629,6 +629,6 @@ class AnaliseMateriais():
             return num / 1000
         elif value.startswith("*"):  # Caso "*N", multiplicar o número por 1000
             num = int(value.replace("*", ""))
-            return num * 1000 / 1000
+            return value
         else:  # Caso padrão, converter direto
-            return int(value) / 1000
+            return value
