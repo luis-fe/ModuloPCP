@@ -319,6 +319,8 @@ class TendenciaPlano():
         if utilizaCongelento == 'nao':
             vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
             consultaVendasSku = vendas.listagemPedidosSku()
+            consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
+
         else:
             load_dotenv('db.env')
             caminhoAbsoluto = os.getenv('CAMINHO')
@@ -332,7 +334,6 @@ class TendenciaPlano():
                                                                            "valorVendido": 'sum'}).reset_index()
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
                                                           ascending=False)  # escolher como deseja classificar
-        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
 
 
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
