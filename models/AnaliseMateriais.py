@@ -568,4 +568,7 @@ class AnaliseMateriais():
         caminhoAbsoluto = os.getenv('CAMINHO')
         consumo = pd.read_csv(f'{caminhoAbsoluto}/dados/requisicoesEmAberto.csv')
 
+        consumo.drop(['Unnamed: 0'], axis=1, inplace=True)
+        consumo['CodComponente'] = consumo['CodComponente'].astype(str)
+
         return consumo
