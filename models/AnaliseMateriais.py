@@ -223,14 +223,14 @@ class AnaliseMateriais():
                 sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['numero','seqitem'],how='left')
 
                 sqlPedidos['qtAtendida'].fillna(0,inplace=True)
+
+                # Realizando o tratamento do fator de conversao de compras dos componentes
                 sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.process_fator)
-                sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2']   * sqlPedidos['qtdPedida']
+                sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2'] * sqlPedidos['qtdPedida']
 
                 sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
 
                 # Congelando o dataFrame de Pedidos em aberto
-
-
                 load_dotenv('db.env')
                 caminhoAbsoluto = os.getenv('CAMINHO')
                 sqlPedidos.to_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
@@ -621,6 +621,8 @@ class AnaliseMateriais():
 
         consumo.drop(['Unnamed: 0'], axis=1, inplace=True)
         consumo['CodComponente'] = consumo['CodComponente'].astype(str)
+        consumo['numero'] = consumo['numero'].astype(str)
+        consumo.drop(['fatCon','fatCon2','sitSugestao','seqitem','qtAtendida','qtdPedida','sitSugestao'], axis=1, inplace=True)
 
         return consumo
 
