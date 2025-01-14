@@ -291,6 +291,10 @@ class TendenciaPlano():
         # 15 - Tratando o valor financeiro
         consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
 
+        # 16 - Acescentando tendencia abc
+        abc = self.tendenciaAbc('sim')
+        consultaVendasSku = pd.merge(consultaVendasSku, abc , on='codItemPai', how='left')
+        consultaVendasSku.fillna('-', inplace=True)
 
         #if aplicaTratamento == 'sim':
             #consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
@@ -307,16 +311,17 @@ class TendenciaPlano():
 
         return consultaVendasSku
 
-    def tendenciaAbc(self):
+    def tendenciaAbc(self, utilizaCongelento = 'nao'):
         '''Metodo que retorna a tendencia ABC '''
 
-        #vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
-
-        #consultaVendasSku = vendas.listagemPedidosSku()
-
-        load_dotenv('db.env')
-        caminhoAbsoluto = os.getenv('CAMINHO')
-        consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+        # 1 - Verifica se é para utilizar ou nao o congelamento ABC que tem como premisa agilar a consulta quanto utilizado na tendenciaSku
+        if utilizaCongelento == 'nao':
+            vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
+            consultaVendasSku = vendas.listagemPedidosSku()
+        else:
+            load_dotenv('db.env')
+            caminhoAbsoluto = os.getenv('CAMINHO')
+            consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
                                                                            "nome": 'first',
@@ -396,6 +401,10 @@ class TendenciaPlano():
 
 
         consultaVendasSku.drop(['ABCdist%','ABCdist%Categoria',"totalVendas","totalVendasCategoria"], axis=1, inplace=True)
+
+        if utilizaCongelento == 'sim':
+            consultaVendasSku = consultaVendasSku.loc[:,
+                  ['codItemPai', 'class','classCategoria']]
 
         return consultaVendasSku
 
