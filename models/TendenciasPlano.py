@@ -442,6 +442,7 @@ class TendenciaPlano():
 
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
+        tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
 
         tendencia = pd.merge(tendencia,abc,on="codItemPai",how='left')
         tendencia = pd.merge(tendencia, dfSimulaAbc, on='class',how='left')
