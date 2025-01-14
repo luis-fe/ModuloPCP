@@ -145,18 +145,36 @@ class AnaliseMateriais():
                 """
 
         sqlPedidos = """
-                SELECT
-        	        p.codPedido pedCompra,
-        	        p.codProduto as CodComponente,
-        	        p.quantidade as qtdPedida,
-        	        p.dataPrevisao,
-        	        p.itemPedido as seqitem,
-        	        p.situacao
-                from 
-        	        sup.PedidoCompraItem p
-                WHERE
-        	        p.situacao in (0, 2)
-        	        and p.codEmpresa = 1
+		SELECT
+			s.codigo as numero,
+			'solicitacao' as tipo,
+			i2.codItem as CodComponente,
+			i.nome,
+			s.quantidade  as qtdPedida,
+			'-' as dataPrevisao,
+				s.situacao as sitSugestao
+		FROM
+			sup.SolicitacaoComprasItem s
+		inner join Cgi.Item2 i2 on i2.Empresa = 1 and i2.codEditado = s.codItemEdt 
+		inner join cgi.item i on i.codigo = i2.coditem
+		WHERE
+			s.codEmpresa = 1
+			and s.situacao in (0, 2)
+	union
+        SELECT
+	        p.codPedido as numero,
+	        'pedido' as tipo,
+	        p.codProduto as CodComponente,
+	        i.nome,
+	        p.quantidade as qtdPedida,
+	        p.dataPrevisao,
+	        p.situacao
+        from 
+	        sup.PedidoCompraItem p
+	    inner join cgi.item i on i.codigo = p.codProduto
+        WHERE
+	        p.situacao in (0, 2)
+	        and p.codEmpresa = 1
                 """
 
         with ConexaoBanco.Conexao2() as conn:
@@ -202,6 +220,13 @@ class AnaliseMateriais():
 
                 sqlPedidos['qtAtendida'].fillna(0,inplace=True)
                 sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
+
+                # Congelando o dataFrame de Pedidos em aberto
+                load_dotenv('db.env')
+                caminhoAbsoluto = os.getenv('CAMINHO')
+                sqlRequisicaoAberto.to_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
+
+
                 sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
                     {"SaldoPedCompras": "sum"}).reset_index()
 
@@ -571,6 +596,19 @@ class AnaliseMateriais():
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         consumo = pd.read_csv(f'{caminhoAbsoluto}/dados/requisicoesEmAberto.csv')
+
+        consumo.drop(['Unnamed: 0'], axis=1, inplace=True)
+        consumo['CodComponente'] = consumo['CodComponente'].astype(str)
+
+        return consumo
+
+
+    def sqlEstoquePedidosCompras(self):
+
+        #1 - Caregando as requisicoes em aberto
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        consumo = pd.read_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
 
         consumo.drop(['Unnamed: 0'], axis=1, inplace=True)
         consumo['CodComponente'] = consumo['CodComponente'].astype(str)
