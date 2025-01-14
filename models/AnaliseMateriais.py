@@ -226,7 +226,8 @@ class AnaliseMateriais():
                 sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
 
                 # Congelando o dataFrame de Pedidos em aberto
-                sqlPedidos['fatCon'] = sqlPedidos['fatCon'].str.replace("*;", "", regex=False).astype(int)
+
+                sqlPedidos['fatCon'] = sqlPedidos['fatCon'].apply(self.process_fator)
 
                 load_dotenv('db.env')
                 caminhoAbsoluto = os.getenv('CAMINHO')
@@ -620,3 +621,14 @@ class AnaliseMateriais():
         consumo['CodComponente'] = consumo['CodComponente'].astype(str)
 
         return consumo
+
+    # Função para tratar cada valor
+    def process_fator(self,value):
+        if ";*" in value or value.startswith("*;"):  # Caso "*;N", remover prefixo
+            num = int(value.replace("*;", "").replace(";*", ""))
+            return num / 1000
+        elif value.startswith("*"):  # Caso "*N", multiplicar o número por 1000
+            num = int(value.replace("*", ""))
+            return num * 1000 / 1000
+        else:  # Caso padrão, converter direto
+            return int(value) / 1000
