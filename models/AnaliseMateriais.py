@@ -223,11 +223,13 @@ class AnaliseMateriais():
                 sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['numero','seqitem'],how='left')
 
                 sqlPedidos['qtAtendida'].fillna(0,inplace=True)
+                sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.process_fator)
+                sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2']   * sqlPedidos['qtdPedida']
+
                 sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
 
                 # Congelando o dataFrame de Pedidos em aberto
 
-                sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.process_fator)
 
                 load_dotenv('db.env')
                 caminhoAbsoluto = os.getenv('CAMINHO')
@@ -629,6 +631,6 @@ class AnaliseMateriais():
             return num / 1000
         elif value.startswith("*"):  # Caso "*N", multiplicar o número por 1000
             num = int(value.replace("*", ""))
-            return value
+            return 1
         else:  # Caso padrão, converter direto
-            return value
+            return 1
