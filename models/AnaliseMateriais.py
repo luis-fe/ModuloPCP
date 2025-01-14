@@ -216,7 +216,7 @@ class AnaliseMateriais():
                 rows = cursor.fetchall()
                 sqlPedidos = pd.DataFrame(rows, columns=colunas)
 
-                sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['pedCompra','seqitem'],how='left')
+                sqlPedidos = pd.merge(sqlPedidos,sqlAtendidoParcial,on=['numero','seqitem'],how='left')
 
                 sqlPedidos['qtAtendida'].fillna(0,inplace=True)
                 sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
