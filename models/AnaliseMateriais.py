@@ -226,6 +226,8 @@ class AnaliseMateriais():
                 sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
 
                 # Congelando o dataFrame de Pedidos em aberto
+                sqlPedidos['fatCon'] = sqlPedidos['fatCon'].str.replace("*;", "", regex=False).astype(int)
+
                 load_dotenv('db.env')
                 caminhoAbsoluto = os.getenv('CAMINHO')
                 sqlPedidos.to_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
