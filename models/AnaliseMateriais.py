@@ -132,7 +132,7 @@ class AnaliseMateriais():
 
         sqlAtendidoParcial = """
                 SELECT
-        		    i.codPedido as pedCompra,
+        		    i.codPedido as numero,
         		    i.codPedidoItem as seqitem,
         		    i.quantidade as qtAtendida
         	    FROM
