@@ -153,7 +153,8 @@ class AnaliseMateriais():
 			s.quantidade  as qtdPedida,
 			'-' as dataPrevisao,
 				s.situacao as sitSugestao,
-				itemSolicitacao as seqitem
+				itemSolicitacao as seqitem,
+				'1' as fatCon
 		FROM
 			sup.SolicitacaoComprasItem s
 		inner join Cgi.Item2 i2 on i2.Empresa = 1 and i2.codEditado = s.codItemEdt 
@@ -170,7 +171,8 @@ class AnaliseMateriais():
 	        p.quantidade as qtdPedida,
 	        p.dataPrevisao,
 	        p.situacao,
-	        p.itemPedido as  seqitem
+	        p.itemPedido as  seqitem,
+	        p.fatCon
         from 
 	        sup.PedidoCompraItem p
 	    inner join cgi.item i on i.codigo = p.codProduto
