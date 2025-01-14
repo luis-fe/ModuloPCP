@@ -450,6 +450,8 @@ class TendenciaPlano():
         tendencia['percentual'].fillna(0, inplace=True)
 
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual']/100)
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
+
         tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
                 tendencia['previcaoVendas'] - tendencia['qtdeFaturada'])
         tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
