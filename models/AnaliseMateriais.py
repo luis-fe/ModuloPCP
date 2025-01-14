@@ -227,7 +227,7 @@ class AnaliseMateriais():
 
                 # Congelando o dataFrame de Pedidos em aberto
 
-                sqlPedidos['fatCon'] = sqlPedidos['fatCon'].apply(self.process_fator)
+                sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.process_fator)
 
                 load_dotenv('db.env')
                 caminhoAbsoluto = os.getenv('CAMINHO')
