@@ -167,6 +167,10 @@ class AnaliseMateriais():
                 rows = cursor.fetchall()
                 sqlEstoque = pd.DataFrame(rows, columns=colunas)
 
+                # Agrupando as requisicoes compromedito pelo CodComponente
+                sqlEstoque = sqlEstoque.groupby(["CodComponente"]).agg(
+                    {"estoqueAtual": "sum"}).reset_index()
+
                 # Carregando as requisicoes em aberto
                 cursor.execute(sqlRequisicaoAberto)
                 colunas = [desc[0] for desc in cursor.description]
