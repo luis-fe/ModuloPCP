@@ -308,9 +308,13 @@ class TendenciaPlano():
     def tendenciaAbc(self):
         '''Metodo que retorna a tendencia ABC '''
 
-        vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
+        #vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
 
-        consultaVendasSku = vendas.listagemPedidosSku()
+        #consultaVendasSku = vendas.listagemPedidosSku()
+
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        consultaVendasSku = pd.read_sql(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
                                                                            "nome": 'first',
@@ -408,8 +412,9 @@ class TendenciaPlano():
 
 
     def simulacaoProgramacao(self, arraySimulaAbc):
+        '''Metodo utilizado para realizar a simulacao de programacao em nivel abc'''
 
-        # Transformando em DataFrame
+        # 1 - transformacao do array abc em DataFrame
         dfSimulaAbc = pd.DataFrame({
             'class': arraySimulaAbc[0],
             'percentual': arraySimulaAbc[1]
