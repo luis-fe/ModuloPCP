@@ -226,7 +226,7 @@ class AnaliseMateriais():
                 # Congelando o dataFrame de Pedidos em aberto
                 load_dotenv('db.env')
                 caminhoAbsoluto = os.getenv('CAMINHO')
-                sqlRequisicaoAberto.to_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
+                sqlPedidos.to_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
 
 
                 sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
