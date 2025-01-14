@@ -114,14 +114,16 @@ class AnaliseMateriais():
                 """
 
         sqlRequisicaoAberto = """
-                SELECT
+                 SELECT
+                 	r.numOPConfec as OP,
         	        ri.codMaterial as CodComponente ,
+        	        ri.nomeMaterial,
         	        ri.qtdeRequisitada as EmRequisicao
                 FROM
         	        tcq.RequisicaoItem ri
                 join 
                     tcq.Requisicao r on
-        	        r.codEmpresa = ri.codEmpresa
+        	        r.codEmpresa = 1
         	        and r.numero = ri.codRequisicao
                 where
         	        ri.codEmpresa = 1
@@ -165,13 +167,22 @@ class AnaliseMateriais():
                 rows = cursor.fetchall()
                 sqlEstoque = pd.DataFrame(rows, columns=colunas)
 
-                # Agrupando os componentes nas requisicoes em aberto
+                # Carregando as requisicoes em aberto
                 cursor.execute(sqlRequisicaoAberto)
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 sqlRequisicaoAberto = pd.DataFrame(rows, columns=colunas)
+
+                # Congelando o dataFrame de Requisicoes em aberto
+                load_dotenv('db.env')
+                caminhoAbsoluto = os.getenv('CAMINHO')
+                sqlRequisicaoAberto.to_csv(f'{caminhoAbsoluto}/dados/requisicoesEmAberto.csv')
+
+                # Agrupando as requisicoes compromedito pelo CodComponente
                 sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
                     {"EmRequisicao": "sum"}).reset_index()
+
+
 
                 cursor.execute(sqlAtendidoParcial)
                 colunas = [desc[0] for desc in cursor.description]
@@ -552,28 +563,9 @@ class AnaliseMateriais():
 
     def sqlEstoqueComprometido(self):
 
-        sql = """
-                 SELECT
-                 	r.numOPConfec as OP,
-        	        ri.codMaterial as CodComponente ,
-        	        ri.nomeMaterial,
-        	        ri.qtdeRequisitada as EmRequisicao
-                FROM
-        	        tcq.RequisicaoItem ri
-                join 
-                    tcq.Requisicao r on
-        	        r.codEmpresa = 1
-        	        and r.numero = ri.codRequisicao
-                where
-        	        ri.codEmpresa = 1
-        	        and r.sitBaixa <0
-        """
-
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                consumo = pd.DataFrame(rows, columns=colunas)
+        #1 - Caregando as requisicoes em aberto
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        consumo = pd.read_csv(f'{caminhoAbsoluto}/dados/requisicoesEmAberto.csv')
 
         return consumo
