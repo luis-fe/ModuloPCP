@@ -254,46 +254,51 @@ class TendenciaPlano():
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].round().astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['qtdePedida']
 
-
-        '''
-        #########################################################################################
-        Verificar: 
-        ['totalVendas'] considerear as vendas em geral indenpendente do status;
-        ['faltaVender'] subtrair a meta geral pelo vendido ate o momento, caso negativo, considerar "0"
-        bloqueio e acompanhamento nao deve ter previsao e nem % de distribuicao
-        
-        apos as operacoes a previsao deve ser tratata como int 
-        #########################################################################################
-        '''
+        # 9.1 - Tratar os erros de NaN para retornar "0"
         consultaVendasSku.fillna(0,inplace=True)
 
+        # 9.2 - Drop das colunas que nao desejo
+        consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
+
+        # 9.3 - Consultando o Estoque da Natureza 5 e fazendo um "merge"  com ds dados
+        estoque = ProdutosClass.Produto().estoqueNat5()
+        consultaVendasSku = pd.merge(consultaVendasSku, estoque, on='codReduzido', how='left')
+        consultaVendasSku['estoqueAtual'].fillna(0, inplace=True)
+
+        # 9.3 - Consultando as Ops em processo  e fazendo um "merge"  com ds dados
+        emProcesso = ProdutosClass.Produto().emProducao()
+        consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
+        consultaVendasSku['emProcesso'].fillna(0, inplace=True)
+
+        # 10 - Calculando o disponivel - baseado na quantidade pedida
+
+        consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+
+        # 11 - Calculando a Previsao de sobra  - baseado na previsao de vendas
+        consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
+
+        # 12 - Calculando o falta programar, baseado na previsao de vendas
+        consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
+
+        # 13 - Tratando o valor financeiro
+        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
+
+        # 14 - Salvando o dataFrame na memoria do servidor, para ser congelado para analises
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
-        consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
-        estoque = ProdutosClass.Produto().estoqueNat5()
-        emProcesso = ProdutosClass.Produto().emProducao()
-        consultaVendasSku = pd.merge(consultaVendasSku, estoque, on='codReduzido', how='left')
-        consultaVendasSku['estoqueAtual'].fillna(0, inplace=True)
-        consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
-        consultaVendasSku['emProcesso'].fillna(0, inplace=True)
-        consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
-                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
-        consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
-                consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
-        consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
-        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.formatar_financeiro)
-
-        if aplicaTratamento == 'sim':
-            consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
+        #if aplicaTratamento == 'sim':
+            #consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
             #consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
-            consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
+            #consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
 
 
 
