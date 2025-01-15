@@ -472,12 +472,43 @@ class AnaliseMateriais():
             and q.codigo > 18
                 """
 
+        sql2 = """
+        SELECT
+            f.CodItem as CodComponente ,
+            f2.nomeFornecedor as novoNome
+        FROM
+            cgi.FornPreferItemFilho f
+        inner join Cgi.FornecHomologados f2 on
+            f.codItem = f2.codItem
+            and f.codFornecedor = f2.codFornecedor
+        WHERE
+            f.Empresa = 1 
+        """
+
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 consumo = pd.DataFrame(rows, columns=colunas)
+
+
+                cursor.execute(sql2)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo2 = pd.DataFrame(rows, columns=colunas)
+
+
+
+        consumo = pd.merge(consumo, consumo2 , on='codComponente', how='left')
+        consumo['novoNome'].fillna('-',inplace=True)
+
+        consumo['fornencedorPreferencial'] = np.where(
+            consumo['novoNome'] == '-',
+            consumo['fornencedorPreferencial'],
+            consumo['novoNome']
+        )
+
         consumo['fatorConversao'].fillna(1,inplace=True)
         consumo['LeadTime'].fillna(1,inplace=True)
         consumo['CodComponente'] = consumo['CodComponente'].astype(str)
