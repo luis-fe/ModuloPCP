@@ -126,7 +126,7 @@ class SimulacaoProg():
         '''metodo que consulta uma simulacao em especifico'''
 
         select = """
-        select nomeSimulacao from pcp."Simulacao"
+        select "nomeSimulacao" from pcp."Simulacao"
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
