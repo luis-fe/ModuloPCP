@@ -500,7 +500,7 @@ class AnaliseMateriais():
 
 
 
-        consumo = pd.merge(consumo, consumo2 , on='codComponente', how='left')
+        consumo = pd.merge(consumo, consumo2 , on='CodComponente', how='left')
         consumo['novoNome'].fillna('-',inplace=True)
 
         consumo['fornencedorPreferencial'] = np.where(
