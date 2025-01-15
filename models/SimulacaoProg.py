@@ -156,6 +156,22 @@ class SimulacaoProg():
             "nomeSimulacao" = %s 
         """
 
+        consultaCategoriaSimulacao = """
+        select 
+            "categoria",
+            percentual
+        from 
+            "PCP".pcp."SimulacaoCategoria" s 
+        Where 
+            "nomeSimulacao" = %s 
+        """
+
+        consultaCategoria= """
+        select "nomeCategoria" as categoria from "PCP".pcp."Categorias" c 
+        where c."nomeCategoria" <> '-'
+        order by "nomeCategoria" asc 
+        """
+
         conn = ConexaoPostgreWms.conexaoEngine()
         consultaParamentrosAbc = pd.read_sql(consultaParamentrosAbc, conn)
         consultaAbcSimulacao = pd.read_sql(consultaAbcSimulacao,conn , params=(self.nomeSimulacao,))
@@ -163,14 +179,20 @@ class SimulacaoProg():
         consultaSimulacao = pd.merge(consultaParamentrosAbc, consultaAbcSimulacao , on='class', how='left')
         consultaSimulacao['percentual'].fillna(0, inplace=True)
 
+        consultaCategoria = pd.read_sql(consultaCategoria,consultaCategoriaSimulacao,on='categoria', how='left' )
+        consultaCategoria['percentual'].fillna(1000, inplace=True)
+
+
+
         consultaSimulacaoNome = self.consultaSimulacao()
 
 
 
         data = {
                 '1- Simulacao': f'{consultaSimulacaoNome["nomeSimulacao"][0]}',
-                '2- ABC':consultaSimulacao.to_dict(orient='records')
-            }
+                '2- ABC':consultaSimulacao.to_dict(orient='records'),
+                '3- Categoria': consultaCategoria.to_dict(orient='records')
+        }
         return pd.DataFrame([data])
 
 
