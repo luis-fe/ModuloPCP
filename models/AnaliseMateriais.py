@@ -499,6 +499,8 @@ class AnaliseMateriais():
                 consumo2 = pd.DataFrame(rows, columns=colunas)
 
 
+        consumo['CodComponente'] = consumo['CodComponente'].astype(str)
+        consumo2['CodComponente'] = consumo2['CodComponente'].astype(str)
 
         consumo = pd.merge(consumo, consumo2 , on='CodComponente', how='left')
         consumo['novoNome'].fillna('-',inplace=True)
@@ -511,7 +513,6 @@ class AnaliseMateriais():
 
         consumo['fatorConversao'].fillna(1,inplace=True)
         consumo['LeadTime'].fillna(1,inplace=True)
-        consumo['CodComponente'] = consumo['CodComponente'].astype(str)
         #consumo['CodComponente'] = consumo['CodComponente'].str.replace('.0','')
         print(consumo['CodComponente'])
 
