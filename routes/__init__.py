@@ -35,6 +35,7 @@ from .MetaApi import metas_routes
 from .VendasApi import vendas_routes
 from .TendenciaApi import tendencia_routes
 from .AnaliseMateriaisApi import analiseMP_routes
+from .SimulacaoProg import simulacaoProg_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -68,3 +69,4 @@ routes_blueprint.register_blueprint(metas_routes)
 routes_blueprint.register_blueprint(vendas_routes)
 routes_blueprint.register_blueprint(tendencia_routes)
 routes_blueprint.register_blueprint(analiseMP_routes)
+routes_blueprint.register_blueprint(simulacaoProg_routes)
