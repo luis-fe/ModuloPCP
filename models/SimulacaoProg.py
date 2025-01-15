@@ -158,7 +158,7 @@ class SimulacaoProg():
 
         conn = ConexaoPostgreWms.conexaoEngine()
         consultaParamentrosAbc = pd.read_sql(consultaParamentrosAbc, conn)
-        consultaAbcSimulacao = pd.read_sql(consultaAbcSimulacao, conn)
+        consultaAbcSimulacao = pd.read_sql(consultaAbcSimulacao,conn , params=(self.nomeSimulacao,))
 
         consultaSimulacao = pd.merge(consultaParamentrosAbc, consultaAbcSimulacao , on='class', how='left')
         consultaSimulacao['percentual'].fillna(0, inplace=True)
