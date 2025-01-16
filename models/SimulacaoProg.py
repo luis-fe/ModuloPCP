@@ -232,16 +232,17 @@ class SimulacaoProg():
 
         self.inserirSimulacao()
 
-        # 1 - transformacao do array abc em DataFrame
-        AbcDataFrame = pd.DataFrame({
-            'class': arrayAbc[0],
-            'percentual': arrayAbc[1]
-        })
+        if arrayAbc != []:
+            # 1 - transformacao do array abc em DataFrame
+            AbcDataFrame = pd.DataFrame({
+                'class': arrayAbc[0],
+                'percentual': arrayAbc[1]
+            })
 
-        for _, row in AbcDataFrame.iterrows():  # O índice é descartado com '_'
-            self.classAbc = row['class']  # Acessa diretamente o valor da coluna
-            self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
-            self.inserirAbcSimulacao()
+            for _, row in AbcDataFrame.iterrows():  # O índice é descartado com '_'
+                self.classAbc = row['class']  # Acessa diretamente o valor da coluna
+                self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
+                self.inserirAbcSimulacao()
 
         return pd.DataFrame([{'Mensagem':'Simulacao inserida ou alterada com sucesso','satus':True}])
 
