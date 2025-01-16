@@ -238,10 +238,9 @@ class SimulacaoProg():
             'percentual': arrayAbc[1]
         })
 
-        if not AbcDataFrame.empty:
-            for index, row in AbcDataFrame.iterrows():
-                self.classAbc = row['class'][index]
-                self.inserirAbcSimulacao()
+        for _, row in AbcDataFrame.iterrows():  # O índice é descartado com '_'
+            self.classAbc = row['class']  # Acessa diretamente o valor da coluna
+            self.inserirAbcSimulacao()
 
         return pd.DataFrame([{'Mensagem':'Simulacao inserida ou alterada com sucesso','satus':True}])
 
