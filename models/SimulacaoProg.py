@@ -50,8 +50,13 @@ class SimulacaoProg():
         verfica = self.consultaSimulacaoAbc()
 
         if not verfica.empty:
-            return pd.DataFrame([{'status':False, "mensagem": "já existe essa simulacao"}])
+            update = """
+            update  pcp."SimulacaoAbc" set percentual = %s where "nomeSimulacao" =%s and "class" = %s
+            """
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
 
+                    curr.execute(update,(self.perc_abc,self.nomeSimulacao, self.classAbc))
         else:
 
             insert = """
@@ -220,6 +225,28 @@ class SimulacaoProg():
                 '4- Marcas': consultaMarcas.to_dict(orient='records')
         }
         return pd.DataFrame([data])
+
+
+    def inserirAtualizarSimulacao(self, arrayAbc = '[]', arrayMarca ='[]', arrayCategoria ='[]'):
+        '''Metedo utilizado para atualizar ou inserir a simulacao '''
+
+        self.inserirSimulacao()
+
+        # 1 - transformacao do array abc em DataFrame
+        AbcDataFrame = pd.DataFrame({
+            'class': arrayAbc[0],
+            'percentual': arrayAbc[1]
+        })
+
+        if not AbcDataFrame.empty:
+            for index, row in AbcDataFrame.iterrows():
+                self.classAbc = row['class'][index]
+                self.inserirAbcSimulacao()
+
+        return pd.DataFrame([{'Mensagem':'Simulacao inserida ou alterada com sucesso','satus':True}])
+
+
+
 
 
 
