@@ -64,7 +64,7 @@ def post_atualizaInserirSimulacao():
 
     data = request.get_json()
     nomeSimulacao = data.get('nomeSimulacao')
-    arrayAbc = data.get('arrayAbc','[]')
+    arrayAbc = data.get('arrayAbc',[])
 
 
     dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).inserirAtualizarSimulacao(arrayAbc)
