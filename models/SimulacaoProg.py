@@ -345,26 +345,26 @@ class SimulacaoProg():
         '''Metodo utilizado para excluir uma simulacao'''
 
         delete = """
-        detete from pcp."Simulacao"
+        DELETE from pcp."Simulacao"
         where "nomeSimulacao" = %s
         """
 
         deleteMarca = """
-        detete from 
+        DELETE from 
             pcp."SimulacaoMarca"
         where 
             "nomeSimulacao" = %s
         """
 
         deleteCategoria= """
-        detete from 
+        DELETE from 
             pcp."SimulacaoCategoria"
         where 
             "nomeSimulacao" = %s
         """
 
         deleteAbc = """
-         detete from 
+         DELETE from 
              pcp."SimulacaoAbc"
          where 
              "nomeSimulacao" = %s
