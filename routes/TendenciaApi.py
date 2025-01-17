@@ -167,7 +167,7 @@ def post_simulacaoProgramacao():
     codPlano = data.get('codPlano')
     empresa = data.get('empresa','1')
     consideraPedBloq = data.get('consideraPedBloq','nao')
-    arraySimulaAbc = data.get('arraySimulaAbc')
+    arraySimulaAbc = data.get('arraySimulaAbc','')
     nomeSimulacao = data.get('nomeSimulacao')
 
     dados = TendenciasPlano.TendenciaPlano(codPlano,'','',empresa,consideraPedBloq,nomeSimulacao).simulacaoProgramacao(arraySimulaAbc)
