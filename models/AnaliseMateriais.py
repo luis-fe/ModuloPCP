@@ -254,7 +254,10 @@ class AnaliseMateriais():
         # Salvar o DataFrame na memoria:
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
-        Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        if simula == 'nao':
+            Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        else:
+            Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
         Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
@@ -526,13 +529,16 @@ class AnaliseMateriais():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
-    def detalhaNecessidade(self):
+    def detalhaNecessidade(self, simulacao = 'nao'):
         '''metodo que detalha a necessidade de um componente '''
 
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
+        if simulacao == 'nao':
+            Necessidade = pd.read_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        else:
+            Necessidade = pd.read_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
-        Necessidade = pd.read_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()

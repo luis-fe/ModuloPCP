@@ -76,10 +76,10 @@ def post_DetalhaNecessidade():
     codPlano = data.get('codPlano')
     consideraPedBloq = data.get('consideraPedBloq','nao')
     codComponente = data.get('codComponente')
+    nomeSimulacao = data.get("nomeSimulacao",'nao')
 
 
-
-    dados = AnaliseMateriais.AnaliseMateriais(codPlano, '',consideraPedBloq,codComponente).detalhaNecessidade()
+    dados = AnaliseMateriais.AnaliseMateriais(codPlano, '',consideraPedBloq,codComponente,nomeSimulacao).detalhaNecessidade()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
