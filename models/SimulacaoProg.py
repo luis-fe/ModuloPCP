@@ -254,7 +254,7 @@ class SimulacaoProg():
         return pd.DataFrame([data])
 
 
-    def inserirAtualizarSimulacao(self, arrayAbc = '[]', arrayMarca ='[]', arrayCategoria ='[]'):
+    def inserirAtualizarSimulacao(self, arrayAbc , arrayMarca, arrayCategoria):
         '''Metedo utilizado para atualizar ou inserir a simulacao '''
 
         self.inserirSimulacao()
