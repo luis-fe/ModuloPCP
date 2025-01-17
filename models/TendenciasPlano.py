@@ -480,7 +480,7 @@ class TendenciaPlano():
     def simulacaoPeloNome(self):
 
         # 1 - transformacao do array abc em DataFrame
-        dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc()
+        dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
 
         # 2 - Caregar a tendencia congelada
         load_dotenv('db.env')
@@ -493,7 +493,7 @@ class TendenciaPlano():
 
         tendencia = pd.merge(tendencia, abc, on="codItemPai", how='left')
         tendencia = pd.merge(tendencia, dfSimulaAbc, on='class', how='left')
-
+        tendencia['nomeSimulacao'] = self.nomeSimulacao
         tendencia['percentual'].fillna(0, inplace=True)
 
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)

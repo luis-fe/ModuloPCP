@@ -159,6 +159,23 @@ class SimulacaoProg():
 
         return consulta
 
+    def consultaSimulacaoAbc_s(self):
+        '''Metodo que consulta uma simulacao ABC por nome em especifico'''
+
+        select = """
+        select 
+            * 
+        from 
+            "PCP".pcp."SimulacaoAbc" s 
+        Where 
+            "nomeSimulacao" = %s 
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,))
+
+        return consulta
+
 
     def consultaSimulacaoCategoria(self):
         '''Metodo que consulta uma simulacao ABC por nome em especifico'''
