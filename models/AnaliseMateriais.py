@@ -254,6 +254,8 @@ class AnaliseMateriais():
         # Salvar o DataFrame na memoria:
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
+
+        # Verificar se é para congelar a simulacao
         if simula == 'nao':
             Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
         else:

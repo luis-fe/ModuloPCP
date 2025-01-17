@@ -320,7 +320,7 @@ class TendenciaPlano():
         if utilizaCongelento == 'nao':
             vendas = Vendas.VendasAcom(self.codPlano, self.empresa, self.consideraPedBloq)
             consultaVendasSku = vendas.listagemPedidosSku()
-            consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
+            consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
         else:
             load_dotenv('db.env')
