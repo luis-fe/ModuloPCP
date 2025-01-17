@@ -4,12 +4,13 @@ from connection import ConexaoPostgreWms
 class SimulacaoProg():
     '''Classe utilizada para a simulacao da programacao '''
 
-    def __init__(self, nomeSimulacao = None, classAbc = None, perc_abc = None, categoria = None):
+    def __init__(self, nomeSimulacao = None, classAbc = None, perc_abc = None, categoria = None, marca = None):
 
         self.nomeSimulacao = nomeSimulacao
         self.classAbc = classAbc
         self.perc_abc = perc_abc
         self.categoria = categoria
+        self.marca = marca
 
     def inserirSimulacao(self):
         '''metodo que faz a insersao de uma nova simulacao'''
@@ -26,6 +27,7 @@ class SimulacaoProg():
                 with conn.cursor() as curr:
 
                     curr.execute(inserir,(self.nomeSimulacao,))
+                    conn.commit()
 
             return pd.DataFrame([{'status':True, "mensagem": "Simulacao inserida com sucesso"}])
 
@@ -57,6 +59,8 @@ class SimulacaoProg():
                 with conn.cursor() as curr:
 
                     curr.execute(update,(self.perc_abc,self.nomeSimulacao, self.classAbc))
+                    conn.commit()
+
         else:
 
             insert = """
@@ -67,6 +71,8 @@ class SimulacaoProg():
                 with conn.cursor() as curr:
 
                     curr.execute(insert,(self.nomeSimulacao,self.classAbc, self.perc_abc))
+                    conn.commit()
+
 
             return pd.DataFrame([{'status':True, "mensagem": "Simulacao inserida com sucesso"}])
 
@@ -84,6 +90,8 @@ class SimulacaoProg():
                 with conn.cursor() as curr:
 
                     curr.execute(update,(self.perc_abc,self.nomeSimulacao, self.categoria))
+                    conn.commit()
+
         else:
 
             insert = """
@@ -94,8 +102,42 @@ class SimulacaoProg():
                 with conn.cursor() as curr:
 
                     curr.execute(insert,(self.nomeSimulacao,self.categoria, self.perc_abc))
+                    conn.commit()
+
 
             return pd.DataFrame([{'status':True, "mensagem": "Simulacao inserida com sucesso"}])
+
+
+    def inserirMarcaSimulacao(self):
+        '''metodo que inseri a simulacao nos niveis abc '''
+
+        verfica = self.consultaSimulacaoMarca()
+
+        if not verfica.empty:
+            update = """
+            update  pcp."SimulacaoMarca" set percentual = %s where "nomeSimulacao" =%s and "marca" = %s
+            """
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(update,(self.perc_abc,self.nomeSimulacao, self.marca))
+                    conn.commit()
+
+        else:
+
+            insert = """
+            insert into pcp."SimulacaoMarca" ("nomeSimulacao", "marca", percentual) values ( %s, %s, %s )
+            """
+
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert,(self.nomeSimulacao,self.marca, self.perc_abc))
+                    conn.commit()
+
+
+            return pd.DataFrame([{'status':True, "mensagem": "Simulacao inserida com sucesso"}])
+
 
 
 
@@ -283,9 +325,66 @@ class SimulacaoProg():
                 self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
                 self.inserirCategoriaSimulacao()
 
+        if arrayMarca != []:
+            # 1 - transformacao do array abc em DataFrame
+            MarcaDataFrame = pd.DataFrame({
+                'marca': arrayMarca[0],
+                'percentual': arrayMarca[1]
+            })
+
+            for _, row in MarcaDataFrame.iterrows():  # O índice é descartado com '_'
+                self.marca = row['categoria']  # Acessa diretamente o valor da coluna
+                self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
+                self.inserirMarcaSimulacao()
+
 
 
         return pd.DataFrame([{'Mensagem':'Simulacao inserida ou alterada com sucesso','satus':True}])
+
+    def excluirSimulacao(self):
+        '''Metodo utilizado para excluir uma simulacao'''
+
+        delete = """
+        detete from pcp."Simulacao"
+        where "nomeSimulacao" = %s
+        """
+
+        deleteMarca = """
+        detete from 
+            pcp."SimulacaoMarca"
+        where 
+            "nomeSimulacao" = %s
+        """
+
+        deleteCategoria= """
+        detete from 
+            pcp."SimulacaoCategoria"
+        where 
+            "nomeSimulacao" = %s
+        """
+
+        deleteAbc = """
+         detete from 
+             pcp."SimulacaoAbc"
+         where 
+             "nomeSimulacao" = %s
+         """
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(delete, (self.nomeSimulacao, ))
+                conn.commit()
+
+                curr.execute(deleteCategoria, (self.nomeSimulacao, ))
+                conn.commit()
+
+                curr.execute(deleteMarca, (self.nomeSimulacao, ))
+                conn.commit()
+
+                curr.execute(deleteAbc, (self.nomeSimulacao, ))
+                conn.commit()
+
+        return pd.DataFrame([{'status': True, "mensagem": "Simulacao deletada com sucesso"}])
 
 
 
