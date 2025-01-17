@@ -71,6 +71,33 @@ class SimulacaoProg():
             return pd.DataFrame([{'status':True, "mensagem": "Simulacao inserida com sucesso"}])
 
 
+    def inserirCategoriaSimulacao(self):
+        '''metodo que inseri a simulacao nos niveis abc '''
+
+        verfica = self.consultaSimulacaoCategoria()
+
+        if not verfica.empty:
+            update = """
+            update  pcp."SimulacaoCategoria" set percentual = %s where "nomeSimulacao" =%s and "categoria" = %s
+            """
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(update,(self.perc_abc,self.nomeSimulacao, self.categoria))
+        else:
+
+            insert = """
+            insert into pcp."SimulacaoCategoria" ("nomeSimulacao", "categoria", percentual) values ( %s, %s, %s )
+            """
+
+            with ConexaoPostgreWms.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert,(self.nomeSimulacao,self.categoria, self.perc_abc))
+
+            return pd.DataFrame([{'status':True, "mensagem": "Simulacao inserida com sucesso"}])
+
+
 
     def consultaSimulacaoAbc(self):
         '''Metodo que consulta uma simulacao ABC por nome em especifico'''
@@ -243,6 +270,20 @@ class SimulacaoProg():
                 self.classAbc = row['class']  # Acessa diretamente o valor da coluna
                 self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
                 self.inserirAbcSimulacao()
+
+        if arrayCategoria != []:
+            # 1 - transformacao do array abc em DataFrame
+            CategoriaDataFrame = pd.DataFrame({
+                'categoria': arrayAbc[0],
+                'percentual': arrayAbc[1]
+            })
+
+            for _, row in CategoriaDataFrame.iterrows():  # O índice é descartado com '_'
+                self.categoria = row['categoria']  # Acessa diretamente o valor da coluna
+                self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
+                self.inserirCategoriaSimulacao()
+
+
 
         return pd.DataFrame([{'Mensagem':'Simulacao inserida ou alterada com sucesso','satus':True}])
 

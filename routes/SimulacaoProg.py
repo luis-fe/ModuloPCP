@@ -65,9 +65,10 @@ def post_atualizaInserirSimulacao():
     data = request.get_json()
     nomeSimulacao = data.get('nomeSimulacao')
     arrayAbc = data.get('arrayAbc',[])
+    arrayCategoria = data.get('arrayCategoria',[])
 
 
-    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).inserirAtualizarSimulacao(arrayAbc)
+    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).inserirAtualizarSimulacao(arrayAbc, arrayCategoria)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
