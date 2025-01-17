@@ -333,7 +333,7 @@ class SimulacaoProg():
             })
 
             for _, row in MarcaDataFrame.iterrows():  # O índice é descartado com '_'
-                self.marca = row['categoria']  # Acessa diretamente o valor da coluna
+                self.marca = row['marca']  # Acessa diretamente o valor da coluna
                 self.perc_abc = row['percentual']  # Acessa diretamente o valor da coluna
                 self.inserirMarcaSimulacao()
 
