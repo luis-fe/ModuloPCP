@@ -84,7 +84,7 @@ def post_atualizaInserirSimulacao():
     return jsonify(OP_data)
 
 
-@simulacaoProg_routes.route('/pcp/api/deletarSimulacao', methods=['POST'])
+@simulacaoProg_routes.route('/pcp/api/deletarSimulacao', methods=['DELETE'])
 @token_required
 def delete_deletarSimulacao():
 
