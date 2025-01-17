@@ -168,9 +168,9 @@ def post_simulacaoProgramacao():
     empresa = data.get('empresa','1')
     consideraPedBloq = data.get('consideraPedBloq','nao')
     arraySimulaAbc = data.get('arraySimulaAbc')
+    nomeSimulacao = data.get('nomeSimulacao')
 
-
-    dados = TendenciasPlano.TendenciaPlano(codPlano,'','',empresa,consideraPedBloq).simulacaoProgramacao(arraySimulaAbc)
+    dados = TendenciasPlano.TendenciaPlano(codPlano,'','',empresa,consideraPedBloq,nomeSimulacao).simulacaoProgramacao(arraySimulaAbc)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

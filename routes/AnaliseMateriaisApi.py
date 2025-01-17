@@ -47,11 +47,11 @@ def post_SimulaAnaliseMateriaisPelaTendenciaa():
 
     codPlano = data.get('codPlano')
     consideraPedBloq = data.get('consideraPedBloq','nao')
-    arraySimulaAbc = data.get('arraySimulaAbc')
+    arraySimulaAbc = data.get('arraySimulaAbc','')
+    nomeSimulacao = data.get('nomeSimulacao','')
 
 
-
-    dados = AnaliseMateriais.AnaliseMateriais(codPlano, consideraPedBloq).estruturaItens('nao',arraySimulaAbc)
+    dados = AnaliseMateriais.AnaliseMateriais(codPlano, consideraPedBloq,'',nomeSimulacao).estruturaItens('nao',arraySimulaAbc, 'sim')
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

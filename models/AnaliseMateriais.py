@@ -13,12 +13,13 @@ class AnaliseMateriais():
     '''Classe criada para a analise das necessidades de materia prima, utilizada mo PCP'''
 
 
-    def __init__(self, codPlano = None , codLote= None, consideraBloqueado = 'nao', codComponente = ''):
+    def __init__(self, codPlano = None , codLote= None, consideraBloqueado = 'nao', codComponente = '', nomeSimulacao=''):
 
         self.codLote = codLote
         self.codPlano = codPlano
         self.consideraBloqueado = consideraBloqueado
         self.codComponente = codComponente
+        self.nomeSimulacao = nomeSimulacao
 
 
     def carregandoComponentes(self):
@@ -34,7 +35,7 @@ class AnaliseMateriais():
 
         return df_loaded
 
-    def estruturaItens(self, pesquisaPor = 'lote', arraySimulaAbc = 'nao'):
+    def estruturaItens(self, pesquisaPor = 'lote', arraySimulaAbc = 'nao', simula = 'nao'):
 
         if pesquisaPor == 'lote':
             inPesquisa = """(select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLote + """)"""
@@ -87,7 +88,7 @@ class AnaliseMateriais():
         else:
 
             inPesquisa = self.estruturaPrevisao()
-            if arraySimulaAbc == 'nao':
+            if simula == 'nao':
                 sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).tendenciaVendas('nao')
             else:
                 sqlMetas = TendenciasPlano.TendenciaPlano(self.codPlano, self.consideraBloqueado).simulacaoProgramacao(arraySimulaAbc)

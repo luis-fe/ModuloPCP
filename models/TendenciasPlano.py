@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from connection import ConexaoPostgreWms
-from models import Vendas, ProdutosClass
+from models import Vendas, ProdutosClass, SimulacaoProg
 from models.Meta import Meta
 from dotenv import load_dotenv, dotenv_values
 import os
@@ -9,11 +9,12 @@ import os
 class TendenciaPlano():
     '''Classe utilizada para a analise de tendencias de vendas de um determinado Plano '''
 
-    def __init__(self, codPlano = None, parametroABC = None, perc_dist = None, empresa = '1',consideraPedBloq = 'nao'):
+    def __init__(self, codPlano = None, parametroABC = None, perc_dist = None, empresa = '1',consideraPedBloq = 'nao', nomeSimulacao = ''):
 
         self.codPlano = codPlano
         self.parametroABC = parametroABC
         self.perc_dist = perc_dist
+        self.nomeSimulacao = nomeSimulacao
 
         if self.perc_dist != None:
             if ',' in self.perc_dist:
@@ -425,8 +426,19 @@ class TendenciaPlano():
             return valor  # Retorna o valor original caso não seja convertível
 
 
-    def simulacaoProgramacao(self, arraySimulaAbc):
+    def simulacaoProgramacao(self, arraySimulaAbc= ''):
         '''Metodo utilizado para realizar a simulacao de programacao em nivel abc'''
+
+        if arraySimulaAbc != '':
+            r = self.simulacaoPeloArrayAbc(arraySimulaAbc)
+            return r
+        else:
+            r = self.simulacaoPeloNome()
+            return r
+
+
+
+    def simulacaoPeloArrayAbc(self, arraySimulaAbc):
 
         # 1 - transformacao do array abc em DataFrame
         dfSimulaAbc = pd.DataFrame({
@@ -465,3 +477,34 @@ class TendenciaPlano():
 
         return tendencia
 
+    def simulacaoPeloNome(self):
+
+        # 1 - transformacao do array abc em DataFrame
+        dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc()
+
+        # 2 - Caregar a tendencia congelada
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+
+        abc = self.tendenciaAbc('sim')
+        abc['codItemPai'] = abc['codItemPai'].astype(str)
+        tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
+
+        tendencia = pd.merge(tendencia, abc, on="codItemPai", how='left')
+        tendencia = pd.merge(tendencia, dfSimulaAbc, on='class', how='left')
+
+        tendencia['percentual'].fillna(0, inplace=True)
+
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
+
+        tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
+                tendencia['previcaoVendas'] - tendencia['qtdeFaturada'])
+        tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
+            tendencia['Prev Sobra'] < 0, 0)
+
+        # 15 - Tratando o valor financeiro
+        tendencia['valorVendido'] = tendencia['valorVendido'].apply(self.formatar_financeiro)
+
+        return tendencia
