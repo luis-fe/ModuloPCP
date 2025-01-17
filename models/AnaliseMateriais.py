@@ -529,7 +529,7 @@ class AnaliseMateriais():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
-    def detalhaNecessidade(self, simulacao = 'nao'):
+    def detalhaNecessidade(self, simulacao):
         '''metodo que detalha a necessidade de um componente '''
 
         load_dotenv('db.env')
