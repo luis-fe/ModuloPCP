@@ -274,8 +274,8 @@ class SimulacaoProg():
         if arrayCategoria != []:
             # 1 - transformacao do array abc em DataFrame
             CategoriaDataFrame = pd.DataFrame({
-                'categoria': arrayAbc[0],
-                'percentual': arrayAbc[1]
+                'categoria': arrayCategoria[0],
+                'percentual': arrayCategoria[1]
             })
 
             for _, row in CategoriaDataFrame.iterrows():  # O índice é descartado com '_'
