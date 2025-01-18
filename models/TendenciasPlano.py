@@ -265,14 +265,29 @@ class TendenciaPlano():
 
         #if aplicaTratamento == 'sim':
         consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
+
+        # Filtrar as 200 primeiras linhas
+        consultaVendasSku_200 = consultaVendasSku.iloc[:200]
+
+        # Filtrar as linhas com status igual a 'NORMAL'
+        filtro_normal = consultaVendasSku_200['statusAFV'] == 'Normal'
+
+        # Calcular o subtotal apenas para as linhas filtradas
+        consultaVendasSku.loc[:199, 'subtotal2'] = (
+            consultaVendasSku_200.loc[filtro_normal]
+            .groupby('marca')['previcaoVendas']
+            .transform('sum')
+        )
+
         consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
 
+        '''
         consultaVendasSku['redistribuir'] = np.where(
             consultaVendasSku['redistribuir'] < 0 ,
             0,
             consultaVendasSku['redistribuir']
         )
-
+        '''
         # 9.2 - Drop das colunas que nao desejo
         consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
 
