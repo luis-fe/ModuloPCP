@@ -245,20 +245,16 @@ class TendenciaPlano():
         # 8 - Calculando o total de vendas e o que falta vender por MARCA
         consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
 
-        consultaVendasSku['totalVendas'] = np.where(
-            consultaVendasSku['totalVendas'] == 0,  # Condição
-            0,  # Valor se condição for verdadeira
-            consultaVendasSku['totalVendas']
-        )
 
         consultaVendasSku['faltaVender'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
         consultaVendasSku['faltaVender'] = consultaVendasSku['faltaVender'].clip(lower=0)
 
         # 9 - Encontradno a previsao de vendas
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['dist%']* consultaVendasSku['faltaVender']
-        consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(7)
 
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
+        consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(5)
+
         consultaVendasSku['previcaoVendas'].fillna(0,inplace=True)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].round().astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['qtdePedida']
