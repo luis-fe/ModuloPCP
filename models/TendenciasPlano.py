@@ -282,8 +282,9 @@ class TendenciaPlano():
         consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
 
         consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'] * consultaVendasSku['redistribuir']
-        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
         consultaVendasSku['subtotal2'].fillna(0,inplace=True)
+
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['subtotal2']
 
 
