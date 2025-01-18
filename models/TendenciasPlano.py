@@ -278,8 +278,13 @@ class TendenciaPlano():
             .groupby('marca')['previcaoVendas']
             .transform('sum')
         )
-
+        consultaVendasSku['subtotal2'] = consultaVendasSku['previcaoVendas']/consultaVendasSku['subtotal2']
         consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
+
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2%'] * consultaVendasSku['redistribuir']
+
+
+
 
         '''
         consultaVendasSku['redistribuir'] = np.where(
