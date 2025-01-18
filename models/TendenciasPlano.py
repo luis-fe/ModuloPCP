@@ -262,6 +262,16 @@ class TendenciaPlano():
         # 9.1 - Tratar os erros de NaN para retornar "0"
         consultaVendasSku.fillna(0,inplace=True)
 
+
+        #if aplicaTratamento == 'sim':
+        consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku.groupby('marca')['previcaoVendas'].sum()
+
+        consultaVendasSku['redistribuir'] = np.where(
+            consultaVendasSku['redistribuir'] < 0 ,
+            0,
+            consultaVendasSku['redistribuir']
+        )
+
         # 9.2 - Drop das colunas que nao desejo
         consultaVendasSku.drop(['faltaVender','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
 
@@ -301,16 +311,6 @@ class TendenciaPlano():
         abc['codItemPai'] = abc['codItemPai'].astype(str)
         consultaVendasSku = pd.merge(consultaVendasSku, abc , on='codItemPai', how='left')
         consultaVendasSku.fillna('-', inplace=True)
-
-        #if aplicaTratamento == 'sim':
-            #consultaVendasSku['estoqueAtual'] = consultaVendasSku['estoqueAtual'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['emProcesso'] = consultaVendasSku['emProcesso'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['qtdeFaturada'] = consultaVendasSku['qtdeFaturada'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['qtdePedida'] = consultaVendasSku['qtdePedida'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['disponivel'] = consultaVendasSku['disponivel'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['faltaProg (Tendencia)'].apply(self.formatar_padraoInteiro)
-            #consultaVendasSku['Prev Sobra'] = consultaVendasSku['Prev Sobra'].apply(self.formatar_padraoInteiro)
 
 
 
