@@ -264,7 +264,7 @@ class TendenciaPlano():
 
 
         #if aplicaTratamento == 'sim':
-        consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].sum()
+        consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
         consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
 
         consultaVendasSku['redistribuir'] = np.where(
