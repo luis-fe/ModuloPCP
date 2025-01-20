@@ -261,11 +261,10 @@ class VendasAcom():
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
         tam = ProdutosClass.Produto().get_tamanhos()
-        teste = groupBy[groupBy['codProduto']=='734720']
-        print(teste)
+
 
         groupBy['codSeqTamanho'] = groupBy['codSeqTamanho'].astype(str)
-        groupBy['codSeqTamanho'] = groupBy['codSeqTamanho'].str.replace('.0','')
+        groupBy['codSeqTamanho'] = groupBy['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
         groupBy = pd.merge(groupBy,tam,on='codSeqTamanho',how='left')
 
 
