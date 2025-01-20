@@ -302,7 +302,7 @@ class Produto():
         gc.collect()
 
         consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
-
+        print(f'consulta\n{consulta}')
         return consulta
 
 
