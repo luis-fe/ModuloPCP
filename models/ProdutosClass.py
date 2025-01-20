@@ -301,7 +301,7 @@ class Produto():
         del rows
         gc.collect()
 
-        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].asype(str)
+        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
 
         return consulta
 
