@@ -287,8 +287,8 @@ class TendenciaPlano():
         consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['subtotal2']
 
-        consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
-        consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
+        consultaVendasSku['subtotalPrev'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
+        consultaVendasSku['redistribuirPrev'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
 
 
 
