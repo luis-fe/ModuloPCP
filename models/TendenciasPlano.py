@@ -308,7 +308,6 @@ class TendenciaPlano():
 
 
 
-
         '''
         consultaVendasSku['redistribuir'] = np.where(
             consultaVendasSku['redistribuir'] < 0 ,
