@@ -287,6 +287,25 @@ class TendenciaPlano():
         consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['subtotal2']
 
+        #if aplicaTratamento == 'sim':
+        consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
+        consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
+        # Filtrar as linhas com status igual a 'NORMAL'
+        filtro_normal = consultaVendasSku_200['statusAFV'] == 'Normal'
+
+        # Calcular o subtotal apenas para as linhas filtradas
+        consultaVendasSku.loc[:10, 'subtotal2'] = (
+            consultaVendasSku_200.loc[filtro_normal]
+            .groupby('marca')['previcaoVendas']
+            .transform('sum')
+        )
+        consultaVendasSku['subtotal2'] = consultaVendasSku['previcaoVendas']/consultaVendasSku['subtotal2']
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'] * consultaVendasSku['redistribuir']
+        consultaVendasSku['subtotal2'].fillna(0,inplace=True)
+
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['subtotal2']
+
 
 
 
