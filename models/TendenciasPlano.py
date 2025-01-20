@@ -182,8 +182,7 @@ class TendenciaPlano():
 
         #2.2 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
         tam = ProdutosClass.Produto().get_tamanhos()
-        consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0','')
-        tam['codSeqTamanho'] = tam['codSeqTamanho'].astype(str).str.replace('.0','')
+        consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
         consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
         consultaVendasSku = consultaVendasSku[~consultaVendasSku['tam'].str.contains('CM', na=False)]
         consultaVendasSku = consultaVendasSku[consultaVendasSku['tam'] != '20']
