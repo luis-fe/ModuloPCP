@@ -390,6 +390,7 @@ class TendenciaPlano():
         consultaVendasSku['ABC_Acum%'] = consultaVendasSku.groupby('marca')['ABCdist%'].cumsum()
         consultaVendasSku['ABC_Acum%Categoria'] = consultaVendasSku.groupby(['marca','categoria'])['ABCdist%Categoria'].cumsum()
 
+
         consultaVendasSku['ABC_Acum%'] = consultaVendasSku['ABC_Acum%'].round(4)
         consultaVendasSku['ABC_Acum%Categoria'] = consultaVendasSku['ABC_Acum%Categoria'].round(4)
 
@@ -432,6 +433,9 @@ class TendenciaPlano():
 
         consultaVendasSku['classCategoria'] = consultaVendasSku['classCategoria'].astype(str)
         consultaVendasSku['classCategoria'].fillna('-', inplace=True)
+
+        consultaVendasSku['ocorrencia'] = consultaVendasSku.groupby(['marca', 'categoria']).cumcount() + 1
+        consultaVendasSku.loc[consultaVendasSku['ocorrencia'] == 1, 'classCategoria'] = 'A1'
 
         if utilizaCongelento == 'sim':
             consultaVendasSku = consultaVendasSku.loc[:,
