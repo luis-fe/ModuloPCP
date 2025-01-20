@@ -267,13 +267,13 @@ class TendenciaPlano():
         consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
 
         # Filtrar as 200 primeiras linhas
-        consultaVendasSku_200 = consultaVendasSku.iloc[:200]
+        consultaVendasSku_200 = consultaVendasSku.iloc[:400]
 
         # Filtrar as linhas com status igual a 'NORMAL'
         filtro_normal = consultaVendasSku_200['statusAFV'] == 'Normal'
 
         # Calcular o subtotal apenas para as linhas filtradas
-        consultaVendasSku.loc[:199, 'subtotal2'] = (
+        consultaVendasSku.loc[:399, 'subtotal2'] = (
             consultaVendasSku_200.loc[filtro_normal]
             .groupby('marca')['previcaoVendas']
             .transform('sum')
