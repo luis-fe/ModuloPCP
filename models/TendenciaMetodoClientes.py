@@ -25,6 +25,9 @@ class TendenciaMetodoClientes():
             quantidade_total=('qtdePedida', 'sum')  # Soma das quantidades pedidas
         ).reset_index()
         pedidos.rename(columns={'nomeCliente': 'clientesAtendidos'}, inplace=True)
+
+        pedidos['Pçs/Cliente'] = pedidos['qtdePedida']  / pedidos['clientesAtendidos']
+
         return pedidos
 
     def listagem_pedidos(self):
