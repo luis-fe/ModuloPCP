@@ -28,8 +28,8 @@ class TendenciaMetodoClientes():
         ).reset_index()
         pedidos.rename(columns={'clientes_distintos': 'clientesAtendidosPlanoAnt'}, inplace=True)
 
-        pedidos['Pçs/ClientePlanoAnt'] = pedidos['quantidadePlanoAnt']  / pedidos['clientesAtendidosPlanoAnt']
-        pedidos['Pçs/ClientePlanoAnt'] = pedidos['Pçs/ClientePlanoAnt'].round().astype(int)
+        pedidos['Ps/ClientePlanoAnt'] = pedidos['quantidadePlanoAnt']  / pedidos['clientesAtendidosPlanoAnt']
+        pedidos['Pcs/ClientePlanoAnt'] = pedidos['Pcs/ClientePlanoAnt'].round().astype(int)
         pedidos['quantidadePlanoAnt'] = pedidos['quantidadePlanoAnt'].round().astype(int)
 
 
@@ -44,8 +44,8 @@ class TendenciaMetodoClientes():
         ).reset_index()
         pedidos2.rename(columns={'clientes_distintos': 'clientesAtendidosPlanoAtual'}, inplace=True)
 
-        pedidos2['Pçs/ClientePlanoAtual'] = pedidos2['quantidadePlanoAtual']  / pedidos2['clientesAtendidosPlanoAtual']
-        pedidos2['Pçs/ClientePlanoAtual'] = pedidos2['Pçs/ClientePlanoAtual'].round().astype(int)
+        pedidos2['Pcs/ClientePlanoAtual'] = pedidos2['quantidadePlanoAtual']  / pedidos2['clientesAtendidosPlanoAtual']
+        pedidos2['Pcs/ClientePlanoAtual'] = pedidos2['Pcs/ClientePlanoAtual'].round().astype(int)
         pedidos2['quantidadePlanoAtual'] = pedidos2['quantidadePlanoAtual'].round().astype(int)
 
         # Merge dos dois DataFrames
@@ -53,6 +53,13 @@ class TendenciaMetodoClientes():
 
         # Substitui NaN por 0
         merged_df.fillna(0, inplace=True)
+
+        merged_df.rename(
+            columns={'marca': '01-Marca',
+                     'Regiao': '02-Regiao',
+                     'nomeRepresentante': '03-Repres.'
+                     },
+            inplace=True)
 
 
         return merged_df
