@@ -89,7 +89,14 @@ class TendenciaMetodoClientes():
         merged_df = pd.concat([merged_df, marca], ignore_index=True)
         merged_df = merged_df.sort_values(by=['01-Marca','04-Qt_PlanoAnt.'], ascending=False)
 
-        merged_df['08-%Atendimento'] = merged_df['07-ClientesAtual'] /merged_df['06-ClientesAnt.']
+
+        marca['08-%Atendimento'] = np.where(
+            marca['06-ClientesAnt.'] == 0,  # Condição
+            1,  # Valor se a condição for verdadeira
+            merged_df['07-ClientesAtual'] /merged_df['06-ClientesAnt.']  # Valor se a condição for falsa
+        )
+
+
         merged_df['08-%Atendimento'] = merged_df['08-%Atendimento'].round(3)
         merged_df['08-%Atendimento'] = merged_df['08-%Atendimento']  *100
         return merged_df
