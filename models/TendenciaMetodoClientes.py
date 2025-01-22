@@ -8,11 +8,12 @@ import numpy as np
 
 class TendenciaMetodoClientes():
 
-    def __init__(self, codPlanoAnterior = None, empresa = 1, consideraPedidosBloqueados = 'nao'):
+    def __init__(self, codPlanoAnterior = None, empresa = 1, consideraPedidosBloqueados = 'nao', codPlanoAtual = None):
 
         self.codPlanoAnterior = codPlanoAnterior
         self.empresa = empresa
         self.consideraPedidosBloqueados = consideraPedidosBloqueados
+        self.codPlanoAtual = codPlanoAtual
 
     def clientesAtendidosMarca_Empresa(self):
         '''Metodo que consulta o numero de Clientes Atendidos no Plano Comparativo '''
@@ -31,7 +32,30 @@ class TendenciaMetodoClientes():
         pedidos['Pçs/ClientePlanoAnt'] = pedidos['Pçs/ClientePlanoAnt'].round().astype(int)
         pedidos['quantidadePlanoAnt'] = pedidos['quantidadePlanoAnt'].round().astype(int)
 
-        return pedidos
+
+        self.codPlanoAnterior = self.codPlanoAtual
+        pedidos2 = self.listagem_pedidos()
+        pedidos2['Regiao'] = pedidos2['nomeEstado'].apply(self.obter_regiao)
+
+        # Encontrando o disponivel :
+        pedidos2 = pedidos2.groupby(['marca','Regiao','nomeRepresentante']).agg(
+            clientes_distintos=('nomeCliente', 'nunique'),  # Número de clientes distintos
+            quantidadePlanoAtual=('qtdePedida', 'sum')  # Soma das quantidades pedidas
+        ).reset_index()
+        pedidos2.rename(columns={'clientes_distintos': 'clientesAtendidosPlanoAtual'}, inplace=True)
+
+        pedidos2['Pçs/ClientePlanoAtual'] = pedidos2['quantidadePlanoAtual']  / pedidos2['clientesAtendidosPlanoAtual']
+        pedidos2['Pçs/ClientePlanoAtual'] = pedidos2['Pçs/ClientePlanoAtual'].round().astype(int)
+        pedidos2['quantidadePlanoAtual'] = pedidos2['quantidadePlanoAtual'].round().astype(int)
+
+        # Merge dos dois DataFrames
+        merged_df = pd.merge(pedidos, pedidos2, on=['marca','Regiao','nomeRepresentante'], how='outer')
+
+        # Substitui NaN por 0
+        merged_df.fillna(0, inplace=True)
+
+
+        return merged_df
 
     def listagem_pedidos(self):
         # 1:  Carregar as variaveis de ambiente e o nome do caminho
