@@ -24,7 +24,7 @@ class TendenciaMetodoClientes():
             clientes_distintos=('nomeCliente', 'nunique'),  # Número de clientes distintos
             quantidade=('qtdePedida', 'sum')  # Soma das quantidades pedidas
         ).reset_index()
-        pedidos.rename(columns={'nomeCliente': 'clientesAtendidos'}, inplace=True)
+        pedidos.rename(columns={'clientes_distintos': 'clientesAtendidos'}, inplace=True)
 
         pedidos['Pçs/Cliente'] = pedidos['quantidade']  / pedidos['clientesAtendidos']
 
