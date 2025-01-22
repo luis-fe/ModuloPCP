@@ -32,7 +32,7 @@ class TendenciaMetodoClientes():
         parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
-        plano = PlanoClass.Plano(self.codPlano)
+        plano = PlanoClass.Plano(self.codPlanoAnterior)
         self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
         self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
         produtos = ProdutosClass.Produto().consultaItensReduzidos()
