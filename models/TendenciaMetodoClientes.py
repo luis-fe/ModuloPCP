@@ -22,12 +22,13 @@ class TendenciaMetodoClientes():
         # Encontrando o disponivel :
         pedidos = pedidos.groupby('marca').agg(
             clientes_distintos=('nomeCliente', 'nunique'),  # Número de clientes distintos
-            quantidade=('qtdePedida', 'sum')  # Soma das quantidades pedidas
+            quantidadePlanoAnt=('qtdePedida', 'sum')  # Soma das quantidades pedidas
         ).reset_index()
-        pedidos.rename(columns={'clientes_distintos': 'clientesAtendidos'}, inplace=True)
+        pedidos.rename(columns={'clientes_distintos': 'clientesAtendidosPlanoAnt'}, inplace=True)
 
-        pedidos['Pçs/Cliente'] = pedidos['quantidade']  / pedidos['clientesAtendidos']
-        pedidos['Pçs/Cliente'] = pedidos['Pçs/Cliente'].round().astype(int)
+        pedidos['Pçs/ClientePlanoAnt'] = pedidos['PlanoAnt']  / pedidos['clientesAtendidosPlanoAnt']
+        pedidos['Pçs/ClientePlanoAnt'] = pedidos['Pçs/ClientePlanoAnt'].round().astype(int)
+        pedidos['quantidadePlanoAnt'] = pedidos['quantidadePlanoAnt'].round().astype(int)
 
         return pedidos
 
