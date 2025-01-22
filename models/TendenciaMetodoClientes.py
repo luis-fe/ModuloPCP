@@ -27,6 +27,7 @@ class TendenciaMetodoClientes():
         pedidos.rename(columns={'clientes_distintos': 'clientesAtendidos'}, inplace=True)
 
         pedidos['Pçs/Cliente'] = pedidos['quantidade']  / pedidos['clientesAtendidos']
+        pedidos['Pçs/Cliente'] = pedidos['Pçs/Cliente'].round().astype(int)
 
         return pedidos
 
