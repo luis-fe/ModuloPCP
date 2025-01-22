@@ -64,7 +64,7 @@ class TendenciaMetodoClientes():
                      'clientesAtendidosPlanoAtual': '07-ClientesAtual'
                      },
             inplace=True)
-        merged_df = pedidos.sort_values(by=['04-Qt_PlanoAnt.'], ascending=False)
+        merged_df = pedidos.sort_values(by='04-Qt_PlanoAnt.', ascending=False)
 
         return merged_df
 
