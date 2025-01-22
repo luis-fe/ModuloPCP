@@ -64,6 +64,25 @@ class TendenciaMetodoClientes():
                      'clientesAtendidosPlanoAtual': '07-ClientesAtual'
                      },
             inplace=True)
+
+        marca = merged_df.groupby(['01-Marca']).agg(
+            _04=('04-Qt_PlanoAnt.', 'sum'),
+            _05=('05-Qt_PlanoAtual.', 'sum'),
+            _06=('06-ClientesAnt.', 'sum'),
+            _07=('07-ClientesAtual', 'sum')
+        ).reset_index()
+
+        marca.rename(
+            columns={'_04': '04-Qt_PlanoAnt.',
+                     '_05': '05-Qt_PlanoAtual',
+                     '_06': '06-ClientesAnt.',
+                     '_07': '07-ClientesAtual',
+                     },
+            inplace=True)
+        marca['02-Regiao'] = 'Total'
+        marca['nomeRepresentante'] = 'Total'
+
+        merged_df = pd.concat([merged_df, marca], ignore_index=True)
         merged_df = merged_df.sort_values(by='04-Qt_PlanoAnt.', ascending=False)
 
         return merged_df
