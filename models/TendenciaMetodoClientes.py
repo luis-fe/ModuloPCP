@@ -90,7 +90,7 @@ class TendenciaMetodoClientes():
         merged_df = merged_df.sort_values(by=['01-Marca','04-Qt_PlanoAnt.'], ascending=False)
 
         merged_df['08-%Atendimento'] = merged_df['07-ClientesAtual'] /merged_df['06-ClientesAnt.']
-
+        merged_df['08-%Atendimento'] = merged_df['08-%Atendimento'].round(3)
         return merged_df
 
     def listagem_pedidos(self):
