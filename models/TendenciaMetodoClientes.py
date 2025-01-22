@@ -67,7 +67,7 @@ class TendenciaMetodoClientes():
 
         marca = merged_df.groupby(['01-Marca']).agg(
             _04=('04-Qt_PlanoAnt.', 'sum'),
-            _05=('05-Qt_PlanoAtual.', 'sum'),
+            _05=('05-Qt_PlanoAtual', 'sum'),
             _06=('06-ClientesAnt.', 'sum'),
             _07=('07-ClientesAtual', 'sum')
         ).reset_index()
@@ -81,6 +81,10 @@ class TendenciaMetodoClientes():
             inplace=True)
         marca['02-Regiao'] = 'Total'
         marca['nomeRepresentante'] = 'Total'
+        marca['Pcs/ClientePlanoAtual'] = marca['05-Qt_PlanoAtual']  / marca['07-ClientesAtual']
+        marca['Pcs/ClientePlanoAtual'] = marca['Pcs/ClientePlanoAtual'].round().astype(int)
+        marca['Pcs/ClientePlanoAnt'] = marca['04-Qt_PlanoAnt.']  / marca['06-ClientesAnt.']
+        marca['Pcs/ClientePlanoAnt'] = marca['Pcs/ClientePlanoAnt'].round().astype(int)
 
         merged_df = pd.concat([merged_df, marca], ignore_index=True)
         merged_df = merged_df.sort_values(by='04-Qt_PlanoAnt.', ascending=False)
