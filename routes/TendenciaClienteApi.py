@@ -22,9 +22,10 @@ def post_ClientesAtendidosMarca():
     data = request.get_json()
 
     PlanoComparativo = data.get('PlanoComparativo')
+    PlanoAtual = data.get('PlanoAtual')
 
 
-    dados = TendenciaMetodoClientes.TendenciaMetodoClientes(PlanoComparativo).clientesAtendidosMarca_Empresa()
+    dados = TendenciaMetodoClientes.TendenciaMetodoClientes(PlanoComparativo,'1','nao',PlanoAtual).clientesAtendidosMarca_Empresa()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
