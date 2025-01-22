@@ -80,14 +80,14 @@ class TendenciaMetodoClientes():
                      },
             inplace=True)
         marca['02-Regiao'] = 'Total'
-        marca['nomeRepresentante'] = 'Total'
+        marca['03-Repres.'] = 'Total'
         marca['Pcs/ClientePlanoAtual'] = marca['05-Qt_PlanoAtual']  / marca['07-ClientesAtual']
         marca['Pcs/ClientePlanoAtual'] = marca['Pcs/ClientePlanoAtual'].round().astype(int)
         marca['Pcs/ClientePlanoAnt'] = marca['04-Qt_PlanoAnt.']  / marca['06-ClientesAnt.']
         marca['Pcs/ClientePlanoAnt'] = marca['Pcs/ClientePlanoAnt'].round().astype(int)
 
         merged_df = pd.concat([merged_df, marca], ignore_index=True)
-        merged_df = merged_df.sort_values(by='04-Qt_PlanoAnt.', ascending=False)
+        merged_df = merged_df.sort_values(by=['01-Marca','04-Qt_PlanoAnt.'], ascending=False)
 
         return merged_df
 
