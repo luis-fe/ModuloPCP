@@ -18,9 +18,10 @@ class TendenciaMetodoClientes():
         '''Metodo que consulta o numero de Clientes Atendidos no Plano Comparativo '''
 
         pedidos = self.listagem_pedidos()
+        pedidos['Regiao'] = pedidos['nomeEstado'].apply(self.obter_regiao)
 
         # Encontrando o disponivel :
-        pedidos = pedidos.groupby(['marca','nomeRepresentante']).agg(
+        pedidos = pedidos.groupby(['marca','Regiao','nomeRepresentante']).agg(
             clientes_distintos=('nomeCliente', 'nunique'),  # Número de clientes distintos
             quantidadePlanoAnt=('qtdePedida', 'sum')  # Soma das quantidades pedidas
         ).reset_index()
@@ -95,3 +96,16 @@ class TendenciaMetodoClientes():
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
         return df_loaded
+
+    def obter_regiao(self,nome_estado):
+        # Dicionário de mapeamento estado -> região
+        regioes = {
+            'AC': 'NORTE', 'AP': 'NORTE', 'AM': 'NORTE', 'PA': 'NORTE', 'RO': 'NORTE', 'RR': 'NORTE', 'TO': 'NORTE',
+            'AL': 'NORDESTE', 'BA': 'NORDESTE', 'CE': 'NORDESTE', 'MA': 'NORDESTE',
+            'PB': 'NORDESTE', 'PE': 'NORDESTE', 'PI': 'NORDESTE', 'RN': 'NORDESTE', 'SE': 'NORDESTE',
+            'DF': 'CENTRO-OESTE', 'GO': 'CENTRO-OESTE', 'MS': 'CENTRO-OESTE', 'MT': 'CENTRO-OESTE',
+            'ES': 'SUDESTE', 'MG': 'SUDESTE', 'RJ': 'SUDESTE', 'SP': 'SUDESTE',
+            'PR': 'SUL', 'RS': 'SUL', 'SC': 'SUL'
+        }
+        # Retorna a região correspondente ao estado
+        return regioes.get(nome_estado.upper(), 'REGIÃO DESCONHECIDA')
