@@ -26,7 +26,7 @@ class TendenciaMetodoClientes():
         ).reset_index()
         pedidos.rename(columns={'clientes_distintos': 'clientesAtendidosPlanoAnt'}, inplace=True)
 
-        pedidos['Pçs/ClientePlanoAnt'] = pedidos['PlanoAnt']  / pedidos['clientesAtendidosPlanoAnt']
+        pedidos['Pçs/ClientePlanoAnt'] = pedidos['quantidadePlanoAnt']  / pedidos['clientesAtendidosPlanoAnt']
         pedidos['Pçs/ClientePlanoAnt'] = pedidos['Pçs/ClientePlanoAnt'].round().astype(int)
         pedidos['quantidadePlanoAnt'] = pedidos['quantidadePlanoAnt'].round().astype(int)
 
