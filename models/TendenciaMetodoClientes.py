@@ -57,7 +57,9 @@ class TendenciaMetodoClientes():
         merged_df.rename(
             columns={'marca': '01-Marca',
                      'Regiao': '02-Regiao',
-                     'nomeRepresentante': '03-Repres.'
+                     'nomeRepresentante': '03-Repres.',
+                     'quantidadePlanoAnt': '04-Qt_PlanoAnt.',
+                     'quantidadePlanoAtual': '05-Qt_PlanoAtual'
                      },
             inplace=True)
 
