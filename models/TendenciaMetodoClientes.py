@@ -20,7 +20,7 @@ class TendenciaMetodoClientes():
         pedidos = self.listagem_pedidos()
 
         # Encontrando o disponivel :
-        pedidos = pedidos.groupby('marca').agg(
+        pedidos = pedidos.groupby(['marca','nomeRepresentante']).agg(
             clientes_distintos=('nomeCliente', 'nunique'),  # Número de clientes distintos
             quantidadePlanoAnt=('qtdePedida', 'sum')  # Soma das quantidades pedidas
         ).reset_index()
