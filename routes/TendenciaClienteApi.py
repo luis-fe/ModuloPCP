@@ -21,10 +21,10 @@ def token_required(f):
 def post_ClientesAtendidosMarca():
     data = request.get_json()
 
-    PlanoComparativo = data.get('TendenciaMetodoClientes')
+    PlanoComparativo = data.get('PlanoComparativo')
 
 
-    dados = TendenciaMetodoClientes.TendenciaMetodoClientes(TendenciaMetodoClientes).clientesAtendidosMarca_Empresa()
+    dados = TendenciaMetodoClientes.TendenciaMetodoClientes(PlanoComparativo).clientesAtendidosMarca_Empresa()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
