@@ -537,14 +537,10 @@ class TendenciaPlano():
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 
         tendencia = pd.merge(tendencia, dfSimulaCategoria, on='categoria', how='left')
-        tendencia['percentual'].fillna(100, inplace=True)
+        tendencia['percentualCategoria'].fillna(100, inplace=True)
 
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentualCategoria'] / 100)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
-
-
-
-
 
 
 
