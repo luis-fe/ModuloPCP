@@ -210,7 +210,7 @@ class SimulacaoProg():
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
-        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,self.categoria,))
+        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,))
 
         return consulta
 
@@ -245,7 +245,7 @@ class SimulacaoProg():
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
-        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,self.marca,))
+        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,))
 
         return consulta
 
