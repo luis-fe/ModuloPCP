@@ -516,6 +516,8 @@ class TendenciaPlano():
 
         # 1 - transformacao do array abc em DataFrame
         dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
+        dfSimulaCategoria = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoCategoria_s()
+        dfSimulaMarca = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoMarca_s()
 
         # 2 - Caregar a tendencia congelada
         load_dotenv('db.env')
@@ -533,6 +535,18 @@ class TendenciaPlano():
 
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
+
+        tendencia = pd.merge(tendencia, dfSimulaCategoria, on='categoria', how='left')
+        tendencia['percentual'].fillna(100, inplace=True)
+
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentualCategoria'] / 100)
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
+
+
+
+
+
+
 
         tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
                 tendencia['previcaoVendas'] - tendencia['qtdeFaturada'])

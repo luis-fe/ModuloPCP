@@ -195,6 +195,25 @@ class SimulacaoProg():
 
         return consulta
 
+
+    def consultaSimulacaoCategoria_s(self):
+        '''Metodo que consulta uma simulacao ABC por nome em especifico'''
+
+        select = """
+        select 
+	        categoria ,
+	        percentual as "percentualCategoria"
+        from
+	        "PCP".pcp."SimulacaoCategoria" s
+	    where
+            "nomeSimulacao" = %s 
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,self.categoria,))
+
+        return consulta
+
     def consultaSimulacaoMarca(self):
         '''Metodo que consulta uma simulacao ABC por nome em especifico'''
 
@@ -206,6 +225,23 @@ class SimulacaoProg():
         Where 
             "nomeSimulacao" = %s 
             and marca = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(select, conn , params=(self.nomeSimulacao,self.marca,))
+
+        return consulta
+
+    def consultaSimulacaoMarca_s(self):
+        '''Metodo que consulta uma simulacao ABC por nome em especifico'''
+
+        select = """
+        select 
+            * 
+        from 
+            "PCP".pcp."SimulacaoMarca" s 
+        Where 
+            "nomeSimulacao" = %s 
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
