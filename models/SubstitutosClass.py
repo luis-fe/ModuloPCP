@@ -15,10 +15,10 @@ class Substituto():
 
         sql = """
         select 
-            codMateriaPrima,
-            nomeCodMateriaPrima,
-            codMateriaPrimaSubstituto,
-            nomeCodSubstituto
+            "codMateriaPrima",
+            "nomeCodMateriaPrima",
+            "codMateriaPrimaSubstituto",
+            "nomeCodSubstituto"
         from
             pcp."SubstituicaoMP"
         """
@@ -104,10 +104,10 @@ class Substituto():
 
         sql = """
         select 
-            codMateriaPrima,
-            nomeCodMateriaPrima,
-            codMateriaPrimaSubstituto,
-            nomeCodSubstituto
+            "codMateriaPrima",
+            "nomeCodMateriaPrima",
+            "codMateriaPrimaSubstituto",
+            "nomeCodSubstituto"
         from
             pcp."SubstituicaoMP"
         where
