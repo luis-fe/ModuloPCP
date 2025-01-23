@@ -1,15 +1,14 @@
 from connection import ConexaoPostgreWms, ConexaoBanco
 import pandas as pd
-import fastparquet as fp
-from dotenv import load_dotenv, dotenv_values
-import os
 
 
 class Substituto():
-    def __init__(self, codMateriaPrima = None , codMateriaPrimaSubstituto = None):
+    def __init__(self, codMateriaPrima = None , codMateriaPrimaSubstituto = None, nomeCodMateriaPrima = None, nomeCodSubstituto = None):
 
         self.codMateriaPrima = codMateriaPrima
         self.codMateriaPrimaSubstituto = codMateriaPrimaSubstituto
+        self.nomeCodMateriaPrima = nomeCodMateriaPrima
+        self.nomeCodSubstituto = nomeCodSubstituto
 
     def consultaSubstitutos(self):
         '''Metodo que consulta todos os substitutos '''
@@ -17,9 +16,9 @@ class Substituto():
         sql = """
         select 
             codMateriaPrima,
-            nomeMatriaPrima,
+            nomeCodMateriaPrima,
             codMateriaPrimaSubstituto,
-            nomeMatriaPrimaSubstituto
+            nomeCodSubstituto
         from
             pcp."SubstituicaoMP"
         """
@@ -31,6 +30,32 @@ class Substituto():
 
     def inserirSubstituto(self):
         '''Metodo que insere um substituto'''
+
+        insert = """Insert into pcp."SubstituicaoMP" ("codMateriaPrima" , "nomeCodMateriaPrima" , "codMateriaPrimaSubstituto", "nomeCodSubstituto") 
+        values ( %s, %s, %s, %s )"""
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(insert,(self.codMateriaPrima, self.nomeCodMateriaPrima, self.codMateriaPrimaSubstituto, self.nomeCodSubstituto))
+                conn.commit()
+
+    def updateSubstituto(self):
+        '''Metodo que insere um substituto'''
+
+        update = """update  pcp."SubstituicaoMP" 
+        set 
+            "codMateriaPrimaSubstituto" = %s , "nomeCodSubstituto" =%s
+        where 
+            "codMateriaPrima" = %s 
+        """
+
+        with ConexaoPostgreWms.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(update,(self.codMateriaPrimaSubstituto, self.nomeCodSubstituto, self.codMateriaPrima))
+                conn.commit()
+
 
 
     def pesquisarNomeMaterial(self):
@@ -60,4 +85,39 @@ class Substituto():
         else:
             consulta['status'] = True
             return consulta
+
+    def inserirOuAlterSubstitutoMP(self):
+        '''Metodo que insere ou altera o substituto de uma materia prima '''
+
+        #1 - Verifica se a materia prima ja possui substituto
+        verifica = self.verificarMP()
+
+        if verifica.empty:
+            self.inserirSubstituto()
+        else:
+            self.updateSubstituto()
+
+        return pd.DataFrame([{'status':True,'Mensagem':'Substituto inserido ou alterado com sucesso! '}])
+
+    def verificarMP(self):
+        '''Metodo que verifica se a Materia Prima ja possui substituto'''
+
+        sql = """
+        select 
+            codMateriaPrima,
+            nomeCodMateriaPrima,
+            codMateriaPrimaSubstituto,
+            nomeCodSubstituto
+        from
+            pcp."SubstituicaoMP"
+        where
+            codMateriaPrima = %s
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        consulta = pd.read_sql(sql,conn, params=(self.codMateriaPrima,))
+
+        return consulta
+
+
 
