@@ -1,4 +1,4 @@
-from connection import ConexaoPostgreWms
+from connection import ConexaoPostgreWms, ConexaoBanco
 import pandas as pd
 import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
@@ -35,4 +35,29 @@ class Substituto():
 
     def pesquisarNomeMaterial(self):
         '''Metodo que pesquisa o nome via codigoMaterial'''
+
+        sql = """
+    SELECT
+        i.nome
+    FROM
+        cgi.Item2 i2
+    inner join cgi.Item i on
+        i.codigo = i2.codItem
+    WHERE
+        i2.Empresa = 1
+        and i2.codEditado ='""" + str(self.codMateriaPrima)+"""'"""
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        if consulta.empty:
+            return pd.DataFrame([{'status':False, 'nome':'produto nao existe'}])
+
+        else:
+            consulta['status'] = True
+            return consulta
 

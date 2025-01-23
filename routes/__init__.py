@@ -37,6 +37,7 @@ from .TendenciaApi import tendencia_routes
 from .AnaliseMateriaisApi import analiseMP_routes
 from .SimulacaoProg import simulacaoProg_routes
 from .TendenciaClienteApi import tendenciaClientes_routes
+from .SubstitutoMateriaisAPI import substitutosMP_routes
 
 routes_blueprint.register_blueprint(planoPCP_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
@@ -72,3 +73,4 @@ routes_blueprint.register_blueprint(tendencia_routes)
 routes_blueprint.register_blueprint(analiseMP_routes)
 routes_blueprint.register_blueprint(simulacaoProg_routes)
 routes_blueprint.register_blueprint(tendenciaClientes_routes)
+routes_blueprint.register_blueprint(substitutosMP_routes)
