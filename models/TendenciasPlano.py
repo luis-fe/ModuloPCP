@@ -524,6 +524,8 @@ class TendenciaPlano():
         caminhoAbsoluto = os.getenv('CAMINHO')
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
+
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
@@ -541,6 +543,9 @@ class TendenciaPlano():
 
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentualCategoria'] / 100)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
+
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] + tendencia['qtdePedida']
+
 
 
 
