@@ -68,6 +68,8 @@ def post_atualizaInserirSimulacao():
     arrayCategoria = data.get('arrayCategoria',[])
     arrayMarca = data.get('arrayMarca',[])
 
+    print(data)
+
 
     dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).inserirAtualizarSimulacao(arrayAbc, arrayMarca,arrayCategoria)
 
