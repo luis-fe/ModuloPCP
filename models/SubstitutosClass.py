@@ -111,7 +111,7 @@ class Substituto():
         from
             pcp."SubstituicaoMP"
         where
-            codMateriaPrima = %s
+            "codMateriaPrima" = %s
         """
 
         conn = ConexaoPostgreWms.conexaoEngine()
