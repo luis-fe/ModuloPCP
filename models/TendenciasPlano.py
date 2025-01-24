@@ -243,7 +243,7 @@ class TendenciaPlano():
         consultaVendasSku['faltaVender1'] = consultaVendasSku['faltaVender1'].clip(lower=0)
 
             # 6.3 Obtendo o falta a vender1 :
-        consultaVendasSku['previcaoVendasGeral'] = consultaVendasSku['distGeral%']* consultaVendasSku['faltaVender1']
+        consultaVendasSku['previcaoVendasGeral1'] = consultaVendasSku['distGeral%']* consultaVendasSku['faltaVender1']
 
                      # 6.4.1 - Consultando o Estoque da Natureza 5 e fazendo um "merge"  com ds dados
         estoque = ProdutosClass.Produto().estoqueNat5()
@@ -264,9 +264,9 @@ class TendenciaPlano():
 
             # 6.5 Decidindo qual a previsao dos produtos de acompanhamento
         consultaVendasSku['previcaoVendasGeral'] = np.where(
-            consultaVendasSku['disponivelAcomp']>consultaVendasSku['previcaoVendasGeral'],
+            consultaVendasSku['disponivelAcomp']>consultaVendasSku['previcaoVendasGeral1'],
             consultaVendasSku['disponivelAcomp'],
-            0
+            consultaVendasSku['previcaoVendasGeral1']
         )
 
 
