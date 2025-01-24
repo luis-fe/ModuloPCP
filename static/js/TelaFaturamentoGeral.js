@@ -5,7 +5,7 @@ let FaturadoDia = ''
 
 async function Faturamento() {
     try {
-        const response = await fetch(`http://192.168.0.183:8000/pcp/api/dashboarTV?ano=${2024}`, {
+        const response = await fetch(`http://192.168.0.183:8000/pcp/api/dashboarTV?ano=${2025}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
