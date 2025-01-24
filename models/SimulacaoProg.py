@@ -164,7 +164,7 @@ class SimulacaoProg():
 
         select = """
         select 
-            * 
+            class, percentual as "percentualABC" 
         from 
             "PCP".pcp."SimulacaoAbc" s 
         Where 
@@ -237,7 +237,7 @@ class SimulacaoProg():
 
         select = """
         select 
-            * 
+            marca, percentual as "percentualMarca"  
         from 
             "PCP".pcp."SimulacaoMarca" s 
         Where 
