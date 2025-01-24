@@ -273,7 +273,7 @@ class TendenciaPlano():
 
         # 9 - Encontradno a previsao de vendas
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['dist%']* consultaVendasSku['faltaVender']
-        consultaVendasSku['previcaoVendasGeral'] = consultaVendasSku['dist%Geral']* consultaVendasSku['faltaVender']
+        consultaVendasSku['previcaoVendasGeral'] = consultaVendasSku['distGeral%']* consultaVendasSku['faltaVender']
 
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(5)
