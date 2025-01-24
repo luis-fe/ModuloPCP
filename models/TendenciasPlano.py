@@ -264,11 +264,11 @@ class TendenciaPlano():
 
             # 6.5 Decidindo qual a previsao dos produtos de acompanhamento
         consultaVendasSku['previcaoVendasGeral'] = np.where(
-            consultaVendasSku['disponivelAcomp']<consultaVendasSku['previcaoVendasGeral1'] & consultaVendasSku['statusAFV'] == 'Acompanhamento',
+            (consultaVendasSku['disponivelAcomp'] < consultaVendasSku['previcaoVendasGeral1']) &
+            (consultaVendasSku['statusAFV'] == 'Acompanhamento'),
             consultaVendasSku['disponivelAcomp'],
             consultaVendasSku['previcaoVendasGeral1']
         )
-
 
         # 7 - Redistribuindo para o Status AFV Normal o excedente da previsao
         consultaVendasSku['Redistribuir1'] = consultaVendasSku.groupby('marca')['previcaoVendasGeral'].transform('sum')
