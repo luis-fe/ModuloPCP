@@ -212,10 +212,18 @@ class TendenciaPlano():
 
         #df_difereSacola= consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
-        # 4 Filtrar status AFV Normal apenas
-        df_filtered= consultaVendasSku[consultaVendasSku['statusAFV']=='Normal']
+        # 4 Filtrar status AFV diferente de Bloqueado
+        df_filtered1 = consultaVendasSku[consultaVendasSku['statusAFV']!='Bloqueado']
 
             # 4.1 Somar o acumulado de vendas por marca, considerando somente o status Normal
+        vendas_acumuladasGeral = df_filtered1.groupby('marca')['qtdePedida'].sum()
+
+
+
+        # 5 Filtrar status AFV Normal apenas
+        df_filtered= consultaVendasSku[consultaVendasSku['statusAFV']=='Normal']
+
+            # 5.1 Somar o acumulado de vendas por marca, considerando somente o status Normal
         vendas_acumuladas = df_filtered.groupby('marca')['qtdePedida'].sum()
 
 
@@ -227,14 +235,29 @@ class TendenciaPlano():
             0
         )
 
+        consultaVendasSku['vendasAcumuladasGeral'] = np.where(
+            consultaVendasSku['statusAFV'] != 'Bloqueado',
+            consultaVendasSku['marca'].map(vendas_acumuladasGeral),
+            0
+        )
+
         # 6 - Calculando o % distribuido para os status AFV IGUAL a Normal
         consultaVendasSku['dist%'] = np.where(
             consultaVendasSku['vendasAcumuladas'] == 0,  # Condição
             0,  # Valor se condição for verdadeira
             consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladas']  # Valor se falsa
         )
-        #consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA'].reset_index()
-        #consultaVendasSku['%'] = consultaVendasSku.groupby('marca')['vendasAcumuladas'].cumsum()
+
+        consultaVendasSku['distGeral%'] = np.where(
+            consultaVendasSku['vendasAcumuladasGeral'] == 0,  # Condição
+            0,  # Valor se condição for verdadeira
+            consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladasGeral']  # Valor se falsa
+        )
+
+
+
+
+
 
         # 7 - Obtendo a Meta por marca
         meta = Meta(self.codPlano).consultaMetaGeral()
@@ -250,6 +273,7 @@ class TendenciaPlano():
 
         # 9 - Encontradno a previsao de vendas
         consultaVendasSku['previcaoVendas'] = consultaVendasSku['dist%']* consultaVendasSku['faltaVender']
+        consultaVendasSku['previcaoVendasGeral'] = consultaVendasSku['dist%Geral']* consultaVendasSku['faltaVender']
 
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
         consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(5)
