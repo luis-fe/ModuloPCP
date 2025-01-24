@@ -127,6 +127,10 @@ class Produto():
             lambda row: self.Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
         consulta['categoria'] = consulta.apply(
             lambda row: self.Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: self.Categoria('BRINDES', row['nome'], 'DISPLAY', row['categoria']), axis=1)
+        consulta['categoria'] = consulta.apply(
+            lambda row: self.Categoria('CARTAZ', row['nome'], 'DISPLAY', row['categoria']), axis=1)
 
         try:
             # Implantando no banco de dados do Pcp
