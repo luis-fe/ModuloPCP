@@ -154,11 +154,14 @@ class TendenciaPlano():
     def tendenciaVendas(self, aplicaTratamento = 'sim'):
         '''Metodo que desdobra a tendencia DE VENDAS  por sku '''
 
-        # 1 - Carregando o acomponhamento de vendas: instancia o objeto "vendas" da classe Vendas
+        # 1 - Carregando o acomponhamento de vendas:
+        #########  instancia-se o objeto "vendas" da classe Vendas
         vendas = Vendas.VendasAcom(self.codPlano,self.empresa, self.consideraPedBloq)
-            # 1.2 listar as vendas por sku: retorna consultaVendasSku no tipo "dataFrame"
+
+            #### 1.2 listar as vendas por sku: retorna consultaVendasSku: tipo "dataFrame"
         consultaVendasSku = vendas.listagemPedidosSku()
-            # 1.3 - desconsiderando as sacolas do tipo de nota de bonificacao
+
+            ##### 1.3 - desconsiderando as sacolas do tipo de nota de bonificacao
         mask = (consultaVendasSku['categoria'] == 'SACOLA') & (consultaVendasSku['codTipoNota'] == '40')
         consultaVendasSku = consultaVendasSku[~mask]
 
@@ -174,23 +177,22 @@ class TendenciaPlano():
                                                          "codSeqTamanho":'first',
                                                         "codSortimento":"first",
                                                          "codPedido": 'count'}).reset_index()
-            # 2.1 - ordenando por tamanho
+            # 2.1 - ordenando as vendas por sku
         consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
-                                      ascending=False)  # escolher como deseja classificar
-        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != '-']
+                                      ascending=False)
+            # 2.2 - Filtrar os produtos diferente da categoria "Brindes"
         consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'BRINDES']
 
-        #2.2 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
+            #2.3 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
         tam = ProdutosClass.Produto().get_tamanhos()
         consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
         consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
-        consultaVendasSku = consultaVendasSku[~consultaVendasSku['tam'].str.contains('CM', na=False)]
-        consultaVendasSku = consultaVendasSku[consultaVendasSku['tam'] != '20']
 
-        # 2.3 Renomear as colunas necessárias
+
+            # 2.4 Renomear as colunas necessárias
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
 
-            # 2.4 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
+            # 2.5 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
         afv = ProdutosClass.Produto().statusAFV()
         consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
         consultaVendasSku = pd.merge(consultaVendasSku, afv, on='codReduzido',how='left')
@@ -210,7 +212,6 @@ class TendenciaPlano():
         )
 
 
-        #df_difereSacola= consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
         # 4 Filtrar status AFV diferente de Bloqueado
         df_filtered1 = consultaVendasSku[consultaVendasSku['statusAFV']!='Bloqueado']
