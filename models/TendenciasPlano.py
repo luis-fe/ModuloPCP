@@ -245,7 +245,17 @@ class TendenciaPlano():
             # 6.3 Obtendo o falta a vender1 :
         consultaVendasSku['previcaoVendasGeral'] = consultaVendasSku['distGeral%']* consultaVendasSku['faltaVender1']
 
-            # 6.4 Obtendo o disponivel dos produtos em acompanhamento:
+                     # 6.4.1 - Consultando o Estoque da Natureza 5 e fazendo um "merge"  com ds dados
+        estoque = ProdutosClass.Produto().estoqueNat5()
+        consultaVendasSku = pd.merge(consultaVendasSku, estoque, on='codReduzido', how='left')
+        consultaVendasSku['estoqueAtual'].fillna(0, inplace=True)
+
+                    # 6.4.2 - Consultando as Ops em processo  e fazendo um "merge"  com ds dados
+        emProcesso = ProdutosClass.Produto().emProducao()
+        consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
+        consultaVendasSku['emProcesso'].fillna(0, inplace=True)
+
+                    # 6.4.3 Obtendo o disponivel dos produtos em acompanhamento:
         consultaVendasSku['disponivelAcomp'] = np.where(
             consultaVendasSku['statusAFV'] == 'Acompanhamento',
             consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'] -consultaVendasSku['qtdeFaturada'],
@@ -345,15 +355,9 @@ class TendenciaPlano():
         # 9.2 - Drop das colunas que nao desejo
         consultaVendasSku.drop(['faltaVender1','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
 
-        # 9.3 - Consultando o Estoque da Natureza 5 e fazendo um "merge"  com ds dados
-        estoque = ProdutosClass.Produto().estoqueNat5()
-        consultaVendasSku = pd.merge(consultaVendasSku, estoque, on='codReduzido', how='left')
-        consultaVendasSku['estoqueAtual'].fillna(0, inplace=True)
 
-        # 9.3 - Consultando as Ops em processo  e fazendo um "merge"  com ds dados
-        emProcesso = ProdutosClass.Produto().emProducao()
-        consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
-        consultaVendasSku['emProcesso'].fillna(0, inplace=True)
+
+
 
         # 10 - Calculando o disponivel - baseado na quantidade pedida
 
