@@ -258,13 +258,13 @@ class TendenciaPlano():
                     # 6.4.3 Obtendo o disponivel dos produtos em acompanhamento:
         consultaVendasSku['disponivelAcomp'] = np.where(
             consultaVendasSku['statusAFV'] == 'Acompanhamento',
-            consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'] -consultaVendasSku['qtdeFaturada'],
+            consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'],
             0
         )
 
             # 6.5 Decidindo qual a previsao dos produtos de acompanhamento
         consultaVendasSku['previcaoVendasGeral'] = np.where(
-            consultaVendasSku['disponivelAcomp']>consultaVendasSku['previcaoVendasGeral1'],
+            consultaVendasSku['disponivelAcomp']<consultaVendasSku['previcaoVendasGeral1'] & consultaVendasSku['statusAFV'] == 'Acompanhamento',
             consultaVendasSku['disponivelAcomp'],
             consultaVendasSku['previcaoVendasGeral1']
         )
