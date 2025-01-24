@@ -256,9 +256,12 @@ class TendenciaPlano():
         consultaVendasSku['emProcesso'].fillna(0, inplace=True)
 
                     # 6.4.3 Obtendo o disponivel dos produtos em acompanhamento:
+        consultaVendasSku['disponivelAplica'] = (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'])-(consultaVendasSku['qtdePedida']+ consultaVendasSku['qtdeFaturada'])
+
         consultaVendasSku['disponivelAcomp'] = np.where(
-            consultaVendasSku['statusAFV'] == 'Acompanhamento',
-            (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'])-(consultaVendasSku['qtdePedida']+ consultaVendasSku['qtdeFaturada']),
+            (consultaVendasSku['statusAFV'] == 'Acompanhamento')&(consultaVendasSku['disponivelAplica'] > 0),
+        consultaVendasSku['disponivelAplica']
+            ,
             0
         )
 
