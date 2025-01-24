@@ -23,7 +23,7 @@ def token_required(f):
 
 @dashboardTVroute.route('/pcp/api/dashboarTV', methods=['GET'])
 def dashboarTV():
-        ano = request.args.get('ano', '2024')
+        ano = request.args.get('ano', '2025')
         empresa = request.args.get('empresa', 'Todas')
 
         if empresa == 'Outras':
@@ -56,7 +56,7 @@ def restart_server():
 @dashboardTVroute.route('/pcp/api/dashboardTVBACKUP', methods=['GET'])
 @token_required
 def dashboarTVBACKUP():
-    ano = request.args.get('ano','2024')
+    ano = request.args.get('ano','2025')
     empresa = request.args.get('empresa', 'Todas')
 
     usuarios = PainelFaturamento.Backup(ano,empresa)
