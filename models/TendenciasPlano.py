@@ -242,7 +242,7 @@ class TendenciaPlano():
         consultaVendasSku['faltaVender1'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
         consultaVendasSku['faltaVender1'] = consultaVendasSku['faltaVender1'].clip(lower=0)
 
-            # 6.3 Obtendo o falta a vender1 :
+            # 6.3 Obtendo a primeira previsao de vendas:
         consultaVendasSku['previcaoVendasGeral1'] = consultaVendasSku['distGeral%']* consultaVendasSku['faltaVender1']
 
                      # 6.4.1 - Consultando o Estoque da Natureza 5 e fazendo um "merge"  com ds dados
@@ -275,7 +275,7 @@ class TendenciaPlano():
 
         # 7 - Redistribuindo para o Status AFV Normal o excedente da previsao
         consultaVendasSku['Redistribuir1'] = consultaVendasSku.groupby('marca')['previcaoVendasGeral'].transform('sum')
-        consultaVendasSku['Redistribuir1_'] = consultaVendasSku['metaPecas'] - consultaVendasSku['Redistribuir1']
+        consultaVendasSku['Redistribuir1_'] = consultaVendasSku['faltaVender1'] - consultaVendasSku['Redistribuir1']
 
 
             # 7.1 Filtrar status AFV Normal apenas, para podermos fazer uma redistribuicao
@@ -320,6 +320,8 @@ class TendenciaPlano():
 
         #if aplicaTratamento == 'sim':
         consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
+        consultaVendasSku['redistribuir2'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
+
 
         # Filtrar as 200 primeiras linhas
         consultaVendasSku_200 = consultaVendasSku.iloc[:400]
@@ -334,9 +336,8 @@ class TendenciaPlano():
             .transform('sum')
         )
         consultaVendasSku['subtotal2'] = consultaVendasSku['previcaoVendas']/consultaVendasSku['subtotal2']
-        consultaVendasSku['redistribuir'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
 
-        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'] * consultaVendasSku['redistribuir']
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'] * consultaVendasSku['redistribuir2']
         consultaVendasSku['subtotal2'].fillna(0,inplace=True)
 
         consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
