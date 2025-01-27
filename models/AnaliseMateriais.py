@@ -303,6 +303,7 @@ class AnaliseMateriais():
 
 
         Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
+        Necessidade['Saldo Substituto'].fillna(0,inplace=True)
         obterSubstitutos.fillna('-',inplace=True)
         Necessidade['Saldo Substituto'] = Necessidade['Saldo Substituto'].where(Necessidade['Saldo Substituto'] > 0, 0)
 
