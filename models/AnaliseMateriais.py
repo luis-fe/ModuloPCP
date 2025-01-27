@@ -301,7 +301,7 @@ class AnaliseMateriais():
             columns={'saldo Novo': 'Saldo Substituto','CodComponente':'codMateriaPrimaSubstituto','codMateriaPrima':'CodComponente'}
         )
 
-       # Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
+        Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
         obterSubstitutos.fillna('-',inplace=True)
 
 
