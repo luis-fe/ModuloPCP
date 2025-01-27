@@ -283,6 +283,7 @@ class AnaliseMateriais():
         Necessidade['estoqueAtual'].fillna(0,inplace=True)
         Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)'])+Necessidade['estoqueAtual']+Necessidade['SaldoPedCompras']-Necessidade['EmRequisicao']
                                             # -0 + 1.747 + 2 -741,49 ( o negativo significa necessidade de compra)
+        Necessidade['saldo Novo'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] > 0, 0)
         Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
 
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
@@ -314,6 +315,11 @@ class AnaliseMateriais():
                      'loteMut': '11-Lote Mutiplo'
                      },
             inplace=True)
+
+        # Encontrando o saldo restante
+
+
+
 
         # Função para ajustar a necessidade
         def ajustar_necessidade(necessidade, lote_multiplo, lotemin):
@@ -678,3 +684,4 @@ class AnaliseMateriais():
             return 1
         else:  # Caso padrão, converter direto
             return 1
+
