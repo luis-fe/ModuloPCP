@@ -304,6 +304,7 @@ class AnaliseMateriais():
 
         Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
         obterSubstitutos.fillna('-',inplace=True)
+        Necessidade['Saldo Substituto'] = Necessidade['Saldo Substituto'].where(Necessidade['Saldo Substituto'] > 0, 0)
 
 
         Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
