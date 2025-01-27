@@ -337,6 +337,9 @@ class AnaliseMateriais():
                      'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
                      'LeadTime': '13-LeadTime',
                      'LoteMin': '14-Lote Mínimo',
+                     'codMateriaPrimaSubstituto': '15-CodSubstituto',
+                     'nomeCodSubstituto': '16-NomeSubstituto',
+                     'Saldo Substituto': '17-SaldoSubs.',
                      'loteMut': '11-Lote Mutiplo'
                      },
             inplace=True)
