@@ -33,7 +33,7 @@ def dashboarTV():
             usuarios = PainelFaturamento.Faturamento_ano(ano, empresa)
             usuarios = pd.DataFrame(usuarios)
 
-        os.system("clear")
+        #os.system("clear")
         # Obtém os nomes das colunas
         column_names = usuarios.columns
         # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
