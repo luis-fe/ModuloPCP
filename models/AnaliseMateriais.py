@@ -6,7 +6,7 @@ import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 import os
 
-from models import PlanoClass, ProdutosClass, TendenciasPlano
+from models import PlanoClass, ProdutosClass, TendenciasPlano, SubstitutosClass
 
 
 class AnaliseMateriais():
@@ -284,6 +284,25 @@ class AnaliseMateriais():
         Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)'])+Necessidade['estoqueAtual']+Necessidade['SaldoPedCompras']-Necessidade['EmRequisicao']
                                             # -0 + 1.747 + 2 -741,49 ( o negativo significa necessidade de compra)
         Necessidade['saldo Novo'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] > 0, 0)
+        Necessidade['saldo Novo'] = Necessidade['saldo Novo'] - Necessidade['SaldoPedCompras']
+
+        # Consulta o substitutos:
+        obterSubstitutos = SubstitutosClass.Substituto().consultaSubstitutos()
+        obterSubstitutos.rename(
+            columns={'codMateriaPrimaSubstituto':'CodComponente'}
+
+        )
+        NecessidadeSubstituto =  Necessidade.groupby('CodComponente').agg({'saldo Novo':'sum'}).reset_index()
+        obterSubstitutos = pd.merge(obterSubstitutos,NecessidadeSubstituto,on='CodComponente',how='left')
+        obterSubstitutos.fillna(0,inplace=True)
+        obterSubstitutos.rename(
+            columns={'saldo Novo': 'Saldo Substituto','CodComponente':'codMateriaPrimaSubstituto','codMateriaPrima':'CodComponente'}
+        )
+
+        Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
+        obterSubstitutos.fillna('-',inplace=True)
+
+
         Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
 
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
