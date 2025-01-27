@@ -344,6 +344,9 @@ class AnaliseMateriais():
                      },
             inplace=True)
 
+        Necessidade = Necessidade.drop(columns=['nomeCodMateriaPrima','novoNome','saldo Novo'])
+
+
         # Encontrando o saldo restante
 
 
