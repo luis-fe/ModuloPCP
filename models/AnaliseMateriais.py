@@ -291,6 +291,8 @@ class AnaliseMateriais():
         obterSubstitutos.rename(
             columns={'codMateriaPrimaSubstituto':'codEditado'},
             inplace=True)
+        informacoes = self.informacoesComponente()
+        Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
 
         NecessidadeSubstituto =  Necessidade.groupby('codEditado').agg({'saldo Novo':'sum'}).reset_index()
 
@@ -314,8 +316,7 @@ class AnaliseMateriais():
         Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
         Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
 
-        informacoes = self.informacoesComponente()
-        Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente',how='left')
+
         Necessidade['loteMut'].fillna(1,inplace=True)
         Necessidade['LoteMin'].fillna(0,inplace=True)
 
