@@ -289,20 +289,20 @@ class AnaliseMateriais():
         # Consulta o substitutos:
         obterSubstitutos = SubstitutosClass.Substituto().consultaSubstitutos()
         obterSubstitutos.rename(
-            columns={'codMateriaPrimaSubstituto':'CodComponente'},
+            columns={'codMateriaPrimaSubstituto':'codEditado'},
             inplace=True)
 
-        NecessidadeSubstituto =  Necessidade.groupby('CodComponente').agg({'saldo Novo':'sum'}).reset_index()
+        NecessidadeSubstituto =  Necessidade.groupby('codEditado').agg({'saldo Novo':'sum'}).reset_index()
 
 
-        obterSubstitutos = pd.merge(obterSubstitutos,NecessidadeSubstituto,on='CodComponente',how='left')
+        obterSubstitutos = pd.merge(obterSubstitutos,NecessidadeSubstituto,on='codEditado',how='left')
         obterSubstitutos.fillna(0,inplace=True)
         obterSubstitutos.rename(
-            columns={'saldo Novo': 'Saldo Substituto','CodComponente':'codMateriaPrimaSubstituto','codMateriaPrima':'CodComponente'},
+            columns={'saldo Novo': 'Saldo Substituto','codEditado':'codMateriaPrimaSubstituto','codMateriaPrima':'codEditado'},
             inplace=True)
 
 
-        Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
+        Necessidade = pd.merge(Necessidade,obterSubstitutos,on='codEditado',how='left')
         Necessidade['Saldo Substituto'].fillna(0,inplace=True)
         obterSubstitutos.fillna('-',inplace=True)
         Necessidade['Saldo Substituto'] = Necessidade['Saldo Substituto'].where(Necessidade['Saldo Substituto'] > 0, 0)
