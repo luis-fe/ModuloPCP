@@ -295,13 +295,13 @@ class AnaliseMateriais():
         print(obterSubstitutos)
         print(NecessidadeSubstituto)
 
-        obterSubstitutos = pd.merge(obterSubstitutos,NecessidadeSubstituto,on='CodComponente',how='left')
+        #obterSubstitutos = pd.merge(obterSubstitutos,NecessidadeSubstituto,on='CodComponente',how='left')
         obterSubstitutos.fillna(0,inplace=True)
-        obterSubstitutos.rename(
-            columns={'saldo Novo': 'Saldo Substituto','CodComponente':'codMateriaPrimaSubstituto','codMateriaPrima':'CodComponente'}
-        )
+        #obterSubstitutos.rename(
+         #   columns={'saldo Novo': 'Saldo Substituto','CodComponente':'codMateriaPrimaSubstituto','codMateriaPrima':'CodComponente'}
+        #)
 
-        Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
+       # Necessidade = pd.merge(Necessidade,obterSubstitutos,on='CodComponente',how='left')
         obterSubstitutos.fillna('-',inplace=True)
 
 
