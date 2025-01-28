@@ -1,6 +1,4 @@
 import sys
-import time
-
 import numpy
 import pandas as pd
 from connection import ConexaoBanco, ConexaoPostgreWms
@@ -19,11 +17,11 @@ class MonitorPedidosOps():
     def __init__(self, empresa, dataInicioVendas , dataFinalVendas, tipoDataEscolhida, dataInicioFat, dataFinalFat ,arrayRepresentantesExcluir = '',
                  arrayEscolherRepresentante = '', arrayescolhernomeCliente = '', parametroClassificacao = None , filtroDataEmissaoIni = '' , filtroDataEmissaoFim = '',
                  analiseOPGarantia = None):
-        self.empresa = empresa
-        self.dataInicioVendas = dataInicioVendas
-        self.dataFinalVendas = dataFinalVendas
-        self.tipoDataEscolhida = tipoDataEscolhida
-        self.dataInicioFat = dataInicioFat
+        self.empresa = empresa # Codigo da empresa utilizada no monitor
+        self.dataInicioVendas = dataInicioVendas # Início  de vendas : data de filtro de 'Emissao' do pedido de venda;
+        self.dataFinalVendas = dataFinalVendas # Fim  de vendas : data de filtro de 'Emissao' do pedido de venda;
+        self.tipoDataEscolhida = tipoDataEscolhida # Filtrar o criterio utilizado no tipo de data : DataEmissao  x DataPrevOriginal
+        self.dataInicioFat = dataInicioFat #
         self.dataFinalFat = dataFinalFat
         self.arrayRepresentantesExcluir = arrayRepresentantesExcluir
         self.arrayEscolherRepresentante = arrayEscolherRepresentante
@@ -62,6 +60,7 @@ class MonitorPedidosOps():
             # escolhernomeCliente = escolhernomeCliente.split(', ')
             pedidos = pedidos[pedidos['nome_cli'].str.contains(self.arrayescolhernomeCliente, case=False, na=False)]
 
+        # 1.4 - Relaizar a combinacao com a capa da sugestao para verificar o status da sugestao do pedido
         statusSugestao = self.CapaSugestao()
         pedidos = pd.merge(pedidos, statusSugestao, on='codPedido', how='left')
         pedidos["StatusSugestao"].fillna('Nao Sugerido', inplace=True)
@@ -89,17 +88,19 @@ class MonitorPedidosOps():
         else:
             sku = self.Monitor_nivelSkuPrev()
 
+        # 5.1 - Obter a categoria dos itens
         estruturasku = self.EstruturaSku()
-        # 5.1 - Considerando somente a qtdePedida maior que 0
         pedidos = pd.merge(pedidos, sku, on='codPedido', how='left')
         pedidos = pd.merge(pedidos, estruturasku, on='codProduto', how='left')
         pedidos['CATEGORIA'].fillna('-',inplace=True)
+
+        # 5.2 - Calcular a Quantidade de saldo aberto por pedido
         pedidos['QtdSaldo'] = pedidos['qtdePedida'] - pedidos['qtdeFaturada'] - pedidos['qtdeSugerida']
         pedidos['QtdSaldo'].fillna(0, inplace=True)
         pedidos['QtdSaldo'] = pedidos['QtdSaldo'].astype(int)
 
         # 6 Consultando n banco de dados do ERP o saldo de estoque
-
+        #6.1 - deseja simular as Ops que estao na garantia ?
         if self.analiseOPGarantia != None:
             estoque = EstoqueSkuClass.EstoqueSKU().simulandoEstoqueGarantia()
         else:
@@ -115,7 +116,7 @@ class MonitorPedidosOps():
         pedidos['dataPrevAtualizada'].fillna('-', inplace=True)
 
         # 8 -# Clasificando o Dataframe para analise
-        pedidos = self.Classificacao(pedidos, self.parametroClassificacao)
+        pedidos = self.classificacao(pedidos, self.parametroClassificacao)
 
         # 9 Contando o numero de ocorrencias acumulado do sku no DataFrame
         pedidos = pedidos[pedidos['vlrSaldo'] > 0]
@@ -127,10 +128,7 @@ class MonitorPedidosOps():
         # 10.2 Obtendo a necessidade de estoque
         pedidos['Necessidade'] = pedidos.groupby('codProduto')['QtdSaldo'].cumsum()
         # 10.3 0 Obtendo a Qtd que antende para o pedido baseado no estoque
-        # pedidos["Qtd Atende"] = pedidos.apply(lambda row: row['QtdSaldo']  if row['Necessidade'] <= row['EstoqueLivre'] else 0, axis=1)
         pedidos['Qtd Atende'] = pedidos['QtdSaldo'].where(pedidos['Necessidade'] <= pedidos['EstoqueLivre'], 0)
-        # analise = pedidos[pedidos['codProduto']=='717411']
-        # analise.to_csv('./dados/analise.csv')
         pedidos.loc[pedidos['qtdeSugerida'] > 0, 'Qtd Atende'] = pedidos['qtdeSugerida']
         pedidos['Qtd Atende'] = pedidos['Qtd Atende'].astype(int)
 
@@ -339,7 +337,7 @@ class MonitorPedidosOps():
                                         qtdPecasFaturadas
                                     FROM 
                                         Ped.Pedido p
-                                       where 
+                                    where 
                                         codEmpresa = """ + empresa + """
                                         and  dataEmissao >= '""" + self.dataInicioFat + """' 
                                         and dataEmissao <= '""" + self.dataFinalVendas + """' 
@@ -628,7 +626,10 @@ class MonitorPedidosOps():
 
         return consultar
 
-    def Classificacao(self, pedidos, parametro):
+    def classificacao(self, pedidos, parametro):
+        '''Metodo utilizado para classificar os pedidos de acordo com o criterio escolhido:
+        Faturamento x DataPrevisao'''
+
         if parametro == 'Faturamento':
             # Define os valores de 'codSitSituacao' com base na condição para Faturamento
             pedidos.loc[

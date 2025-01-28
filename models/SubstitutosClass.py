@@ -30,6 +30,9 @@ class Substituto():
 
     def inserirSubstituto(self):
         '''Metodo que insere um substituto'''
+        self.nomeCodSubstituto = self.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
+        self.nomeCodMateriaPrima = self.pesquisarNomeMaterial()
+
 
         insert = """Insert into pcp."SubstituicaoMP" ("codMateriaPrima" , "nomeCodMateriaPrima" , "codMateriaPrimaSubstituto", "nomeCodSubstituto") 
         values ( %s, %s, %s, %s )"""
@@ -42,6 +45,8 @@ class Substituto():
 
     def updateSubstituto(self):
         '''Metodo que insere um substituto'''
+
+        self.nomeCodSubstituto = self.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
 
         update = """update  pcp."SubstituicaoMP" 
         set 
@@ -58,8 +63,15 @@ class Substituto():
 
 
 
-    def pesquisarNomeMaterial(self):
+    def pesquisarNomeMaterial(self, codigoMP = ''):
         '''Metodo que pesquisa o nome via codigoMaterial'''
+
+
+        if codigoMP == '':
+            codigoMP = str(self.codMateriaPrima)
+        else:
+            codigoMP = codigoMP
+
 
         sql = """
     SELECT
@@ -70,7 +82,7 @@ class Substituto():
         i.codigo = i2.codItem
     WHERE
         i2.Empresa = 1
-        and i2.codEditado ='""" + str(self.codMateriaPrima)+"""'"""
+        and i2.codEditado ='""" + codigoMP+"""'"""
 
         with ConexaoBanco.Conexao2() as conn:
             with conn.cursor() as cursor:
