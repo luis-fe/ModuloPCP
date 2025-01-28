@@ -31,10 +31,10 @@ class Substituto():
     def inserirSubstituto(self):
         '''Metodo que insere um substituto'''
         self.nomeCodSubstituto = self.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
-        self.nomeCodSubstituto = self.nomeCodSubstituto[0]
+        self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
 
         self.nomeCodMateriaPrima = self.pesquisarNomeMaterial()
-        self.nomeCodMateriaPrima = self.nomeCodSubstituto[0]
+        self.nomeCodMateriaPrima = self.nomeCodSubstituto['nome'][0]
 
 
 
@@ -51,7 +51,7 @@ class Substituto():
         '''Metodo que insere um substituto'''
 
         self.nomeCodSubstituto = self.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
-        self.nomeCodSubstituto = self.nomeCodSubstituto[0]
+        self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
         update = """update  pcp."SubstituicaoMP" 
         set 
             "codMateriaPrimaSubstituto" = %s , "nomeCodSubstituto" =%s
