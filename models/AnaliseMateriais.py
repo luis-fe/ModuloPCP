@@ -307,9 +307,12 @@ class AnaliseMateriais():
         Necessidade = pd.merge(Necessidade,obterSubstitutos,on='codEditado',how='left')
         Necessidade['Saldo Substituto'].fillna(0,inplace=True)
         obterSubstitutos.fillna('-',inplace=True)
+
+
+
         Necessidade['Saldo Substituto'] = Necessidade['Saldo Substituto'].where(Necessidade['Saldo Substituto'] > 0, 0)
 
-
+        Necessidade['Necessidade faltaProg (Tendencia)'] =Necessidade['Necessidade faltaProg (Tendencia)'] -Necessidade['Saldo Substituto']
         Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
 
         Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
