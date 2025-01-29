@@ -34,7 +34,7 @@ class Substituto():
         self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
 
         self.nomeCodMateriaPrima = self.pesquisarNomeMaterial()
-        self.nomeCodMateriaPrima = self.nomeCodSubstituto['nome'][0]
+        self.nomeCodMateriaPrima = self.nomeCodMateriaPrima['nome'][0]
 
 
 

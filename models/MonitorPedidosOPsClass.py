@@ -138,11 +138,10 @@ class MonitorPedidosOps():
         # 11.2  Calculando a necessidade a nivel de grade Pedido||Prod.||Cor
         pedidos['Saldo +Sugerido'] = pedidos['QtdSaldo'] + pedidos['qtdeSugerida']
         pedidos['Saldo Grade'] = pedidos.groupby('Pedido||Prod.||Cor')['Saldo +Sugerido'].transform('sum')
-        # etapa11 = controle.salvarStatus_Etapa11(rotina, ip, etapa10, 'necessidade a nivel de grade Pedido||Prod.||Cor')#Registrar etapa no controlador
 
         # 12 obtendo a Qtd que antende para o pedido baseado no estoque e na grade
         pedidos['X QTDE ATENDE'] = pedidos.groupby('Pedido||Prod.||Cor')['Qtd Atende'].transform('sum')
-        # pedidos['Qtd Atende por Cor'] = pedidos.apply(lambda row: row['Saldo +Sugerido'] if row['Saldo Grade'] == row['X QTDE ATENDE'] else 0, axis=1)
+
         pedidos['Qtd Atende por Cor'] = pedidos['Saldo +Sugerido'].where(
             pedidos['Saldo Grade'] == pedidos['X QTDE ATENDE'], 0)
 
