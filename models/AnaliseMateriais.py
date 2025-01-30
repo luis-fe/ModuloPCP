@@ -296,7 +296,6 @@ class AnaliseMateriais():
 
         NecessidadeSubstituto =  Necessidade.groupby('codEditado').agg({'saldo Novo':'sum'}).reset_index()
 
-
         obterSubstitutos = pd.merge(obterSubstitutos,NecessidadeSubstituto,on='codEditado',how='left')
         obterSubstitutos.fillna(0,inplace=True)
         obterSubstitutos.rename(
@@ -381,6 +380,9 @@ class AnaliseMateriais():
         Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.formatar_float)
         Necessidade['06-Necessidade faltaProg(Tendencia)'] = Necessidade['06-Necessidade faltaProg(Tendencia)'].apply(self.formatar_float)
         Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
+
+        Necessidade = Necessidade.drop_duplicates()
+
         return Necessidade
 
     def metaLote(self):
