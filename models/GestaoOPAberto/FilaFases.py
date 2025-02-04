@@ -70,7 +70,6 @@ def FilaFases():
         WHERE 
             op.codempresa = 1 
             and op.situacao = 3 
-            and op.codTipoOP||op.codFaseAtual <> '2426'
     """
 
     with ConexaoBanco.ConexaoInternoMPL() as conn:
