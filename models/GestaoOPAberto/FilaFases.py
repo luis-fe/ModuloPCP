@@ -8,32 +8,32 @@ import os
 
 def RoteiroOPsAberto():
     sqlCsw = """
-SELECT
-	numeroOP ,
-	codSeqRoteiro,
-	codFase,
-	(
-	SELECT
-		codtipoop
-	from
-		tco.OrdemProd o
-	WHERE
-		o.codempresa = 1
-		and o.numeroop = r.numeroOP) as tipoOP
-FROM
-	tco.RoteiroOP r
-WHERE
-	r.codEmpresa = 1
-	and 
-numeroOP in (
-	SELECT
-		numeroOP
-	from
-		tco.OrdemProd op
-	WHERE
-		op.codempresa = 1
-		and op.situacao = 3
-		and op.codFaseAtual not in (1, 401))
+        SELECT
+            numeroOP ,
+            codSeqRoteiro,
+            codFase,
+            (
+            SELECT
+                codtipoop
+            from
+                tco.OrdemProd o
+            WHERE
+                o.codempresa = 1
+                and o.numeroop = r.numeroOP) as tipoOP
+        FROM
+            tco.RoteiroOP r
+        WHERE
+            r.codEmpresa = 1
+            and 
+        numeroOP in (
+            SELECT
+                numeroOP
+            from
+                tco.OrdemProd op
+            WHERE
+                op.codempresa = 1
+                and op.situacao = 3
+                and op.codFaseAtual not in (1, 401))
     """
 
     with ConexaoBanco.ConexaoInternoMPL() as conn:
@@ -51,10 +51,26 @@ numeroOP in (
 
 def FilaFases():
 
+
+    # 1: Carregar o SQL das OPS em aberto do CSW
     sqlOrdemAbertoCsw = """
-    SELECT op.codLote , codTipoOP , numeroOP, codSeqRoteiroAtual, lot.descricao as desLote, codfaseatual from tco.OrdemProd op 
-    inner join tcl.Lote lot on lot.codLote = op.codLote  and lot.codEmpresa  = 1 
-    WHERE op.codempresa = 1 and op.situacao = 3 and op.codTipoOP||op.codFaseAtual <> '2426'
+        SELECT 
+            op.codLote , 
+            codTipoOP , 
+            numeroOP, 
+            codSeqRoteiroAtual, 
+            lot.descricao as desLote, 
+            codfaseatual 
+        from 
+            tco.OrdemProd op 
+        inner join 
+            tcl.Lote lot 
+            on lot.codLote = op.codLote  
+            and lot.codEmpresa  = 1 
+        WHERE 
+            op.codempresa = 1 
+            and op.situacao = 3 
+            and op.codTipoOP||op.codFaseAtual <> '2426'
     """
 
     with ConexaoBanco.ConexaoInternoMPL() as conn:
@@ -66,11 +82,16 @@ def FilaFases():
             sqlOrdemAbertoCsw = pd.DataFrame(rows, columns=colunas)
             del rows
 
+    # 2: Carregando os roteiros das OPs em aberto e realizando o merge com a carga (# 01 item anterior)
     fila = RoteiroOPsAberto()
     fila = pd.merge(fila,sqlOrdemAbertoCsw,on='numeroOP')
-    fila['codSeqRoteiroAtual'] =fila['codSeqRoteiroAtual'].astype(int)
 
+    # 3: Encontrando o status das ops em cada fase
+    fila['codSeqRoteiroAtual'] =fila['codSeqRoteiroAtual'].astype(int)
+    #3.1 - Caso o roteiro atual for igual ao codigo da sequencia de roteiro
     fila['Situacao'] = np.where(fila['codSeqRoteiroAtual'] == fila['codSeqRoteiro'], 'em processo', '-')
+
+
     fila['Situacao'] = np.where((fila['codSeqRoteiroAtual'] > fila['codSeqRoteiro']) & (fila['Situacao'] == '-'),
                                 'produzido', fila['Situacao'])
     fila['Situacao'] = np.where((fila['codSeqRoteiroAtual'] < fila['codSeqRoteiro']) & (fila['Situacao'] == '-'),
@@ -152,18 +173,22 @@ def ApresentacaoFila(COLECAO):
     fila.to_csv(f'{caminhoAbsoluto}/dados/filaroteiroOP.csv')
 
     fila_carga_atual = fila[fila['Situacao'] == 'em processo'].reset_index()
-    fila_fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
-
-    fila = fila.groupby('codFase').agg({"fase": 'first'}).reset_index()
-
     fila_carga_atual = fila_carga_atual.groupby('codFase').agg({"pcs": 'sum'}).reset_index()
     fila_carga_atual.rename(columns={'pcs': 'Carga Atual'}, inplace=True)
+
+
+
+    fila_fila = fila[fila['Situacao'] == 'a produzir'].reset_index()
+
+
 
     fila_fila = fila_fila.groupby('codFase').agg({"pcs": 'sum'}).reset_index()
     fila_fila.rename(columns={'pcs': 'Fila'}, inplace=True)
 
-    fila = pd.merge(fila, fila_carga_atual, on='codFase')
-    fila = pd.merge(fila, fila_fila, on='codFase')
+    fila = fila.groupby('codFase').agg({"fase": 'first'}).reset_index()
+    fila = pd.merge(fila, fila_carga_atual, on='codFase',how='left')
+    fila = pd.merge(fila, fila_fila, on='codFase',how='left')
+    fila.fillna(0,inplace=True)
 
     apresentacao_query = """
         SELECT x."nomeFase" as "fase", apresentacao 
