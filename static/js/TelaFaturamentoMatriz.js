@@ -80,7 +80,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: function (value/1000000) {
+                        callback: function (value) {
                             return 'R$' + value.toLocaleString('pt-BR');
                         },
                         font: {
