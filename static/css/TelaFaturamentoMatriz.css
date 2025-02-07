@@ -90,8 +90,9 @@
 
 }
 
-#meuGraficoDeBarras{
-    height: 90%;
+#meuGraficoDeBarras {
+    width: 100%; /* Ocupa 100% da largura do contêiner pai */
+    height: 90%; /* Ocupa 90% da altura do contêiner pai */
 }
 
 
