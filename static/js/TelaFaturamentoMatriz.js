@@ -81,10 +81,10 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                     beginAtZero: true,
                     ticks: {
                         callback: function (value) {
-                            return 'R$ ' + value.toLocaleString('pt-BR');
+                            return 'R$' + value.toLocaleString('pt-BR');
                         },
                         font: {
-                            size: 30 // Ajuste o tamanho da fonte do eixo X
+                            size: 20 // Ajuste o tamanho da fonte do eixo X
                                 }
                     },
                 },
@@ -98,7 +98,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                     callbacks: {
                         label: function (context) {
                             const value = context.parsed.y;
-                            return 'R$ ' + value.toLocaleString('pt-BR');
+                            return 'R$' + value.toLocaleString('pt-BR');
                         },
                     },
                 },
