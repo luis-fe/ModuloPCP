@@ -62,8 +62,8 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 backgroundColor: 'rgb(93, 140, 233)',
                 borderColor: 'rgb(211, 211, 211)',
                 borderWidth: 1,
-                font-size: 25px;
-                },
+                font-size: 25px
+            },
             {
                 type: 'bar',
                 label: 'Meta',
