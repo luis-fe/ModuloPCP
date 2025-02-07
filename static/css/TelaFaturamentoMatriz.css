@@ -60,7 +60,7 @@
 
 .Dados .TabelaFaturamento th {
     background-color: var(--cor3);
-    max-height: 25px;
+    max-height: 30px;
   }
           
   .Dados .TabelaFaturamento tdd {
