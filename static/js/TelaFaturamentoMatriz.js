@@ -81,7 +81,10 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                     beginAtZero: true,
                     ticks: {
                         callback: function (value) {
-                            return 'R$' + value.toLocaleString('pt-BR');
+                               if (value >= 1000000) {
+                        return 'R$' + (value / 1000000) + 'M'; // Converte milhões
+                    }
+                    return 'R$' + value.toLocaleString('pt-BR'); // Formato padrão para valores menores
                         },
                         font: {
                             size: 20 // Ajuste o tamanho da fonte do eixo X
