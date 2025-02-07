@@ -49,7 +49,7 @@
 }
 
 .Dados{
-    width: 60%;
+    width: 55%;
     height: 90%;
     flex-direction: column;
     display: block;
@@ -81,7 +81,7 @@
   }
 
 .grafico{
-    width: 40%;
+    width: 45%;
     height: 90%;
 
     margin-top: 100px;
