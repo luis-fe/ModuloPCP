@@ -89,7 +89,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                         font: {
                             size: 20 // Ajuste o tamanho da fonte do eixo X
                                 },
-                            color: 'white' // Cor da fonte no eixo X
+                            //color: 'white' // Cor da fonte no eixo X
 
                     },
                 },
@@ -100,7 +100,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                             font: {
                                 size: 22 // Ajuste o tamanho da fonte do eixo X
                                     },
-                            color: 'white' // Cor da fonte no eixo X
+                            //color: 'white' // Cor da fonte no eixo X
 
 
                             }
