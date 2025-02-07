@@ -80,7 +80,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: function (value) {
+                        callback: function (value/1000000) {
                             return 'R$' + value.toLocaleString('pt-BR');
                         },
                         font: {
@@ -95,7 +95,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                     barPercentage: 0.1,// Ajusta a largura da barra dentro da categoria
                     ticks: {
                             font: {
-                                size: 20 // Ajuste o tamanho da fonte do eixo X
+                                size: 30 // Ajuste o tamanho da fonte do eixo X
                                     },
                             color: 'white' // Cor da fonte no eixo X
 
