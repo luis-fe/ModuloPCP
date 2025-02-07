@@ -88,7 +88,17 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                                 }
                     },
                 },
+                x: {
+                     barPercentage: 0.2, // Ajusta a largura da barra dentro da categoria
+                    categoryPercentage: 0.9, // Ajusta o espaçamento entre as categorias
+                    ticks: {
+                        font: {
+                            size: 20
+                        }
+
+                    }
             },
+
             plugins: {
                 legend: {
                     display: true,
