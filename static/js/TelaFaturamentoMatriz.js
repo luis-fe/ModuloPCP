@@ -61,8 +61,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 data: valoresFaturadosMilhoes,
                 backgroundColor: 'rgb(93, 140, 233)',
                 borderColor: 'rgb(211, 211, 211)',
-                borderWidth: 1,
-                font-size: 25px
+                borderWidth: 1
             },
             {
                 type: 'bar',
