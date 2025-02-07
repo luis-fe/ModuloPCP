@@ -84,7 +84,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                             return 'R$ ' + value.toLocaleString('pt-BR');
                         },
                         font: {
-                            size: 14 // Ajuste o tamanho da fonte do eixo X
+                            size: 30 // Ajuste o tamanho da fonte do eixo X
                                 }
                     },
                 },
