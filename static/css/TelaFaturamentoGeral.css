@@ -50,6 +50,8 @@
 
 .Dados{
     width: 52%;
+    height: 90%;
+
     flex-direction: column;
     display: block;
     align-items: center;
