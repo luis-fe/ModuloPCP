@@ -74,6 +74,8 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
         ],
         },
         options: {
+            responsive:true,
+            maintainAspectRatio: false, // Permite ajuste livre da altura
             scales: {
                 y: {
                     beginAtZero: true,
