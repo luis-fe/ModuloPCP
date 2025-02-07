@@ -90,7 +90,12 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 },
 
                 x: {
-                    barPercentage: 0.8, // Ajusta a largura da barra dentro da categoria
+                    barPercentage: 0.1,// Ajusta a largura da barra dentro da categoria
+                    ticks: {
+                            font: {
+                                size: 20 // Ajuste o tamanho da fonte do eixo X
+                                    }
+                            }
                     }
 
             },
