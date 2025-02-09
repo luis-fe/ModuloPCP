@@ -61,7 +61,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 data: valoresFaturadosMilhoes,
                 backgroundColor: 'rgb(93, 140, 233)',
                 borderColor: 'rgb(211, 211, 211)',
-                borderWidth: 1,
+                borderWidth: 1
             },
             {
                 type: 'bar',
@@ -74,16 +74,40 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
         ],
         },
         options: {
+            responsive:true,
+            maintainAspectRatio: false, // Permite ajuste livre da altura
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
                         callback: function (value) {
-                            return 'R$ ' + value.toLocaleString('pt-BR');
+                               if (value >= 1000000) {
+                        return 'R$' + (value / 1000000) + 'M'; // Converte milhões
+                    }
+                    return 'R$' + value.toLocaleString('pt-BR'); // Formato padrão para valores menores
                         },
+                        font: {
+                            size: 20 // Ajuste o tamanho da fonte do eixo X
+                                },
+                            //color: 'white' // Cor da fonte no eixo X
+
                     },
                 },
+
+                x: {
+                    barPercentage: 0.1,// Ajusta a largura da barra dentro da categoria
+                    ticks: {
+                            font: {
+                                size: 22 // Ajuste o tamanho da fonte do eixo X
+                                    },
+                            //color: 'white' // Cor da fonte no eixo X
+
+
+                            }
+                    }
+
             },
+
             plugins: {
                 legend: {
                     display: true,
@@ -93,7 +117,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                     callbacks: {
                         label: function (context) {
                             const value = context.parsed.y;
-                            return 'R$ ' + value.toLocaleString('pt-BR');
+                            return 'R$' + value.toLocaleString('pt-BR');
                         },
                     },
                 },

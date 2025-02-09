@@ -49,7 +49,8 @@
 }
 
 .Dados{
-    width: 50%;
+    width: 55%;
+    height: 90%;
     flex-direction: column;
     display: block;
     align-items: center;
@@ -60,7 +61,7 @@
 
 .Dados .TabelaFaturamento th {
     background-color: var(--cor3);
-    max-height: 20px;
+    max-height: 30px;
   }
           
   .Dados .TabelaFaturamento tdd {
@@ -80,9 +81,17 @@
   }
 
 .grafico{
-    width: 70%;
-    margin-top: 150px;
-    height: 1300px;
+    width: 45%;
+    height: 90%;
+
+    margin-top: 100px;
+    height: 600px;
+
+}
+
+#meuGraficoDeBarras {
+    width: 100%; /* Ocupa 100% da largura do contêiner pai */
+    height: 90%; /* Ocupa 90% da altura do contêiner pai */
 }
 
 
@@ -112,8 +121,8 @@
     #TabelaFaturamento{
         width: 80%;
         max-width: 80%;
-        font-size: 20px;
-        text-align: center;
+        font-size: 25px;
+        /*text-align: center;*/
         color: white;
         margin-top: 50px;
         height: 50vh;
@@ -123,14 +132,14 @@
     #Retorna{
         margin-top: 100px;
             color: white;
-            font-size: 30px;
+            font-size: 40px;
         
         }
         
         #FaturadoDia{
             margin-top: 100px;
                 color: white;
-                font-size: 30px;
+                font-size: 40px;
             
             }
 }
