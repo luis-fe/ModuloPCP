@@ -133,7 +133,7 @@ function ObterCurva(dados) {
     AbrirLoadingCurva();
     const divPaginamento = document.querySelector('.PaginamentoCurva');
 
-    fetch(`http://192.168.0.183:8000/pcp/api/RankingABCVendas`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/RankingABCVendas`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -368,7 +368,7 @@ fecharModalPlanosCurva.addEventListener('click', function() {
 //------------------------------------------------TABELA DOS PLANOS-------------------------------------------------------------------//
 
 function ConsultaPlanosExistentes() {
-    fetch(`http://192.168.0.183:8000/pcp/api/Plano`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/Plano`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -486,7 +486,7 @@ function exportarParaExcel (){
       "MARCA": TextoMarca,
     };
 
-    fetch("http://192.168.0.183:8000/pcp/api/RankingABCVendas", {
+    fetch("http://10.162.0.190:8000/pcp/api/RankingABCVendas", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

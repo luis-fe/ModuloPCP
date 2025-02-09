@@ -1,4 +1,4 @@
-const ApiConsultaCodigos = "http://192.168.0.183:8000/pcp/api/Plano";
+const ApiConsultaCodigos = "http://10.162.0.190:8000/pcp/api/Plano";
 let PlanoSelecionado;
 let CriarTabela = 0;
 
@@ -150,7 +150,7 @@ function carregarDadosFromCodigo() {
     } else {
         console.log(valorInput)
 
-        fetch(`http://192.168.0.183:8000/pcp/api/StatusPlano/${valorInput}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/StatusPlano/${valorInput}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -270,7 +270,7 @@ BotaoCriarPlano.addEventListener('click', function () {
         "dataGeracao": getFormattedDate()
     }
 
-    fetch("http://192.168.0.183:8000/pcp/api/Plano", {
+    fetch("http://10.162.0.190:8000/pcp/api/Plano", {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -322,7 +322,7 @@ BotaoEditarPlano.addEventListener('click', function () {
     }
 
 
-    fetch(`http://192.168.0.183:8000/pcp/api/Plano/${InputCodigo.value}`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/Plano/${InputCodigo.value}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -351,7 +351,7 @@ BotaoEditarPlano.addEventListener('click', function () {
 //------------------------------------------------------------Coleções-----------------------------------------------------------------//
 
 function ConsultaColecoesVinculadas() {
-    fetch(`http://192.168.0.183:8000/pcp/api/ColecoesPlano/${InputCodigo.value}`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/ColecoesPlano/${InputCodigo.value}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -418,7 +418,7 @@ function criarTabelaColecoes(listaColecoes) {
 }
 
 function ConsultaColecoesCsw() {
-    fetch(`http://192.168.0.183:8000/pcp/api/PesquisaColecoes`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/PesquisaColecoes`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -534,7 +534,7 @@ botaoSelecionarColecao.addEventListener('click', function () {
         console.log(ColecoesSelecionadas)
         console.log(NomeColecaoSelecionadas)
 
-        fetch(`http://192.168.0.183:8000/pcp/api/ColecaoPlano/${InputCodigo.value}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/ColecaoPlano/${InputCodigo.value}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -593,7 +593,7 @@ InputBuscaColecoes.addEventListener('keyup', () => {
 //----------------------------------------------------Tipos de Notas----------------------------------------------------------------//
 
 function ConsultaTiposDeNotasVinculadas() {
-    fetch(`http://192.168.0.183:8000/pcp/api/NotasPlano/${InputCodigo.value}`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/NotasPlano/${InputCodigo.value}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -662,7 +662,7 @@ function criarTabelaNotas(listaNotas) {
 
 
 function ConsultaNotasCsw() {
-    fetch(`http://192.168.0.183:8000/pcp/api/PesquisaTipoNotas`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/PesquisaTipoNotas`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -779,7 +779,7 @@ botaoSelecionarNotas.addEventListener('click', function () {
         console.log(NotasSelecionadas)
         console.log(DescricaoNotasSelecionadas)
 
-        fetch(`http://192.168.0.183:8000/pcp/api/TipoNotaPlano/${InputCodigo.value}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/TipoNotaPlano/${InputCodigo.value}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -840,7 +840,7 @@ InputBuscaNota.addEventListener('keyup', () => {
 //-----------------------------------------------------------Lotes Produção----------------------------------------------------------//
 
 function ConsultaLotesVinculados() {
-    fetch(`http://192.168.0.183:8000/pcp/api/LotesPlano/${InputCodigo.value}`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/LotesPlano/${InputCodigo.value}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -909,7 +909,7 @@ function criartTabelaLotes(listaLotes) {
 
 
 function ConsultaLotesCsw() {
-    fetch(`http://192.168.0.183:8000/pcp/api/PesquisaLotes`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/PesquisaLotes`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -1025,7 +1025,7 @@ botaoSelecionarLotes.addEventListener('click', function () {
         console.log(LotesSelecionados)
         console.log(DescricaoLotesSelecionadas)
 
-        fetch(`http://192.168.0.183:8000/pcp/api/LotePlano/${InputCodigo.value}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/LotePlano/${InputCodigo.value}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1113,7 +1113,7 @@ BotaoExcluirLotes.addEventListener('click', function () {
             "lote": LotesSelecionados1,
         };
 
-        fetch(`http://192.168.0.183:8000/pcp/api/LotePlano/${InputCodigo.value}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/LotePlano/${InputCodigo.value}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1167,7 +1167,7 @@ BotaoExcluirColecoes.addEventListener('click', function () {
             "codigocolecao": ColecoesSelecionados1
         };
 
-        fetch(`http://192.168.0.183:8000/pcp/api/ColecaoPlano/${InputCodigo.value}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/ColecaoPlano/${InputCodigo.value}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1221,7 +1221,7 @@ BotaoExcluirNotas.addEventListener('click', function () {
             "tipoNota": NotasSelecionados1
         };
 
-        fetch(`http://192.168.0.183:8000/pcp/api/TipoNotaPlano/${InputCodigo.value}`, {
+        fetch(`http://10.162.0.190:8000/pcp/api/TipoNotaPlano/${InputCodigo.value}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1335,7 +1335,7 @@ function ObterCurva() {
     const InputC3 = document.getElementById("InputCurvaC3");
     const CodPlano = document.getElementById("InputPlano");
 
-    fetch(`http://192.168.0.183:8000/pcp/api/ABCPlano/${CodPlano.value}`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/ABCPlano/${CodPlano.value}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -1418,7 +1418,7 @@ function SalvarNovosPercentuais() {
 
     }
 
-    fetch("http://192.168.0.183:8000/pcp/api/EditarABCPlano", {
+    fetch("http://10.162.0.190:8000/pcp/api/EditarABCPlano", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

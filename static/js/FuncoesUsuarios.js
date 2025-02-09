@@ -1,7 +1,7 @@
 function Usuarios() {
     const username = document.getElementById('InputLogin').value;
     const password = document.getElementById('InputSenha').value;
-    const apiUrl = `http://192.168.0.183:8000/pcp/api/UsuarioSenha?codigo=${username}&senha=${password}`;
+    const apiUrl = `http://10.162.0.190:8000/pcp/api/UsuarioSenha?codigo=${username}&senha=${password}`;
     const UsuarioInvalido = document.getElementById('UsuarioInválido')
   
     fetch(apiUrl, {
@@ -38,7 +38,7 @@ function Usuarios() {
   
 
  //------------------------------------------------------------------------------Criação Tela Inicial-----------------------------------------------------------------------//
-const apiUrl = 'http://192.168.0.183:8000/pcp/api/Usuarios';
+const apiUrl = 'http://10.162.0.190:8000/pcp/api/Usuarios';
 const Token = "a44pcp22"
 let indiceExibicao = 0;
 let totalUsuarios = 0;
@@ -276,7 +276,7 @@ document.getElementById("ButtonEditar").addEventListener("click", function(){
     const nomeUsuario = (Resultado.nome);
      const Usuario = (Resultado.usuario);
     console.log(Usuario)
-    fetch(`http://192.168.0.183:8000/pcp/api/Usuarios/${Usuario}`, {
+    fetch(`http://10.162.0.190:8000/pcp/api/Usuarios/${Usuario}`, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
