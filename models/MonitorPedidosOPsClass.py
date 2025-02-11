@@ -280,8 +280,8 @@ class MonitorPedidosOps():
         '''Metodo que transferi o arquivo .fast entre servidores concectados '''
 
         # Conectar ao servidor
-        transport = paramiko.Transport(('10.162.0.190', 22))
-        transport.connect(username='mplti', password='*yvnMP')
+        transport = paramiko.Transport(('192.168.0.183', 22))
+        transport.connect(username='grupompl', password='4u3*qZ8KI@h2')
 
         sftp = paramiko.SFTPClient.from_transport(transport)
 
