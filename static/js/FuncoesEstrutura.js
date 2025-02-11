@@ -2,7 +2,7 @@
 let IndiceExibicao = 0;
 let TotalPagina;
 let PaginaAtual = 1;
-const codApi = 'http://10.162.0.190:8000/pcp/api/Estrutura';
+const codApi = 'http://192.168.0.183:8000/pcp/api/Estrutura';
 let plano = [];
 
 const itensPag = 15;
@@ -500,7 +500,7 @@ buttonPrimeiraPagina.addEventListener('click', CarregarBotaoPrimeiraPagina);
 
 //------------------------------------------------- FUNÇÃO EXCEL ----------------------------------------------------------------//
 
-const ApiEstrutura = 'http://10.162.0.190:8000/pcp/api/Estrutura';
+const ApiEstrutura = 'http://192.168.0.183:8000/pcp/api/Estrutura';
 
 
 
@@ -572,7 +572,7 @@ botaoExportarExcel.addEventListener('click', () => exportarParaExcel());
 
 
 function ConsultaPlanosExistentes() {
-  fetch(`http://10.162.0.190:8000/pcp/api/Plano`, {
+  fetch(`http://192.168.0.183:8000/pcp/api/Plano`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

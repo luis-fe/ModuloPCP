@@ -1,5 +1,5 @@
-const ApiGetCurvaVenda = "http://10.162.0.190:8000/pcp/api/metaPlano";
-const ApiMetaSemanal = "http://10.162.0.190:8000/pcp/api/metaPlanoSemanal";
+const ApiGetCurvaVenda = "http://192.168.0.183:8000/pcp/api/metaPlano";
+const ApiMetaSemanal = "http://192.168.0.183:8000/pcp/api/metaPlanoSemanal";
 const Token = "a44pcp22";
 let ResultadoApi = [];
 const MetaMpolloPcs = document.getElementById("PecasMpollo");
@@ -110,7 +110,7 @@ function SalvarMeta(Marca, PecasMarca, ValorMarca) {
   console.log(dadosEnviar);
 
   // Faça a solicitação POST para a API
-  fetch("http://10.162.0.190:8000/pcp/api/metaPlano", {
+  fetch("http://192.168.0.183:8000/pcp/api/metaPlano", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ async function CadastrarPercentual(Marca, Semana, Percentual) {
 }
 console.log(dados)
   try {
-      const response = await fetch(`http://10.162.0.190:8000/pcp/api/metaPlanoSemanal`, {
+      const response = await fetch(`http://192.168.0.183:8000/pcp/api/metaPlanoSemanal`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',

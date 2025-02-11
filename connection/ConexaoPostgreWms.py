@@ -13,7 +13,7 @@ def conexaoEngine():
     db_user = "postgres"
     db_password = "Master100"
     db_host = os.getenv('DATABASE_HOST')
-    db_host ='10.162.0.190'
+    db_host ='192.168.0.183'
     portbanco = "5432"
 
 
@@ -29,7 +29,7 @@ def conexaoEngineWms():
     db_user = "postgres"
     db_password = "Master100"
     db_host = os.getenv('DATABASE_HOST')
-    db_host ='10.162.0.190'
+    db_host ='192.168.0.183'
     portbanco = "5432"
 
 
@@ -46,7 +46,7 @@ def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     user = "postgres"
     password = "Master100"
     #host = os.getenv('DATABASE_HOST')
-    host ='10.162.0.190'
+    host ='192.168.0.183'
     port = "5432"
 
 # Cria conexão ao banco de dados usando SQLAlchemy
@@ -64,7 +64,7 @@ def conexaoInsercao():
     db_user = "postgres"
     db_password = "Master100"
     db_host = os.getenv('DATABASE_HOST')
-    db_host ='10.162.0.190'
+    db_host ='192.168.0.183'
 
     portbanco = "5432"
 
@@ -78,7 +78,7 @@ def Funcao_InserirBackup (df_tags, tamanho,tabela, metodo):
     user = "postgres"
     password = "Master100"
     #host = os.getenv('DATABASE_HOST')
-    host ='10.162.0.190'
+    host ='192.168.0.183'
     port = "5432"
 
 # Cria conexão ao banco de dados usando SQLAlchemy

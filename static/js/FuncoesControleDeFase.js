@@ -11,7 +11,7 @@ const itensPag = 15;
 
 function ObterFases() {
   const dados = {}
-  fetch(`http://10.162.0.190:8000/pcp/api/ResponsabilidadeFase`, {
+  fetch(`http://192.168.0.183:8000/pcp/api/ResponsabilidadeFase`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ buttonSalvar.addEventListener('click', function () {
   
 
   // Envia os dados para a API
-  fetch('http://10.162.0.190:8000/pcp/api/ResponsabilidadeFase', {
+  fetch('http://192.168.0.183:8000/pcp/api/ResponsabilidadeFase', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

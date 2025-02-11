@@ -1,8 +1,8 @@
-const ApiConsulta = 'http://10.162.0.190:8000/pcp/api/CargaOPs';
-        const ApiJustificativa = 'http://10.162.0.190:8000/pcp/api/CadastrarJustificativa';
+const ApiConsulta = 'http://192.168.0.183:8000/pcp/api/CargaOPs';
+        const ApiJustificativa = 'http://192.168.0.183:8000/pcp/api/CadastrarJustificativa';
         const ModalPendencia = document.getElementById("ModalPendencia");
         const DivPendencias = document.getElementById("DivPendencias");
-        const ApiColecoes = 'http://10.162.0.190:8000/pcp/api/DistinctColecao';
+        const ApiColecoes = 'http://192.168.0.183:8000/pcp/api/DistinctColecao';
         const Token = 'a44pcp22';
         let VarOp = '';
         let VarFase = '';
@@ -272,7 +272,7 @@ const ApiConsulta = 'http://10.162.0.190:8000/pcp/api/CargaOPs';
 
         async function Justificativas(Op, Fase) {
             await $.ajax({
-                url: `http://10.162.0.190:8000/pcp/api/ConsultarJustificativa?ordemProd=${Op}&fase=${Fase}`,
+                url: `http://192.168.0.183:8000/pcp/api/ConsultarJustificativa?ordemProd=${Op}&fase=${Fase}`,
                 method: 'GET',
                 dataType: 'json',
                 headers: {

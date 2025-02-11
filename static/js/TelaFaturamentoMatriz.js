@@ -6,7 +6,7 @@ let Atualizacao = ''
 
 async function Faturamento() {
     try {
-        const response = await fetch(`http://10.162.0.190:8000/pcp/api/dashboarTV?ano=${2025}&empresa=${1}`, {
+        const response = await fetch(`http://192.168.0.183:8000/pcp/api/dashboarTV?ano=${2025}&empresa=${1}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
