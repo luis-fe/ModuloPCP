@@ -1,7 +1,7 @@
 function Usuarios() {
   const username = document.getElementById('usuario').value;
   const password = document.getElementById('password').value;
-  const apiUrl = `http:192.168.0.183:8000/api/UsuarioSenha?codigo=${username}&senha=${password}`;
+  const apiUrl = `http:10.162.0.190:8000/api/UsuarioSenha?codigo=${username}&senha=${password}`;
 
   fetch(apiUrl, {
     method: 'GET',
