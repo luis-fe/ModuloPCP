@@ -35,7 +35,7 @@ class ProducaoFases():
     	and rf."dataBaixa"::date <= %s ;
         """
 
-        conn = ConexaoPostgreWms.conexaoEngine()
+        conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
         realizado = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
 
         if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
