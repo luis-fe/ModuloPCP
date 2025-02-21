@@ -61,8 +61,10 @@ def CarregarRealizado(utimosDias):
     del rows
     gc.collect()
 
-    verifica = ComparativoMovimentacoes(10000)
     sql['chave'] = sql['numeroop']+'||'+sql['codfase'].astype(str)
+
+
+    verifica = ComparativoMovimentacoes(10000)
     sql = pd.merge(sql,verifica,on='chave',how='left')
     sql['status'].fillna('-',inplace=True)
     sql = sql[sql['status'] == '-'].reset_index()
@@ -166,6 +168,7 @@ def RealizadoFaseCategoria(dataMovFaseIni,dataMovFaseFim,codFase, congelado=Fals
 
 
 def ComparativoMovimentacoes(limit):
+    '''Metodo que devolve os ultimos n registro do banco de dados da Aplicacao'''
 
     sqlDelete = """
     delete from "PCP".pcp.realizado_fase 
