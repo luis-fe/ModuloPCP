@@ -194,7 +194,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         totalPc = Totais['0-Previcao Pçs'][0]
         totalFaltaProgramar = Totais['01-Falta Programar'][0]
 
-        realizado = realizadoFases.RealizadoMediaMovel(dataMovFaseIni, dataMovFaseFim,[6,8])
+        realizadoPeriodo = ProducaoFases.ProducaoFases(dataMovFaseIni, dataMovFaseFim, '', 0, '1', 100, 100, [6, 8])
+        realizado = realizadoPeriodo.RealizadoMediaMovel()
         realizado['codFase'] = realizado['codFase'].astype(int)
         Meta = pd.merge(Meta,realizado,on='codFase',how='left')
 
