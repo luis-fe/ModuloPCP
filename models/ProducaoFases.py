@@ -109,6 +109,7 @@ class ProducaoFases():
         }
 
         realizado["dia"] = realizado["dataBaixa"].apply(lambda x: dias_semana[pd.to_datetime(x, format="%d/%m/%Y").strftime("%A")])
+        realizado = realizado.astype(str)
 
         realizado = pd.concat([realizado, realizadoTotal], ignore_index=True)
 
