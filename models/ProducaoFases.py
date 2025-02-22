@@ -86,6 +86,8 @@ class ProducaoFases():
 
         # filtrando o nome da fase
         fases = self.__sqlObterFases()
+        print(fases)
+
         realizado = pd.merge(realizado, fases , on ="codFase")
         print(realizado)
         realizado = realizado[realizado["nomeFase"] == str(self.nomeFase)].reset_index()
