@@ -86,7 +86,7 @@ class ProducaoFases():
 
         # filtrando o nome da fase
         fases = self.__sqlObterFases()
-        print(fases)
+        print(realizado)
 
         realizado = pd.merge(realizado, fases , on ="codFase")
         print(realizado)
