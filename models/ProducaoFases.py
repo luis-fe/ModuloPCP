@@ -10,7 +10,7 @@ import pytz
 class ProducaoFases():
     '''Classe que controla a producao das fases '''
 
-    def __init__(self, periodoInicio = None, periodoFinal = None, codFase = None, dias_buscaCSW = 0, codEmpresa = None, limitPostgres = None, utimosDias = None, ArraytipoOPExluir = None, consideraMost = 'nao'):
+    def __init__(self, periodoInicio = None, periodoFinal = None, codFase = None, dias_buscaCSW = 0, codEmpresa = None, limitPostgres = None, utimosDias = None, ArraytipoOPExluir = None, consideraMost = 'nao',nomeFase = ''):
 
         self.periodoInicio = periodoInicio
         self.periodoFinal = periodoFinal
@@ -21,6 +21,7 @@ class ProducaoFases():
         self.utimosDias = utimosDias
         self.ArraytipoOPExluir = ArraytipoOPExluir
         self.consideraMost = 'nao'
+        self.nomeFase = nomeFase
 
     def RealizadoMediaMovel(self):
 
@@ -70,6 +71,32 @@ class ProducaoFases():
 
         realizado = self.__sqlRealizadoPeriodo()
 
+        if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
+            realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
+
+        if self.consideraMost == 'nao':
+            realizado = realizado[~realizado['descricaolote'].str.contains("MOST", case=False, na=False)].reset_index()
+
+        realizado['filtro'] = realizado['codFase'].astype(str) + '|' + realizado['codEngenharia'].str[0]
+        realizado = realizado[(realizado['filtro'] != '401|6')]
+        realizado = realizado[(realizado['filtro'] != '401|5')]
+        realizado = realizado[(realizado['filtro'] != '426|6')]
+        realizado = realizado[(realizado['filtro'] != '441|5')]
+        realizado = realizado[(realizado['filtro'] != '412|5')]
+
+        # filtrando o nome da fase
+        fases = self.__sqlObterFases()
+        realizado = pd.merge(realizado, fases , on ="codFase")
+        realizado = realizado[realizado["nomeFase"] == str(self.codFase)].reset_index()
+
+        realizadoTotal = realizado.groupby(["codFase"]).agg({"Realizado": "sum"}).reset_index()
+        realizadoTotal['dataBaixa'] = 'Total:'
+        realizado = realizado.groupby(["codFase","dataBaixa"]).agg({"Realizado": "sum"}).reset_index()
+        realizado = pd.concat([realizado, realizadoTotal], ignore_index=True)
+
+        return realizado
+
+
 
 
     def calcular_dias_sem_domingos(self,dataInicio, dataFim):
@@ -105,4 +132,19 @@ class ProducaoFases():
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d')
         return pd.to_datetime(agora)
+
+
+    def __sqlObterFases(self):
+
+        sql = """
+        select
+	        distinct "codFase"::varchar ,
+	        "nomeFase"
+        from
+	        "PCP".pcp."Eng_Roteiro" er
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        realizado = pd.read_sql(sql, conn)
+        return realizado
 
