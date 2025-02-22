@@ -95,7 +95,7 @@ class ProducaoFases():
         realizadoTotal = realizado.groupby(["codFase"]).agg({"Realizado": "sum"}).reset_index()
         realizadoTotal['dataBaixa'] = 'Total:'
         realizadoTotal['dia'] = '-'
-        realizado = realizado.groupby(["nomeFase",'dataBaixa']).agg({"Realizado": "sum"}).reset_index()
+        realizado = realizado.groupby(["codFase",'dataBaixa']).agg({"Realizado": "sum"}).reset_index()
 
 
         # Convertendo para datetime sem especificar o formato fixo
