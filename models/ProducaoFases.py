@@ -87,7 +87,7 @@ class ProducaoFases():
         # filtrando o nome da fase
         fases = self.__sqlObterFases()
         realizado = pd.merge(realizado, fases , on ="codFase")
-        realizado = realizado[realizado["nomeFase"] == str(self.codFase)].reset_index()
+        realizado = realizado[realizado["nomeFase"] == str(self.nomeFase)].reset_index()
 
         realizadoTotal = realizado.groupby(["codFase"]).agg({"Realizado": "sum"}).reset_index()
         realizadoTotal['dataBaixa'] = 'Total:'
