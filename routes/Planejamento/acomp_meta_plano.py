@@ -137,6 +137,7 @@ def pOST_RealizadoFaseDiaFaccionista():
 @MetasFases_routes.route('/pcp/api/RetornoPorFaseDiaria', methods=['GET'])
 @token_required
 def get_RetornoPorFaseDiaria():
+
     nomeFase = request.args.get('nomeFase')
     dataInicio = request.args.get('dataInicio')
     dataFinal = request.args.get('dataFinal')

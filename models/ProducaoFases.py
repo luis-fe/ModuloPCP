@@ -70,7 +70,6 @@ class ProducaoFases():
     def realizadoFasePeriodo(self):
 
         realizado = self.__sqlRealizadoPeriodo()
-        print(realizado)
 
 
         if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
@@ -90,12 +89,28 @@ class ProducaoFases():
         fases = self.__sqlObterFases()
 
         realizado = pd.merge(realizado, fases , on ="codFase")
-        print(realizado)
+
         realizado = realizado[realizado["nomeFase"] == str(self.nomeFase)].reset_index()
 
         realizadoTotal = realizado.groupby(["codFase"]).agg({"Realizado": "sum"}).reset_index()
         realizadoTotal['dataBaixa'] = 'Total:'
+        realizadoTotal['dia'] = '-'
+
         realizado = realizado.groupby(["codFase","dataBaixa"]).agg({"Realizado": "sum"}).reset_index()
+        # Convertendo para datetime, ignorando o texto extra
+        realizado["dataBaixa"] = pd.to_datetime(realizado["dataBaixa"], format="%a, %d %b %Y %H:%M:%S %Z")
+
+        # Criando a coluna formatada no padrão brasileiro
+        realizado["dataBaixa"] = realizado["dataBaixa"].dt.strftime("%d/%m/%Y")
+
+        # Criando a coluna com o nome do dia da semana em português
+        dias_semana = {
+            "Monday": "segunda-feira", "Tuesday": "terça-feira", "Wednesday": "quarta-feira",
+            "Thursday": "quinta-feira", "Friday": "sexta-feira", "Saturday": "sábado", "Sunday": "domingo"
+        }
+
+        realizado["dia"] = realizado["dataBaixa"].apply(lambda x: dias_semana[pd.to_datetime(x, format="%d/%m/%Y").strftime("%A")])
+
         realizado = pd.concat([realizado, realizadoTotal], ignore_index=True)
 
         return realizado
