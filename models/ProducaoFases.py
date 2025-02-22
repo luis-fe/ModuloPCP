@@ -70,6 +70,8 @@ class ProducaoFases():
     def realizadoFasePeriodo(self):
 
         realizado = self.__sqlRealizadoPeriodo()
+        print(realizado)
+
 
         if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
             realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
@@ -86,7 +88,6 @@ class ProducaoFases():
 
         # filtrando o nome da fase
         fases = self.__sqlObterFases()
-        print(realizado)
 
         realizado = pd.merge(realizado, fases , on ="codFase")
         print(realizado)
