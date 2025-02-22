@@ -141,6 +141,8 @@ def get_RetornoPorFaseDiaria():
     dataInicio = request.args.get('dataInicio')
     dataFinal = request.args.get('dataFinal')
     codEmpresa = request.args.get('codEmpresa','1')
+    print(dataInicio)
+    print(dataFinal)
 
     realizado = ProducaoFases.ProducaoFases(dataInicio, dataFinal, '','',codEmpresa,'','',[6, 8],'nao',nomeFase)
     dados = realizado.realizadoFasePeriodo()
