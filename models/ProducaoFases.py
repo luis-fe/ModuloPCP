@@ -96,9 +96,8 @@ class ProducaoFases():
         realizadoTotal['dataBaixa'] = 'Total:'
         realizadoTotal['dia'] = '-'
 
-        realizado = realizado.groupby(["codFase","dataBaixa"]).agg({"Realizado": "sum"}).reset_index()
-        # Convertendo para datetime, ignorando o texto extra
-        realizado["dataBaixa"] = pd.to_datetime(realizado["dataBaixa"], format="%a, %d %b %Y %H:%M:%S %Z")
+        # Convertendo para datetime sem especificar o formato fixo
+        realizado["dataBaixa"] = pd.to_datetime(realizado["dataBaixa"], errors="coerce")
 
         # Criando a coluna formatada no padrão brasileiro
         realizado["dataBaixa"] = realizado["dataBaixa"].dt.strftime("%d/%m/%Y")
