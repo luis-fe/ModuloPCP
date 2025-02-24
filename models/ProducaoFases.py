@@ -70,6 +70,7 @@ class ProducaoFases():
     def realizadoFasePeriodo(self):
 
         realizado = self.__sqlRealizadoPeriodo()
+        print(f'nomeFase:{self.nomeFase}')
 
 
         if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
