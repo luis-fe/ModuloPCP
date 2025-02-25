@@ -74,8 +74,8 @@ class ProducaoFases():
             from
                 pcp.realizado_fase rf 
                     where 
-                rf."dataBaixa"::date >='2025-02-24' 
-                and rf."dataBaixa"::date <= '2025-02-25' 
+                rf."dataBaixa"::date >= %s
+                and rf."dataBaixa"::date <= %s
                 and rf.descricaolote not like '%LOTO%';
         """
         conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
