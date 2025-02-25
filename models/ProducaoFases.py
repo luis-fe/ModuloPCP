@@ -86,6 +86,7 @@ class ProducaoFases():
         realizado['filtro'].fillna('-',inplace = True)
         realizado.loc[realizado["filtro"].str.contains("ENCOMENDA", na=False), "filtro"] = "ENCOMENDA"
         realizado['filtro'] = realizado['filtro'].str.replace('Á ','A')
+        realizado['filtro'] = realizado['filtro'].str.replace('Ã ','A')
 
         return realizado.drop_duplicates()
 
