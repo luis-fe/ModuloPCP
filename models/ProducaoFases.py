@@ -81,8 +81,8 @@ class ProducaoFases():
         realizado = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
 
 
-        realizado['filtro'] = realizado['filtro'].str.replace('LOTE INTERNO','')
-        realizado['filtro'] = realizado['filtro'].str.replace('PRODUÇÃO','').drop_duplicates()
+        realizado['filtro'] = realizado['filtro'].str.replace('LOTE INTERNO ','')
+        realizado['filtro'] = realizado['filtro'].str.replace('PRODUÇÃO ','').drop_duplicates()
         realizado['filtro'].fillna('-',inplace = True)
         return realizado
 
