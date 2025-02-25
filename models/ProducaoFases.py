@@ -74,11 +74,11 @@ class ProducaoFases():
             from
                 pcp.realizado_fase rf 
             where 
-                rf."dataBaixa"::date >= %s
-                and rf."dataBaixa"::date <= %s and rf.descricaolote not like '%LOTO%'
+                rf."dataBaixa"::date >= '2025-02-25'
+                and rf."dataBaixa"::date <= '2025-02-25'and rf.descricaolote not like '%LOTO%'
         """
         conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
-        consulta = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal))
+        consulta = pd.read_sql(sql, conn)
 
 
         consulta['filtro'] = consulta['filtro'].str.replace('LOTE INTERNO','')
