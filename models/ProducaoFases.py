@@ -81,11 +81,10 @@ class ProducaoFases():
         conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
         consulta = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
 
-        print(consulta)
 
         consulta['filtro'] = consulta['filtro'].str.replace('LOTE INTERNO','')
 
-        return consulta
+        return pd.DataFrame([{'mensagem':'ok'}])
 
 
     def realizadoFasePeriodo(self):
