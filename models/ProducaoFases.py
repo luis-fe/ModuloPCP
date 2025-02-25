@@ -69,19 +69,19 @@ class ProducaoFases():
     def lotesFiltragrem(self):
 
         sql = """
-            select 
-                distinct rf.descricaolote as filtro
-            from
-                pcp.realizado_fase rf 
-            where 
-                rf."dataBaixa"::date >= '2025-02-25'
-                and rf."dataBaixa"::date <= '2025-02-25'and rf.descricaolote not like '%LOTO%'
+            SELECT 
+                DISTINCT rf.descricaolote AS filtro
+            FROM 
+                pcp.realizado_fase rf
+            WHERE 
+                rf."dataBaixa"::DATE BETWEEN %s AND %s
+                AND rf.descricaolote NOT LIKE '%%LOTO%%';
         """
         conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
-        consulta = pd.read_sql(sql, conn)
+        realizado = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
 
 
-        consulta['filtro'] = consulta['filtro'].str.replace('LOTE INTERNO','')
+        realizado['filtro'] = realizado['filtro'].str.replace('LOTE INTERNO','')
 
         return pd.DataFrame([{'mensagem':'ok'}])
 
