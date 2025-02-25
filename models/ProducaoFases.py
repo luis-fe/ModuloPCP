@@ -82,9 +82,9 @@ class ProducaoFases():
 
 
         realizado['filtro'] = realizado['filtro'].str.replace('LOTE INTERNO ','')
-        realizado['filtro'] = realizado['filtro'].str.replace('PRODUÇÃO ','').drop_duplicates()
-        realizado['filtro'].fillna('-',inplace = True)
-        realizado['filtro'] = realizado[realizado['filtro']!='-']
+        realizado['filtro'] = realizado['filtro'].str.replace('PRODUÇÃO ','').drop_duplicates().reset_index()
+        realizado['filtro'].fillna('-',inplace = True).reset_index()
+
         return realizado
 
 
