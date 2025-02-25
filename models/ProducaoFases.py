@@ -83,7 +83,7 @@ class ProducaoFases():
 
         realizado['filtro'] = realizado['filtro'].str.replace('LOTE INTERNO','')
 
-        return pd.DataFrame([{'mensagem':'ok'}])
+        return realizado
 
 
     def realizadoFasePeriodo(self):
