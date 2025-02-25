@@ -78,7 +78,7 @@ class ProducaoFases():
                 and rf."dataBaixa"::date <= %s and rf.descricaolote not like '%LOTO%'
         """
         conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
-        consulta = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
+        consulta = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal))
 
 
         consulta['filtro'] = consulta['filtro'].str.replace('LOTE INTERNO','')
