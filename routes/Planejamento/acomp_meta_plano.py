@@ -67,7 +67,7 @@ def get_filtroTiposOP():
 
 
     realizado = ProducaoFases.ProducaoFases(dataInicio, dataFinal, '','',codEmpresa)
-    dados = realizado.realizadoFasePeriodo()
+    dados = realizado.lotesFiltragrem()
     # Obtém os nomes das colunas
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes

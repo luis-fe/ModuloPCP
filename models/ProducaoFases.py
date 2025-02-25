@@ -66,7 +66,7 @@ class ProducaoFases():
         realizado = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
         return realizado
 
-    def __lotesFiltragrem(self):
+    def lotesFiltragrem(self):
 
         sql = """
             select 
