@@ -68,7 +68,6 @@ def get_filtroTiposOP():
 
     realizado = ProducaoFases.ProducaoFases(dataInicio, dataFinal, '','',codEmpresa)
     dados = realizado.lotesFiltragrem()
-    # Obtém os nomes das colunas
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
@@ -77,8 +76,8 @@ def get_filtroTiposOP():
         for column_name in column_names:
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
-    del dados
     return jsonify(OP_data)
+
 
 @MetasFases_routes.route('/pcp/api/MetasFasesCosturaCategorias', methods=['POST'])
 @token_required

@@ -73,7 +73,7 @@ class ProducaoFases():
                 distinct rf.descricaolote as filtro
             from
                 pcp.realizado_fase rf 
-                    where 
+            where 
                 rf."dataBaixa"::date >= %s
                 and rf."dataBaixa"::date <= %s
                 and rf.descricaolote not like '%LOTO%';
