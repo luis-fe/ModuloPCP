@@ -82,10 +82,10 @@ class ProducaoFases():
 
 
         realizado['filtro'] = realizado['filtro'].str.replace('LOTE INTERNO ','')
-        realizado['filtro'] = realizado['filtro'].str.replace('PRODUÇÃO ','').drop_duplicates()
+        realizado['filtro'] = realizado['filtro'].str.replace('PRODUÇÃO ','')
         realizado['filtro'].fillna('-',inplace = True)
 
-        return realizado
+        return realizado.drop_duplicates()
 
 
     def realizadoFasePeriodo(self):
