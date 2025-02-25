@@ -54,6 +54,32 @@ def pOST_MetasFases():
         OP_data.append(op_dict)
     return jsonify(OP_data)
 
+
+@MetasFases_routes.route('/pcp/api/filtroTiposOP', methods=['GET'])
+@token_required
+def get_filtroTiposOP():
+
+
+    dataInicio = request.args.get('dataInicio')
+    dataFinal = request.args.get('dataFinal')
+    codEmpresa = request.args.get('codEmpresa','1')
+
+
+
+    realizado = ProducaoFases.ProducaoFases(dataInicio, dataFinal, '','',codEmpresa)
+    dados = realizado.realizadoFasePeriodo()
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
 @MetasFases_routes.route('/pcp/api/MetasFasesCosturaCategorias', methods=['POST'])
 @token_required
 def pOST_MetasFasesCostura():

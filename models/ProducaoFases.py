@@ -66,11 +66,31 @@ class ProducaoFases():
         realizado = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
         return realizado
 
+    def __lotesFiltragrem(self):
+
+        sql = """
+            select 
+                distinct rf.descricaolote as filtro
+            from
+                pcp.realizado_fase rf 
+                    where 
+                rf."dataBaixa"::date >='2025-02-24' 
+                and rf."dataBaixa"::date <= '2025-02-25' 
+                and rf.descricaolote not like '%LOTO%';
+        """
+        conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
+        consulta = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
+
+        consulta['filtro'] = consulta['filtro'].str.replace('LOTE INTERNO','')
+
+        return consulta
+
 
     def realizadoFasePeriodo(self):
 
         realizado = self.__sqlRealizadoPeriodo()
         print(f'nomeFase:{self.nomeFase}')
+
 
 
         if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
@@ -92,6 +112,7 @@ class ProducaoFases():
         realizado = pd.merge(realizado, fases , on ="codFase")
 
         realizado = realizado[realizado["nomeFase"] == str(self.nomeFase)].reset_index()
+
 
         realizadoTotal = realizado.groupby(["codFase"]).agg({"Realizado": "sum"}).reset_index()
         realizadoTotal['dataBaixa'] = 'Total:'

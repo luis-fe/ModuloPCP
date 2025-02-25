@@ -5,6 +5,7 @@ from models import ProdutosClass
 
 
 class Lote():
+    '''Classe relativo ao controle de Lote de Producao que vem do ERP CSW'''
     def __init__(self,codLote = None, codEmpresa = '1', codPlano = None):
         self.codLote = codLote
         self.codEmpresa = codEmpresa
@@ -172,6 +173,9 @@ class Lote():
         # 1 - Transformando o array em padrao "in sql"
         nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
         novo = ", ".join(nomes_com_aspas)
+        #____________________________________________________________________
+
+        # 2 - Pesquisando no ERP CSW o Lote vinculado
         sqlLotes = """
         select Empresa , t.codLote, codengenharia, t.codSeqTamanho , t.codSortimento , t.qtdePecasImplementadas as previsao FROM tcl.LoteSeqTamanho t
         WHERE t.Empresa = """ + self.codEmpresa + """and t.codLote in (""" + novo + """) 
@@ -183,13 +187,13 @@ class Lote():
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
                 lotes = pd.DataFrame(rows, columns=colunas)
-
-        # Libera memória manualmente
         del rows
         gc.collect()
 
-        # Implantando no banco de dados do Pcp, atualizando o cadastro de itens e atualizando o roteiro
+        # 3- Implantando no banco de dados do Pcp, atualizando o cadastro de itens e atualizando o roteiro
         ConexaoPostgreWms.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
+
+        #4 - Recarregando os itens
         ProdutosClass.Produto().RecarregarItens()
         self.carregarRoteiroEngLote(arrayCodLoteCsw)
 

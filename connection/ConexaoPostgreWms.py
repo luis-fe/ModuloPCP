@@ -73,6 +73,24 @@ def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     for i in range(0, len(df_tags), chunksize):
         df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='pcp')
 
+def Funcao_InserirOFF_srvWMS (df_tags, tamanho,tabela, metodo):
+    # Configurações de conexão ao banco de dados
+    #database = os.getenv('POSTGRES_DB')
+    database = 'Reposicao'
+    user = "postgres"
+    password = "postgres"
+    #host = os.getenv('DATABASE_HOST')
+    host ='10.162.0.190'
+    port = "5432"
+
+# Cria conexão ao banco de dados usando SQLAlchemy
+    engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
+
+    # Inserir dados em lotes
+    chunksize = tamanho
+    for i in range(0, len(df_tags), chunksize):
+        df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='pcp')
+
 def conexaoInsercao():
     db_name = os.getenv('POSTGRES_DB')
     db_name = 'PCP'
