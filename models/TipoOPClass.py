@@ -52,7 +52,6 @@ class TipoOP():
         tipoOP.loc[tipoOP["tipoOP"].str.contains("2-", na=False), "Agrupado"] = "Producao"
         tipoOP.loc[tipoOP["tipoOP"].str.contains("ENC", na=False), "Agrupado"] = "Encomendas"
         tipoOP.loc[tipoOP["tipoOP"].str.contains("MOST", na=False), "Agrupado"] = "Mostruario"
-        tipoOP.loc[tipoOP["tipoOP"].str.contains("REVEN", na=False), "Agrupado"] = "Producao"
         tipoOP.fillna('Producao',inplace=True)
 
         return tipoOP
