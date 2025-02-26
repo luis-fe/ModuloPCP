@@ -65,6 +65,7 @@ def get_ObterTipoOP():
 def get_tiposDeProducaoAgrupado():
 
     dados = TipoOPClass.TipoOP().tiposDeProducaoAgrupado()
+    print(dados)
 
     # Converte o DataFrame para uma lista de dicionários de forma eficiente
     OP_data = dados.to_dict('records')
