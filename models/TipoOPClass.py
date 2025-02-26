@@ -8,7 +8,7 @@ class TipoOP():
     def __init__(self, codTipoOP = None):
         self.codTipoOP = codTipoOP
 
-    def obiterTodosTipos(self):
+    def obterTodosTipos(self):
         '''Metodo qe busca no ERP CSW todos os tipo de OPS'''
 
         sql = """
@@ -38,5 +38,19 @@ class TipoOP():
     def tiposDeProducaoAgrupado(self):
         '''Metodo qe agrupa o tipo de OP em categorias'''
         print("Executando tiposDeProducaoAgrupado")
-        categorias = pd.DataFrame({'Categoria': ['Producao', 'Mostruario', 'Encomendas']})
+        categorias = pd.DataFrame({'Categoria': ['Producao', 'Mostruario', 'Encomendas','Varejo']})
         return categorias
+
+
+    def agrupado_x_tipoOP(self):
+        '''metodo que compara o agrupado x tipo de op '''
+
+
+        tipoOP = self.obterTodosTipos()
+        tipoOP.loc[tipoOP['tipoOP'] == '1-PRODUTO VENDA', 'Agrupado'] = 'Producao'
+        tipoOP.loc[tipoOP["tipoOP"].str.contains("VAREJO", na=False), "Agrupado"] = "Varejo"
+        tipoOP.loc[tipoOP['tipoOP'] == 'ENCOME', 'Agrupado'] = 'Encomendas'
+        return tipoOP
+
+
+

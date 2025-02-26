@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from functools import wraps
 from models import FaccionistaClass, LeadTimeClass, TipoOPClass
 import gc
+
 LeadTime_routes = Blueprint('LeadTime_routes', __name__)
 
 def token_required(f):
@@ -45,7 +46,7 @@ def get_LeadTimesRealizados():
 def get_ObterTipoOP():
 
     tipoOP = TipoOPClass.TipoOP()
-    dados = tipoOP.obiterTodosTipos()
+    dados = tipoOP.obterTodosTipos()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
