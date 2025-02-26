@@ -50,6 +50,8 @@ class TipoOP():
         tipoOP.loc[tipoOP['tipoOP'] == '1-PRODUTO VENDA', 'Agrupado'] = 'Producao'
         tipoOP.loc[tipoOP["tipoOP"].str.contains("VAREJO", na=False), "Agrupado"] = "Varejo"
         tipoOP.loc[tipoOP['tipoOP'] == 'ENCOME', 'Agrupado'] = 'Encomendas'
+
+
         return tipoOP
 
 
