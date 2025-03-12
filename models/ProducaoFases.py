@@ -10,7 +10,8 @@ from models import TipoOPClass
 class ProducaoFases():
     '''Classe que controla a producao das fases '''
 
-    def __init__(self, periodoInicio = None, periodoFinal = None, codFase = None, dias_buscaCSW = 0, codEmpresa = None, limitPostgres = None, utimosDias = None, ArraytipoOPExluir = None, consideraMost = 'nao',nomeFase = ''):
+    def __init__(self, periodoInicio = None, periodoFinal = None, codFase = None, dias_buscaCSW = 0, codEmpresa = None, limitPostgres = None, utimosDias = None,
+                 ArraytipoOPExluir = None, consideraMost = 'nao',nomeFase = '', ArrayTipoProducao = None):
 
         self.periodoInicio = periodoInicio
         self.periodoFinal = periodoFinal
@@ -22,6 +23,8 @@ class ProducaoFases():
         self.ArraytipoOPExluir = ArraytipoOPExluir
         self.consideraMost = 'nao'
         self.nomeFase = nomeFase
+        self.ArrayTipoProducao = ArrayTipoProducao
+
 
     def RealizadoMediaMovel(self):
 
@@ -202,4 +205,6 @@ class ProducaoFases():
         conn = ConexaoPostgreWms.conexaoEngine()
         realizado = pd.read_sql(sql, conn)
         return realizado
+
+
 
