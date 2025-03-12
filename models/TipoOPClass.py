@@ -38,7 +38,7 @@ class TipoOP():
     def tiposDeProducaoAgrupado(self):
         '''Metodo qe agrupa o tipo de OP em categorias'''
         print("Executando tiposDeProducaoAgrupado")
-        categorias = pd.DataFrame({'Categoria': ['Producao', 'Mostruario', 'Encomendas','Varejo']})
+        categorias = pd.DataFrame({'Tipo Producao': ['Producao', 'Mostruario', 'Encomendas','Varejo']})
         return categorias
 
 
