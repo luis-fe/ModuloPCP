@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from connection import ConexaoBanco, ConexaoPostgreWms
 import pytz
-
+from models import TipoOPClass
 
 
 class ProducaoFases():
@@ -31,6 +31,9 @@ class ProducaoFases():
             realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
 
         if self.consideraMost == 'nao':
+            agrupamentoOP = TipoOPClass.TipoOP().agrupado_x_tipoOP()
+
+
             realizado = realizado[~realizado['descricaolote'].str.contains("MOST", case=False, na=False)].reset_index()
 
         realizado['filtro'] = realizado['codFase'].astype(str) + '|' + realizado['codEngenharia'].str[0]
