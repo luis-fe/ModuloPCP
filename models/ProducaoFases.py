@@ -33,11 +33,12 @@ class ProducaoFases():
         if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
             realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
 
-        if self.consideraMost == 'nao':
+        if self.ArrayTipoProducao != None:
             agrupamentoOP = TipoOPClass.TipoOP().agrupado_x_tipoOP()
+            dataFrameTipoProducao = pd.DataFrame({'tipoOP': self.ArrayTipoProducao})
+            dataFrameTipoProducao = pd.merge(agrupamentoOP,dataFrameTipoProducao, on='tipoOP')
+            realizado = pd.merge(realizado,dataFrameTipoProducao, on='codtipoop')
 
-
-            realizado = realizado[~realizado['descricaolote'].str.contains("MOST", case=False, na=False)].reset_index()
 
         realizado['filtro'] = realizado['codFase'].astype(str) + '|' + realizado['codEngenharia'].str[0]
         realizado = realizado[(realizado['filtro'] != '401|6')]
