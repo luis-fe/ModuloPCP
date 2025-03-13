@@ -46,6 +46,7 @@ class ProducaoFases():
             #print(dataFrameTipoProducao)
             dataFrameTipoProducao = pd.merge(agrupamentoOP,dataFrameTipoProducao, on='Agrupado')
             print(dataFrameTipoProducao)
+            realizado['codtipoop'] = realizado['codtipoop'].astype(str)
             realizado = pd.merge(realizado,dataFrameTipoProducao, on='codtipoop')
 
 
