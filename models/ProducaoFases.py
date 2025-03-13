@@ -41,10 +41,11 @@ class ProducaoFases():
         else:
             self.ArrayTipoProducao = ['Producao']
             agrupamentoOP = TipoOPClass.TipoOP().agrupado_x_tipoOP()
-            #print(agrupamentoOP)
+            print(agrupamentoOP)
             dataFrameTipoProducao = pd.DataFrame({'Agrupado': self.ArrayTipoProducao})
             #print(dataFrameTipoProducao)
             dataFrameTipoProducao = pd.merge(agrupamentoOP,dataFrameTipoProducao, on='Agrupado')
+            print(dataFrameTipoProducao)
             realizado = pd.merge(realizado,dataFrameTipoProducao, on='codtipoop')
 
 
