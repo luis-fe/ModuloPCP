@@ -130,7 +130,9 @@ WHERE op.situacao = 3 and op.codEmpresa = 1 and op.codFaseAtual <> 401
 
 
 def EstoquePartes():
+    '''Metodo que busca o estoque das Partes '''
 
+    # 1 - sql do De-Para entre pai x filho
     sql = """
     SELECT 
         cv.CodComponente as redParte, 
@@ -159,6 +161,7 @@ def EstoquePartes():
     relacaoPartes['codSeqTamanho'] = relacaoPartes['codSeqTamanho'].astype(str)
     relacaoPartes['codSortimento'] = relacaoPartes['codSortimento'].astype(str)
 
+    # 2 - sql para buscar o codigo reduzido a nivel pai
     sl2Itens2 = """
     select 
         codigo as "codItem", 
@@ -173,29 +176,23 @@ def EstoquePartes():
     conn = ConexaoPostgreWms.conexaoEngine()
     itens = pd.read_sql(sl2Itens2,conn)
 
+    # 3 - merge entre os sql para descobrir o codigoReduzido Pai x codigoReduzido Filho
     relacaoPartes = pd.merge(relacaoPartes,itens,on=['codProduto','codSortimento','codSeqTamanho'])
 
 
     estoquePa = EstoqueNaturezaPA()
     relacaoPartes = pd.merge(relacaoPartes,estoquePa,on='codItem')
 
-    cargaFase = CargaFases()
-    cargaFasePartes = pd.merge(relacaoPartes, cargaFase, on='codItem')
 
     relacaoPartes['estoqueAtual'] = relacaoPartes['quantidade'] * relacaoPartes['estoqueAtual']
     relacaoPartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho'], axis=1, inplace=True)
-    cargaFasePartes.drop(['codItem','codProduto','codSortimento','codSeqTamanho','estoqueAtual'], axis=1, inplace=True)
 
     relacaoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
-    cargaFasePartes.rename(columns={'redParte': 'codItem'}, inplace=True)
 
 
     relacaoPartes = pd.concat([estoquePa,relacaoPartes])
 
-    cargaFasePartes = pd.concat([cargaFase,cargaFasePartes])
-    cargaFasePartes.fillna(1,inplace=True)
-    cargaFasePartes = cargaFasePartes.drop_duplicates()
-    cargaFasePartes = cargaFasePartes.groupby('codItem').agg({'quantidade':'first','carga':'first'}).reset_index()
+
     relacaoPartes = relacaoPartes.groupby('codItem').agg({'quantidade':'first','estoqueAtual':'first'}).reset_index()
 
 

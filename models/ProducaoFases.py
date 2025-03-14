@@ -65,22 +65,26 @@ class ProducaoFases():
         # Evitar divisão por zero ou infinito
         realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
         print(f'dias uteis {diasUteis}')
+
         return realizado
 
     def __sqlRealizadoPeriodo(self):
         sql = """
-        select rf."codEngenharia",
-    	rf.numeroop ,
-    	rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" , rf."horaMov"::time,
-    	rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave ,"codtipoop", rf.descricaolote 
-    from
-    	pcp.realizado_fase rf 
-    where 
-    	rf."dataBaixa"::date >= %s 
-    	and rf."dataBaixa"::date <= %s ;
+        select 
+            rf."codEngenharia",
+    	    rf.numeroop ,
+    	    rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date , rf."nomeFaccionista", rf."codFaccionista" , rf."horaMov"::time,
+    	    rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave ,"codtipoop", rf.descricaolote 
+        from
+    	    pcp.realizado_fase rf 
+        where 
+    	    rf."dataBaixa"::date >= %s 
+    	    and rf."dataBaixa"::date <= %s ;
         """
         conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
         realizado = pd.read_sql(sql, conn, params=(self.periodoInicio, self.periodoFinal,))
+
+
         return realizado
 
     def lotesFiltragrem(self):

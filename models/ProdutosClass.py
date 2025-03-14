@@ -17,9 +17,19 @@ class Produto():
         '''
 
         sql = """
-        SELECT cv.CodComponente as redParte, cv.codProduto, cv2.codSortimento, cv2.seqTamanho as codSeqTamanho, cv2.quantidade
-        FROM tcp.ComponentesVariaveis cv
-        inner join tcp.CompVarSorGraTam cv2 on cv2.codEmpresa = cv.codEmpresa and cv2.codProduto = cv.codProduto and cv.codSequencia = cv2.sequencia 
+        SELECT 
+            cv.CodComponente as redParte, 
+            cv.codProduto, 
+            cv2.codSortimento, 
+            cv2.seqTamanho as codSeqTamanho, 
+            cv2.quantidade
+        FROM 
+            tcp.ComponentesVariaveis cv
+        inner join 
+            tcp.CompVarSorGraTam cv2 
+            on cv2.codEmpresa = cv.codEmpresa 
+            and cv2.codProduto = cv.codProduto 
+            and cv.codSequencia = cv2.sequencia 
         WHERE cv.codEmpresa = 1 and cv.codClassifComponente in (10,12) and cv.codProduto like '%-0'
         """
 
@@ -35,8 +45,15 @@ class Produto():
 
 
         sl2Itens2 = """
-            select codigo as "codItem", "codSortimento"::varchar, "codSeqTamanho"::varchar, '0'||"codItemPai"||'-0' as "codProduto"  from "PCP".pcp.itens_csw ic 
-            where ic."codItemPai" like '1%'
+            select 
+                codigo as "codItem", 
+                "codSortimento"::varchar, 
+                "codSeqTamanho"::varchar, 
+                '0'||"codItemPai"||'-0' as "codProduto"  
+            from 
+                "PCP".pcp.itens_csw ic 
+            where 
+                ic."codItemPai" like '1%'
             """
 
         conn = ConexaoPostgreWms.conexaoEngine()
