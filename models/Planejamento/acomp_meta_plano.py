@@ -33,7 +33,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         """
 
         consulta = """
-        select codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho"  from pcp.itens_csw ic 
+        select 
+            codigo as "codItem", nome, "unidadeMedida" , "codItemPai" , "codSortimento" as "codSortimento" , "codSeqTamanho" as "codSeqTamanho" , categoria 
+        from pcp.itens_csw ic 
         """
 
         sqlMetas = pd.read_sql(sqlMetas,conn)
@@ -41,8 +43,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         sqlApresentacao = pd.read_sql(sqlApresentacao,conn)
 
         consulta = pd.read_sql(consulta, conn)
-        consulta['categoria'] = '-'
-        consulta['categoria'] = consulta['nome'].apply(mapear_categoria)
+
 
         # Verificar quais codItemPai começam com '1' ou '2'
         mask = consulta['codItemPai'].str.startswith(('1', '2'))
