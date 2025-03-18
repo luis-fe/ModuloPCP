@@ -142,7 +142,7 @@ class Faturamento():
     def faturamentoPeriodo_Plano_PartesPeca(self):
         '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
 
-        self.consultaPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
+        #self.consultaPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
 
 
         faturamento = self.faturamentoPeriodo_Plano()
