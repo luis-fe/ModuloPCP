@@ -102,6 +102,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         caminhoAbsoluto = os.getenv('CAMINHO')
         sqlMetas.to_csv(f'{caminhoAbsoluto}/dados/analise.csv')
 
+        print(
+            'excutando a etata 8:Salvando os dados para csv que é o retrado da previsao x falta programar a nivel sku')
+
         Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
         filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
         totalPc = filtro['previsao'].sum()
