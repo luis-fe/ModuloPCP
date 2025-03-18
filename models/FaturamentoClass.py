@@ -7,12 +7,12 @@ from dotenv import load_dotenv, dotenv_values
 import os
 
 class Faturamento():
-    def __init__(self, dataInicial = None, dataFinal = None, tipoNotas = None, codigoPlano = None):
+    def __init__(self, dataInicial = None, dataFinal = None, tipoNotas = None, codigoPlano = None, relacaoPartes = None):
         self.dataInicial = dataInicial
         self.dataFinal = dataFinal
         self.tipoNotas = tipoNotas
         self.codigoPlano = codigoPlano
-
+        self.relacaoPartes = relacaoPartes
 
     def faturamentoPeriodo_Plano(self):
         '''Metodo para obter o faturamento de um determinado plano
@@ -143,7 +143,6 @@ class Faturamento():
         '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
         partes = ProdutosClass.Produto()
         consultaPartes = partes.conversaoSKUparaSKUPartes()
-        consultaPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
 
 
 
@@ -156,6 +155,8 @@ class Faturamento():
 
         # Rename do redParte para codProduto
         faturamentoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
+        faturamentoPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
+
 
         return faturamentoPartes
 
