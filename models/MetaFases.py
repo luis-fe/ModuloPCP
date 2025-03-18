@@ -150,7 +150,7 @@ class MetaFases():
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
 
-        previsao = pd.read_csv(f'{caminhoAbsoluto}/dados/analise.csv')
+        previsao = pd.read_csv(f'{caminhoAbsoluto}/dados/analiseFaltaProgrFases.csv')
 
         previsao = previsao[previsao['nomeFase'] == self.nomeFase].reset_index()
         previsao = previsao.groupby(["categoria"]).agg({"previsao":"sum"}).reset_index()
