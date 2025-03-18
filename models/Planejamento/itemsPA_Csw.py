@@ -129,55 +129,60 @@ WHERE op.situacao = 3 and op.codEmpresa = 1 and op.codFaseAtual <> 401
 
 
 
-def EstoquePartes():
+def EstoquePartes(Df_relacaoPartes = None):
     '''Metodo que busca o estoque das Partes '''
 
-    # 1 - sql do De-Para entre pai x filho
-    sql = """
-    SELECT 
-        cv.CodComponente as redParte, 
-        cv.codProduto, 
-        cv2.codSortimento, 
-        cv2.seqTamanho as codSeqTamanho, 
-        cv2.quantidade
-    FROM 
-        tcp.ComponentesVariaveis cv
-    inner join 
-        tcp.CompVarSorGraTam cv2 on cv2.codEmpresa = cv.codEmpresa 
-        and cv2.codProduto = cv.codProduto 
-        and cv.codSequencia = cv2.sequencia 
-    WHERE 
-        cv.codEmpresa = 1 and cv.codClassifComponente in (10,12) 
-        and cv.codProduto like '%-0'
-    """
+    if Df_relacaoPartes == None:
 
-    with ConexaoBanco.Conexao2() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(sql)
-            colunas = [desc[0] for desc in cursor.description]
-            rows = cursor.fetchall()
-            relacaoPartes = pd.DataFrame(rows, columns=colunas)
+        # 1 - sql do De-Para entre pai x filho
+        sql = """
+        SELECT 
+            cv.CodComponente as redParte, 
+            cv.codProduto, 
+            cv2.codSortimento, 
+            cv2.seqTamanho as codSeqTamanho, 
+            cv2.quantidade
+        FROM 
+            tcp.ComponentesVariaveis cv
+        inner join 
+            tcp.CompVarSorGraTam cv2 on cv2.codEmpresa = cv.codEmpresa 
+            and cv2.codProduto = cv.codProduto 
+            and cv.codSequencia = cv2.sequencia 
+        WHERE 
+            cv.codEmpresa = 1 and cv.codClassifComponente in (10,12) 
+            and cv.codProduto like '%-0'
+        """
 
-    relacaoPartes['codSeqTamanho'] = relacaoPartes['codSeqTamanho'].astype(str)
-    relacaoPartes['codSortimento'] = relacaoPartes['codSortimento'].astype(str)
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                relacaoPartes = pd.DataFrame(rows, columns=colunas)
 
-    # 2 - sql para buscar o codigo reduzido a nivel pai
-    sl2Itens2 = """
-    select 
-        codigo as "codItem", 
-        "codSortimento"::varchar, 
-        "codSeqTamanho"::varchar, '0'||"codItemPai"||'-0' as "codProduto"  
-    from 
-        "PCP".pcp.itens_csw ic 
-    where 
-        ic."codItemPai" like '1%'
-    """
+        relacaoPartes['codSeqTamanho'] = relacaoPartes['codSeqTamanho'].astype(str)
+        relacaoPartes['codSortimento'] = relacaoPartes['codSortimento'].astype(str)
 
-    conn = ConexaoPostgreWms.conexaoEngine()
-    itens = pd.read_sql(sl2Itens2,conn)
+        # 2 - sql para buscar o codigo reduzido a nivel pai
+        sl2Itens2 = """
+        select 
+            codigo as "codItem", 
+            "codSortimento"::varchar, 
+            "codSeqTamanho"::varchar, '0'||"codItemPai"||'-0' as "codProduto"  
+        from 
+            "PCP".pcp.itens_csw ic 
+        where 
+            ic."codItemPai" like '1%'
+        """
 
-    # 3 - merge entre os sql para descobrir o codigoReduzido Pai x codigoReduzido Filho
-    relacaoPartes = pd.merge(relacaoPartes,itens,on=['codProduto','codSortimento','codSeqTamanho'])
+        conn = ConexaoPostgreWms.conexaoEngine()
+        itens = pd.read_sql(sl2Itens2,conn)
+
+        # 3 - merge entre os sql para descobrir o codigoReduzido Pai x codigoReduzido Filho
+        relacaoPartes = pd.merge(relacaoPartes,itens,on=['codProduto','codSortimento','codSeqTamanho'])
+
+    else:
+        relacaoPartes = Df_relacaoPartes
 
 
     estoquePa = EstoqueNaturezaPA()
