@@ -70,7 +70,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
 
         cargaFases = FaseClass.FaseProducao()
-        cargas = cargaFases.cargaPartes()
+        cargas = cargaFases.cargaPartes(consultaPartes)
 
         #cargas = itemsPA_Csw.CargaFases()
         sqlMetas = pd.merge(sqlMetas,cargas,on='codItem',how='left')

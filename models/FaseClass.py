@@ -118,8 +118,17 @@ class FaseProducao():
         consulta.fillna('-',inplace=True)
         return consulta
 
-    def cargaPartes(self):
+    def cargaPartes(self, relacaoPartes = None):
         '''Metodo para obter a carga de producao convertida em Partes - Semiacabado'''
+
+        try:
+            if relacaoPartes == 'None':
+                Df_relacaoPartes = pd.DataFrame()
+        except:
+            Df_relacaoPartes = relacaoPartes
+
+
+
 
         # 1 Consulta sql para obter as OPs em aberto no sistema do ´PCP
         sqlCarga = """
@@ -142,15 +151,15 @@ class FaseProducao():
         cargaPai = pd.read_sql(sqlCarga,conn)
 
     # 2 - Obtendo o DE-PARA DAS PARTES:
-        partes = ProdutosClass.Produto()
-        partesPecas = partes.conversaoSKUparaSKUPartes()
-        partesPecas.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
+        partesPecas = Df_relacaoPartes
 
 
     #3 - Realizando o merge
         cargas = cargaPai.copy()  # Criar uma cópia do DataFrame original
 
         cargaPartes = pd.merge(cargaPai,partesPecas , on='codItem')
+        cargaPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
+
 
     # Drop do codProduto
         cargaPartes.drop('codItem', axis=1, inplace=True)
