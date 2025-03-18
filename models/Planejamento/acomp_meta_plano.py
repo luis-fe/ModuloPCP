@@ -66,7 +66,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
         sqlMetas = pd.merge(sqlMetas,faturadoPeriodo,on='codItem',how='left')
 
-        estoque = itemsPA_Csw.EstoquePartes()
+        estoque = itemsPA_Csw.EstoquePartes(consultaPartes)
         sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
 
         cargaFases = FaseClass.FaseProducao()
