@@ -160,5 +160,21 @@ class MetaFases():
         return previsao
 
 
+    def faltaProgcategoria_fase(self):
+        '''Metodo que obtem o previsto em cada fase por categoria '''
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+
+        previsao = pd.read_csv(f'{caminhoAbsoluto}/dados/analiseFaltaProgrFases.csv')
+
+        previsao = previsao[previsao['nomeFase'] == self.nomeFase].reset_index()
+        previsao = previsao.groupby(["categoria"]).agg({"FaltaProgramar":"sum"}).reset_index()
+
+        previsao = previsao.sort_values(by=['FaltaProgramar'], ascending=False)  # escolher como deseja classificar
+
+        return previsao
+
+
+
 
 
