@@ -138,7 +138,7 @@ def EstoquePartes(Df_relacaoPartes = 'None'):
             Df_relacaoPartes = pd.DataFrame()
     except:
         Df_relacaoPartes = Df_relacaoPartes
-        print(Df_relacaoPartes)
+        print(Df_relacaoPartes.columns)
     if Df_relacaoPartes.empty:
 
         # 1 - sql do De-Para entre pai x filho
