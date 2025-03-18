@@ -92,9 +92,6 @@ class MetaFases():
             # 4 - Aplicando os estoques ao calculo
             #----------------------------------------------------------------------------------------------------------
             estoque = itemsPA_Csw.EstoquePartes()
-            sqlMetas = pd.merge(sqlMetas, estoque, on='codItem', how='left')
-            #___________________________________________________________________________________________________________
-
             # 5- Aplicando a carga em producao
             #-------------------------------------------------------------------------------------------------------
             cargaFases = FaseClass.FaseProducao()
@@ -137,113 +134,6 @@ class MetaFases():
 
             print('excutando a etata 8:Salvando os dados para csv que é o retrado da previsao x falta programar a nivel sku')
 
-
-            # 9 - Encontrando o falta Programar geral por produto
-
-            Meta = sqlMetas.groupby(["codEngenharia", "codSeqTamanho", "codSortimento", "categoria"]).agg(
-                {"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
-
-            filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
-            totalPc = filtro['previsao'].sum()
-            totalFaltaProgramar = filtro['FaltaProgramar'].sum()
-            novo2 = novo.replace('"', "-")
-            Totais = pd.DataFrame(
-                [{'0-Previcao Pçs': f'{totalPc} pcs', '01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
-            Totais.to_csv(f'{caminhoAbsoluto}/dados/Totais{novo2}.csv')
-
-            # Carregando o Saldo COLECAO ANTERIOR
-
-            Meta = pd.merge(Meta, sqlRoteiro, on='codEngenharia', how='left')
-            # Converter as colunas para arrays do NumPy
-            codFase_array = Meta['codFase'].values
-            codEngenharia_array = Meta['codEngenharia'].values
-
-            # Filtrar as linhas onde 'codFase' é 401
-            fase_401 = codFase_array == 401
-            fase_426 = codFase_array == 426
-            fase_412 = codFase_array == 412
-            fase_441 = codFase_array == 441
-
-            # Filtrar as linhas onde 'codEngenharia' não começa com '0'
-            nao_comeca_com_0 = np.vectorize(lambda x: not x.startswith('0'))(codEngenharia_array)
-
-            # Combinar as duas condições para filtrar as linhas
-            filtro_comb = fase_401 & nao_comeca_com_0
-            filtro_comb2 = fase_426 & nao_comeca_com_0
-            filtro_comb3 = fase_412 & nao_comeca_com_0
-            filtro_comb4 = fase_441 & nao_comeca_com_0
-
-            # Aplicar o filtro invertido
-            Meta = Meta[~(filtro_comb | filtro_comb2 | filtro_comb3 | filtro_comb4)]
-
-            Meta.to_csv(f'{caminhoAbsoluto}/dados/analiseFaltaProgrFases.csv')
-
-            Meta = Meta.groupby(["codFase", "nomeFase"]).agg({"previsao": "sum", "FaltaProgramar": "sum"}).reset_index()
-            Meta = pd.merge(Meta, sqlApresentacao, on='nomeFase', how='left')
-            Meta['apresentacao'] = Meta.apply(lambda x: 0 if x['codFase'] == 401 else x['apresentacao'], axis=1)
-
-            Meta = Meta.sort_values(by=['apresentacao'], ascending=True)  # escolher como deseja classificar
-
-            cronogramaS = cronograma.CronogramaFases(Codplano)
-            Meta = pd.merge(Meta, cronogramaS, on='codFase', how='left')
-
-            colecoes = TratamentoInformacaoColecao(arrayCodLoteCsw)
-
-            filaFase = FilaFases.ApresentacaoFila(colecoes)
-            filaFase = filaFase.loc[:,
-                       ['codFase', 'Carga Atual', 'Fila']]
-
-            Meta = pd.merge(Meta, filaFase, on='codFase', how='left')
-            Meta['Carga Atual'].fillna(0, inplace=True)
-            Meta['Fila'].fillna(0, inplace=True)
-            Meta['Falta Produzir'] = Meta['Carga Atual'] + Meta['Fila'] + Meta['FaltaProgramar']
-            Meta['dias'].fillna(1, inplace=True)
-            Meta['Meta Dia'] = Meta['Falta Produzir'] / Meta['dias']
-            Meta['Meta Dia'] = Meta['Meta Dia'].round(0)
-
-            # Ponto de Congelamento do lote:
-            Meta.to_csv(f'{caminhoAbsoluto}/dados/analiseLote{novo2}.csv')
-
-            realizadoPeriodo = ProducaoFases.ProducaoFases(dataMovFaseIni, dataMovFaseFim, '', 0, '1', 100, 100, [6, 8])
-            realizado = realizadoPeriodo.RealizadoMediaMovel()
-            realizado['codFase'] = realizado['codFase'].astype(int)
-            Meta = pd.merge(Meta, realizado, on='codFase', how='left')
-
-            Meta['Realizado'].fillna(0, inplace=True)
-            Meta.fillna('-', inplace=True)
-            Meta = Meta[Meta['apresentacao'] != '-']
-
-            dados = {
-                '0-Previcao Pçs': f'{totalPc} pcs',
-                '01-Falta Programar': f'{totalFaltaProgramar} pçs',
-                '1-Detalhamento': Meta.to_dict(orient='records')}
-
-            return pd.DataFrame([dados])
-
-        else:
-            load_dotenv('db.env')
-            caminhoAbsoluto = os.getenv('CAMINHO')
-            novo2 = novo.replace('"', "-")
-            Meta = pd.read_csv(f'{caminhoAbsoluto}/dados/analiseLote{novo2}.csv')
-            Totais = pd.read_csv(f'{caminhoAbsoluto}/dados/Totais{novo2}.csv')
-            totalPc = Totais['0-Previcao Pçs'][0]
-            totalFaltaProgramar = Totais['01-Falta Programar'][0]
-
-            realizadoPeriodo = ProducaoFases.ProducaoFases(dataMovFaseIni, dataMovFaseFim, '', 0, '1', 100, 100, [6, 8])
-            realizado = realizadoPeriodo.RealizadoMediaMovel()
-            realizado['codFase'] = realizado['codFase'].astype(int)
-            Meta = pd.merge(Meta, realizado, on='codFase', how='left')
-
-            Meta['Realizado'].fillna(0, inplace=True)
-            Meta.fillna('-', inplace=True)
-            Meta = Meta[Meta['apresentacao'] != '-']
-
-            dados = {
-                '0-Previcao Pçs': f'{totalPc} pcs',
-                '01-Falta Programar': f'{totalFaltaProgramar} pçs',
-                '1-Detalhamento': Meta.to_dict(orient='records')}
-
-            return pd.DataFrame([dados])
 
 
     def obterDiaAtual(self):

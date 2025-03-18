@@ -7,12 +7,12 @@ from dotenv import load_dotenv, dotenv_values
 import os
 
 class Faturamento():
-    def __init__(self, dataInicial = None, dataFinal = None, tipoNotas = None, codigoPlano = None, consultaPartes = None):
+    def __init__(self, dataInicial = None, dataFinal = None, tipoNotas = None, codigoPlano = None):
         self.dataInicial = dataInicial
         self.dataFinal = dataFinal
         self.tipoNotas = tipoNotas
         self.codigoPlano = codigoPlano
-        self.consultaPartes = consultaPartes
+
 
     def faturamentoPeriodo_Plano(self):
         '''Metodo para obter o faturamento de um determinado plano
@@ -141,14 +141,16 @@ class Faturamento():
 
     def faturamentoPeriodo_Plano_PartesPeca(self):
         '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
+        partes = ProdutosClass.Produto()
+        consultaPartes = partes.conversaoSKUparaSKUPartes()
+        consultaPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
 
-        consultaPartes2 = self.consultaPartes
-        consultaPartes2 = consultaPartes2.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
+
 
 
         faturamento = self.faturamentoPeriodo_Plano()
 
-        faturamentoPartes = pd.merge(faturamento,consultaPartes2,on='codItem')
+        faturamentoPartes = pd.merge(faturamento,consultaPartes,on='codItem')
         # Drop do codProduto
         faturamentoPartes.drop('codItem', axis=1, inplace=True)
 
