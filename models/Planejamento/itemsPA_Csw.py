@@ -129,10 +129,10 @@ WHERE op.situacao = 3 and op.codEmpresa = 1 and op.codFaseAtual <> 401
 
 
 
-def EstoquePartes(Df_relacaoPartes = None):
+def EstoquePartes(Df_relacaoPartes = 'None'):
     '''Metodo que busca o estoque das Partes '''
 
-    if Df_relacaoPartes == None:
+    if Df_relacaoPartes == 'None':
 
         # 1 - sql do De-Para entre pai x filho
         sql = """
