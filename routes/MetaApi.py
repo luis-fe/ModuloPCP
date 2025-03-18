@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from models import Meta, ProdutosClass
-
+from models import Meta, ProdutosClass, MetaFases
 
 metas_routes = Blueprint('metas_routes', __name__)
 
@@ -136,6 +135,31 @@ def post_atualizaOuInserirMetaCategoria():
     nomeCategoria = data.get('nomeCategoria', '-')
 
     dados = Meta.Meta(codPlano,marca, metaFinanceira, metaPecas, nomeCategoria).atualizaOuInserirMetaCategoria()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
+
+@metas_routes.route('/pcp/api/previsaoCategoriaFase', methods=['GET'])
+@token_required
+def get_previsaoCategoriaFase():
+    nomeFase = request.args.get('nomeFase', '-')
+
+    meta = MetaFases.MetaFases('','',nomeFase)
+
+    dados = meta.previsao_categoria_fase()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

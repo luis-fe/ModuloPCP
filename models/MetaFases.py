@@ -14,10 +14,11 @@ import os
 class MetaFases():
 
     '''Classe utilizada para construcao das metas por fase a nivel departamental '''
-    def __init__(self, codPlano = None, codLote = None):
+    def __init__(self, codPlano = None, codLote = None , nomeFase =None ):
 
         self.codPlano = codPlano
         self.codLote = codLote
+        self.nomeFase = nomeFase
     def metasFase(self,Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
         '''Metodo que consulta as meta por fase'''
 
@@ -142,5 +143,22 @@ class MetaFases():
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d')
         return agora
+
+
+    def previsao_categoria_fase(self):
+        '''Metodo que obtem o previsto em cada fase por categoria '''
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+
+        previsao = pd.read_csv(f'{caminhoAbsoluto}/dados/analise.csv')
+
+        previsao = previsao[previsao['nomeFase'] == self.nomeFase].reset_index()
+        previsao = previsao.groupby(["categoria"]).agg({"previsao":"sum"}).reset_index()
+
+        previsao = previsao.sort_values(by=['previsao'], ascending=False)  # escolher como deseja classificar
+
+        return previsao
+
+
 
 
