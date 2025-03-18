@@ -6,7 +6,7 @@ import numpy as np
 import re
 import pytz
 from datetime import datetime
-from models import FaturamentoClass, FaseClass
+from models import FaturamentoClass, FaseClass, ProdutosClass
 from dotenv import load_dotenv, dotenv_values
 import os
 from models import ProducaoFases
@@ -56,7 +56,10 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         saldo = SaldoPlanoAnterior.SaldosAnterior(Codplano)
         sqlMetas = pd.merge(sqlMetas,saldo,on='codItem',how='left')
 
-        faturado = FaturamentoClass.Faturamento(None,None,None,Codplano)
+        partes = ProdutosClass.Produto()
+        consultaPartes = partes.conversaoSKUparaSKUPartes()
+
+        faturado = FaturamentoClass.Faturamento(None,None,None,Codplano,consultaPartes)
         faturadoPeriodo = faturado.faturamentoPeriodo_Plano()
         faturadoPeriodoPartes = faturado.faturamentoPeriodo_Plano_PartesPeca()
         faturadoPeriodo = pd.concat([faturadoPeriodo, faturadoPeriodoPartes], ignore_index=True)
