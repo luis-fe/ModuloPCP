@@ -132,9 +132,12 @@ WHERE op.situacao = 3 and op.codEmpresa = 1 and op.codFaseAtual <> 401
 def EstoquePartes(Df_relacaoPartes = 'None'):
     '''Metodo que busca o estoque das Partes '''
 
-    if Df_relacaoPartes == 'None':
-        Df_relacaoPartes = pd.DataFrame()
 
+    try:
+        if Df_relacaoPartes == 'None':
+            Df_relacaoPartes = pd.DataFrame()
+    except:
+        Df_relacaoPartes = Df_relacaoPartes
 
     if Df_relacaoPartes.empty:
 
