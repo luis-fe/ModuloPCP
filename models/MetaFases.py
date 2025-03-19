@@ -253,7 +253,7 @@ class MetaFases():
 
         conn = ConexaoPostgreWms.conexaoEngine()
 
-        codFase = self.__obterCodFase(),
+        codFase = str(self.__obterCodFase()),
         roteiro = pd.read_sql(roteiro, conn, params=(codFase,))
 
 
