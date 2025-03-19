@@ -260,7 +260,7 @@ class MetaFases():
 
         #roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
 
-        roteiro = pd.DataFrame({'ttes':f'{codFase}'})
+        roteiro = pd.DataFrame({'ttes':[f'{codFase}']})
         return roteiro
 
 
