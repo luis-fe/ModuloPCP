@@ -242,7 +242,7 @@ class MetaFases():
             "PCP".pcp.ordemprod o on er."codEngenharia" = o."codProduto"
         where 
             o."codFaseAtual" <> '401'
-            and o.numeroop like '%-001%'
+            and o.numeroop like '%%-001%%'
             and o."seqAtual"::decimal < er."seqProcesso"::decimal
             and er."codFase" = %s
         """
@@ -250,7 +250,7 @@ class MetaFases():
         conn = ConexaoPostgreWms.conexaoEngine()
         codFase = str(self.__obterCodFase())
 
-        roteiro = pd.read_sql(roteiro, conn, params=('410',))  # Use a list
+        roteiro = pd.read_sql(roteiro, conn, params=(codFase,))  # Use a list
 
         roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs": "sum"}).reset_index()
 
