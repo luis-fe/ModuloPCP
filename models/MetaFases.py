@@ -267,7 +267,7 @@ class MetaFases():
 
         fases = self.__sqlObterFases()
         fases = fases[fases['nomeFase']==self.nomeFase].reset_index()
-
+        print(fases)
         return fases['codFaseAtual'][0]
 
 
