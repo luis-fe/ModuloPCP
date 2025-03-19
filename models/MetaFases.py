@@ -228,10 +228,7 @@ class MetaFases():
         realizado = pd.read_sql(sql, conn)
         return realizado
 
-
-
     def ObterRoteirosFila(self):
-
         roteiro = """
         select
             er."codFase" , 
@@ -244,25 +241,20 @@ class MetaFases():
         left join 
             "PCP".pcp.ordemprod o on er."codEngenharia" = o."codProduto"
         where 
-             o."codFaseAtual" <> '401'
-            and o.numeroop  like '%-001'
+            o."codFaseAtual" <> '401'
+            and o.numeroop like '%-001%'
             and o."seqAtual"::decimal < er."seqProcesso"::decimal
-            and er."codFase"  = %s
+            and er."codFase" = %s
         """
 
-
         conn = ConexaoPostgreWms.conexaoEngine()
-
         codFase = str(self.__obterCodFase())
 
-        #roteiro = pd.read_sql(roteiro, conn, params=(codFase))
+        roteiro = pd.read_sql(roteiro, conn, params=(codFase,))
 
+        roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs": "sum"}).reset_index()
 
-        #roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
-
-        roteiro = pd.DataFrame({'ttes':[f'{codFase}']})
         return roteiro
-
 
     def __obterCodFase(self):
 
