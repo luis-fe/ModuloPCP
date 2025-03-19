@@ -253,7 +253,8 @@ class MetaFases():
 
         conn = ConexaoPostgreWms.conexaoEngine()
 
-        codFase = str(self.__obterCodFase()),
+        codFase = str(self.__obterCodFase())
+
         roteiro = pd.read_sql(roteiro, conn, params=(codFase,))
 
 
@@ -267,8 +268,8 @@ class MetaFases():
 
         fases = self.__sqlObterFases()
         fases = fases[fases['nomeFase']==self.nomeFase].reset_index()
-        print(fases)
-        return fases['codFaseAtual'][0]
+        retorno = fases['codFaseAtual'][0]
+        return retorno
 
 
 
