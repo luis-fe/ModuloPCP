@@ -175,6 +175,66 @@ class MetaFases():
         return previsao
 
 
+    def cargaProgcategoria_Geral(self):
+        '''Metodo que obtem a carga em cada fase por categoria '''
+
+
+        cargaAtual = """
+        select
+            o."codFaseAtual",
+            o."codreduzido",
+            o.total_pcs,
+            "codTipoOP", ic.categoria 
+        from
+            "PCP".pcp.ordemprod o 
+        inner join 
+            "PCP".pcp.itens_csw ic on ic.codigo = o.codreduzido
+        """
+
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        cargaAtual = pd.read_sql(cargaAtual, conn)
+
+        return cargaAtual
+
+
+    def cargaProgcategoria_fase(self):
+        '''Metodo que obtem a carga em cada fase por categoria '''
+
+
+        cargaAtual = self.cargaProgcategoria_Geral()
+        nomes = self.__sqlObterFases()
+        cargaAtual = pd.merge(cargaAtual,nomes,on='codFaseAtual')
+
+
+        cargaAtual = cargaAtual[cargaAtual['nomeFase'] == self.nomeFase].reset_index()
+        cargaAtual = cargaAtual.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
+
+
+        return cargaAtual
+    def __sqlObterFases(self):
+
+        sql = """
+        select
+	        distinct "codFase"::varchar as "codFaseAtual" ,
+	        "nomeFase"
+        from
+	        "PCP".pcp."Eng_Roteiro" er
+        """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        realizado = pd.read_sql(sql, conn)
+        return realizado
+
+
+
+
+
+
+
+
+
+
 
 
 
