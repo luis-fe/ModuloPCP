@@ -228,7 +228,7 @@ def get_Filacategoria_fase():
 
     meta = MetaFases.MetaFases('','',nomeFase)
 
-    dados = meta.ObterRoteirosFila()
+    dados = meta.obterRoteirosFila()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

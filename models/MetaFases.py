@@ -211,6 +211,7 @@ class MetaFases():
 
         cargaAtual = cargaAtual[cargaAtual['nomeFase'] == self.nomeFase].reset_index()
         cargaAtual = cargaAtual.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
+        cargaAtual.rename(columns={'total_pcs': 'Carga'}, inplace=True)
 
 
         return cargaAtual
@@ -228,7 +229,7 @@ class MetaFases():
         realizado = pd.read_sql(sql, conn)
         return realizado
 
-    def ObterRoteirosFila(self):
+    def obterRoteirosFila(self):
         roteiro = """
         select
             er."codFase" , 
@@ -253,6 +254,7 @@ class MetaFases():
         roteiro = pd.read_sql(roteiro, conn, params=(codFase,))  # Use a list
 
         roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs": "sum"}).reset_index()
+        roteiro.rename(columns={'total_pcs': 'Fila'}, inplace=True)
 
         return roteiro
 
@@ -272,11 +274,15 @@ class MetaFases():
 
         # 2 - Carga
         carga = self.cargaProgcategoria_fase()
-        carga.rename(columns={'total_pcs': 'Carga'}, inplace=True)
 
         faltaProduzir = pd.merge(faltaProgramar,carga, on ='categoria',how='outer')
 
-        faltaProduzir['faltaProduzir'] = faltaProduzir['FaltaProgramar'] + faltaProduzir['Carga']
+        # 3 - Fila
+        fila = self.obterRoteirosFila()
+        faltaProduzir = pd.merge(faltaProduzir,fila, on ='categoria',how='outer')
+
+        faltaProduzir.fillna(0, inplace = True)
+        faltaProduzir['faltaProduzir'] = faltaProduzir['FaltaProgramar'] + faltaProduzir['Carga']+ faltaProduzir['Fila']
 
         return faltaProduzir
 
