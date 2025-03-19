@@ -264,6 +264,24 @@ class MetaFases():
         return retorno
 
 
+    def faltaProduzirCategoriaFase(self):
+        '''Metodo que consulta o falta produzir a nivel de categoria'''
+
+        # 1 - Levantando o falta programar
+        faltaProgramar = self.faltaProgcategoria_fase()
+
+        # 2 - Carga
+        carga = self.cargaProgcategoria_fase()
+        carga.rename(columns={'total_pcs': 'Carga'}, inplace=True)
+
+        faltaProduzir = pd.merge(faltaProgramar,carga, on ='categoria',how='outer')
+
+        faltaProduzir['faltaProduzir'] = faltaProduzir['FaltaProgramar'] + faltaProduzir['Carga']
+
+        return faltaProduzir
+
+
+
 
 
 
