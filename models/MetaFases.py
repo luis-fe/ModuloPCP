@@ -255,12 +255,12 @@ class MetaFases():
 
         codFase = str(self.__obterCodFase())
 
-        roteiro = pd.read_sql(roteiro, conn, params=(codFase))
+        #roteiro = pd.read_sql(roteiro, conn, params=(codFase))
 
 
-        roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
+        #roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
 
-
+        roteiro = pd.DataFrame({'ttes':f'{codFase}'})
         return roteiro
 
 
