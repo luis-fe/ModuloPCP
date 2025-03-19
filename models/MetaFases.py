@@ -184,11 +184,13 @@ class MetaFases():
             o."codFaseAtual",
             o."codreduzido",
             o.total_pcs,
-            "codTipoOP", ic.categoria 
+            "codTipoOP", ic.categoria, o."seqAtual" 
         from
             "PCP".pcp.ordemprod o 
         inner join 
             "PCP".pcp.itens_csw ic on ic.codigo = o.codreduzido
+        WHERE 
+                "codFaseAtual" <> '401'
         """
 
 
@@ -228,6 +230,43 @@ class MetaFases():
 
 
 
+    def ObterRoteirosFila(self):
+
+        roteiro = """
+        select
+            er."codFase" , 
+            o."codFaseAtual", 
+            o."codTipoOP", 
+            o.categoria, 
+            o.total_pcs
+        from
+            "PCP".pcp."Eng_Roteiro" er
+        left join 
+            "PCP".pcp.ordemprod o on er."codEngenharia" = o."codProduto"
+        where 
+             o."codFaseAtual" <> '401'
+            and o.numeroop  like '%-001'
+            and o."seqAtual"::decimal < er."seqProcesso"::decimal
+            and er."codFase"  = %s
+        """
+
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+        roteiro = pd.read_sql(roteiro, conn, params=(self.__obterCodFase(),))
+
+
+        roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
+
+
+        return roteiro
+
+
+    def __obterCodFase(self):
+
+        fases = self.__sqlObterFases()
+        fases = fases[fases['nomeFase']==self.nomeFase].reset_index()
+
+        return fases['codFaseAtual'][0]
 
 
 
