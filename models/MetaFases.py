@@ -252,7 +252,9 @@ class MetaFases():
 
 
         conn = ConexaoPostgreWms.conexaoEngine()
-        roteiro = pd.read_sql(roteiro, conn, params=(self.__obterCodFase(),))
+
+        codFase = self.__obterCodFase(),
+        roteiro = pd.read_sql(roteiro, conn, params=(codFase,))
 
 
         roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
