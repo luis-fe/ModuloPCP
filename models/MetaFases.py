@@ -250,7 +250,7 @@ class MetaFases():
         conn = ConexaoPostgreWms.conexaoEngine()
         codFase = str(self.__obterCodFase())
 
-        roteiro = pd.read_sql(roteiro, conn, params=(codFase,))
+        roteiro = pd.read_sql(roteiro, conn, params=[codFase])  # Use a list
 
         roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs": "sum"}).reset_index()
 
