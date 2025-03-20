@@ -14,11 +14,13 @@ import os
 class MetaFases():
 
     '''Classe utilizada para construcao das metas por fase a nivel departamental '''
-    def __init__(self, codPlano = None, codLote = None , nomeFase =None ):
+    def __init__(self, codPlano = None, codLote = None , nomeFase =None, periodoInicio = None , periodoFinal = None ):
 
         self.codPlano = codPlano
         self.codLote = codLote
         self.nomeFase = nomeFase
+        self.periodoInicio = periodoInicio
+        self.periodoFinal = periodoFinal
     def metasFase(self,Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
         '''Metodo que consulta as meta por fase'''
 
@@ -283,8 +285,20 @@ class MetaFases():
 
         faltaProduzir.fillna(0, inplace = True)
         faltaProduzir['faltaProduzir'] = faltaProduzir['FaltaProgramar'] + faltaProduzir['Carga']+ faltaProduzir['Fila']
-        diasUteis = self.calcular_dias_sem_domingos(self.periodoInicio, self.periodoFinal)
-        faltaProduzir['metaDiaria'] = faltaProduzir['faltaProduzir'] / diasUteis
+
+
+        cronogramaS =cronograma.CronogramaFases(self.codPlano)
+        codFase = self.__obterCodFase()
+
+
+        cronogramaS = cronogramaS[cronogramaS['codFase'] == codFase].reset_index()
+
+        if not cronogramaS.empty:
+            dia_util = cronogramaS['dias'][0]
+        else:
+            dia_util = 1
+
+        faltaProduzir['metaDiaria'] = faltaProduzir['faltaProduzir'] / dia_util
 
 
         return faltaProduzir
