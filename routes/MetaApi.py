@@ -248,10 +248,9 @@ def get_Filacategoria_fase():
 @token_required
 def get_FaltaProduzircategoria_fase():
     nomeFase = request.args.get('nomeFase', '-')
-    periodoInicio = request.args.get('periodoInicio', '-')
-    periodoFinal = request.args.get('periodoFinal', '-')
+    codPlano = request.args.get('codPlano', '-')
 
-    meta = MetaFases.MetaFases('','',nomeFase, periodoInicio, periodoFinal)
+    meta = MetaFases.MetaFases(codPlano,'',nomeFase)
 
     dados = meta.faltaProduzirCategoriaFase()
     #controle.salvarStatus(rotina, ip, datainicio)
