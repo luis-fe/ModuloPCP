@@ -290,8 +290,8 @@ class MetaFases():
         cronogramaS =cronograma.CronogramaFases(self.codPlano)
         codFase = self.__obterCodFase()
 
-        print(codFase)
         cronogramaS = cronogramaS[cronogramaS['codFase'] == str(codFase)].reset_index()
+        print(cronogramaS)
 
         if not cronogramaS.empty:
             dia_util = cronogramaS['dias'][0]
