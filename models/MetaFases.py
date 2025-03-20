@@ -290,8 +290,8 @@ class MetaFases():
         cronogramaS =cronograma.CronogramaFases(self.codPlano)
         codFase = self.__obterCodFase()
 
-
-        cronogramaS = cronogramaS[cronogramaS['codFase'] == codFase].reset_index()
+        print(cronogramaS)
+        cronogramaS = cronogramaS[cronogramaS['codFase'] == str(codFase)].reset_index()
 
         if not cronogramaS.empty:
             dia_util = cronogramaS['dias'][0]
@@ -299,7 +299,7 @@ class MetaFases():
             dia_util = 1
 
         faltaProduzir['metaDiaria'] = faltaProduzir['faltaProduzir'] / dia_util
-
+        faltaProduzir['dias'] = dia_util
 
         return faltaProduzir
 
