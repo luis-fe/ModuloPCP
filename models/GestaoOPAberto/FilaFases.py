@@ -19,7 +19,8 @@ def RoteiroOPsAberto():
                 tco.OrdemProd o
             WHERE
                 o.codempresa = 1
-                and o.numeroop = r.numeroOP) as tipoOP
+                and o.numeroop = r.numeroOP
+            ) as tipoOP
         FROM
             tco.RoteiroOP r
         WHERE
@@ -146,8 +147,9 @@ def FilaFases():
     fila['COLECAO'] = fila['desLote'].apply(TratamentoInformacaoColecao)
     fila['COLECAO'] = fila['COLECAO'] + ' ' + fila['desLote'].apply(extrair_ano)
     fila.fillna('-', inplace=True)
+    caminhoAbsoluto = os.getenv('CAMINHO')
 
-
+    fila.to_csv(f'{caminhoAbsoluto}/dados/filaTesteLuis.csv')
 
 
     return fila
