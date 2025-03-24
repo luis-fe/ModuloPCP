@@ -186,30 +186,3 @@ def get_RetornoPorFaseDiaria():
     del dados
     return jsonify(OP_data)
 
-
-@MetasFases_routes.route('/pcp/api/RetornoPorFaseDiaria', methods=['GET'])
-@token_required
-def get_RetornoPorFaseDiaria():
-
-    nomeFase = request.args.get('nomeFase')
-    dataInicio = request.args.get('dataInicio')
-    dataFinal = request.args.get('dataFinal')
-    codEmpresa = request.args.get('codEmpresa','1')
-    print(dataInicio)
-    print(dataFinal)
-
-    realizado = ProducaoFases.ProducaoFases(dataInicio, dataFinal, '','',codEmpresa,'','',[6, 8],'nao',nomeFase)
-    dados = realizado.realizadoFasePeriodo()
-
-
-    # Obtém os nomes das colunas
-    column_names = dados.columns
-    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
-    OP_data = []
-    for index, row in dados.iterrows():
-        op_dict = {}
-        for column_name in column_names:
-            op_dict[column_name] = row[column_name]
-        OP_data.append(op_dict)
-    del dados
-    return jsonify(OP_data)
