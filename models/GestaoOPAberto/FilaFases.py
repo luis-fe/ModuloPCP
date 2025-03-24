@@ -135,8 +135,8 @@ def FilaFases():
     fila = pd.merge(fila,sql_nomeFases2,on='codFaseAtual')
 
     sqlBuscarPecas = """
-    select o.numeroop as "numeroOP", categoria, sum(o.total_pcs) as pcs from pcp.ordemprod o 
-    group by numeroop, categoria
+    select o.numeroop as "numeroOP", sum(o.total_pcs) as pcs from pcp.ordemprod o 
+    group by numeroop
     """
 
     conn2 = ConexaoPostgreWms.conexaoEngine()
