@@ -79,7 +79,7 @@ def Monitor_nivelSku(dataFim):
     parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parquet')
 
     # Converter para DataFrame do Pandas
-    df_loaded = parquet_file.to_pandas()
+    df_loaded = parquet_file.to_pandas(strict=False)
 
     # Converter 'dataEmissao' para datetime
     df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
