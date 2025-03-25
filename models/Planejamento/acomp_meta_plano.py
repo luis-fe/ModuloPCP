@@ -470,4 +470,5 @@ def obterdiaAtual():
     fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
     agora = datetime.now(fuso_horario)
     agora = agora.strftime('%Y_%m_%d')
-    return pd.to_datetime(agora)
+
+    return agora
