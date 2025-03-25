@@ -76,7 +76,7 @@ def Monitor_nivelSku(dataFim):
     # Carregar o arquivo Parquet
     load_dotenv('db.env')
     caminhoAbsoluto = os.getenv('CAMINHO')
-    df_loaded = pd.read_parquet(f'{caminhoAbsoluto}/dados/pedidos.parquet', engine="pyarrow")
+    df_loaded = pd.read_parquet(f'{caminhoAbsoluto}/dados/pedidos.parquet', engine="fastparquet")
 
     # Converter para DataFrame do Pandas
 
