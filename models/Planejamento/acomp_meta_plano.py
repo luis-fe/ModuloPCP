@@ -185,7 +185,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta.fillna('-', inplace=True)
         Meta = Meta[Meta['apresentacao'] != '-']
         data = obterdiaAtual()
-        Meta.to_csv(f'{caminhoAbsoluto}/dados/backup/meta_{str(plano)}_{str(loteCsw)}_{str(data)}.csv')
+        Meta.to_csv(f'{caminhoAbsoluto}/dados/backup/meta_{str(Codplano)}_{str(novo)}_{str(data)}.csv')
 
         dados = {
             '0-Previcao Pçs': f'{totalPc} pcs',
