@@ -184,6 +184,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta['Realizado'].fillna(0, inplace=True)
         Meta.fillna('-', inplace=True)
         Meta = Meta[Meta['apresentacao'] != '-']
+        data = obterdiaAtual()
+        Meta.to_csv(f'{caminhoAbsoluto}/dados/backup/meta_{str(plano)}_{str(loteCsw)}_{str(data)}.csv')
 
         dados = {
             '0-Previcao Pçs': f'{totalPc} pcs',
@@ -460,3 +462,12 @@ def mapear_categoria(nome):
         if chave in nome.upper():
             return valor
     return '-'
+
+
+
+
+def obterdiaAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+    agora = datetime.now(fuso_horario)
+    agora = agora.strftime('%Y-%m-%d')
+    return pd.to_datetime(agora)
