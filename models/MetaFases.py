@@ -232,31 +232,14 @@ class MetaFases():
         return realizado
 
     def obterRoteirosFila(self):
-        roteiro = """
-        select
-            er."codFase" , 
-            o."codFaseAtual", 
-            o."codTipoOP", 
-            o.categoria, 
-            o.total_pcs
-        from
-            "PCP".pcp."Eng_Roteiro" er
-        left join 
-            "PCP".pcp.ordemprod o on er."codEngenharia" = o."codProduto"
-        where 
-            o."codFaseAtual" <> '401'
-            and o.numeroop like '%%-001%%'
-            and o."seqAtual"::decimal < er."seqProcesso"::decimal
-            and er."codFase" = %s
-        """
 
-        conn = ConexaoPostgreWms.conexaoEngine()
-        codFase = str(self.__obterCodFase())
-
-        roteiro = pd.read_sql(roteiro, conn, params=(codFase,))  # Use a list
-
-        roteiro = roteiro.groupby(["categoria"]).agg({"total_pcs": "sum"}).reset_index()
-        roteiro.rename(columns={'total_pcs': 'Fila'}, inplace=True)
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        roteiro = pd.read_csv(f'{caminhoAbsoluto}/dados/filaroteiroOP.csv')
+        roteiro = roteiro[roteiro['fase']==self.nomeFase].reset_index()
+        roteiro = roteiro[roteiro['Situacao']=='a produzir'].reset_index()
+        roteiro = roteiro.groupby(["categoria"]).agg({"pcs": "sum"}).reset_index()
+        roteiro.rename(columns={'pcs': 'Fila'}, inplace=True)
 
         return roteiro
 
@@ -332,6 +315,8 @@ class MetaFases():
             dias = 1
 
         return dias
+
+
 
 
 
