@@ -326,7 +326,7 @@ class MonitorPedidosOps():
                                     SELECT   
                                         dataEmissao, 
                                         convert(varchar(9), codPedido) as codPedido,
-                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli, " \
+                                        (select c.nome as nome_cli from fat.cliente c where c.codCliente = p.codCliente) as nome_cli,
                                         codTipoNota, 
                                         dataPrevFat, 
                                         convert(varchar(9),codCliente) as codCliente, 
