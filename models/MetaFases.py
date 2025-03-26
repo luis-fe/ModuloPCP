@@ -204,16 +204,17 @@ class MetaFases():
 
     def cargaProgcategoria_fase(self):
         '''Metodo que obtem a carga em cada fase por categoria '''
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
 
 
-        cargaAtual = self.cargaProgcategoria_Geral()
-        nomes = self.__sqlObterFases()
-        cargaAtual = pd.merge(cargaAtual,nomes,on='codFaseAtual')
+        cargaAtual = pd.read_csv(f'{caminhoAbsoluto}/dados/filaroteiroOP.csv')
+        cargaAtual = cargaAtual[cargaAtual['fase']==self.nomeFase].reset_index()
 
 
-        cargaAtual = cargaAtual[cargaAtual['nomeFase'] == self.nomeFase].reset_index()
-        cargaAtual = cargaAtual.groupby(["categoria"]).agg({"total_pcs":"sum"}).reset_index()
-        cargaAtual.rename(columns={'total_pcs': 'Carga'}, inplace=True)
+        cargaAtual = cargaAtual[cargaAtual['Situacao']=='em processo'].reset_index()
+        cargaAtual = cargaAtual.groupby(["categoria"]).agg({"pcs": "sum"}).reset_index()
+        cargaAtual.rename(columns={'pcs': 'Carga'}, inplace=True)
 
 
         return cargaAtual
