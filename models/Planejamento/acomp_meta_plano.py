@@ -215,6 +215,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta.fillna('-',inplace=True)
         Meta = Meta[Meta['apresentacao']!='-']
 
+        Meta = pd.merge(Meta,dataFrame2, on='nomeFase',how='left')
+
+
         dados = {
         '0-Previcao Pçs': f'{totalPc} pcs',
         '01-Falta Programar':f'{totalFaltaProgramar} pçs',
