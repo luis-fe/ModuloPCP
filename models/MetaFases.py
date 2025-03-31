@@ -34,10 +34,14 @@ class MetaFases():
     def transformaando_codLote_clausulaIN(self):
         '''Metodo que transforma o arrayCodLote em cláusula IN'''
 
-        nomes_com_aspas = [f"'{nome}'" for nome in self.arrayCodLoteCsw]
-        novo = ", ".join(nomes_com_aspas)
+        if self.arrayCodLoteCsw == None:
 
-        return novo
+            return ''
+        else:
+            nomes_com_aspas = [f"'{nome}'" for nome in self.arrayCodLoteCsw]
+            novo = ", ".join(nomes_com_aspas)
+
+            return novo
 
     def metas_Lote(self):
         '''Metodo que consulta as metas de um lote'''
