@@ -50,7 +50,7 @@ def pOST_MetasFases():
 
     dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
 
-    dados = pd.merge(dados,dados1,on='nomeFase',how='left')
+    #dados = pd.merge(dados,dados1,on='nomeFase',how='left')
 
 
     column_names = dados.columns
