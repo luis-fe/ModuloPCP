@@ -474,7 +474,7 @@ class MetaFases():
     def backupMetasAnteriores(self):
         '''Metodo que busca as metas anteriores '''
 
-        data = self.dataBackupMetas.replace('-','_')
+        data = str(self.dataBackupMetas).replace('-', '_')
         plano = self.codPlano
         lote = self.transformaando_codLote_clausulaIN()
 
