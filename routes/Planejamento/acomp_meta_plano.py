@@ -74,7 +74,7 @@ def pOST_MetasFases2():
     else:
         congelado = congelado
 
-    meta = MetaFases.MetaFases(codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado, dataBackupMetas)
+    meta = MetaFases.MetaFases(codigoPlano, '','',dataMovFaseIni,dataMovFaseFim,congelado,arrayCodLoteCsw, '1',dataBackupMetas)
     dados = meta.backupMetasAnteriores()
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
