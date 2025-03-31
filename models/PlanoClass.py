@@ -20,7 +20,13 @@ class Plano():
         self.descricaoPlano = descricaoPlano
         self.iniVendas = iniVendas
         self.fimVendas = fimVendas
-        self.iniFat = iniFat
+
+        if self.iniFat == None: # Atributo de Inicio do Faturamento, caso nao seja informado busca via sql na funcao obterDataInicioFatPlano()
+            self.iniFat = self.obterDataInicioFatPlano()
+        else:
+            self.iniFat = iniFat
+
+
         self.fimFat = fimFat
         self.usuarioGerador = usuarioGerador
         self.codLote = codLote
@@ -85,14 +91,17 @@ class Plano():
         :return:
         '''
 
-    def obterDataInicioPlano(self):
+    def obterDataInicioFatPlano(self):
+        '''Metodo que obtem a DataInicial de faturamento do plano'''
+
+
         sql = """SELECT p."inicoFat" FROM pcp."Plano" p where codigo = %s"""
         conn = ConexaoPostgreWms.conexaoEngine()
         dataInicial =  pd.read_sql(sql,conn, params=(str(self.codPlano),))
 
         return dataInicial['inicoFat'][0]
 
-    def obterDataFinalPlano(self):
+    def obterDataFinalFatPlano(self):
         sql = """SELECT p."finalFat" FROM pcp."Plano" p where codigo = %s"""
         conn = ConexaoPostgreWms.conexaoEngine()
         dataInicial = pd.read_sql(sql, conn, params=(str(self.codPlano),))
