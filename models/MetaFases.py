@@ -481,7 +481,7 @@ class MetaFases():
         nome = f'meta_{plano}_{lote}_{data}.csv'
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
-        dataFrame = pd.read_csv(f'{caminhoAbsoluto}/dados/{nome}')
+        dataFrame = pd.read_csv(f'{caminhoAbsoluto}/dados/backup/{nome}')
 
 
         return dataFrame
