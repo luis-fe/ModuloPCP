@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Blueprint, jsonify, request
 from functools import wraps
 from models.Planejamento import plano, loteCsw, acomp_meta_plano
@@ -36,14 +37,22 @@ def pOST_MetasFases():
     dataMovFaseIni = data.get('dataMovFaseIni', dia)
     dataMovFaseFim = data.get('dataMovFaseFim', dia)
     congelado = data.get('congelado', False)
+    dataBackupMetas = data.get('dataBackupMetas', '2025-03-26')
+
     print(data)
     if congelado =='' or congelado == '-':
         congelado = False
     else:
         congelado = congelado
 
+    meta = MetaFases.MetaFases(codigoPlano, '','',dataMovFaseIni,dataMovFaseFim,congelado,arrayCodLoteCsw, '1',dataBackupMetas)
+    dados1 = meta.backupMetasAnteriores()
 
     dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
+
+    dados = pd.merge(dados,dados1,on='nomeFase',how='left')
+
+
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
