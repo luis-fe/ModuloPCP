@@ -1,5 +1,5 @@
 import pandas as pd
-from models import PlanoClass, ProdutosClass
+from models import PlanoClass, ProdutosClass, Pedidos_CSW
 import fastparquet as fp
 from connection import ConexaoBanco, ConexaoPostgreWms
 from datetime import datetime, timedelta
@@ -7,12 +7,29 @@ from dotenv import load_dotenv, dotenv_values
 import os
 
 class Faturamento():
+    '''Classe que interagem com o faturamento'''
     def __init__(self, dataInicial = None, dataFinal = None, tipoNotas = None, codigoPlano = None, relacaoPartes = None):
-        self.dataInicial = dataInicial
-        self.dataFinal = dataFinal
+        '''Construtor da classe'''
+
+        self.dataInicial = dataInicial # dataInicial de faturamento
+        self.dataFinal = dataFinal # dataFinal de faturamento
         self.tipoNotas = tipoNotas
         self.codigoPlano = codigoPlano
         self.relacaoPartes = relacaoPartes
+
+        self.pedidoCsw = Pedidos_CSW.Pedidos_CSW()
+
+
+    def pedidosBloqueados(self):
+        '''Metodo que busca os pedidos bloqueados e retorna em um DataFrame '''
+
+        self._pedidosBloqueados = self.pedidoCsw.pedidosBloqueados()
+
+
+
+
+
+
 
     def faturamentoPeriodo_Plano(self):
         '''Metodo para obter o faturamento de um determinado plano
@@ -26,26 +43,26 @@ class Faturamento():
             return pd.Dataframe([{'status':False, 'Mensagem':'Plano nao encontrado' }])
         else:
             plano = PlanoClass.Plano(self.codigoPlano)
-            self.dataInicial = plano.obterDataInicioPlano()
-            self.dataFinal = plano.obterDataFinalPlano()
-            pedidos = self.consultaArquivoFastVendas()
-            pedidos['status'] = True
 
+            #Obtendo a dataInicial e dataFinal do Plano
+            self.dataInicial = plano.obterDataInicioFatPlano()
+            self.dataFinal = plano.obterDataFinalFatPlano()
+
+
+
+
+            pedidos = self.consultaArquivoFastVendas()
+
+            pedidos['status'] = True
             # 3 - Filtrando os pedidos aprovados
-            pedidosBloqueados = self._PedidosBloqueados()
-            pedidos = pd.merge(pedidos, pedidosBloqueados, on='codPedido', how='left')
+            pedidos = pd.merge(pedidos, self._pedidosBloqueados, on='codPedido', how='left')
             pedidos['situacaobloq'].fillna('Liberado', inplace=True)
             pedidos = pedidos[pedidos['situacaobloq'] == 'Liberado']
 
             # 4 Filtrando somente os tipo de notas desejados
 
-            sqlNotas = """
-                    select tnp."tipo nota" as "codTipoNota"  from "PCP".pcp."tipoNotaporPlano" tnp 
-                    where plano = %s
-                    """
 
-            conn = ConexaoPostgreWms.conexaoEngine()
-            tipoNotas = pd.read_sql(sqlNotas, conn, params=(self.codigoPlano,))
+            tipoNotas = plano.pesquisarTipoNotasPlano()
 
             pedidos = pd.merge(pedidos, tipoNotas, on='codTipoNota')
             pedidos = pedidos.groupby("codItem").agg({"qtdeFaturada": "sum"}).reset_index()
@@ -54,6 +71,8 @@ class Faturamento():
             return pedidos
 
     def consultaArquivoFastVendas(self):
+        '''Metodo utilizado para ler um arquivo do tipo parquet e converter em um DataFrame '''
+
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         # Carregar o arquivo Parquet
@@ -63,19 +82,16 @@ class Faturamento():
         df_loaded = parquet_file.to_pandas()
         # Converter 'dataEmissao' para datetime
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
-        # Convertendo a string para datetime
 
+        # Convertendo a string para datetime
         dataFatIni = pd.to_datetime(self.dataInicial)
         dataFatFinal = pd.to_datetime(self.dataFinal)
 
         # Filtrar as datas
         df_loaded['filtro'] = (df_loaded['dataPrevFat'] >= dataFatIni) & (df_loaded['dataPrevFat'] <= dataFatFinal)
 
-        # 2 - Filtrar Apenas Pedidos Não Bloqueados
-        pedidosBloqueados = self.Monitor_PedidosBloqueados()
-        df_loaded = pd.merge(df_loaded, pedidosBloqueados, on='codPedido', how='left')
-        df_loaded['situacaobloq'].fillna('Liberado', inplace=True)
-        df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
+
+
 
         # Aplicar o filtro
         df_filtered = df_loaded[df_loaded['filtro']].reset_index(drop=True)
@@ -99,45 +115,8 @@ class Faturamento():
 
         return df_filtered
 
-    def Monitor_PedidosBloqueados(self):
-        consultacsw = """SELECT * FROM (
-        SELECT top 300000 bc.codPedido, 'analise comercial' as situacaobloq  from ped.PedidoBloqComl  bc WHERE codEmpresa = 1  
-        and bc.situacaoBloq = 1
-        order by codPedido desc
-        UNION 
-        SELECT top 300000 codPedido, 'analise credito'as situacaobloq  FROM Cre.PedidoCreditoBloq WHERE Empresa  = 1  
-        and situacao = 1
-        order BY codPedido DESC) as D"""
 
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(consultacsw)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                consulta = pd.DataFrame(rows, columns=colunas)
 
-            del rows
-            return consulta
-
-    def _PedidosBloqueados(self):
-        consultacsw = """SELECT * FROM (
-        SELECT top 300000 bc.codPedido, 'analise comercial' as situacaobloq  from ped.PedidoBloqComl  bc WHERE codEmpresa = 1  
-        and bc.situacaoBloq = 1
-        order by codPedido desc
-        UNION 
-        SELECT top 300000 codPedido, 'analise credito'as situacaobloq  FROM Cre.PedidoCreditoBloq WHERE Empresa  = 1  
-        and situacao = 1
-        order BY codPedido DESC) as D"""
-
-        with ConexaoBanco.Conexao2() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(consultacsw)
-                colunas = [desc[0] for desc in cursor.description]
-                rows = cursor.fetchall()
-                consulta = pd.DataFrame(rows, columns=colunas)
-
-            del rows
-            return consulta
 
     def faturamentoPeriodo_Plano_PartesPeca(self):
         '''Metodo para obter o faturamento no periodo do plano , convertido em partes de peças (SEMIACABADOS)'''
