@@ -10,7 +10,8 @@ from models import FaturamentoClass, FaseClass, ProdutosClass
 from dotenv import load_dotenv, dotenv_values
 import os
 from models import ProducaoFases
-def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False):
+
+def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False, dataFrame2 = None):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
     conn = ConexaoPostgreWms.conexaoEngine()
@@ -186,6 +187,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta = Meta[Meta['apresentacao'] != '-']
         data = obterdiaAtual()
         Meta.to_csv(f'{caminhoAbsoluto}/dados/backup/meta_{str(Codplano)}_{str(novo)}_{str(data)}.csv')
+
+        Meta = pd.merge(Meta,dataFrame2, on='nomeFase',how='left')
 
         dados = {
             '0-Previcao Pçs': f'{totalPc} pcs',

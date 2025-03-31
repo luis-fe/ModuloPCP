@@ -48,7 +48,7 @@ def pOST_MetasFases():
     meta = MetaFases.MetaFases(codigoPlano, '','',dataMovFaseIni,dataMovFaseFim,congelado,arrayCodLoteCsw, '1',dataBackupMetas)
     dados1 = meta.backupMetasAnteriores()
 
-    dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
+    dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado,dados1)
 
     #dados = pd.merge(dados,dados1,on='nomeFase',how='left')
 
