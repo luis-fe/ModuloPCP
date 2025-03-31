@@ -483,6 +483,9 @@ class MetaFases():
         caminhoAbsoluto = os.getenv('CAMINHO')
         dataFrame = pd.read_csv(f'{caminhoAbsoluto}/dados/backup/{nome}')
         dataFrame = dataFrame.loc[:, ['Meta Dia', 'nomeFase']].reset_index()
+        dataFrame.rename(
+            columns={'Meta Dia':'Meta Anterior'},
+            inplace=True)
 
 
 
