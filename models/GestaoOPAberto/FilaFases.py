@@ -147,7 +147,6 @@ def FilaFases():
     fila['COLECAO'] = fila['desLote'].apply(TratamentoInformacaoColecao)
     fila['COLECAO'] = fila['COLECAO'] + ' ' + fila['desLote'].apply(extrair_ano)
     fila.fillna('-', inplace=True)
-    caminhoAbsoluto = os.getenv('CAMINHO')
 
 
 
@@ -155,8 +154,7 @@ def FilaFases():
 
 
 def ApresentacaoFila(COLECAO):
-    load_dotenv('db.env')
-    caminhoAbsoluto = os.getenv('CAMINHO')
+
     fila = FilaFases()
 
 
@@ -169,6 +167,9 @@ def ApresentacaoFila(COLECAO):
             {'numeroOP': ['t-0', 't-0','t-0'], 'codFase': [449, 437,412], "codFaseAtual": [449, 437,412], "Situacao": ['em processo','em processo','a produzir'],
              "pcs": 0, 'COLECAO': ['', '',''], "fase": ['ENTRADA DE ESTOQUE', 'ACABAMENTO EXTERNO','PRODUCAO DE MEIAS']})
         fila = pd.concat([fila,start])
+
+    load_dotenv('db.env')
+    caminhoAbsoluto = os.getenv('CAMINHO')
 
     fila.to_csv(f'{caminhoAbsoluto}/dados/filaroteiroOP.csv')
 
