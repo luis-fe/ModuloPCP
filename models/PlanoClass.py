@@ -21,6 +21,7 @@ class Plano():
         self.iniVendas = iniVendas
         self.fimVendas = fimVendas
 
+        self.iniFat = iniFat
         if self.iniFat == None: # Atributo de Inicio do Faturamento, caso nao seja informado busca via sql na funcao obterDataInicioFatPlano()
             self.iniFat = self.obterDataInicioFatPlano()
         else:
