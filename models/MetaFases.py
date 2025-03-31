@@ -477,7 +477,7 @@ class MetaFases():
         data = str(self.dataBackupMetas).replace('-', '_')
         plano = self.codPlano
         lote = self.transformaando_codLote_clausulaIN()
-        lote = '25F17B'
+        lote = """'25F17B'"""
 
         nome = f'meta_{plano}_{lote}_{data}.csv'
         load_dotenv('db.env')
