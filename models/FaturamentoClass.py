@@ -19,6 +19,7 @@ class Faturamento():
 
         self.pedidoCsw = Pedidos_CSW.Pedidos_CSW()
 
+        self.pedidosBloqueados()
 
     def pedidosBloqueados(self):
         '''Metodo que busca os pedidos bloqueados e retorna em um DataFrame '''
