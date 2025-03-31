@@ -4,7 +4,7 @@ from models.Planejamento import plano, loteCsw, acomp_meta_plano
 from models.GestaoOPAberto import realizadoFases
 import datetime
 import pytz
-from models import ProducaoFases
+from models import ProducaoFases, MetaFases
 
 MetasFases_routes = Blueprint('MetasFases_routes', __name__)
 
@@ -44,6 +44,38 @@ def pOST_MetasFases():
 
 
     dados = acomp_meta_plano.MetasFase(codigoPlano,arrayCodLoteCsw,dataMovFaseIni, dataMovFaseFim, congelado)
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)
+
+
+@MetasFases_routes.route('/pcp/api/MetasFases2', methods=['POST'])
+@token_required
+def pOST_MetasFases2():
+
+    data = request.get_json()
+    dia = dayAtual()
+    codigoPlano = data.get('codigoPlano')
+    arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
+    dataMovFaseIni = data.get('dataMovFaseIni', dia)
+    dataMovFaseFim = data.get('dataMovFaseFim', dia)
+    congelado = data.get('congelado', False)
+    dataBackupMetas = data.get('dataBackupMetas', dia)
+
+    print(data)
+    if congelado =='' or congelado == '-':
+        congelado = False
+    else:
+        congelado = congelado
+
+    meta = MetaFases.MetaFases(codigoPlano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado, dataBackupMetas)
+    dados = meta.backupMetasAnteriores()
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
