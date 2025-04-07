@@ -111,7 +111,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             'excutando a etata 8:Salvando os dados para csv que é o retrado da previsao x falta programar a nivel sku')
 
         Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
-        Meta['FaltaProgramar'] = Meta['FaltaProgramar'] * 0.8
+        Meta['FaltaProgramar'] = Meta['FaltaProgramar'] * 0.78
         filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
         totalPc = filtro['previsao'].sum()
         totalFaltaProgramar = filtro['FaltaProgramar'].sum()
