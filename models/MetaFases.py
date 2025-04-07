@@ -517,7 +517,7 @@ class MetaFases():
         lote = self.transformaando_codLote_clausulaIN()
         lote = """'25M31B'"""
 
-        nome = f'Officialmeta{plano}_{lote}_{data}.csv'
+        nome = f'Officialmeta_{plano}_{lote}_{data}.csv'
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         dataFrame = pd.read_csv(f'{caminhoAbsoluto}/dados/backup/{nome}')
