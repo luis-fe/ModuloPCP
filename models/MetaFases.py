@@ -3,8 +3,7 @@ import pytz
 from connection import ConexaoPostgreWms
 import pandas as pd
 from datetime import datetime
-from models import FaturamentoClass, FaseClass, ProducaoFases, Produtos, PlanoClass, Cronograma
-from models import OrdemProd
+from models import FaturamentoClass, ProducaoFases, Produtos, PlanoClass, Cronograma, OrdemProd
 from models.Planejamento import itemsPA_Csw, plano, cronograma
 from dotenv import load_dotenv, dotenv_values
 import os
@@ -15,14 +14,15 @@ class MetaFases():
 
     '''Classe utilizada para construcao das metas por fase a nivel departamental '''
 
-    def __init__(self, codPlano = None, codLote = None , nomeFase =None, periodoInicio = None , periodoFinal = None, analiseCongelada = False, arrayCodLoteCsw = None,
+    def __init__(self, codPlano = None, codLote = None, nomeFase =None, dt_inicioRealizado = None, dt_fimRealizado = None, analiseCongelada = False, arrayCodLoteCsw = None,
                  codEmpresa = '1', dataBackupMetas = None):
         '''Construtor da classe'''
+
         self.codPlano = codPlano # codigo do Plano criado
         self.codLote = codLote   # codigo do Lote criado no PCP
         self.nomeFase = nomeFase # nome da fase
-        self.periodoInicio = periodoInicio # filtro do perido de Inicio do realizado
-        self.periodoFinal = periodoFinal # filtro do perido final do realizado
+        self.dt_inicioRealizado = dt_inicioRealizado # filtro do perido de Inicio do realizado
+        self.dt_fimRealizado = dt_fimRealizado # filtro do perido final do realizado
         self.analiseCongelada = analiseCongelada # atributo que informa se a analse vai usar recursos pré salvos em csv
         self.arrayCodLoteCsw = arrayCodLoteCsw # Array com o codigo do lote
         self.codEmpresa = codEmpresa
@@ -73,7 +73,7 @@ class MetaFases():
 
 
 
-    def metasFase(self,Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim):
+    def metasFase(self,Codplano, arrayCodLoteCsw):
         '''Metodo que consulta as meta por fase'''
 
         ordemProd = OrdemProd.OrdemProd()
@@ -241,15 +241,79 @@ class MetaFases():
             self.backupsCsv(Meta, f'analiseLote{novo2}')
 
             # 20 - Buscando o realizado da Producao das fases
+            producaofases = ProducaoFases.ProducaoFases(self.dt_inicioRealizado, self.dt_fimRealizado, '', 0, self.codEmpresa, 100, 100, [6, 8])
+            realizado = producaofases.realizadoMediaMovel()
+            realizado['codFase'] = realizado['codFase'].astype(int)
+            Meta = pd.merge(Meta, realizado, on='codFase', how='left')
+            Meta['Realizado'].fillna(0, inplace=True)
+            Meta.fillna('-', inplace=True)
+            Meta = Meta[Meta['apresentacao'] != '-']
+            data = self.__obterdiaAtual()
+
+            # 21 - backup das metas levantadas
+            self.backupsCsv(Meta, f'meta_{str(Codplano)}_{str(self.loteIN )}_{str(data)}',True)
+
 
             # 21 Carregando o Saldo COLECAO ANTERIOR
+            dataFrame2 = self.backupMetasAnteriores()
+            Meta = pd.merge(Meta, dataFrame2, on='nomeFase', how='left')
 
-    def backupsCsv(self, dataFrame, nome):
+            dados = {
+                '0-Previcao Pçs': f'{totalPc} pcs',
+                '01-Falta Programar': f'{totalFaltaProgramar} pçs',
+                '1-Detalhamento': Meta.to_dict(orient='records')}
+
+            return pd.DataFrame([dados])
+
+        else:
+            load_dotenv('db.env')
+            caminhoAbsoluto = os.getenv('CAMINHO')
+            novo2 = self.loteIN.replace('"', "-")
+            Meta = pd.read_csv(f'{caminhoAbsoluto}/dados/analiseLote{novo2}.csv')
+            Totais = pd.read_csv(f'{caminhoAbsoluto}/dados/Totais{novo2}.csv')
+            totalPc = Totais['0-Previcao Pçs'][0]
+            totalFaltaProgramar = Totais['01-Falta Programar'][0]
+
+            realizadoPeriodo = ProducaoFases.ProducaoFases(self.dt_inicioRealizado, self.dt_fimRealizado, '', 0, '1', 100, 100, [6, 8])
+            realizado = realizadoPeriodo.realizadoMediaMovel()
+            realizado['codFase'] = realizado['codFase'].astype(int)
+            Meta = pd.merge(Meta, realizado, on='codFase', how='left')
+
+            Meta['Realizado'].fillna(0, inplace=True)
+            Meta.fillna('-', inplace=True)
+            Meta = Meta[Meta['apresentacao'] != '-']
+            dataFrame2 = self.backupMetasAnteriores()
+
+            Meta = pd.merge(Meta, dataFrame2, on='nomeFase', how='left')
+
+            dados = {
+                '0-Previcao Pçs': f'{totalPc} pcs',
+                '01-Falta Programar': f'{totalFaltaProgramar} pçs',
+                '1-Detalhamento': Meta.to_dict(orient='records')}
+
+            return pd.DataFrame([dados])
+
+
+
+
+
+
+
+
+
+
+    def backupsCsv(self, dataFrame, nome, backupMetas = False ):
         '''Metodo que faz o backup em csv da analise do falta a programar'''
+
 
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
-        dataFrame.to_csv(f'{caminhoAbsoluto}/dados/{nome}.csv')
+
+        if backupMetas == False:
+            dataFrame.to_csv(f'{caminhoAbsoluto}/dados/{nome}.csv')
+        else:
+            dataFrame.to_csv(f'{caminhoAbsoluto}/dados/backup/{nome}.csv')
+
 
 
 
@@ -404,33 +468,7 @@ class MetaFases():
 
 
 
-    def calcular_dias_sem_domingos(self,dataInicio, dataFim):
-        # Obtendo a data atual
-        dataHoje = self.obterdiaAtual()
-        # Convertendo as datas para o tipo datetime, se necessário
-        if not isinstance(dataInicio, pd.Timestamp):
-            dataInicio = pd.to_datetime(dataInicio)
-        if not isinstance(dataFim, pd.Timestamp):
-            dataFim = pd.to_datetime(dataFim)
-        if not isinstance(dataHoje, pd.Timestamp):
-            dataHoje = pd.to_datetime(dataFim)
 
-        # Inicializando o contador de dias
-        dias = 0
-        data_atual = dataInicio
-
-        # Iterando através das datas
-        while data_atual <= dataFim:
-            # Se o dia não for sábado (5) ou domingo (6), incrementa o contador de dias
-            if data_atual.weekday() != 5 and data_atual.weekday() != 6:
-                dias += 1
-            # Incrementa a data atual em um dia
-            data_atual += pd.Timedelta(days=1)
-
-        if dias == 0:
-            dias = 1
-
-        return dias
 
     def __tratamentoInformacaoColecao(self):
         '''Método privado que trata a informacao do nome da colecao'''
@@ -477,9 +515,9 @@ class MetaFases():
         data = str(self.dataBackupMetas).replace('-', '_')
         plano = self.codPlano
         lote = self.transformaando_codLote_clausulaIN()
-        lote = """'25M24A'"""
+        lote = """'25M31B'"""
 
-        nome = f'meta_{plano}_{lote}_{data}.csv'
+        nome = f'Officialmeta{plano}_{lote}_{data}.csv'
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         dataFrame = pd.read_csv(f'{caminhoAbsoluto}/dados/backup/{nome}')
@@ -492,6 +530,12 @@ class MetaFases():
 
         return dataFrame
 
+    def __obterdiaAtual(self):
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y_%m_%d')
+
+        return agora
 
 
 

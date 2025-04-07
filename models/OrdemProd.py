@@ -235,6 +235,22 @@ class OrdemProd():
 
             return consulta
 
+        def agrupado_x_tipoOP(self):
+            '''metodo que compara o agrupado x tipo de op '''
+
+            op_csw = OP_CSW.OP_CSW()
+
+            tipoOP = op_csw.obterTiposOPCSW()
+            tipoOP.loc[tipoOP['tipoOP'] == '1-PRODUTO VENDA', 'Agrupado'] = 'Producao'
+            tipoOP.loc[tipoOP["tipoOP"].str.contains("VAREJO", na=False), "Agrupado"] = "Varejo"
+            tipoOP.loc[tipoOP["tipoOP"].str.contains("2-", na=False), "Agrupado"] = "Producao"
+            tipoOP.loc[tipoOP["tipoOP"].str.contains("ENC", na=False), "Agrupado"] = "Encomendas"
+            tipoOP.loc[tipoOP["tipoOP"].str.contains("MOST", na=False), "Agrupado"] = "Mostruario"
+            tipoOP.fillna('Producao', inplace=True)
+            tipoOP['codtipoop'] = tipoOP['tipoOP'].str.split('-').str[0]
+
+            return tipoOP
+
 
 
 

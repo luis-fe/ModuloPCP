@@ -2,50 +2,55 @@ import gc
 from datetime import datetime
 import numpy as np
 import pandas as pd
-from connection import ConexaoBanco, ConexaoPostgreWms
+from connection import ConexaoPostgreWms
 import pytz
-from models import TipoOPClass
+from models import  Cronograma, OrdemProd
 
 
 class ProducaoFases():
     '''Classe que controla a producao das fases '''
 
     def __init__(self, periodoInicio = None, periodoFinal = None, codFase = None, dias_buscaCSW = 0, codEmpresa = None, limitPostgres = None, utimosDias = None,
-                 ArraytipoOPExluir = None, consideraMost = 'nao',nomeFase = '', ArrayTipoProducao = None):
-
+                 arraytipoOPExluir = None, consideraMost ='nao', nomeFase ='', arrayTipoProducao = None):
+        '''Contrutor da Classe'''
         self.periodoInicio = periodoInicio
         self.periodoFinal = periodoFinal
         self.codFase = codFase
         self.dias_buscaCSW = dias_buscaCSW
-        self.codEmpresa = codEmpresa
+        self.codEmpresa = codEmpresa # codEmpresa - codEmpresa utilizado para consultar os dados
         self.limitPostgres = limitPostgres
         self.utimosDias = utimosDias
-        self.ArraytipoOPExluir = ArraytipoOPExluir
+        self.arraytipoOPExluir = arraytipoOPExluir # Array com os codigo de tipo de op a serem excluidos da analise
         self.consideraMost = 'nao'
         self.nomeFase = nomeFase
-        self.ArrayTipoProducao = ArrayTipoProducao
+        self.arrayTipoProducao = arrayTipoProducao # Array com os tipo de producao desejado
 
 
-    def RealizadoMediaMovel(self):
+    def realizadoMediaMovel(self):
+        '''Método que retona o realizado por fase de acordo com o periodo informado'''
 
-        realizado = self.__sqlRealizadoPeriodo()
+        realizado = self.__sqlRealizadoPeriodo() # realiza a consulta sql no banco postgre do realizado
 
-        if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
-            realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
+        ordemProd = OrdemProd.OrdemProd()
 
-        if self.ArrayTipoProducao != None:
-            agrupamentoOP = TipoOPClass.TipoOP().agrupado_x_tipoOP()
-            dataFrameTipoProducao = pd.DataFrame({'Agrupado': self.ArrayTipoProducao})
+        # 1 - verfica se existe tipo de ops a serem excluidos da analise
+        if self.arraytipoOPExluir is not None and isinstance(self.arraytipoOPExluir, list):
+            realizado = realizado[~realizado['codtipoop'].isin(self.arraytipoOPExluir)]
+
+        # 2 - verfica o arrayTipoProducao com os tipo de ordens de producao que desejo consultar
+        if self.arrayTipoProducao != None:
+
+            agrupamentoOP = ordemProd.agrupado_x_tipoOP()
+            dataFrameTipoProducao = pd.DataFrame({'Agrupado': self.arrayTipoProducao})
             dataFrameTipoProducao = pd.merge(agrupamentoOP,dataFrameTipoProducao, on='Agrupado')
             realizado = pd.merge(realizado,dataFrameTipoProducao, on='codtipoop')
+
+
         else:
-            self.ArrayTipoProducao = ['Producao']
-            agrupamentoOP = TipoOPClass.TipoOP().agrupado_x_tipoOP()
-            print(agrupamentoOP)
-            dataFrameTipoProducao = pd.DataFrame({'Agrupado': self.ArrayTipoProducao})
-            #print(dataFrameTipoProducao)
+            self.arrayTipoProducao = ['Producao']
+            agrupamentoOP = ordemProd.agrupado_x_tipoOP()
+            dataFrameTipoProducao = pd.DataFrame({'Agrupado': self.arrayTipoProducao})
             dataFrameTipoProducao = pd.merge(agrupamentoOP,dataFrameTipoProducao, on='Agrupado')
-            print(dataFrameTipoProducao)
             realizado['codtipoop'] = realizado['codtipoop'].astype(str)
             realizado = pd.merge(realizado,dataFrameTipoProducao, on='codtipoop')
 
@@ -61,14 +66,17 @@ class ProducaoFases():
 
         realizado = realizado.groupby(["codFase"]).agg({"Realizado": "sum"}).reset_index()
 
-        diasUteis = self.calcular_dias_sem_domingos(self.periodoInicio, self.periodoFinal)
+        cronograma = Cronograma.Cronograma()
+        diasUteis = cronograma.calcular_dias_uteis(self.periodoInicio, self.periodoFinal)
+
         # Evitar divisão por zero ou infinito
         realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
-        print(f'dias uteis {diasUteis}')
+        #print(f'dias uteis {diasUteis}')
 
         return realizado
 
     def __sqlRealizadoPeriodo(self):
+        '''Metodo privado que consulta via sql o realizado no banco de dados Postgre '''
         sql = """
         select 
             rf."codEngenharia",
@@ -122,8 +130,8 @@ class ProducaoFases():
 
 
 
-        if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
-            realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
+        if self.arraytipoOPExluir is not None and isinstance(self.arraytipoOPExluir, list):
+            realizado = realizado[~realizado['codtipoop'].isin(self.arraytipoOPExluir)]
 
         if self.consideraMost == 'nao':
             realizado = realizado[~realizado['descricaolote'].str.contains("MOST", case=False, na=False)].reset_index()
@@ -227,8 +235,8 @@ class ProducaoFases():
 
         realizado = self.__sqlRealizadoPeriodo()
 
-        if self.ArraytipoOPExluir is not None and isinstance(self.ArraytipoOPExluir, list):
-            realizado = realizado[~realizado['codtipoop'].isin(self.ArraytipoOPExluir)]
+        if self.arraytipoOPExluir is not None and isinstance(self.arraytipoOPExluir, list):
+            realizado = realizado[~realizado['codtipoop'].isin(self.arraytipoOPExluir)]
 
         if self.consideraMost == 'nao':
             realizado = realizado[~realizado['descricaolote'].str.contains("MOST", case=False, na=False)].reset_index()
