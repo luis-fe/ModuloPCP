@@ -47,7 +47,7 @@ class Cronograma():
 
         return cronograma
 
-    def calcular_dias_uteis(self, dataInicio, dataFim, recalculaFeriado = True):
+    def calcular_dias_uteis(self, dataInicio, dataFim, recalculaFeriado = True, tratarDatasAnteriores = True):
         # Obtendo a data atual
         dataHoje = self.obterdiaAtual()
         if recalculaFeriado == True:
@@ -64,7 +64,7 @@ class Cronograma():
             dataHoje = pd.to_datetime(dataFim)
 
         # Ajustando a data de início se for anterior ao dia atual
-        if dataHoje > dataInicio:
+        if dataHoje > dataInicio and tratarDatasAnteriores==True:
             dataInicio = dataHoje
 
         # Inicializando o contador de dias
