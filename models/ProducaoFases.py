@@ -73,7 +73,7 @@ class ProducaoFases():
         realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
         #print(f'dias uteis {diasUteis}')
 
-        return realizado
+        return diasUteis
 
     def __sqlRealizadoPeriodo(self):
         '''Metodo privado que consulta via sql o realizado no banco de dados Postgre '''
