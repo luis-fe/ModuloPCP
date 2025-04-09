@@ -72,7 +72,7 @@ class ProducaoFases():
         # Evitar divisão por zero ou infinito
         realizado['Realizado'] = np.where(diasUteis == 0, 0, realizado['Realizado'] / diasUteis)
         #print(f'dias uteis {diasUteis}')
-
+        realizado['diasUteis'] = diasUteis
         return realizado
 
     def __sqlRealizadoPeriodo(self):
