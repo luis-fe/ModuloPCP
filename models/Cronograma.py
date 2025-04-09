@@ -90,7 +90,7 @@ class Cronograma():
             # Iterando através das datas
             while data_atual <= dataFim:
                 # Verifica se é dia útil (segunda a sexta) e não é feriado
-                if data_atual.weekday() < 5 and data_atual:
+                if data_atual.weekday() < 5:
                     dias += 1
 
                 # Incrementa a data atual em um dia
