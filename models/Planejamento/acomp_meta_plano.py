@@ -170,7 +170,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         Meta['Fila'].fillna(0,inplace=True)
         Meta['Falta Produzir'] = Meta['Carga Atual'] + Meta['Fila'] + Meta['FaltaProgramar']
         Meta['dias'].fillna(1,inplace=True)
-        Meta['Meta Dia'] = Meta['Falta Produzir'] /Meta['dias']
+        Meta['Meta Dia'] = np.where(Meta['dias'] == 0, 0, Meta['Falta Produzir'] / Meta['dias'])
+
         Meta['Meta Dia'] = Meta['Meta Dia'] .round(0)
 
         # Ponto de Congelamento do lote:
