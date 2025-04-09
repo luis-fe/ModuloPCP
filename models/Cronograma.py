@@ -72,8 +72,7 @@ class Cronograma():
         data_atual = dataInicio
 
         # Obtendo os feriados entre as datas
-        # Convertendo a coluna "data" para datetime, caso necessário
-        feriados['data'] = pd.to_datetime(feriados['data'])
+
 
         if not feriados.empty:
 
@@ -86,6 +85,8 @@ class Cronograma():
                 # Incrementa a data atual em um dia
                 data_atual += pd.Timedelta(days=1)
         else:
+            # Convertendo a coluna "data" para datetime, caso necessário
+            feriados['data'] = pd.to_datetime(feriados['data'])
             # Iterando através das datas
             while data_atual <= dataFim:
                 # Verifica se é dia útil (segunda a sexta) e não é feriado
