@@ -52,7 +52,7 @@ class LeadTimeCalculator:
                 rf."dataBaixa"||' '||rf."horaMov" as "dataBaixa",
                 rf."totPecasOPBaixadas" as "Realizado"
             FROM
-                "PCP".pcp.realizado_fase rf 
+                pcp.realizado_fase rf 
             join 
             "PCP".pcp."responsabilidadeFase" rf2 on rf2."codFase" = rf.codfase::varchar
             WHERE
@@ -70,7 +70,7 @@ class LeadTimeCalculator:
             FROM
                 "PCP".pcp.realizado_fase rf 
             join 
-            "PCP".pcp."responsabilidadeFase" rf2 on rf2."codFase" = rf.codfase::varchar
+                pcp."responsabilidadeFase" rf2 on rf2."codFase" = rf.codfase::varchar
             WHERE
                 rf."dataBaixa"::date >= %s AND rf."dataBaixa"::date <= %s ;
             """
