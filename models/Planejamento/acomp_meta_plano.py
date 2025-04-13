@@ -93,6 +93,20 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         # Levantar as data de início e fim do faturamento:
         IniFat = datetime.strptime(planoAtual['inicoFat'][0], '%Y-%m-%d')
 
+
+
+
+
+        if diaAtual >= IniFat:
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
+        else:
+            sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
+        try:
+            sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
+        except:
+            print('verificar')
+
         if faltaProgramarZerado == True:
 
             # 1 Consulta sql para obter as OPs em aberto no sistema do ´PCP
@@ -116,18 +130,6 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             sqlMetas = pd.merge(sqlMetas, sqlCarga2,on='codItem')
 
             sqlMetas['FaltaProgramar'] = sqlMetas['carga2']
-
-
-        else:
-            if diaAtual >= IniFat:
-                sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
-            else:
-                sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
-                sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
-            try:
-                sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
-            except:
-                print('verificar')
 
 
 
