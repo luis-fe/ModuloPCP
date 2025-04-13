@@ -125,8 +125,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             conn = ConexaoPostgreWms.conexaoEngine()
             sqlCarga2 = pd.read_sql(sqlCarga2, conn)
 
-            sqlMetas = pd.merge(sqlMetas, sqlCarga2,on='codItem')
+            sqlMetas = pd.merge(sqlMetas, sqlCarga2,on='codItem', how='left')
 
+            sqlMetas['carga2'].fillna(0,inplace=True)
             sqlMetas['FaltaProgramar'] = sqlMetas['carga2']
 
 
