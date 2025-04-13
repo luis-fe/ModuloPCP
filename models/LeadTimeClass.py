@@ -120,7 +120,7 @@ class LeadTimeCalculator:
                             """
 
         # Conectar ao banco de dados
-        conn = ConexaoPostgreWms.conexaoEngine()
+        conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
 
         # Executar as consultas
         saida = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
