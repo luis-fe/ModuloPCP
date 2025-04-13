@@ -118,7 +118,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         novo2 = novo.replace('"',"-")
 
         if faltaProgramarZerado == True:
-            sqlMetas['FaltaProgramar'] = 0
+            Meta['FaltaProgramar'] = 0
 
 
         Totais = pd.DataFrame([{'0-Previcao Pçs':f'{totalPc} pcs','01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
