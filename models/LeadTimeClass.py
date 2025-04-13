@@ -177,12 +177,12 @@ class LeadTimeCalculator:
         id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
         saida['id'] = id
         saida['diaAtual'] = self.obterdiaAtual()
-        self.deletar_backup(id,"leadTimeFases")
+        #self.deletar_backup(id,"leadTimeFases")
 
-        try:
-            ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
-        except:
-            print('erro')
+        #try:
+         #   ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
+        #except:
+         #   print('erro')
 
         return saida
 
