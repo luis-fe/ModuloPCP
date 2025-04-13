@@ -369,8 +369,9 @@ class LeadTimeCalculator:
         print(realizado)
         return realizado
     def leadTimeCategoria(self):
-        conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
+        conn1 = ConexaoPostgreWms.conexaoEngineWMSSrv()
 
+        conn = ConexaoPostgreWms.conexaoEngine()
         if self.tipoOps != []:
             result = [int(item.split('-')[0]) for item in self.tipoOps]
             result = f"({', '.join(str(x) for x in result)})"
@@ -402,7 +403,7 @@ class LeadTimeCalculator:
                 rf."dataBaixa"::date >= %s 
                 and rf."dataBaixa"::date <= %s and codFase in (236, 449) and codtipoop in """ + result
 
-            MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(self.data_inicio, self.data_final))
+            MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn1, params=(self.data_inicio, self.data_final))
 
             with ConexaoBanco.Conexao2() as connCsw:
                 with connCsw.cursor() as cursor:
@@ -440,7 +441,7 @@ class LeadTimeCalculator:
             where 
                 rf."dataBaixa"::date >= %s 
                 and rf."dataBaixa"::date <= %s and codFase in (236, 449) """
-            MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn, params=(self.data_inicio, self.data_final))
+            MovEntradaEstoque = pd.read_sql(sqlMovEntradaEstoque, conn1, params=(self.data_inicio, self.data_final))
 
             with ConexaoBanco.Conexao2() as connCsw:
                 with connCsw.cursor() as cursor:
