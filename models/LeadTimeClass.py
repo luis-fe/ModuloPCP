@@ -169,7 +169,8 @@ class LeadTimeCalculator:
 
         saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(diasCorridos)']*saida['LeadTime(PonderadoPorQtd)']
         saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
-        saida['categoria'] = saida['nome'].apply(self.mapear_categoria)
+
+        saida['categoria'] = saida['nome'].astype(str).apply(self.mapear_categoria)
 
         '''Inserindo as informacoes no banco para acesso temporario'''
 
