@@ -177,12 +177,12 @@ class LeadTimeCalculator:
         id = self.data_inicio+'||'+self.data_final+'||'+str(TotaltipoOp)
         saida['id'] = id
         saida['diaAtual'] = self.obterdiaAtual()
-        #self.deletar_backup(id,"leadTimeFases")
+        self.deletar_backup(id,"leadTimeFases")
 
-        #try:
-         #   ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
-        #except:
-         #   print('erro')
+        try:
+            ConexaoPostgreWms.Funcao_InserirBackup(saida,saida['codfase'].size,'leadTimeFases','append')
+        except:
+            print('erro')
 
         return saida
 
@@ -369,7 +369,7 @@ class LeadTimeCalculator:
         print(realizado)
         return realizado
     def leadTimeCategoria(self):
-        conn = ConexaoPostgreWms.conexaoEngine()
+        conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
 
         if self.tipoOps != []:
             result = [int(item.split('-')[0]) for item in self.tipoOps]
@@ -397,7 +397,7 @@ class LeadTimeCalculator:
                 rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
                 rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
             from
-                "PCP".pcp.realizado_fase rf 
+                pcp.realizado_fase rf 
             where 
                 rf."dataBaixa"::date >= %s 
                 and rf."dataBaixa"::date <= %s and codFase in (236, 449) and codtipoop in """ + result
