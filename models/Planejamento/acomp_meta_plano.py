@@ -11,7 +11,7 @@ from dotenv import load_dotenv, dotenv_values
 import os
 from models import ProducaoFases
 
-def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False, dataFrame2 = None):
+def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False, dataFrame2 = None, faltaProgramarZerado = True):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
     conn = ConexaoPostgreWms.conexaoEngine()
@@ -116,6 +116,11 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         totalPc = filtro['previsao'].sum()
         totalFaltaProgramar = filtro['FaltaProgramar'].sum()
         novo2 = novo.replace('"',"-")
+
+        if faltaProgramarZerado == True:
+            sqlMetas['FaltaProgramar'] = 0
+
+
         Totais = pd.DataFrame([{'0-Previcao Pçs':f'{totalPc} pcs','01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
         Totais.to_csv(f'{caminhoAbsoluto}/dados/Totais{novo2}.csv')
 
