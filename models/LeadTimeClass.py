@@ -436,7 +436,7 @@ class LeadTimeCalculator:
                 rf.codfase:: varchar as "codFase", rf."seqRoteiro" , rf."dataBaixa"::date ,  rf."horaMov"::time,
                 rf."totPecasOPBaixadas" as "Realizado", rf."descOperMov" as operador, rf.chave 
             from
-                "PCP".pcp.realizado_fase rf 
+                pcp.realizado_fase rf 
             where 
                 rf."dataBaixa"::date >= %s 
                 and rf."dataBaixa"::date <= %s and codFase in (236, 449) """
