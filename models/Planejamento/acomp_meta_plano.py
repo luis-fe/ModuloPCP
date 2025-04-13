@@ -150,6 +150,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
                             '152108-001',
                             '152109-001',
                             '152110-001',
+                            '152111-001',
                             '152112-001',
                             '152113-001',
                             '152114-001',
