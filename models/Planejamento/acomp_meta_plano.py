@@ -94,9 +94,6 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         IniFat = datetime.strptime(planoAtual['inicoFat'][0], '%Y-%m-%d')
 
 
-
-
-
         if diaAtual >= IniFat:
             sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
         else:
@@ -128,9 +125,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             conn = ConexaoPostgreWms.conexaoEngine()
             sqlCarga2 = pd.read_sql(sqlCarga2, conn)
 
-            Meta = pd.merge(Meta, sqlCarga2,on='codItem')
+            sqlMetas = pd.merge(sqlMetas, sqlCarga2,on='codItem')
 
-            Meta['FaltaProgramar'] = Meta['carga2']
+            sqlMetas['FaltaProgramar'] = sqlMetas['carga2']
 
 
 
