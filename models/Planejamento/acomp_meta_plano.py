@@ -113,7 +113,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             conn = ConexaoPostgreWms.conexaoEngine()
             sqlCarga2 = pd.read_sql(sqlCarga2, conn)
 
-            sqlMetas = pd.mege(sqlMetas, sqlCarga2,on='codItem')
+            sqlMetas = pd.merge(sqlMetas, sqlCarga2,on='codItem')
 
 
 
