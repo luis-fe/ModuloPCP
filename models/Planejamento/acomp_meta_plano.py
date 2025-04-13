@@ -119,7 +119,8 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
                         where 
                             codreduzido is not null
                             and 
-                            "codFaseAtual" = '401'
+                            "codFaseAtual" = '401' 
+                            and "codTipoOP" <> 6
                         group by 
                             codreduzido
                     """
