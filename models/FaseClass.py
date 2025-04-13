@@ -118,6 +118,31 @@ class FaseProducao():
         consulta.fillna('-',inplace=True)
         return consulta
 
+
+    def cargaPCp(self):
+
+        # 1 Consulta sql para obter as OPs em aberto no sistema do ´PCP
+        sqlCarga = """
+                    select 
+                        codreduzido as "codItem", 
+                        sum(total_pcs) as cargaPCP  
+                    from 
+                        pcp.ordemprod o 
+                    where 
+                        codreduzido is not null
+                        and 
+                        "codFaseAtual" = '401'
+                    group by 
+                        codreduzido
+                """
+
+        conn = ConexaoPostgreWms.conexaoEngine()
+
+        sqlCarga = pd.read_sql(sqlCarga,conn)
+        return sqlCarga
+
+
+
     def cargaPartes(self, relacaoPartes = None):
         '''Metodo para obter a carga de producao convertida em Partes - Semiacabado'''
 

@@ -93,16 +93,41 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         # Levantar as data de início e fim do faturamento:
         IniFat = datetime.strptime(planoAtual['inicoFat'][0], '%Y-%m-%d')
 
+        if faltaProgramarZerado == True:
 
-        if diaAtual >= IniFat:
-            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
+            # 1 Consulta sql para obter as OPs em aberto no sistema do ´PCP
+            sqlCarga2 = """
+                        select 
+                            codreduzido as "codItem", 
+                            sum(total_pcs) as carga2  
+                        from 
+                            pcp.ordemprod o 
+                        where 
+                            codreduzido is not null
+                            and 
+                            "codFaseAtual" = '401'
+                        group by 
+                            codreduzido
+                    """
+
+            conn = ConexaoPostgreWms.conexaoEngine()
+            sqlCarga2 = pd.read_sql(sqlCarga2, conn)
+
+            sqlMetas = pd.mege(sqlMetas, sqlCarga2,on='codItem')
+
+
+
+            sqlMetas['FaltaProgramar'] = sqlMetas['carga2']
         else:
-            sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
-            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
-        try:
-            sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
-        except:
-            print('verificar')
+            if diaAtual >= IniFat:
+                sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
+            else:
+                sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
+                sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
+            try:
+                sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
+            except:
+                print('verificar')
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         sqlMetas.to_csv(f'{caminhoAbsoluto}/dados/analise.csv')
@@ -117,8 +142,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         totalFaltaProgramar = filtro['FaltaProgramar'].sum()
         novo2 = novo.replace('"',"-")
 
-        if faltaProgramarZerado == True:
-            Meta['FaltaProgramar'] = 0
+
 
 
         Totais = pd.DataFrame([{'0-Previcao Pçs':f'{totalPc} pcs','01-Falta Programar': f'{totalFaltaProgramar} pçs'}])
