@@ -115,9 +115,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
             sqlMetas = pd.merge(sqlMetas, sqlCarga2,on='codItem')
 
-
-
             sqlMetas['FaltaProgramar'] = sqlMetas['carga2']
+
+
         else:
             if diaAtual >= IniFat:
                 sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
@@ -128,6 +128,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
                 sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
             except:
                 print('verificar')
+
+
+
         load_dotenv('db.env')
         caminhoAbsoluto = os.getenv('CAMINHO')
         sqlMetas.to_csv(f'{caminhoAbsoluto}/dados/analise.csv')
