@@ -516,6 +516,7 @@ class LeadTimeCalculator:
 
         MetaCategoria = self.ObterCategorias()
         leadTime_ = pd.merge(leadTime_, MetaCategoria, on='categoria', how='left')
+        leadTime_.fillna('-',inplace=True)
 
         dados = {
             '01-leadTimeMedioGeral': f'{leadTimeMedioGeral} dias',
