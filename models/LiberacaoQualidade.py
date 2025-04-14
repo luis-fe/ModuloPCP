@@ -212,7 +212,7 @@ class Liberacao():
         """
 
         # Conexões com o banco
-        conn = ConexaoPostgreWms.conexaoEngineWms()
+        conn = ConexaoPostgreWms.conexaoEngineWMSSrv()
         conn2 = ConexaoPostgreWms.conexaoEngine()
 
         # Executando consultas SQL
