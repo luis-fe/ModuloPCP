@@ -226,58 +226,63 @@ class Liberacao():
         consulta = pd.merge(consulta, tamanhos, on='codSeqTamanho', how='left')
 
         consulta2 = pd.read_sql(consulta2, conn, params=(self.Ncarrinho, self.empresa))
-        filtro = consulta2['numeroop'][0]
 
-        # Merge entre consultas
-        consulta2 = pd.merge(consulta, consulta2, on=['numeroop', 'codreduzido'], how='left')
-        consulta2 = consulta2[consulta2['numeroop'] == filtro].reset_index()
+        if consulta2.empty:
+            consulta3 = pd.DataFrame([{'Mensagem':'carrinho vazio','status':False}])
+        else:
+            filtro = consulta2['numeroop'][0]
 
-        consulta2['Pecas'].fillna(0, inplace=True)
-        consulta2.fillna('-', inplace=True)
+            # Merge entre consultas
+            consulta2 = pd.merge(consulta, consulta2, on=['numeroop', 'codreduzido'], how='left')
+            consulta2 = consulta2[consulta2['numeroop'] == filtro].reset_index()
 
-        # Coluna 'PcBipadas/Total'
-        consulta2['Pecas'] = consulta2['Pecas'].astype(int).astype(str)
-        consulta2['total_pcs'] = consulta2['total_pcs'].astype(int).astype(str)
-        consulta2['PcBipadas/Total'] = consulta2['Pecas'] + '/' + consulta2['total_pcs']
+            consulta2['Pecas'].fillna(0, inplace=True)
+            consulta2.fillna('-', inplace=True)
 
-        # Ajustando formato da cor e removendo colunas não necessárias
-        consulta2['codSortimento'] = consulta2['codSortimento'].astype(str).str.zfill(2)
+            # Coluna 'PcBipadas/Total'
+            consulta2['Pecas'] = consulta2['Pecas'].astype(int).astype(str)
+            consulta2['total_pcs'] = consulta2['total_pcs'].astype(int).astype(str)
+            consulta2['PcBipadas/Total'] = consulta2['Pecas'] + '/' + consulta2['total_pcs']
 
-        consulta2['cor'] = consulta2["codSortimento"].astype(str) + '/' + consulta2["cor"].astype(str)
-        #consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
+            # Ajustando formato da cor e removendo colunas não necessárias
+            consulta2['codSortimento'] = consulta2['codSortimento'].astype(str).str.zfill(2)
 
-        # Agrupamento principal
-        consulta3 = (
-            consulta2.groupby(['numeroop', 'cor'])
-            .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
-            .reset_index()
-        )
+            consulta2['cor'] = consulta2["codSortimento"].astype(str) + '/' + consulta2["cor"].astype(str)
+            #consulta2 = consulta2.drop(['total_pcs', 'codreduzido', 'Pecas'], axis=1)
 
-        # Calcular subtotal por combinação de 'numeroop' e 'tamanho'
-        consulta2['Pecas'] = consulta2['Pecas'].astype(int)
-        totalPcCarrinho = consulta2['Pecas'].sum()
-        consulta2['subtotal'] = consulta2.groupby(['tamanho'])['Pecas'].transform('sum')
-        consulta2['total_pcs'] = consulta2['total_pcs'].astype(int)
-        consulta2['subtotal2'] = consulta2.groupby(['tamanho'])['total_pcs'].transform('sum')
+            # Agrupamento principal
+            consulta3 = (
+                consulta2.groupby(['numeroop', 'cor'])
+                .apply(lambda x: [f"{row['tamanho']} : {row['PcBipadas/Total']}" for _, row in x.iterrows()])
+                .reset_index()
+            )
 
-        # Criar DataFrame de subtotal, agrupando por 'numeroop' e removendo duplicatas em 'tamanho'
-        subtotal = (
-            consulta2.groupby('numeroop')
-            .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}/{row['subtotal2']}" for _, row in
-                              x.drop_duplicates(subset='tamanho').iterrows()])
-            .reset_index()
-        )
+            # Calcular subtotal por combinação de 'numeroop' e 'tamanho'
+            consulta2['Pecas'] = consulta2['Pecas'].astype(int)
+            totalPcCarrinho = consulta2['Pecas'].sum()
+            consulta2['subtotal'] = consulta2.groupby(['tamanho'])['Pecas'].transform('sum')
+            consulta2['total_pcs'] = consulta2['total_pcs'].astype(int)
+            consulta2['subtotal2'] = consulta2.groupby(['tamanho'])['total_pcs'].transform('sum')
 
-        # Adicionar coluna `cor` com o valor "total" para os subtotais
-        subtotal['cor'] = 'total'
+            # Criar DataFrame de subtotal, agrupando por 'numeroop' e removendo duplicatas em 'tamanho'
+            subtotal = (
+                consulta2.groupby('numeroop')
+                .apply(lambda x: [f"{row['tamanho']} : {row['subtotal']}/{row['subtotal2']}" for _, row in
+                                  x.drop_duplicates(subset='tamanho').iterrows()])
+                .reset_index()
+            )
 
-        # Renomeando colunas para compatibilidade de concatenação
-        consulta3 = consulta3.rename(columns={0: "tamanhos-PcBipadas/Total"})
-        subtotal = subtotal.rename(columns={0: "tamanhos-PcBipadas/Total"})
+            # Adicionar coluna `cor` com o valor "total" para os subtotais
+            subtotal['cor'] = 'total'
 
-        # Concatenando consulta3 e subtotal
-        consulta3 = pd.concat([consulta3, subtotal], ignore_index=True)
-        consulta3['totalPcCarrinho'] = totalPcCarrinho
+            # Renomeando colunas para compatibilidade de concatenação
+            consulta3 = consulta3.rename(columns={0: "tamanhos-PcBipadas/Total"})
+            subtotal = subtotal.rename(columns={0: "tamanhos-PcBipadas/Total"})
+
+            # Concatenando consulta3 e subtotal
+            consulta3 = pd.concat([consulta3, subtotal], ignore_index=True)
+            consulta3['totalPcCarrinho'] = totalPcCarrinho
+
 
         return consulta3
 
