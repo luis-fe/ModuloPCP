@@ -476,7 +476,7 @@ class LeadTimeCalculator:
         leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
 
         sqlNomeEngenharia = """
-        select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome, categoria from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') or ("codItemPai" like '2%') group by "codItemPai"
+        select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome, categoria from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') or ("codItemPai" like '2%') group by "codItemPai", categoria
         """
         NomeEngenharia = pd.read_sql(sqlNomeEngenharia, conn)
 
