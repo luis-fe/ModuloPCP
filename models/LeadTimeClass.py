@@ -170,7 +170,7 @@ class LeadTimeCalculator:
         saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(diasCorridos)']*saida['LeadTime(PonderadoPorQtd)']
         saida['LeadTime(PonderadoPorQtd)'] = saida['LeadTime(PonderadoPorQtd)'].round()
 
-        #saida['categoria'] = saida['nome'].astype(str).apply(self.mapear_categoria)
+        saida['categoria'] = saida['nome'].astype(str).apply(self.mapear_categoria)
         saida['categoria'] = '-'
         '''Inserindo as informacoes no banco para acesso temporario'''
 
@@ -476,7 +476,7 @@ class LeadTimeCalculator:
         leadTime['horaMov'] = leadTime['horaMov'].apply(lambda x: x.strftime('%H:%M:%S') if pd.notnull(x) else None)
 
         sqlNomeEngenharia = """
-        select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') or ("codItemPai" like '2%') group by "codItemPai"
+        select ic."codItemPai"::varchar , max(ic.nome)::varchar as nome, categoria from "PCP".pcp.itens_csw ic where ("codItemPai" like '1%') or ("codItemPai" like '5%') or ("codItemPai" like '2%') group by "codItemPai"
         """
         NomeEngenharia = pd.read_sql(sqlNomeEngenharia, conn)
 
@@ -487,7 +487,6 @@ class LeadTimeCalculator:
         )
         leadTime = pd.merge(leadTime, NomeEngenharia, on='codEngenharia', how='left')
 
-        leadTime['categoria'] = leadTime['nome'].apply(self.mapear_categoria)
         leadTime = leadTime.drop_duplicates()
 
         TotalPecas = leadTime['Realizado'].sum()
