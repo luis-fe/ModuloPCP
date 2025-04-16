@@ -11,7 +11,7 @@ from dotenv import load_dotenv, dotenv_values
 import os
 from models import ProducaoFases
 
-def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False, dataFrame2 = None, faltaProgramarZerado = True):
+def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congelado = False, dataFrame2 = None, faltaProgramarZerado = False):
     nomes_com_aspas = [f"'{nome}'" for nome in arrayCodLoteCsw]
     novo = ", ".join(nomes_com_aspas)
     conn = ConexaoPostgreWms.conexaoEngine()
