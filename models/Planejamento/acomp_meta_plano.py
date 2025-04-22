@@ -16,6 +16,10 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
     novo = ", ".join(nomes_com_aspas)
     conn = ConexaoPostgreWms.conexaoEngine()
 
+
+    if arrayCodLoteCsw == ["25A04B"]:
+        faltaProgramarZerado = True
+
     if congelado == False:
 
 
