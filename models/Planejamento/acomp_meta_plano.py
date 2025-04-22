@@ -71,7 +71,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         faturadoPeriodoAnterior = pd.concat([faturadoPeriodoAnterior, faturadoPeriodoPartesAnterior], ignore_index=True)
 
         sqlMetas = pd.merge(sqlMetas,faturadoPeriodo,on='codItem',how='left')
-        sqlMetas = pd.merge(sqlMetas,faturadoPeriodoPartesAnterior,on='codItem',how='left')
+        sqlMetas = pd.merge(sqlMetas,faturadoPeriodoAnterior,on='codItem',how='left')
 
         estoque = itemsPA_Csw.EstoquePartes(consultaPartes)
         sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
@@ -103,7 +103,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         if diaAtual >= IniFat:
             sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
         else:
-            sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - sqlMetas['saldo']
+            sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - (sqlMetas['qtdePedida2']-sqlMetas['qtdeFaturada2'])
+            sqlMetas['estoque-saldoAnt'] = np.where(sqlMetas['estoque-saldoAnt'] > 0, sqlMetas['estoque-saldoAnt'], 0)
+
             sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
         try:
             sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
