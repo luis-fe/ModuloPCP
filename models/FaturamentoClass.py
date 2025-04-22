@@ -119,7 +119,7 @@ class Faturamento():
                            'PrecoLiquido', 'codTipoNota'}]
             '''
 
-            pedidos.drop(['codPedido', 'codTipoNota'], axis=1, inplace=True)
+           # pedidos.drop(['codPedido', 'codTipoNota'], axis=1, inplace=True)
 
             return pedidos
 
