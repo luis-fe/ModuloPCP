@@ -62,10 +62,16 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
         faturado = FaturamentoClass.Faturamento(None,None,None,Codplano,consultaPartes)
         faturadoPeriodo = faturado.faturamentoPeriodo_Plano()
+        faturadoPeriodoAnterior = faturado.faturamentoPeriodo_PlanoAnterior()
+
         faturadoPeriodoPartes = faturado.faturamentoPeriodo_Plano_PartesPeca()
+        faturadoPeriodoPartesAnterior = faturado.faturamentoPeriodo_Plano_PartesPecaAnterior()
+
         faturadoPeriodo = pd.concat([faturadoPeriodo, faturadoPeriodoPartes], ignore_index=True)
+        faturadoPeriodoAnterior = pd.concat([faturadoPeriodoAnterior, faturadoPeriodoPartesAnterior], ignore_index=True)
 
         sqlMetas = pd.merge(sqlMetas,faturadoPeriodo,on='codItem',how='left')
+        sqlMetas = pd.merge(sqlMetas,faturadoPeriodoPartesAnterior,on='codItem',how='left')
 
         estoque = itemsPA_Csw.EstoquePartes(consultaPartes)
         sqlMetas = pd.merge(sqlMetas,estoque,on='codItem',how='left')
@@ -197,7 +203,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
         print(
             'excutando a etata 8:Salvando os dados para csv que é o retrado da previsao x falta programar a nivel sku')
 
-        Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria"]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
+        Meta = sqlMetas.groupby(["codEngenharia" , "codSeqTamanho" , "codSortimento","categoria",]).agg({"previsao":"sum","FaltaProgramar":"sum"}).reset_index()
         Meta['FaltaProgramar'] = Meta['FaltaProgramar'] * 0.78
         filtro = Meta[Meta['codEngenharia'].str.startswith('0')]
         totalPc = filtro['previsao'].sum()
