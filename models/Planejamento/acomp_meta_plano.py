@@ -69,6 +69,7 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
 
         faturadoPeriodo = pd.concat([faturadoPeriodo, faturadoPeriodoPartes], ignore_index=True)
         faturadoPeriodoAnterior = pd.concat([faturadoPeriodoAnterior, faturadoPeriodoPartesAnterior], ignore_index=True)
+        print(faturadoPeriodoAnterior)
 
         sqlMetas = pd.merge(sqlMetas,faturadoPeriodo,on='codItem',how='left')
         sqlMetas = pd.merge(sqlMetas,faturadoPeriodoAnterior,on='codItem',how='left')
@@ -86,7 +87,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             'saldo': 0,
             'qtdeFaturada': 0,
             'estoqueAtual': 0,
-            'carga': 0
+            'carga': 0,
+            "qtdePedida2":0,
+            "qtdeFaturada2":0
         }, inplace=True)
 
 
