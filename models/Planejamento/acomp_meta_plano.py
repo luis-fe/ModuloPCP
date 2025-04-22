@@ -111,9 +111,9 @@ def MetasFase(Codplano, arrayCodLoteCsw, dataMovFaseIni, dataMovFaseFim, congela
             sqlMetas['FaltaProgramar1'] = sqlMetas['previsao'] - (sqlMetas['estoqueAtual'] + sqlMetas['carga'] + sqlMetas['qtdeFaturada'])
         else:
             sqlMetas['estoque-saldoAnt'] = sqlMetas['estoqueAtual'] - (sqlMetas['qtdePedida2']-sqlMetas['qtdeFaturada2'])
-            sqlMetas['estoque-saldoAnt'] = np.where(sqlMetas['estoque-saldoAnt'] < 0, sqlMetas['estoque-saldoAnt']*1.70 , 0)
+            sqlMetas['estoque-saldoAnt'] = np.where(sqlMetas['estoque-saldoAnt'] < 0, sqlMetas['estoque-saldoAnt']*2.30 , 0)
 
-            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(0+ sqlMetas['carga'])
+            sqlMetas['FaltaProgramar1'] = sqlMetas['previsao']-(sqlMetas['estoque-saldoAnt'] + sqlMetas['carga'])
         try:
             sqlMetas['FaltaProgramar'] = np.where(sqlMetas['FaltaProgramar1'] > 0, sqlMetas['FaltaProgramar1'], 0)
         except:
