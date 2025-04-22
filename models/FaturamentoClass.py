@@ -107,7 +107,7 @@ class Faturamento():
             tipoNotas = plano.pesquisarTipoNotasPlano()
 
             pedidos = pd.merge(pedidos, tipoNotas, on='codTipoNota')
-            pedidos = pedidos.groupby("codItem").agg({"qtdeFaturada": "sum"}).reset_index()
+            pedidos = pedidos.groupby("codItem").agg({"qtdeFaturada": "sum","qtdePedida":"sum"}).reset_index()
             pedidos = pedidos.sort_values(by=['qtdeFaturada'], ascending=False)
             pedidos = pedidos[pedidos['qtdeFaturada'] > 0].reset_index()
 
@@ -204,7 +204,7 @@ class Faturamento():
         faturamentoPartes.drop('codItem', axis=1, inplace=True)
 
         # Rename do redParte para codProduto
-        faturamentoPartes.rename(columns={'redParte': 'codItem'}, inplace=True)
+        faturamentoPartes.rename(columns={'redParte': 'codItem',"quantidade":"quantidade2"}, inplace=True)
         faturamentoPartes.drop(['codProduto','codSeqTamanho','codSortimento'], axis=1, inplace=True)
 
 
