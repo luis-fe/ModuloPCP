@@ -227,7 +227,7 @@ class Faturamento():
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
 
         # Convertendo a string para datetime
-        dataFatIni = pd.to_datetime(self.dataInicial) - pd.Timedelta(days=100)
+        dataFatIni = pd.to_datetime(self.dataInicial) - pd.Timedelta(days=150)
         dataFatFinal = pd.to_datetime(self.dataInicial)
 
         # Filtrar as datas
