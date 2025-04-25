@@ -179,7 +179,7 @@ def Faturamento_ano(ano, empresa):
     where 
     	n.codTipoDeNota in (48, 30, 180, 156, 51, 175, 81, 12, 47, 67, 149, 159, 1030, 2015, 1, 27, 102, 2, 9998) and codPedido is null
     	and n.dataEmissao >= '{dataInicio}'
-        and n.dataEmissao <= '{dataFim} 
+        and n.dataEmissao <= '{dataFim} '
         and situacao = 2 
         and codempresa ={empresa}"""
 
