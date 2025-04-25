@@ -158,17 +158,30 @@ def Faturamento_ano(ano, empresa):
                         'where n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
                         ' and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2  and codTipoDeNota in (145)'
     else:
-        query = 'select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, codPedido, codNumNota, codEmpresa  ' \
-            'FROM Fat.NotaFiscal n ' \
-            'where n.codPedido >= 0 '   \
-            'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
-            'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 and codempresa ='+ "'" + empresa + "'" \
-                                                            ' union ' \
-                                                            "select n.codTipoDeNota as tiponota, n.dataEmissao, n.vlrTotal as faturado, '0' ,codNumNota, "+"'"+empresa+"'" \
-            ' FROM Fat.NotaFiscal n ' \
-            'where n.codTipoDeNota in (30, 180, 156, 51, 175, 81, 12, 47, 67, 149, 159, 1030, 2015, 1, 27, 102, 2, 9998, 48) and codPedido is null ' \
-            'and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' ' \
-            'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 and codempresa ='+ "'" + empresa + "'" \
+        query = f"""
+    select 
+    	n.codTipoDeNota as tiponota, 
+    	n.dataEmissao, n.vlrTotal as faturado, 
+    	codPedido, codNumNota, codEmpresa
+    FROM 
+    	Fat.NotaFiscal n 
+    where 
+    	n.codPedido >= 0
+    	and n.dataEmissao >= '{dataInicio}'
+    	and n.dataEmissao <= '{dataFim}' and situacao = 2 and codempresa = {empresa} 
+    union
+    select 
+    	n.codTipoDeNota as tiponota, 
+    	n.dataEmissao, n.vlrTotal as faturado, '0' ,
+    	codNumNota, {empresa}
+    FROM 
+    	Fat.NotaFiscal n
+    where 
+    	n.codTipoDeNota in (48, 30, 180, 156, 51, 175, 81, 12, 47, 67, 149, 159, 1030, 2015, 1, 27, 102, 2, 9998) and codPedido is null
+    	and n.dataEmissao >= '{dataInicio}'
+        and n.dataEmissao <= '{dataFim} 
+        and situacao = 2 
+        and codempresa ={empresa}"""
 
         retornaCsw = """SELECT  i.codPedido, e.vlrSugestao, sum(i.qtdePecasConf) as conf , sum(i.qtdeSugerida) as qtde,  i.codSequencia,  
          (SELECT codTipoNota  FROM ped.Pedido p WHERE p.codEmpresa = i.codEmpresa and p.codpedido = i.codPedido) as codigo 
