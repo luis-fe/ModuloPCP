@@ -57,8 +57,11 @@ def ConfTipoNota(empresa):
 
 
     else:
-        consulta = pd.read_sql('select tiponota from "pcp"."DashbordTV" c '
-                           "where c.empresa = %s  ",conn, params=(empresa))
+        consulta = pd.read_sql("""
+                                select 
+                                    tiponota from "pcp"."DashbordTV" c
+                                where 
+                                    c.empresa = %s  """,conn, params=(empresa))
 
     consulta['tiponota']= consulta['tiponota'].astype(str)
 
@@ -664,7 +667,7 @@ def Backup(ano, empresa):
 
     dataInicio = ano + '-01-01'
     backupAno = True
-    if mesFinal in ['11','4','6','09']:
+    if mesFinal in ['11','4','6','09','9']:
         dataFim = ano + '-'+mesFinal+'-30'
     elif mesFinal in ['01']:
         backupAno = False
