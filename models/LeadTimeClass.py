@@ -369,6 +369,8 @@ class LeadTimeCalculator:
         print('realizado faccionistas:')
         print(realizado)
         return realizado
+
+
     def leadTimeCategoria(self):
         conn1 = ConexaoPostgreWms.conexaoEngineWMSSrv()
 

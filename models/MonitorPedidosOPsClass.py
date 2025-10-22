@@ -1228,6 +1228,8 @@ class MonitorPedidosOps():
 
         }
         return pd.DataFrame([dados])
+
+
     def consultaIdOPReservada(self):
 
         conn = ConexaoPostgreWms.conexaoEngine()

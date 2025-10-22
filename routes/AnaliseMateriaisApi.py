@@ -162,8 +162,6 @@ def ger_comprometidoOP():
 @token_required
 def ger_comprometidoCompras():
 
-
-
     dados = AnaliseMateriais.AnaliseMateriais().sqlEstoquePedidosCompras()
     #controle.salvarStatus(rotina, ip, datainicio)
 

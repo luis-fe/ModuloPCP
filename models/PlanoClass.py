@@ -387,7 +387,7 @@ class Plano():
         return semanas_completas + semana_inicial_parcial + 1
 
     def pesquisarInicioFimVendas(self):
-        '''metodo que pesquisa o inicio e o fim das vendas passeado no codPlano'''
+        '''metodo que pesquisa o inicio e o fim das vendas baseado no codPlano'''
 
         sql = """
         select 
